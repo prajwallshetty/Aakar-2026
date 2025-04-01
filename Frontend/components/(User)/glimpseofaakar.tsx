@@ -6,23 +6,19 @@ const GlimpseOfAakar = () => {
       
       <div className="w-full text-white py-16 px-6 text-center flex flex-col md:flex-row items-center justify-center gap-8 rounded-lg">
         
+        <h2 className="text-4xl font-bold uppercase tracking-wide text-white flex flex-col items-center">
         
-        <h2 className="text-4xl font-bold uppercase tracking-wide text-white">
-          <div>
-            Glimpse of<br/>
-            Aakar 2024
-          </div>
+           <span > Glimpse of </span>
+           <span>Aakar 2024</span>
         </h2>
-
-     
+        
         <video 
-          className="w-[90px] h-[100px] md:w-[200px] md:h-[150px] lg:w-[350px] lg:h-[200px] rounded-lg ml-24"
+          className="w-[90px] h-[100px] md:w-[200px] md:h-[150px] lg:w-[350px] lg:h-[200px] rounded-2xl ml-24"
           autoPlay
           loop
           muted
-          controls
         >
-          <source src="/glimpse.mp4" type="video/mp4" />
+          <source src="\glimpse.mp4" type="video/mp4" />
         </video>
 
       </div> 
