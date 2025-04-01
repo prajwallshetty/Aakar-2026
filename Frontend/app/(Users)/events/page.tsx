@@ -45,7 +45,6 @@ const Page = () => {
           >
             <h2 className="text-xl font-semibold mb-4">{event.name}</h2>
             <p className="text-black text-xs">{event.date}</p>
-            {/* Dynamic background image positioned at the bottom right */}
             <div
               className="w-25 h-20 bg-contain bg-no-repeat absolute bottom-2 right-[-50]"
               style={{

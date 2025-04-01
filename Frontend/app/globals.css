@@ -44,10 +44,10 @@
 }
 
 .bg-custom {
-  position: fixed; /* Ensures the background stays fixed */
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: -1; /* Pushes the background behind other content */
+  z-index: -1;
   background-image: url('/bg.png');
   background-size: cover;
   background-position: center;
