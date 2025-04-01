@@ -1,11 +1,12 @@
+import Eventpage from '@/components/(User)/events/eventpage'
 import React from 'react'
-import Eventdescription from "./eventdescription"
+
 const page = () => {
   return (
     <div>
-      <Eventdescription/>
+      <Eventpage />
     </div>
-  );
+  )
 }
 
 export default page
