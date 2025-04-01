@@ -29,7 +29,7 @@ const teamData: TeamCategory[] = [
         name: 'GAURESH G PAI',
         role: 'WEB LEAD',
         image: '/Team/Core-Committee/gauresh.png',
-        shape: 'triangle',
+        shape: 'square',
       },
       {
         name: 'SHREYA DK',
@@ -41,13 +41,13 @@ const teamData: TeamCategory[] = [
         name: 'ANAUM FATHIMA',
         role: 'MEMBER',
         image: '/Team/Core-Committee/anaum.jpg',
-        shape: 'square',
+        shape: 'triangle',
       },
       {
         name: 'THASHVY S SUVARNA',
         role: 'MEMBER',
         image: '/Team/Core-Committee/thashvy.jpg',
-        shape: 'triangle',
+        shape: 'square',
       },
       {
         name: 'MOHAMMAD AAWAN SHAIKH',
@@ -59,37 +59,37 @@ const teamData: TeamCategory[] = [
         name: 'THANISHA DEVADIGA',
         role: 'MEMBER',
         image: '/Team/Core-Committee/thanisha.jpg',
-        shape: 'square',
+        shape: 'triangle',
       },
       {
         name: 'NISHANTH SHETTY B',
         role: 'MEMBER',
         image: '/Team/Core-Committee/nishant.jpg',
-        shape: 'circle',
+        shape: 'square',
       },
       {
         name: 'Manya',
         role: 'MEMBER',
         image: '/Team/Core-Committee/manya.jpg',
-        shape: 'square',
+        shape: 'circle',
       },
       {
         name: 'Sahana',
         role: 'MEMBER',
         image: '/Team/Core-Committee/sahana.jpg',
-        shape: 'square',
+        shape: 'triangle',
       },
       {
         name: 'Farhan',
         role: 'MEMBER',
         image: '/Team/Core-Committee/farhan.jpg',
-        shape: 'circle',
+        shape: 'square',
       },
       {
         name: 'MONITH K',
         role: 'MEMBER',
         image: '/Team/Core-Committee/monith.jpg',
-        shape: 'square',
+        shape: 'circle',
       },
     ],
   },
@@ -97,11 +97,56 @@ const teamData: TeamCategory[] = [
     name: 'Executive',
     members: [
       {
-        name: 'EXECUTIVE 1',
-        role: 'ROLE 1',
-        image: '/Team/Executive/exec1.jpg',
+        name: 'Dr. A. J. Shetty',
+        role: 'Chairman, LMET',
+        image: '/Team/executive/ajshetty.png',
         shape: 'triangle',
       },
+      {
+        name: 'Mrs. Sharada J. Shetty',
+        role: 'Director, LMET',
+        image: '/Team/executive/sharadha.png',
+        shape: 'square',
+      },
+      {
+        name: 'Mr. Prashanth Shetty',
+        role: 'Vice President, LMET',
+        image: '/Team/executive/prashanth.png',
+        shape: 'circle',
+      },
+      {
+        name: 'Mrs. Ashritha P. Shetty',
+        role: 'Director, LMET',
+        image: '/Team/executive/ashritha.png',
+        shape: 'triangle',
+      },
+      {
+        name: 'Dr. Prashanth Marla K',
+        role: 'Director, LMET',
+        image: '/Team/executive/prashanthM.png',
+        shape: 'square',
+      },
+
+      {
+        name: 'Dr. Amitha P. Marla',
+        role: 'Director, LMET',
+        image: '/Team/executive/amithaM.png',
+        shape: 'circle',
+      },
+      {
+        name: 'Mr. Ranga B. Shetty',
+        role: 'Director, LMET',
+        image: '/Team/executive/ranga.png',
+        shape: 'triangle',
+      },
+      {
+        name: 'Mrs. Vinuth R. Shetty',
+        role: 'Director, LMET',
+        image: '/Team/executive/vinutha.png',
+        shape: 'square',
+      },
+
+
     ],
   },
   {
@@ -111,7 +156,7 @@ const teamData: TeamCategory[] = [
         name: 'LECTURER 1',
         role: 'DEPARTMENT',
         image: '/Team/Lecturers/lecturer1.jpg',
-        shape: 'circle',
+        shape: 'triangle',
       },
     ],
   },
@@ -134,17 +179,17 @@ const TeamPage = () => {
             {category.name}
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center relative top-20">
             {category.members.map((member, index) => (
-              <Card key={index} className="relative w-full mx-auto">
+              <Card key={index} className="relative  w-[300] h-[73%] mx-auto">
                 <CardContent className="p-4">
-                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-32">
+                  <div className="absolute -top-17 left-1/2 transform -translate-x-1/2 w-30 h-30 z-3">
                     <Image
                       src={shapeImages[member.shape]}
                       alt="shape"
                       width={1080}
                       height={1080}
-                      className="object-contain"
+                      className="object-contain  "
                     />
                   </div>
 
@@ -154,11 +199,11 @@ const TeamPage = () => {
                       alt={member.name}
                       width={300}
                       height={300}
-                      className="rounded-xl w-full aspect-square object-cover"
+                      className="rounded-xl w-full aspect-square object-cover relative -top-6 z-2 "
                     />
                   </div>
                 </CardContent>
-                <div className="bg-black bg-opacity-70 text-white text-center p-3 rounded-b-2xl">
+                <div className="bg-black/55 text-white text-center p-3 rounded-b-2xl relative left-4 bottom-34 z-2 w-[266]">
                   <h2 className="text-lg font-semibold truncate">{member.name}</h2>
                   <p className="text-sm opacity-90">{member.role}</p>
                 </div>
