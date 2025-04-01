@@ -12,7 +12,7 @@ const LandingPage = () => {
 
             <div className="flex h-full relative z-10 ">
                 <div className="w-1/4 flex items-center justify-center ml-">
-                    <div className="text-white text-4xl md:text-6xl font-bold tracking-wider">
+                    <div className="text-white text-8xl md:text-8xl font-bold tracking-wider ml-200">
                         <div>
                             <span className="inline-block">AAKAR</span>
                             <br />
@@ -59,6 +59,11 @@ const LandingPage = () => {
                     </div>
                 </div>
             </div>
+
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white text-3xl md:text-4xl font-bold text-centerabsolute bottom-2 left-1/2 transform -translate-x-1/2 text-white text-3xl md:text-4xl font-bold text-center">
+                <span>Pick your path, shape your fate!</span>
+            </div>
+            
         </div>
     );
 };
