@@ -146,6 +146,10 @@
   -webkit-text-stroke: 2px rgba(156, 155, 155, 0.75);
   color:transparent;
 }
-.text-outline:hover{
+.text-outline-blue{
+  -webkit-text-stroke: 2px transparent;
+  color:transparent;
+}
+.text-outline-blue:hover{
   -webkit-text-stroke: 2px blue;
 }
