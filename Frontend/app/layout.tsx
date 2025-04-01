@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Common/Navbar";
+import Footer from "@/components/Common/Footer";
 import localfont from "next/font/local";
 
 const gamesquid = localfont({
@@ -38,7 +39,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${gamesquid.className} antialiased`}>
         <Navbar/>
-        <div className="relative z-10 font-GameOfSquids">{children}</div>
+        <div className="relative z-10 font-GameOfSquids min-h-screen">
+          {children}
+        </div>
+        <Footer />
         <div className="fixed inset-0 -z-10 bg-custom" />
       </body>
     </html>
