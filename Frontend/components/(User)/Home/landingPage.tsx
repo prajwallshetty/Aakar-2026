@@ -45,8 +45,6 @@ const LandingPage = () => {
                         </button>
                     </div>
                 </div>
-
-                {/* Right column - Video thumbnails */}
                 <div className="w-1/4 flex items-center justify-center">
                     <div className="flex flex-row space-y-6">
                         <div className="w-40 md:w-48 h-28 md:h-32 rounded-xl overflow-hidden">
@@ -59,6 +57,8 @@ const LandingPage = () => {
                         <div className="w-40 md:w-48 h-28 md:h-32 rounded-xl overflow-hidden">
                             <div className="w-full h-full bg-blue-900 bg-cover bg-center" style={{ backgroundImage: "url('/api/placeholder/192/128')" }}></div>
                         </div>
+                    </div>
+                    <div className="absolute left-10 top-1/3 w-20 h-40 border-4 border-pink-500 rounded-full animate-pulse">
                     </div>
                 </div>
             </div>
