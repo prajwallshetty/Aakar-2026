@@ -10,8 +10,8 @@ const LandingPage = () => {
                 AAKAR 2025
             </div>
 
-            <div className="flex h-full relative z-10">
-                <div className="w-1/4 flex items-center justify-center">
+            <div className="flex h-full relative z-10 ">
+                <div className="w-1/4 flex items-center justify-center ml-">
                     <div className="text-white text-4xl md:text-6xl font-bold tracking-wider">
                         <div>
                             <span className="inline-block">AAKAR</span>
