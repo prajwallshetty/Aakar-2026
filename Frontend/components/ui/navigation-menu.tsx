@@ -4,8 +4,6 @@ import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-
-//hello codeium
 import { Montserrat } from "next/font/google"
 
 const montserrat = Montserrat({
