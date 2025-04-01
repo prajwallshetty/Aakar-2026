@@ -1,14 +1,17 @@
+import GlimpseOfAakar from "@/components/(User)/glimpseofaakar";
 import LandingPage from "@/components/(User)/Home/landingPage";
-import Image from "next/image";
 import RegisterSection from "@/components/(User)/Home/registerSection";
-import Footer from "@/components/(User)/footer";
+import AboutPage from "@/components/(User)/aboutPage";
 
 export default function Home() {
   return (
-    <div className="h-[1000vh] font-GameOfSquids">
-      <LandingPage />
-      <RegisterSection />
-      <Footer />
-    </div>
+    <>
+      <div className="h-[1000vh] font-GameOfSquids">
+        <AboutPage />
+        <GlimpseOfAakar />
+        <LandingPage />
+        <RegisterSection />
+      </div>
+    </>
   );
 }

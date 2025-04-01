@@ -7,21 +7,11 @@ import localfont from "next/font/local";
 const gamesquid = localfont({
   src: [
     {
-    path: "../public/fonts/GameofSquids.otf",
+    path: "./GameofSquids.ttf",
     weight: "700",
   },
  ],
  variable: "--font--gamesquid",
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
