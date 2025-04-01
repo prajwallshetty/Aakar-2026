@@ -1,5 +1,4 @@
-import GlimpseOfAakar from "@/components/(User)/glimpseofaakar";
-import LandingPage from "@/components/(User)/landingPage";
+import LandingPage from "@/components/(User)/Home/landingPage";
 import Image from "next/image";
 
 export default function Home() {

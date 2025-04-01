@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        GameOfSquids: ["GameOfSquids", "sans-serif"],
+        gamesquid: ["GameOfSquids", "sans-serif"],
       },
     },
   },
