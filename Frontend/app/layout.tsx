@@ -7,7 +7,7 @@ import localfont from "next/font/local";
 const gamesquid = localfont({
   src: [
     {
-    path: "../fonts/GameofSquids.ttf",
+    path: "./GameofSquids.ttf",
     weight: "700",
   },
  ],
