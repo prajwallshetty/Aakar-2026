@@ -18,17 +18,17 @@ const Eventpage = () => {
       date: '2025-04-15',
     },
     {
-      id: 1,
+      id: 4,
       name: 'CODE DEBUGGING',
       date: '2025-04-15',
     },
     {
-      id: 2,
+      id: 5,
       name: 'CODE DEBUGGING',
       date: '2025-04-15',
     },
     {
-      id: 3,
+      id: 6,
       name: 'CODE DEBUGGING',
       date: '2025-04-15',
     },
