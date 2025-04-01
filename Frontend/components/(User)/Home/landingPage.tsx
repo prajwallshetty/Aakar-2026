@@ -3,7 +3,10 @@ import React from 'react';
 const LandingPage = () => {
     return (
         <div className="relative w-full h-screen overflow-hidden">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl font-bold text-gray-800 opacity-10 w-full text-center tracking-widest">
+            <div className="absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl font-bold opacity-100 text-outline w-full text-center tracking-widest">
+                AAKAR 2025
+            </div>
+            <div className="absolute top-1/5 left-1/2 transform z-40 text-outline-blue -translate-x-1/2 -translate-y-1/2 text-8xl font-bold opacity-100 text-outline w-full text-center tracking-widest">
                 AAKAR 2025
             </div>
 
@@ -25,13 +28,15 @@ const LandingPage = () => {
 
                 {/* Center column - Character with play trailer button */}
                 <div className="w-2/4 flex flex-col items-center justify-center relative">
-                    {/* Character in red hoodie */}
-                    <div className="h-full w-64 md:w-80 bg-transparent relative">
-                        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/character.png')" }}></div>
+                    {/* Character in red hoodie - REDUCED SIZE */}
+                    <div className="h-full flex items-center justify-center">
+                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center" 
+                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
+                        </div>
                     </div>
 
                     {/* Play trailer button at bottom */}
-                    <div className="mt-8 absolute bottom-20">
+                    <div className="mt-8 absolute bottom-30">
                         <button className="flex items-center bg-transparent border border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300">
                             <div className="mr-3 w-10 h-10 rounded-full bg-white flex items-center justify-center">
                                 <div className="w-0 h-0 border-t-4 border-t-transparent border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>

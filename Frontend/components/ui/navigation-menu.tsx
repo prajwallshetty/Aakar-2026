@@ -5,6 +5,14 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+//hello codeium
+import { Montserrat } from "next/font/google"
+
+const montserrat = Montserrat({
+  weight: "600",
+  subsets: ["latin"],
+})
+
 function NavigationMenu({
   className,
   children,
