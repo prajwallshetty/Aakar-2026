@@ -7,11 +7,11 @@ import localfont from "next/font/local";
 const gamesquid = localfont({
   src: [
     {
-      path: "./GameofSquids.ttf",
+      path: "./fonts/GameofSquids.ttf",
       weight: "700",
     },
- ],
- variable: "--font--gamesquid",
+  ],
+  variable: "--font--gamesquid",
 });
 
 export const metadata: Metadata = {
