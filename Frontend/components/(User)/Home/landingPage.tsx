@@ -3,7 +3,7 @@ import React from 'react';
 const LandingPage = () => {
     return (
         <div className="relative w-full h-screen overflow-hidden">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl font-bold text-gray-800 opacity-10 w-full text-center tracking-widest">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl font-bold opacity-100 text-outline w-full text-center tracking-widest">
                 AAKAR 2025
             </div>
 
@@ -25,9 +25,11 @@ const LandingPage = () => {
 
                 {/* Center column - Character with play trailer button */}
                 <div className="w-2/4 flex flex-col items-center justify-center relative">
-                    {/* Character in red hoodie */}
-                    <div className="h-full w-64 md:w-80 bg-transparent relative">
-                        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/character.png')" }}></div>
+                    {/* Character in red hoodie - REDUCED SIZE */}
+                    <div className="h-full flex items-center justify-center">
+                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center" 
+                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
+                        </div>
                     </div>
 
                     {/* Play trailer button at bottom */}
