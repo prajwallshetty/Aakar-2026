@@ -8,10 +8,10 @@ AAKAR 2025 is the official techno-cultural fest of **AJIET Mangalore**, featurin
 ## 🚀 Tech Stack  
 
 ### Frontend 🖥️  
-- **Framework:** Next.js / React.js  
+- **Framework:** Next.js
 - **Styling:** Tailwind CSS  
-- **State Management:** Context API / Redux  
-- **API Calls:** Axios / Fetch  
+- **State Management:** Context API 
+- **API Calls:** Fetch  
 
 ### Backend 🔧  
 - **Runtime:** Node.js  

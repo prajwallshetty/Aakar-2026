@@ -4,6 +4,12 @@ import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Montserrat } from "next/font/google"
+
+const montserrat = Montserrat({
+  weight: "600",
+  subsets: ["latin"],
+})
 
 function NavigationMenu({
   className,
