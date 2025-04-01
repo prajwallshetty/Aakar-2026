@@ -1,10 +1,10 @@
-import Login from '@/components/(User)/auth/Login'
+import Eventdescription from '@/components/(User)/events/eventdescription'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <Login />
+        <Eventdescription />
     </div>
   )
 }
