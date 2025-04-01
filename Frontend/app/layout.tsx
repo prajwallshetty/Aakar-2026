@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-const fontUrl = "/GameofSquids.ttf";
 import "./globals.css";
 import Navbar from "@/components/Common/Navbar";
 import localfont from "next/font/local";
@@ -7,9 +6,9 @@ import localfont from "next/font/local";
 const gamesquid = localfont({
   src: [
     {
-    path: fontUrl,
-    weight: "700",
-  },
+      path: "/GameofSquids.ttf",
+      weight: "700",
+    },
  ],
  variable: "--font--gamesquid",
 });
