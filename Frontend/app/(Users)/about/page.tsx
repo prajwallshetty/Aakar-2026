@@ -1,9 +1,9 @@
-import React from 'react'
+import AboutPage from "@/components/(User)/about/aboutPage";
 
-const page = () => {
+export default function Home() {
   return (
-    <div>page</div>
-  )
+    <div className="">
+      <AboutPage />
+    </div>
+  );
 }
-
-export default page

@@ -1,29 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Common/Navbar";
 import Footer from "@/components/Common/Footer";
-import localfont from "next/font/local";
-
-const gamesquid = localfont({
-  src: [
-    {
-    path: "../public/fonts/GameofSquids.otf",
-    weight: "700",
-  },
- ],
- variable: "--font--gamesquid",
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { GameOfSquids } from "@/lib/font";
 
 export const metadata: Metadata = {
   title: "AAKAR 2025",
@@ -37,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${gamesquid.className} antialiased`}>
+      <body className={`${GameOfSquids.className} antialiased`}>
         <Navbar/>
         <div className="relative z-10 font-GameOfSquids min-h-screen">
           {children}
