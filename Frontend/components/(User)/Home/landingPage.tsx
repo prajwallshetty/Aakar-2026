@@ -36,7 +36,7 @@ const LandingPage = () => {
                     </div>
 
                     {/* Play trailer button at bottom */}
-                    <div className="mt-8 absolute bottom-20">
+                    <div className="mt-8 absolute bottom-30">
                         <button className="flex items-center bg-transparent border border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300">
                             <div className="mr-3 w-10 h-10 rounded-full bg-white flex items-center justify-center">
                                 <div className="w-0 h-0 border-t-4 border-t-transparent border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
