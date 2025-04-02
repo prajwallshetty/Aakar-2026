@@ -11,13 +11,11 @@ export default function AboutPage() {
     <main className="min-h-screen flex flex-col">
       <div className="flex-1 bg-cover bg-center bg-no-repeat py-8 px-4 md:px-8">
         <div className="container mx-auto max-w-6xl">
-          
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-white mb-4">About Our Institute</h1>
-          </div>
-
+          <h2 className="text-4xl font-bold text-white py-6 text-center">
+            Abour our Institution
+          </h2>
           {/* First section - Institute info */}
-          <div className="rounded-xl overflow-hidden mb-16 border-2 border-transparent">
+          <div className="rounded-xl overflow-hidden  border-2 border-transparent">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="w-full md:w-1/2">
                 <Image
@@ -53,10 +51,10 @@ export default function AboutPage() {
           </div>
 
           {/* Second section - AAKAR */}
-          <div className="rounded-xl overflow-hidden mt-12 p-6 md:p-10 border-2 border-transparent">
+          <div className="rounded-xl overflow-hidden p-6 md:p-10 border-2 border-transparent">
             <div className="mx-auto">
               <h2 className="text-4xl font-bold text-center text-white mb-8">
-                AAKAR
+               About AAKAR
               </h2>
 
               <div className="flex flex-col justify-center items-center gap-4 mb-8">

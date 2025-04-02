@@ -16,84 +16,6 @@ interface TeamCategory {
 
 const teamData: TeamCategory[] = [
     {
-        name: 'Core Committee',
-        members: [
-
-            {
-                name: 'AYAN A THONSE',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/ayan.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'GAURESH G PAI',
-                role: 'WEB LEAD',
-                image: '/Team/Core-Committee/gauresh.png',
-                shape: 'square',
-            },
-            {
-                name: 'SHREYA DK',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/shreya.jpg',
-                shape: 'circle',
-            },
-            {
-                name: 'ANAUM FATHIMA',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/anaum.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'THASHVY S SUVARNA',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/thashvy.jpg',
-                shape: 'square',
-            },
-            {
-                name: 'MOHAMMAD AAWAN SHAIKH',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/aawan.jpg',
-                shape: 'circle',
-            },
-            {
-                name: 'THANISHA DEVADIGA',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/thanisha.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'NISHANTH SHETTY B',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/nishant.jpg',
-                shape: 'square',
-            },
-            {
-                name: 'Manya',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/manya.jpg',
-                shape: 'circle',
-            },
-            {
-                name: 'Sahana',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/sahana.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'Farhan',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/farhan.jpg',
-                shape: 'square',
-            },
-            {
-                name: 'MONITH K',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/monith.jpg',
-                shape: 'circle',
-            },
-        ],
-    },
-    {
         name: 'Executive',
         members: [
             {
@@ -175,6 +97,84 @@ const teamData: TeamCategory[] = [
                 role: 'member',
                 image: '/Team/Lecturer/disha.png',
                 shape: 'triangle',
+            },
+        ],
+    },
+    {
+        name: 'Core Committee',
+        members: [
+
+            {
+                name: 'AYAN A THONSE',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/ayan.jpg',
+                shape: 'triangle',
+            },
+            {
+                name: 'GAURESH G PAI',
+                role: 'WEB LEAD',
+                image: '/Team/Core-Committee/gauresh.png',
+                shape: 'square',
+            },
+            {
+                name: 'SHREYA DK',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/shreya.jpg',
+                shape: 'circle',
+            },
+            {
+                name: 'ANAUM FATHIMA',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/anaum.jpg',
+                shape: 'triangle',
+            },
+            {
+                name: 'THASHVY S SUVARNA',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/thashvy.jpg',
+                shape: 'square',
+            },
+            {
+                name: 'MOHAMMAD AAWAN SHAIKH',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/aawan.jpg',
+                shape: 'circle',
+            },
+            {
+                name: 'THANISHA DEVADIGA',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/thanisha.jpg',
+                shape: 'triangle',
+            },
+            {
+                name: 'NISHANTH SHETTY B',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/nishant.jpg',
+                shape: 'square',
+            },
+            {
+                name: 'Manya',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/manya.jpg',
+                shape: 'circle',
+            },
+            {
+                name: 'Sahana',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/sahana.jpg',
+                shape: 'triangle',
+            },
+            {
+                name: 'Farhan',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/farhan.jpg',
+                shape: 'square',
+            },
+            {
+                name: 'MONITH K',
+                role: 'MEMBER',
+                image: '/Team/Core-Committee/monith.jpg',
+                shape: 'circle',
             },
         ],
     },

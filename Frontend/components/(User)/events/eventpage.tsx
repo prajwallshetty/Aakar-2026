@@ -18,7 +18,7 @@ const Eventpage = () => {
       <h1 className="text-2xl font-bold text-white mb-12">TECHNICAL EVENTS</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {events.map((event, index) => (
-          <Link  href='events/desc'>
+          <Link  href='events/desc' key={event.id}>
             <div
               className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center h-100 w-90 bg-cover bg-center cursor-pointer transition-transform "
               style={{
