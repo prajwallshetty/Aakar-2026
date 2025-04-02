@@ -4,7 +4,7 @@ import Navbar from "@/components/Common/Navbar";
 
 export default function Home() {
   return (
-    <div className="h-[1000vh] font-GameOfSquids">
+    <div className="font-GameOfSquids">
       <AboutPage />
     </div>
   );

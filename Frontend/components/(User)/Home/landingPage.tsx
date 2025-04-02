@@ -1,5 +1,4 @@
 import React from 'react';
-
 const LandingPage = () => {
     return (
         <div className="relative w-full h-screen overflow-hidden">
@@ -60,7 +59,7 @@ const LandingPage = () => {
                             <div className="w-full h-full bg-blue-900 bg-cover bg-center" style={{ backgroundImage: "url('/api/placeholder/192/128')" }}></div>
                         </div>
                     </div>
-                </div>
+                </div> 
             </div>
         </div>
     );
