@@ -27,7 +27,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        GameOfSquids: ['var(--font-GameOfSquids)'],
+        GameOfSquids: ['GameOfSquids', 'sans-serif'],
         inter: ["Inter", "sans-serif"],
       },
       colors: {

@@ -10,6 +10,7 @@ const montserrat = Montserrat({
     weight: "600",
     subsets: ["latin"],
 })
+
 export default function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
