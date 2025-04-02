@@ -1,10 +1,10 @@
 import React from 'react'
-
+import Link from 'next/link'
 const Login = () => {
     return (
         <div className="flex items-center justify-center min-h-screen px-4 sm:px-8" >
             <div className="flex flex-col   bg-white w-100 p-6 rounded shadow-md">
-                <h2 className="text-black text-lg font-semibold mb-4">Login</h2>
+                <h2 className="text-black text-lg font-semibold mb-4 flex justify-center">Login</h2>
                 <form className="flex flex-col gap-4">
                     <div className='flex flex-col gap-2'>
                         <label htmlFor="email" className="text-gray-700">
@@ -32,14 +32,16 @@ const Login = () => {
                         <button className="bg-pink-800 text-white py-2 px-4 rounded-full  hover:bg-pink-700 w-full sm:w-32 cursor-pointer">
                             Login
                         </button>
+                        <Link href="/register">
                         <button className=" text-pink-800 py-2 px-4 rounded-full  border-pink-800 border-2 w-full sm:w-32 cursor-pointer">
                             Register
                         </button>
+                        </Link>
                     </div>
 
                 </form>
             </div>
-            <div className="h-96 w-68 bg-transparent absolute bottom-0 left-[-38] hidden sm:block">
+            <div className="h-96 w-68 bg-transparent absolute bottom-0 left-[-38] hidden md:block">
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/login-ch.png')", backgroundSize: "contain", backgroundRepeat: "no-repeat" }}></div>
             </div>
         </div>
