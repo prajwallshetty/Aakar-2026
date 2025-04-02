@@ -1,4 +1,4 @@
-import Eventdescription from '@/components/(User)/events/eventdescription'
+import Eventdescription from '@/components/(User)/events/desc/eventdescription'
 import React from 'react'
 
 const page = () => {
