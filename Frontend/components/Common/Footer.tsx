@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
 
           {/* Legal Section */}
           <div>
-            <h3 className="text-lg font-medium mb-3">Legal</h3>
+            <h3 className="text-lg font-medium mb-3 mt-3">Legal</h3>
             <Link href="/privacy-policy" className="block text-gray-400 hover:text-white mb-2">
               Privacy policy
             </Link>
@@ -53,7 +53,7 @@ const Footer: React.FC = () => {
 
           {/* Address Section */}
           <div>
-            <h3 className="text-lg font-medium mb-3">Address</h3>
+            <h3 className="text-lg font-medium mb-3 mt-3">Address</h3>
             <p className="text-gray-400">
               NH-66, Kottara Chowki <br />
               Mangaluru, Karnataka <br />
