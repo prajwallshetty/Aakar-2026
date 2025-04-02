@@ -14,6 +14,7 @@
 
 
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -26,7 +27,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        gamesquid: ["GameOfSquids", "sans-serif"],
+        GameOfSquids: ['var(--font-GameOfSquids)'],
         inter: ["Inter", "sans-serif"],
       },
       colors: {
