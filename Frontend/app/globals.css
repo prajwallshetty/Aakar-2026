@@ -153,3 +153,39 @@
 .text-outline-blue:hover{
   -webkit-text-stroke: 2px blue;
 }
+
+
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+}
+
+@font-face {
+  font-family: "Futuristic";
+  src: url("/fonts/futuristic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1 {
+  font-family: "Futuristic", sans-serif;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+}

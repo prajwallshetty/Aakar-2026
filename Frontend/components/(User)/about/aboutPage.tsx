@@ -1,13 +1,13 @@
 import Image from "next/image"
 import Navbar from "@/components/Common/Navbar"
-
+import { Inter } from "next/font/google"
+const inter =Inter({ subsets: ["latin"] })
 export default function AboutPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <Navbar />
       <div 
-        className="flex-1 bg-cover bg-center bg-no-repeat py-16 px-4 "
-      >
+        className="flex-1 bg-cover bg-center bg-no-repeat py-16 px-4 ">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-white mb-4">About Our Institute</h1>
@@ -16,13 +16,13 @@ export default function AboutPage() {
           <div className="rounded-xl shadow-md overflow-hidden mb-12 border-2 border-transparent">
             <div className="md:flex">
               <div className="md:w-1/2 p-8 md:p-12">
-                <h2 className="text-3xl font-bold text-white mb-6 text-center md:text-left">
+                <h2 className="text-3xl font-bold  text-white mb-6 text-center md:text-left">
                   AJ INSTITUTE OF ENGINEERING AND TECH
                 </h2>
-                <div className="space-y-4 text-white">
+                <div className={"space-y-4 text-white "+inter.className}>
                   <p className="text-lg">Established in 2005, Kottara, Mangaluru</p>
-                  <p className="text-lg">Affiliated to Visvesvaraya Technological University, Belagavi</p>
-                  <p className="text-lg">Recognized by All India Council for Technical Education (AICTE), New Delhi</p>
+                  <p className="text-lg ">Affiliated to Visvesvaraya Technological University, Belagavi</p>
+                  <p className="text-lg font-semibold">Recognized by All India Council for Technical Education (AICTE), New Delhi</p>
                 </div>
               </div>
               <div className="md:w-1/2">
@@ -49,7 +49,7 @@ export default function AboutPage() {
                 />
               </div>
               <div className="md:w-1/2  p-8 md:p-12">
-              <p className="text-lg text-white mb-6">
+              <p className={"text-lg text-white mb-6"+inter.className}>
                   Our institution stands as a beacon of academic brilliance in the region, committed to fostering
                   innovation and excellence in engineering education. With state-of-the-art facilities and a dedicated
                   faculty, we strive to nurture the next generation of engineers and technologists.
