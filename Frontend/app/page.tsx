@@ -4,12 +4,10 @@ import RegisterSection from "@/components/(User)/Home/registerSection";
 
 export default function Home() {
   return (
-    <>
     <div className="">
       <LandingPage />
       <RegisterSection />
-      <GlimpseOfAakar/>
+      <GlimpseOfAakar />
     </div>
-    </>
   );
 }
