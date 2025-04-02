@@ -153,9 +153,27 @@ const teamData: TeamCategory[] = [
         name: 'Lecturers',
         members: [
             {
-                name: 'LECTURER 1',
-                role: 'DEPARTMENT',
-                image: '/Team/Lecturers/lecturer1.jpg',
+                name: 'Mr. Suhan das',
+                role: 'Main Coordinator',
+                image: '/Team/Lecturer/suhan.jpg',
+                shape: 'triangle',
+            },
+            {
+                name: 'Mr. Vinod T Dsouza',
+                role: 'member',
+                image: '/Team/Lecturer/vinod.png',
+                shape: 'square',
+            },
+            {
+                name: 'Mrs. Sharanya P S',
+                role: 'member',
+                image: '/Team/Lecturer/sharanya.png',
+                shape: 'circle',
+            },
+            {
+                name: 'Ms. Disha C Shetty',
+                role: 'member',
+                image: '/Team/Lecturer/disha.png',
                 shape: 'triangle',
             },
         ],
@@ -174,14 +192,14 @@ const Team = () => {
             <h1 className="text-white text-4xl font-bold mb-12">OUR TEAM</h1>
 
             {teamData.map((category) => (
-                <div key={category.name} className="w-full max-w-7xl">
+                <div key={category.name} className=" max-w-7xl">
                     <h2 className="text-white text-2xl font-semibold mb-8 text-center">
                         {category.name}
                     </h2>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center relative top-20">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-7 gap-y-0 justify-center relative top-20 ">
                         {category.members.map((member, index) => (
-                            <Card key={index} className="relative  w-[300] h-[73%] mx-auto">
+                            <Card key={index} className="relative  w-[300] h-[69%] mx-auto">
                                 <CardContent className="p-4">
                                     <div className="absolute -top-17 left-1/2 transform -translate-x-1/2 w-30 h-30 z-3">
                                         <Image
@@ -197,13 +215,13 @@ const Team = () => {
                                         <Image
                                             src={member.image}
                                             alt={member.name}
-                                            width={300}
-                                            height={300}
-                                            className="rounded-xl w-full aspect-square object-cover relative -top-6 z-2 "
+                                            width={1080}
+                                            height={1080}
+                                            className="rounded-xl w-full aspect-square object-cover relative -top-7 z-2 "
                                         />
                                     </div>
                                 </CardContent>
-                                <div className="bg-black/55 text-white text-center p-3 rounded-b-2xl relative left-4 bottom-34 z-2 w-[266]">
+                                <div className="bg-black/55 text-white text-center p-3 rounded-b-2xl relative left-4 bottom-35 z-2 w-[266]">
                                     <h2 className="text-lg font-semibold truncate">{member.name}</h2>
                                     <p className="text-sm opacity-90">{member.role}</p>
                                 </div>
