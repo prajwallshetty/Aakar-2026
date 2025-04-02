@@ -33,9 +33,9 @@ const Footer: React.FC = () => {
         <div className="mb-6 md:mb-0">
           <h3 className="text-lg font-medium mb-3">Contact us</h3>
           <Link href="mailto:akar2025@example.com" className="block text-gray-400 hover:text-white mb-2">
-            @akar2025
+          ✉️ akar2025@example.com
           </Link>
-          <p className="text-gray-400">+9999999999</p>
+          <p className="text-gray-400">📞+9999999999</p>
         </div>
 
         {/* Legal Section */}
@@ -53,9 +53,9 @@ const Footer: React.FC = () => {
         <div>
           <h3 className="text-lg font-medium mb-3">Address</h3>
           <p className="text-gray-400">
-            opp. mangalore near katraja <br />
-            chowki mangalore kamptapu <br />
-            546750 india
+          NH-66, Kottara Chowki,<br />
+          Mangaluru, Karnataka <br />
+          PIN: 575006
           </p>
         </div>
       </div>
