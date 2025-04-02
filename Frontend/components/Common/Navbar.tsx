@@ -99,11 +99,11 @@ export default function Navbar() {
                 onClick={closeSidebar}
             ></div>
 
-            {/* Full-page Sidebar */}
+            {/* Full-page Sidebar with Montserrat font */}
             <div 
                 className={`fixed top-0 right-0 h-full w-64 bg-gray-900 text-white z-40 transform transition-transform duration-300 ease-in-out md:hidden ${
                     sidebarOpen ? 'translate-x-0' : 'translate-x-full'
-                }`}
+                } ${montserrat.className}`}
             >
                 <div className="flex flex-col h-full">
                     {/* Logo area in sidebar */}
@@ -115,7 +115,7 @@ export default function Navbar() {
 
                     {/* Navigation Links */}
                     <div className="flex-grow overflow-y-auto">
-                        <ul className="p-6 space-y-6 text-lg">
+                        <ul className="p-6 space-y-6 text-lg font-semibold">
                             <li>
                                 <Link 
                                     href="/" 
@@ -168,7 +168,7 @@ export default function Navbar() {
                         ) : (
                             <Link 
                                 href="/register" 
-                                className="flex items-center justify-center w-full py-3 bg-pink-500 hover:bg-pink-600 rounded-lg transition" 
+                                className="flex items-center justify-center w-full py-3 bg-pink-500 hover:bg-pink-600 rounded-lg transition font-semibold" 
                                 onClick={closeSidebar}
                             >
                                 Register
