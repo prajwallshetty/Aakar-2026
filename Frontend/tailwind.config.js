@@ -1,18 +1,3 @@
-// /** @type {import('tailwindcss').Config} */
-// module.exports = {
-//   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
-//   theme: {
-//     extend: {
-//       fontFamily: {
-//         gamesquid: ["GameOfSquids", "sans-serif"],
-//         inter: ["Inter", "sans-serif"],
-//       },
-//     },
-//   },
-//   plugins: [],
-// };
-
-
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
@@ -27,7 +12,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        GameOfSquids: ['var(--font-GameOfSquids)'],
+        GameOfSquids: ['GameOfSquids', 'sans-serif'],
         inter: ["Inter", "sans-serif"],
       },
       colors: {
