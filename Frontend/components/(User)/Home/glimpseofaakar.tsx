@@ -2,18 +2,17 @@ import React from 'react';
 
 const GlimpseOfAakar = () => {
   return (
-    <div className="absolute top-250 left-1/2 -translate-x-1/2 h-40 rounded-md animate-pulse">
-      
-      <div className="w-full text-white py-16 px-6 text-center flex flex-col md:flex-row items-center justify-center gap-8 rounded-lg">
-        
-        <h2 className="text-4xl font-bold uppercase tracking-wide text-white flex flex-col items-center">
-        
-           <span > Glimpse of </span>
-           <span>Aakar 2024</span>
+    <div className="rounded-md grid place-items-center">
+
+      <div className="w-full text-white py-16 max-w-7xl px-6 text-center flex flex-col md:flex-row items-center justify-around gap-8 rounded-lg">
+
+        <h2 className="text-2xl md:text-5xl text-white flex flex-col text-center justify-center items-center">
+          <p className='py-6'> Glimpse of </p>
+          <p>Aakar 2024</p>
         </h2>
-        
-        <video 
-          className="w-[90px] h-[100px] md:w-[200px] md:h-[150px] lg:w-[350px] lg:h-[200px] rounded-2xl ml-24"
+
+        <video
+          className="max-h-[50vh] rounded-[3rem]"
           autoPlay
           loop
           muted
@@ -21,8 +20,8 @@ const GlimpseOfAakar = () => {
           <source src="\glimpse.mp4" type="video/mp4" />
         </video>
 
-      </div> 
-      
+      </div>
+
     </div>
   );
 };
