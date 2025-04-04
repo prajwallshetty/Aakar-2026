@@ -81,8 +81,8 @@ export default function Navbar() {
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <button 
-                        className="md:hidden text-white text-2xl focus:outline-none z-50" 
+                    <button
+                        className="md:hidden text-white text-2xl cursor-pointer focus:outline-none z-50"
                         onClick={toggleSidebar}
                         aria-label="Toggle menu"
                     >
@@ -92,18 +92,16 @@ export default function Navbar() {
             </nav>
 
             {/* Full-page Sidebar Overlay */}
-            <div 
-                className={`fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 ease-in-out md:hidden ${
-                    sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                }`}
+            <div
+                className={`fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 ease-in-out md:hidden ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    }`}
                 onClick={closeSidebar}
             ></div>
 
             {/* Full-page Sidebar with Montserrat font */}
-            <div 
-                className={`fixed top-0 right-0 h-full w-64 bg-gray-900 text-white z-40 transform transition-transform duration-300 ease-in-out md:hidden ${
-                    sidebarOpen ? 'translate-x-0' : 'translate-x-full'
-                } ${montserrat.className}`}
+            <div
+                className={`fixed top-0 right-0 h-full w-64 bg-gray-900 text-white z-40 transform transition-transform duration-300 ease-in-out md:hidden ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'
+                    } ${montserrat.className}`}
             >
                 <div className="flex flex-col h-full">
                     {/* Logo area in sidebar */}
@@ -117,36 +115,36 @@ export default function Navbar() {
                     <div className="flex-grow overflow-y-auto">
                         <ul className="p-6 space-y-6 text-lg font-semibold">
                             <li>
-                                <Link 
-                                    href="/" 
-                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200" 
+                                <Link
+                                    href="/"
+                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                     onClick={closeSidebar}
                                 >
                                     Home
                                 </Link>
                             </li>
                             <li>
-                                <Link 
-                                    href="/about" 
-                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200" 
+                                <Link
+                                    href="/about"
+                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                     onClick={closeSidebar}
                                 >
                                     About
                                 </Link>
                             </li>
                             <li>
-                                <Link 
-                                    href="/team" 
-                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200" 
+                                <Link
+                                    href="/team"
+                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                     onClick={closeSidebar}
                                 >
                                     Team
                                 </Link>
                             </li>
                             <li>
-                                <Link 
-                                    href="/events" 
-                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200" 
+                                <Link
+                                    href="/events"
+                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                     onClick={closeSidebar}
                                 >
                                     Events
@@ -158,17 +156,17 @@ export default function Navbar() {
                     {/* Auth Section at Bottom */}
                     <div className="p-6 border-t border-gray-800">
                         {isLoggedIn ? (
-                            <Link 
-                                href="/profile" 
-                                className="flex items-center py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200" 
+                            <Link
+                                href="/profile"
+                                className="flex items-center py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                 onClick={closeSidebar}
                             >
                                 <FaUserCircle className="mr-3 text-2xl" /> Profile
                             </Link>
                         ) : (
-                            <Link 
-                                href="/register" 
-                                className="flex items-center justify-center w-full py-3 bg-pink-500 hover:bg-pink-600 rounded-lg transition font-semibold" 
+                            <Link
+                                href="/register"
+                                className="flex items-center justify-center w-full py-3 bg-pink-500 hover:bg-pink-600 rounded-lg transition font-semibold"
                                 onClick={closeSidebar}
                             >
                                 Register
