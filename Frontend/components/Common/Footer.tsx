@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+
 import { Montserrat } from "next/font/google";
 
 const montserrat = Montserrat({
@@ -48,6 +49,9 @@ const Footer: React.FC = () => {
             </Link>
             <Link href="/terms-and-conditions" className="block text-gray-400 hover:text-white">
               Terms and conditions
+            </Link>
+            <Link href="/faq" className="block text-gray-400 hover:text-white">
+              FAQ
             </Link>
           </div>
 
