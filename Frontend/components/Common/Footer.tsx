@@ -57,6 +57,11 @@ const Footer = () => {
                 Terms & Conditions
               </a>
             </li>
+            <li>
+              <a href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                    FAQ
+              </a>
+            </li>
           </ul>
         </div>
 
