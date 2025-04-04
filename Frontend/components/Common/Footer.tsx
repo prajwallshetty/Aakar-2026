@@ -64,7 +64,7 @@ const Footer = () => {
           <h4 className="text-lg font-medium mb-4">Address</h4>
           <p className="text-gray-400 max-w-xs">
             NH66, Kottara Chowki, Mangaluru,
-            Karnataka - 574142
+            Karnataka - 575006
           </p>
         </div>
       </div>
