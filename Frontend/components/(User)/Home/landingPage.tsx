@@ -94,7 +94,7 @@ const LandingPage = () => {
 
                     <div className="h-full flex items-center justify-center mt relative top-[-50px]">
                         <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center"
-                            style={{ backgroundImage: "url('/eventcard-ch1.png')", minWidth: "250px" }}>
+                            style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                     </div>
 
