@@ -1,20 +1,20 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
+import type React from "react"
+
 import Image from "next/image"
 
 // Main component that combines all parts
 export default function EventsPage() {
   return (
-    <div className="relative w-full flex flex-col items-center justify-center overflow-hidden py-12 ">
-
-      {/* Heading component */}
-      <div className="text-center mb-16 z-10">
-        <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold tracking-wider">
+    <div className="relative w-full flex flex-col items-center justify-center overflow-hidden py-12 min-h-screen">
+      <div className="text-center mb-8 md:mb-16 z-10 px-4">
+        <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold tracking-wider">
           <span className="block mb-2">PICK YOUR PATH,</span>
           <span className="block">SHAPE YOUR FATE!</span>
         </h1>
       </div>
-      
+
       {/* Card grid with integrated flip functionality */}
       <CardGrid />
     </div>
@@ -30,29 +30,50 @@ function CardGrid() {
     { id: 4, frontText: "SPECIAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png" },
   ]
 
-  const [visibleCards, setVisibleCards] = useState<number[]>([])
+  const [isVisible, setIsVisible] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const addVisibleCard = (cardId: number) => {
-    setVisibleCards(prev => (!prev.includes(cardId) ? [...prev, cardId] : prev))
-  }
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        } else {
+          setIsVisible(false)
+        }
+      },
+      { threshold: 0.3 },
+    )
 
-  const removeVisibleCard = (cardId: number) => {
-    setVisibleCards(prev => prev.filter(id => id !== cardId))
-  }
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
+    }
 
-  // Use a container div instead of grid for fan layout
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current)
+      }
+    }
+  }, [])
+
   return (
-    <div className="relative max-w-6xl w-full h-64 md:h-80 px-4">
+    <div
+      ref={containerRef}
+      className="relative w-full max-w-6xl px-4 mx-auto"
+      style={{
+        height: "min(70vh, 500px)",
+        minHeight: "300px",
+      }}
+    >
       {cards.map((card, index) => (
-        <FlipCard 
-          key={card.id} 
-          frontText={card.frontText} 
+        <FlipCard
+          key={card.id}
+          frontText={card.frontText}
           frontImage={card.frontImage}
-          backImage={card.backImage} 
-          index={index} 
-          addVisibleCard={() => addVisibleCard(card.id)} 
-          removeVisibleCard={() => removeVisibleCard(card.id)} 
-          visibleCards={visibleCards} 
+          backImage={card.backImage}
+          index={index}
+          isVisible={isVisible}
           totalCards={cards.length}
         />
       ))}
@@ -66,124 +87,97 @@ type FlipCardProps = {
   frontImage: string
   backImage: string
   index: number
-  addVisibleCard: () => void
-  removeVisibleCard: () => void
-  visibleCards: number[]
+  isVisible: boolean
   totalCards: number
 }
 
-function FlipCard({
-  frontText,
-  frontImage,
-  backImage,
-  index,
-  addVisibleCard,
-  removeVisibleCard,
-  visibleCards,
-  totalCards
-}: FlipCardProps) {
-  const [isFlipped, setIsFlipped] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-          addVisibleCard()
-        } else {
-          removeVisibleCard()
-          setIsFlipped(false)
-        }
-      },
-      { threshold: 0.5 }
-    )
-
-    if (cardRef.current) {
-      observer.observe(cardRef.current)
-    }
-
-    return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current)
-      }
-    }
-  }, [addVisibleCard, removeVisibleCard])
-
-  useEffect(() => {
-    if (visibleCards.length > 0) {
-      const timer = setTimeout(() => {
-        setIsFlipped(true)
-      }, 300 * index)
-
-      return () => clearTimeout(timer)
-    }
-  }, [visibleCards, index])
-
+function FlipCard({ frontText, frontImage, backImage, index, isVisible, totalCards }: FlipCardProps) {
   // Calculate position for the fan layout
   const calculateCardStyle = () => {
+    // Adjust fan spread based on screen size
+    const getSpreadFactor = () => {
+      if (typeof window !== "undefined") {
+        if (window.innerWidth < 640) return 0.6 // mobile
+        if (window.innerWidth < 1024) return 0.8 // tablet
+        return 1 // desktop
+      }
+      return 1
+    }
+
     // Center position
-    const centerX = 50;
-    
-    // Calculate rotation angle between -15 and 15 degrees
-    const rotationAngle = -15 + (30 / (totalCards - 1)) * index;
-    
+    const centerX = 50
+
+    // Calculate rotation angle between -20 and 20 degrees (adjusted for screen size)
+    const maxRotation = 20 * getSpreadFactor()
+    const rotationAngle = -maxRotation + ((maxRotation * 2) / (totalCards - 1)) * index
+
     // Calculate horizontal position based on index
-    const horizontalPosition = centerX - 40 + (80 / (totalCards - 1)) * index;
-    
+    const spreadWidth = 70 * getSpreadFactor()
+    const horizontalPosition = centerX - spreadWidth / 2 + (spreadWidth / (totalCards - 1)) * index
+
     return {
       position: "absolute",
       left: `${horizontalPosition}%`,
-      transform: `rotate(${rotationAngle}deg)`,
+      transform: `translateX(-50%) rotate(${rotationAngle}deg)`,
       transformOrigin: "bottom center",
-      zIndex: index
-    };
-  };
+      zIndex: index + 1,
+    } as React.CSSProperties
+  }
+
+  // Calculate card size based on screen size
+  const getCardSize = () => {
+    return {
+      width: "min(220px, 80vw)",
+      height: "min(300px, 60vh)",
+    }
+  }
 
   return (
     <div
-      ref={cardRef}
-      className="relative h-[300px] cursor-pointer"
-      style={{ 
-        ...calculateCardStyle(), 
-        width: "220px",
-        perspective: "1000px" 
+      className="absolute cursor-pointer transition-transform duration-500"
+      style={{
+        ...calculateCardStyle(),
+        ...getCardSize(),
+        perspective: "1000px",
+        transitionDelay: `${index * 100}ms`,
       }}
     >
       <div
         className="w-full h-full relative transition-all duration-1000 ease-in-out"
         style={{
           transformStyle: "preserve-3d",
-          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
+          transform: isVisible ? "rotateY(180deg)" : "rotateY(0deg)",
+          transitionDelay: "300ms", // Add a slight delay for all cards to create a wave effect
         }}
       >
         {/* Front of card - showing the event card image */}
         <div
           className="absolute w-full h-full rounded-lg flex items-center justify-center overflow-hidden"
           style={{
-            backfaceVisibility: "hidden"
+            backfaceVisibility: "hidden",
           }}
         >
           <Image
-            src={frontImage}
+            src={frontImage || "/placeholder.svg"}
             alt={frontText}
             fill
             className="object-cover rounded"
+            sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 220px"
           />
         </div>
 
         {/* Back of card - showing the category card with text */}
         <div
           className="absolute w-full h-full rounded-lg flex items-center justify-center"
-          style={{ 
-            backfaceVisibility: "hidden", 
+          style={{
+            backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
             backgroundImage: `url(${backImage})`,
             backgroundSize: "cover",
-            backgroundPosition: "center"
+            backgroundPosition: "center",
           }}
         >
-          <span className="text-red-600 font-bold text-2xl tracking-wider bg-opacity-50 px-4 py-2 rounded">
+          <span className="text-red-600 font-bold text-xl sm:text-2xl tracking-wider bg-opacity-50 px-4 py-2 rounded">
             {frontText}
           </span>
         </div>
