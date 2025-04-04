@@ -3,15 +3,26 @@
 import Link from "next/link";
 import { useState } from "react";
 import Select from "react-select";
+import { GroupBase, OptionsOrGroups } from "react-select";
 
 const Register = () => {
   const [selectedEvents, setSelectedEvents] = useState([]);
-  const events = [
-    { value: "technical_fest", label: "Technical Fest" },
-    { value: "cultural_fest", label: "Cultural Fest" },
-    { value: "sports_meet", label: "Sports Meet" },
-    { value: "seminar", label: "Seminar" },
+  
+  const events: OptionsOrGroups<{ value: string; label: string }, GroupBase<{ value: string; label: string }>> = [
+    {
+      label: "Event Categories",
+      options: [
+        { value: "technical_fest", label: "Technical Fest" },
+        { value: "cultural_fest", label: "Cultural Fest" },
+        { value: "sports_meet", label: "Sports Meet" },
+        { value: "seminar", label: "Seminar" },
+      ],
+    },
   ];
+  const handleSelectChange = (selectedOptions: any) => {
+    setSelectedEvents(selectedOptions || []);
+  };
+
 
 
 
@@ -149,14 +160,16 @@ const Register = () => {
               Select Event
             </label>
             <Select
-              id="events"
-              options={events}
-              isMulti
-              value={selectedEvents}
-              onChange={setSelectedEvents}
-              placeholder="Select event(s)..."
-              className="border border-gray-300 rounded  w-full md:w-3xl focus:outline-none focus:ring-2 focus:ring-pink-500"
-            />
+            id="events"
+            instanceId="events-select" // ✅ Ensures stable SSR hydration
+            options={events}
+            isMulti
+            value={selectedEvents}
+            onChange={handleSelectChange} // ✅ Correct function handling
+            placeholder="Select event(s)..."
+            className="border border-gray-300 rounded w-full md:w-3xl focus:outline-none focus:ring-2 focus:ring-pink-500"
+          />
+
 
           </div>
           <div className="flex flex-col md:flex-row gap-1">
