@@ -97,7 +97,7 @@ export const adminLogin = [
     asyncHandler(async (req, res) => {
         try {
             const { contact, password, name } = sanitizeInput(req.body);
-
+            
             console.log('Login data:', { contact, password, name });
 
             // Find admin in the database

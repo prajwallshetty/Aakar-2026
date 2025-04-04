@@ -8,6 +8,56 @@ let eventsCache = {
     lastUpdated: null
 };
 
+const createEvent = async (req, res) => {
+    try {
+        // Extract event data from request body
+        const eventData = req.body;
+
+        // Validate the data (basic validation example)
+        if (!eventData || !eventData.eventName) {
+            return res.status(400).json({
+                message: 'Event data is required and must include a title'
+            });
+        }
+
+        // Create new event in the database
+        const newEvent = await Event.create(eventData);
+
+        if (!newEvent) {
+            return res.status(500).json({
+                message: 'Failed to create event'
+            });
+        }
+
+        // Invalidate the cache since we've added a new event
+        eventsCache = {
+            data: null,
+            lastUpdated: null
+        };
+
+        return res.status(201).json({
+            message: 'Event created successfully',
+            event: newEvent
+        });
+
+    } catch (error) {
+        console.error("Error creating event:", error);
+
+        // Handle validation errors specifically
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                message: 'Validation error',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+
+        return res.status(500).json({
+            message: 'Error creating event',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
 const getAllEventDetails = async (req, res) => {
     try {
         // Check cache first
@@ -70,4 +120,4 @@ const preloadCache = async () => {
 };
 
 // Export both the main function and preload function
-export { getAllEventDetails as default, preloadCache };
+export { getAllEventDetails as default, preloadCache, createEvent };
