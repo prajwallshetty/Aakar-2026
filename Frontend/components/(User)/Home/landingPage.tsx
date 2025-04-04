@@ -39,14 +39,14 @@ const LandingPage = () => {
                 <div className="w-2/4 flex flex-col items-center justify-center relative">
                     {/* Character in red hoodie */}
                     <div className="h-full flex items-center justify-center">
-                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center" 
-                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
+                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center"
+                            style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                     </div>
 
                     {/* Play trailer button at bottom */}
                     <div className={`mt-8 absolute bottom-31 ${montserrat.className}`}>
-                        <button className="flex items-center bg-transparent border border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300">
+                        <button className="flex items-center bg-transparent border cursor-pointer border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300">
                             <div className="mr-3 w-10 h-10 rounded-full bg-white flex items-center justify-center">
                                 <div className="w-0 h-0 border-t-4 border-t-transparent border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
                             </div>
@@ -93,19 +93,19 @@ const LandingPage = () => {
                     </div>
 
                     <div className="h-full flex items-center justify-center mt relative top-[-50px]">
-                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center" 
-                             style={{ backgroundImage: "url('/eventcard-ch1.png')", minWidth: "250px" }}>
+                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center"
+                            style={{ backgroundImage: "url('/eventcard-ch1.png')", minWidth: "250px" }}>
                         </div>
                     </div>
-                    
+
                     {/* Play trailer button - centered */}
-                    <button className={`flex items-center bg-transparent border border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300 relative top-[-160px] ${montserrat.className}`}>
+                    <button className={`flex items-center cursor-pointer bg-transparent border border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300 relative top-[-160px] ${montserrat.className}`}>
                         <div className="mr-3 w-10 h-10 rounded-full bg-white flex items-center justify-center">
                             <div className="w-0 h-0 border-t-4 border-t-transparent border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
                         </div>
                         Play Trailer
                     </button>
-                    
+
                 </div>
             </div>
 
