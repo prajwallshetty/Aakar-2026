@@ -1,10 +1,10 @@
-import { Event, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import db from "./db";
 
 //TODO: verify admin
 
 // Create a new event
-export async function createEvent(event: Omit<Event, "id">) {
+export async function createEvent(event: Prisma.EventCreateInput) {
     try {
         return await db.event.create({
             data: event
