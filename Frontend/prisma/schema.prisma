@@ -8,27 +8,27 @@ datasource db {
 }
 
 model Participant {
-  id            Int           @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   name          String
   usn           String
-  phone         String        @unique
+  phone         String         @unique
   college       String
   registrations Registration[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   password      String
+  email         String         @unique
 }
 
 model Registration {
   id                  Int         @id @default(autoincrement())
-  event_id            String?
+  event_id            Int?
   ticket_url          String?
   amount              Int?
   order_id            String?
   payment_status      String?
   razorpay_payment_id String?
   registration_date   DateTime    @default(now())
-
   participantId       Int
   participant         Participant @relation(fields: [participantId], references: [id])
 }
@@ -41,14 +41,16 @@ model Event {
   date                      DateTime
   time                      String
   venue                     String
-  studentCoordinator        String
-  studentCoordinatorContact String
-  rules                     String[] 
+  studentCoordinator        String[]
+  studentCoordinatorContact String[]
+  rules                     String[]
+  imageUrl                  String
 }
 
 model Admin {
-  id       Int     @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
   name     String
-  phone    String  @unique
+  phone    String @unique
   password String
+  email    String @unique
 }
