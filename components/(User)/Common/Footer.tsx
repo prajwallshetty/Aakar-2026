@@ -27,19 +27,19 @@ const Footer = () => {
           <h4 className="text-lg font-medium mb-4">Contact Us</h4>
           <ul className="space-y-2">
             <li>
-              <a href="https://www.instagram.com/aakar_25" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
+              <Link href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
                 <i className="fa-brands fa-instagram mr-2"></i> aakar_25
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="tel:+919741152696" className="text-gray-400 hover:text-white flex items-center">
+              <Link href="tel:+919741152696" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
                 <i className="fa-solid fa-phone mr-2"></i> +91 628759863
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="mailto:aakaar@gmail.com" className="text-gray-400 hover:text-white flex items-center">
+              <Link href="mailto:aakaar@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
                 <i className="fa-solid fa-envelope mr-2"></i> aakar@gmail.com
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -48,19 +48,19 @@ const Footer = () => {
           <h4 className="text-lg font-medium mb-4">Legal</h4>
           <ul className="space-y-2">
             <li>
-              <a href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <Link href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                 Privacy Policy
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <Link href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                 Terms & Conditions
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <Link href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                     FAQ
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
