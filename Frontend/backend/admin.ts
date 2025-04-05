@@ -1,3 +1,4 @@
+"use server"
 import { Prisma } from "@prisma/client";
 import { db } from ".";
 import bcrypt from "bcryptjs";
