@@ -4,6 +4,7 @@ import RegisterSection from "@/components/(User)/Home/registerSection";
 import Eventcards from "@/components/(User)/Home/Eventcards";
 import DJ from "@/components/(User)/Home/DJ";
 import Concert from "@/components/(User)/Home/Concert";
+import ArenaBanner from "@/components/(User)/Home/ArenaBanner";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <DJ/>
       <Concert/>
       <RegisterSection />
+      <ArenaBanner />
     </div>
   );
 }
