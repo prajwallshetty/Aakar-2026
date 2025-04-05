@@ -11,6 +11,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        textZoom: 'textZoom 3s ease-in-out infinite',
+      },
+      keyframes: {
+        textZoom: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        },
+      },
       fontFamily: {
         GameOfSquids: ['GameOfSquids', 'sans-serif'],
         inter: ["Inter", "sans-serif"],

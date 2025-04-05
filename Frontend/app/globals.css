@@ -154,8 +154,6 @@
   -webkit-text-stroke: 2px blue;
 }
 
-
-
 @layer utilities {
   .perspective-1000 {
     perspective: 1000px;
@@ -183,4 +181,25 @@
   src: url("/fonts/futuristic.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1.2s infinite;
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px white;
 }
