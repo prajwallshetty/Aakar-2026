@@ -1,5 +1,5 @@
 "use server"
-import { Prisma } from "@prisma/client";
+import { eventType, Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 
@@ -38,6 +38,23 @@ export async function getAllEvents() {
         });
     } catch (e) {
         console.error("Get All Events Error:", e);
+        return [];
+    }
+}
+
+// Get events by type
+export async function getEventsByType(eventType: eventType) {
+    try {
+        return await db.event.findMany({
+            where: {
+                eventType
+            },
+            orderBy: {
+                date: "asc"
+            }
+        });
+    } catch (e) {
+        console.error("Get Category Events Error:", e);
         return [];
     }
 }

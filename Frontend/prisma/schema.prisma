@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum eventType {
+  Technical
+  Cultural
+  Gaming
+  Special
+}
+
 model Participant {
   id            Int            @id @default(autoincrement())
   name          String
@@ -34,17 +41,17 @@ model Registration {
 }
 
 model Event {
-  id                        Int      @id @default(autoincrement())
-  eventName                 String
-  eventType                 String
-  description               String
-  date                      DateTime
-  time                      String
-  venue                     String
-  studentCoordinator        String[]
-  studentCoordinatorContact String[]
-  rules                     String[]
-  imageUrl                  String
+  id                         Int       @id @default(autoincrement())
+  eventName                  String
+  eventType                  eventType
+  description                String
+  date                       DateTime
+  time                       String
+  venue                      String
+  studentCoordinators        String[]
+  studentCoordinatorContacts String[]
+  rules                      String[]
+  imageUrl                   String
 }
 
 model Admin {
