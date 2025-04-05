@@ -82,7 +82,7 @@ const LandingPage = () => {
                         <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center z-20"
                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
-                        <div className={`absolute bottom-20 z-20 ${montserrat.className} cursor-pointer`}>
+                        <div className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}>
                             <button className="flex items-center px-6 py-3 text-white cursor-pointer transition duration-300 group" onClick={() => openModal('/glimpse.mp4')}>
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 group-hover:bg-white group-hover:text-black">
                                     <FaPlay className="text-sm" />
@@ -192,8 +192,8 @@ const LandingPage = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-center h-[10vh] mt-4 animate-blink text-white">
-                    <FiChevronDown className="text-4xl" />
+                <div className="flex justify-center h-[10vh] mt-4 animate-blink text-red-400">
+                    <FiChevronDown className="text-6xl" />
                 </div>
             </div>
         </div>

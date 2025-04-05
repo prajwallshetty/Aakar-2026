@@ -1,13 +1,13 @@
 import GlimpseOfAakar from "@/components/(User)/Home/glimpseofaakar";
 import LandingPage from "@/components/(User)/Home/landingPage";
 import RegisterSection from "@/components/(User)/Home/registerSection";
-import CardPage from "@/components/(User)/Card/cardPage";
+import Eventcards from "@/components/(User)/Home/Eventcards";
 
 export default function Home() {
   return (
     <div className="">
       <LandingPage />
-      <CardPage />
+      <Eventcards />
       <GlimpseOfAakar />
       <RegisterSection />
     </div>

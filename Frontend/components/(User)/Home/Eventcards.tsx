@@ -1,27 +1,22 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
 import React from "react"
-
 import Image from "next/image"
 
-// Main component that combines all parts
-export default function EventsPage() {
+export default function Eventcards() {
   return (
-    <div className="relative w-full flex flex-col items-center justify-center overflow-hidden py-12 min-h-screen">
-      <div className="text-center mb-8 md:mb-16 z-10 px-4">
+    <div className="relative w-full flex flex-col items-center justify-center overflow-hidden md:py-12">
+      <div className="text-center mb-8 md:mb-0 z-10 px-4">
         <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold tracking-wider">
           <span className="block mb-2">PICK YOUR PATH,</span>
           <span className="block">SHAPE YOUR FATE!</span>
         </h1>
       </div>
-
-      {/* Card grid with integrated flip functionality */}
       <CardGrid />
     </div>
   )
 }
 
-// CardGrid component
 function CardGrid() {
   const cards = [
     { id: 1, frontText: "CULTURAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png" },
@@ -35,19 +30,15 @@ function CardGrid() {
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
   const [isMobile, setIsMobile] = useState(false)
 
-  // Check screen size
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
     }
 
-    // Initial check
     checkMobile()
 
-    // Set up listener
     window.addEventListener('resize', checkMobile)
 
-    // Cleanup
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
@@ -55,7 +46,6 @@ function CardGrid() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (isMobile) {
-          // For mobile: observe each card individually
           entries.forEach(entry => {
             const cardId = parseInt(entry.target.getAttribute('data-id') || '0')
 
@@ -71,27 +61,22 @@ function CardGrid() {
             }
           })
         } else {
-          // For desktop: observe the container
           const [entry] = entries
           if (entry.isIntersecting) {
-            // Show all cards when container is visible
             setVisibleCards([1, 2, 3, 4])
           } else {
-            // Hide all cards when container is not visible
             setVisibleCards([])
           }
         }
       },
-      { threshold: isMobile ? 0.6 : 0.3 }, // Higher threshold for mobile
+      { threshold: isMobile ? 0.6 : 0.3 },
     )
 
     if (isMobile) {
-      // For mobile: observe each card
       cardRefs.current.forEach(card => {
         if (card) observer.observe(card)
       })
     } else {
-      // For desktop: observe the container
       if (containerRef.current) {
         observer.observe(containerRef.current)
       }
@@ -137,7 +122,6 @@ function CardGrid() {
   )
 }
 
-// FlipCard component
 type FlipCardProps = {
   frontText: string
   frontImage: string
@@ -151,10 +135,8 @@ type FlipCardProps = {
 
 const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
   ({ frontText, frontImage, backImage, index, isVisible, totalCards, isMobile, id }, ref) => {
-    // Calculate position for the spheroid/geoid layout
     const calculateCardStyle = () => {
       if (isMobile) {
-        // For mobile: vertical stack layout
         return {
           position: "relative",
           marginBottom: "24px",
@@ -162,31 +144,14 @@ const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
           transform: "translateX(-50%)",
         } as React.CSSProperties
       } else {
-        // For desktop: oblate spheroid/geoid layout
-
-        // Calculate the center point
         const centerX = 50;
-
-        // Calculate normalized position (0 to 1)
-        // This will be used for both position and rotation calculations
         const normalizedPosition = index / (totalCards - 1);
-
-        // Create an elliptical arc for horizontal positioning
-        // This creates a more structured arc than a linear distribution
-        const spreadWidth = 60; // Reduce spread width for tighter arc
+        const spreadWidth = 60;
         const horizontalPosition = centerX - (spreadWidth / 2) + spreadWidth * normalizedPosition;
-
-        // Calculate vertical offset for geoid appearance
-        // Cards in the middle will be slightly higher
         const verticalOffset = Math.sin(Math.PI * normalizedPosition) * 20;
-
-        // Calculate rotation for spheroid alignment
-        // Central cards are more vertical, edge cards are more tilted
-        const baseRotation = -20; // Base rotation for leftmost card
-        const rotationRange = 40;  // Range from leftmost to rightmost
+        const baseRotation = -20;
+        const rotationRange = 40;
         const rotationAngle = baseRotation + (rotationRange * normalizedPosition);
-
-        // Calculate z-index - middle cards should be on top
         const zIndexBase = 10;
         const zIndexFactor = Math.sin(Math.PI * normalizedPosition) * 10;
         const zIndex = Math.floor(zIndexBase + zIndexFactor);
@@ -194,7 +159,7 @@ const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
         return {
           position: "absolute",
           left: `${horizontalPosition}%`,
-          bottom: `${verticalOffset}px`, // Add vertical offset for geoid appearance
+          bottom: `${verticalOffset}px`,
           transform: `translateX(-50%) rotate(${rotationAngle}deg)`,
           transformOrigin: "bottom center",
           zIndex: zIndex,
@@ -202,7 +167,6 @@ const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
       }
     }
 
-    // Calculate card size based on screen size
     const getCardSize = () => {
       if (isMobile) {
         return {
@@ -233,10 +197,9 @@ const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
           style={{
             transformStyle: "preserve-3d",
             transform: isVisible ? "rotateY(180deg)" : "rotateY(0deg)",
-            transitionDelay: isMobile ? "0ms" : "300ms", // No delay for mobile
+            transitionDelay: isMobile ? "0ms" : "300ms",
           }}
         >
-          {/* Front of card - showing the event card image */}
           <div
             className="absolute w-full h-full rounded-lg flex items-center justify-center overflow-hidden"
             style={{
@@ -252,7 +215,6 @@ const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
             />
           </div>
 
-          {/* Back of card - showing the category card with text */}
           <div
             className="absolute w-full h-full rounded-lg flex items-center justify-center"
             style={{
