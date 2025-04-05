@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum eventType {
+  Technical
+  Cultural
+  Gaming
+  Special
+}
+
+model Participant {
+  id            Int            @id @default(autoincrement())
+  name          String
+  usn           String
+  phone         String         @unique
+  college       String
+  registrations Registration[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  password      String
+  email         String         @unique
+}
+
+model Registration {
+  id                  Int         @id @default(autoincrement())
+  event_id            Int?
+  ticket_url          String?
+  amount              Int?
+  order_id            String?
+  payment_status      String?
+  razorpay_payment_id String?
+  registration_date   DateTime    @default(now())
+  participantId       Int
+  participant         Participant @relation(fields: [participantId], references: [id])
+}
+
+model Event {
+  id                         Int       @id @default(autoincrement())
+  eventName                  String
+  eventType                  eventType
+  description                String
+  date                       DateTime
+  time                       String
+  venue                      String
+  studentCoordinators        String[]
+  studentCoordinatorContacts String[]
+  rules                      String[]
+  imageUrl                   String
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  name     String
+  phone    String @unique
+  password String
+  email    String @unique
+}
