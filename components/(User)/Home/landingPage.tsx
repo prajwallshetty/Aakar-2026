@@ -83,7 +83,7 @@ const LandingPage = () => {
                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                         <div className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}>
-                            <button className="flex items-center px-6 py-3 text-white cursor-pointer transition duration-300 group" onClick={() => openModal('/glimpse.mp4')}>
+                            <button className="flex items-center px-6 py-3 text-white cursor-pointer transition duration-300 group" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
                                     <FaPlay className="text-sm" />
                                 </div>
@@ -183,13 +183,7 @@ const LandingPage = () => {
                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                         <div className={`mt-8 absolute bottom-12 ${montserrat.className}`}>
-                            <button className="flex items-center bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300" onClick={() => {
-                                if (window.innerWidth < 768) {
-                                    window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank');
-                                } else {
-                                    openModal('/glimpse.mp4');
-                                }
-                            }}>
+                            <button className="flex items-center bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
                                 <div className="mr-3 w-10 h-10 rounded-full border-2 b-white flex items-center justify-center">
                                     <FaPlay className="text-sm" />
                                 </div>

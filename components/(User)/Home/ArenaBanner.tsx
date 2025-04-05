@@ -7,7 +7,7 @@ const ArenaBanner = () => {
                 All in or out 
                 <br />
                 <span className="inline-block mt-4 text-transparent bg-clip-text bg-gradient-to-r from-[#AA1F26] via-red-500 to-yellow-400 animate-textZoom">
-                    Aakar in an ARENA
+                    Aakar is an ARENA
                 </span>
             </h2>
         </div>
