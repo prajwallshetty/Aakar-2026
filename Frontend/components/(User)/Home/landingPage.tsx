@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Montserrat } from "next/font/google";
+import Image from 'next/image';
 
 const montserrat = Montserrat({
     weight: "600",
@@ -20,19 +21,14 @@ const LandingPage = () => {
 
             {/* Desktop layout - hidden on mobile */}
             <div className="hidden md:flex h-full relative z-10">
-                <div className="w-1/4 flex items-center justify-center">
-                    <div className="text-white text-8xl font-bold tracking-wider ml-[750px]">
-                        <div>
-                            <span className="inline-block">AAKAR</span>
-                            <br />
-                            <span className="inline-block">
-                                <span>2</span>
-                                <span className="text-pink-500">0</span>
-                                <span>2</span>
-                                <span>5</span>
-                            </span>
-                        </div>
-                    </div>
+                <div className="w-1/4 flex items-center justify-end">
+                    <Image
+                        src="/Aakarlogo.png"
+                        alt="AAKAR Logo"
+                        width={400}
+                        height={200}
+                        className="mx-auto"
+                    />
                 </div>
 
                 {/* Center column - Character with play trailer button */}
@@ -80,16 +76,13 @@ const LandingPage = () => {
                 <div className="flex flex-col h-full items-center justify-center space-y-16">
                     {/* AAKAR Logo for mobile - centered */}
                     <div className="text-white text-6xl font-bold tracking-wider relative top-[30px] text-center">
-                        <div>
-                            <span className="inline-block">AAKAR</span>
-                            <br />
-                            <span className="inline-block">
-                                <span>2</span>
-                                <span className="text-pink-500">0</span>
-                                <span>2</span>
-                                <span>5</span>
-                            </span>
-                        </div>
+                        <Image
+                            src="/Aakarlogo.png"
+                            alt="AAKAR Logo"
+                            width={200}
+                            height={100}
+                            className="mx-auto"
+                        />
                     </div>
 
                     <div className="h-full flex items-center justify-center mt relative top-[-50px]">
