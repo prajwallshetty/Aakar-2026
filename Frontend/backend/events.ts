@@ -1,11 +1,11 @@
 import { Prisma } from "@prisma/client";
 import db from "./db";
-
-//TODO: verify admin
+import { isAdmin } from "./admin";
 
 // Create a new event
 export async function createEvent(event: Prisma.EventCreateInput) {
     try {
+        if (!await isAdmin()) throw new Error("Not authorized");
         return await db.event.create({
             data: event
         });
@@ -44,6 +44,7 @@ export async function getAllEvents() {
 // Update an event by ID
 export async function updateEvent(id: number, data: Prisma.EventUpdateInput) {
     try {
+        if (!await isAdmin()) throw new Error("Not authorized");
         return await db.event.update({
             where: { id },
             data
@@ -57,6 +58,7 @@ export async function updateEvent(id: number, data: Prisma.EventUpdateInput) {
 // Delete an event by ID
 export async function deleteEvent(id: number) {
     try {
+        if (!await isAdmin()) throw new Error("Not authorized");
         return await db.event.delete({
             where: { id }
         });
