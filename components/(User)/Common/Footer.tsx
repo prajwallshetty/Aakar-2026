@@ -1,22 +1,21 @@
-'use client';
-
 import Link from 'next/link';
-import { Montserrat } from "next/font/google";
+import { Montserrat } from 'next/font/google';
+import { FaInstagram, FaPhone, FaEnvelope } from 'react-icons/fa';
 
 const montserrat = Montserrat({
-    weight: "600",
-    subsets: ["latin"],
-})
+  weight: '600',
+  subsets: ['latin'],
+});
 
 const Footer = () => {
   return (
     <section className={`bg-black text-white py-10 px-5 ${montserrat.className}`}>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
         <div>
           <h4 className="text-lg font-medium mb-4">Explore</h4>
           <ul className="space-y-2">
             <li><Link href='/' className="text-gray-400 hover:text-white">Home</Link></li>
-            <li><Link href='/events' className="text-gray-400 hover:text-white">Events</Link></li>
             <li><Link href='/about' className="text-gray-400 hover:text-white">About Us</Link></li>
             <li><Link href='/contact' className="text-gray-400 hover:text-white">Contact Us</Link></li>
             <li><Link href='/team' className="text-gray-400 hover:text-white">Our Team</Link></li>
@@ -26,19 +25,22 @@ const Footer = () => {
         <div>
           <h4 className="text-lg font-medium mb-4">Contact Us</h4>
           <ul className="space-y-2">
-            <li>
-              <Link href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
-                <i className="fa-brands fa-instagram mr-2"></i> aakar_25
+            <li className="flex items-center gap-2 text-gray-400 hover:text-white">
+              <FaInstagram />
+              <Link href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer">
+                @aakar_25
               </Link>
             </li>
-            <li>
-              <Link href="tel:+919741152696" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
-                <i className="fa-solid fa-phone mr-2"></i> +91 628759863
+            <li className="flex items-center gap-2 text-gray-400 hover:text-white">
+              <FaPhone />
+              <Link href="tel:+91628759863" target="_blank" rel="noopener noreferrer">
+                +91 62875 9863
               </Link>
             </li>
-            <li>
-              <Link href="mailto:aakaar@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white flex items-center">
-                <i className="fa-solid fa-envelope mr-2"></i> aakar@gmail.com
+            <li className="flex items-center gap-2 text-gray-400 hover:text-white">
+              <FaEnvelope />
+              <Link href="mailto:aakaar@gmail.com" target="_blank" rel="noopener noreferrer">
+                aakar@gmail.com
               </Link>
             </li>
           </ul>
@@ -47,28 +49,16 @@ const Footer = () => {
         <div>
           <h4 className="text-lg font-medium mb-4">Legal</h4>
           <ul className="space-y-2">
-            <li>
-              <Link href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                Terms & Conditions
-              </Link>
-            </li>
-            <li>
-              <Link href="" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                    FAQ
-              </Link>
-            </li>
+            <li><Link href="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
+            <li><Link href="/terms" className="text-gray-400 hover:text-white">Terms & Conditions</Link></li>
+            <li><Link href="/faq" className="text-gray-400 hover:text-white">FAQ</Link></li>
           </ul>
         </div>
 
         <div>
           <h4 className="text-lg font-medium mb-4">Address</h4>
           <p className="text-gray-400 max-w-xs">
-            NH66, Kottara Chowki, Mangaluru,
+            NH66, Kottara Chowki, Mangaluru,<br />
             Karnataka - 575006
           </p>
         </div>
