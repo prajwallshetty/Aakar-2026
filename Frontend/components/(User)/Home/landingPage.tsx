@@ -84,7 +84,7 @@ const LandingPage = () => {
                         </div>
                         <div className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}>
                             <button className="flex items-center px-6 py-3 text-white cursor-pointer transition duration-300 group" onClick={() => openModal('/glimpse.mp4')}>
-                                <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 group-hover:bg-white group-hover:text-black">
+                                <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
                                     <FaPlay className="text-sm" />
                                 </div>
 
@@ -183,9 +183,9 @@ const LandingPage = () => {
                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                         <div className={`mt-8 absolute bottom-12 ${montserrat.className}`}>
-                            <button className="flex items-center bg-transparent border cursor-pointer border-white rounded-full px-6 py-3 text-white hover:bg-white hover:text-black transition duration-300">
-                                <div className="mr-3 w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                                    <div className="w-0 h-0 border-t-4 border-t-transparent border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
+                            <button className="flex items-center bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300" onClick={() => openModal('/glimpse.mp4')}>
+                                <div className="mr-3 w-10 h-10 rounded-full border-2 b-white flex items-center justify-center">
+                                    <FaPlay className="text-sm" />
                                 </div>
                                 Play Trailer
                             </button>

@@ -11,7 +11,7 @@ const DJ = () => {
   return (
     <div className="w-full py-12 text-white flex flex-col items-center justify-center px-4">
       <div className="max-w-6xl w-full text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-4">DJ Night – Day 1 | Aakar 2024</h2>
+        <h2 className="text-4xl font-bold mb-2">DJ Night – Day 1</h2>
         <p className="text-lg md:text-xl text-gray-300 mb-8">
           Day 1 of Aakar 2024 will end on a high note with the electrifying DJ Night featuring our headliner <strong>DJ Blaze</strong>! Get ready to experience the unforgettable beats and energy that will light up the night.
         </p>

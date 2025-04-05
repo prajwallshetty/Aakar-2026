@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], weight: '400' })
 
 const RegisterSection = () => {
     return (
-        <section className="flex items-center justify-center text-white px-6 py-16 relative">
+        <section className="flex items-center justify-center text-white px-6 pt-16 relative">
             <div className="text-center max-w-3xl">
                 <h2 className="text-3xl md:text-5xl font-light pb-6">Register Now</h2>
 

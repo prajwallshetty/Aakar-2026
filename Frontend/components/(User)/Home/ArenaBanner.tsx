@@ -2,7 +2,7 @@ import React from 'react'
 
 const ArenaBanner = () => {
     return (
-        <div className="w-full text-white py-8 px-6 text-center">
+        <div className="w-full text-white py-16 pb-18 px-6 text-center">
             <h2 className="text-3xl md:text-6xl font-extrabold tracking-wide leading-tight animate-pulse">
                 All in or out 
                 <br />

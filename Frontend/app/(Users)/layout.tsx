@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Navbar from "@/components/Common/Navbar";
-import Footer from "@/components/Common/Footer";
+import Navbar from "@/components/(User)/Common/Navbar";
+import Footer from "@/components/(User)/Common/Footer";
 import { GameOfSquids } from "@/lib/font";
 
 export const metadata: Metadata = {

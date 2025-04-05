@@ -41,7 +41,7 @@ export default function AboutPage() {
                     className="w-full object-cover rounded-lg"
                   />
                   <div className="absolute inset-0 bg-opacity-40 flex items-center justify-center rounded-lg">
-                    <FaPlay/>
+                    <FaPlay />
                   </div>
                 </button>
               </div>
@@ -79,12 +79,12 @@ export default function AboutPage() {
             <div className="flex flex-col justify-center items-center gap-4 mb-8">
               <div className="text-white text-center px-4 py-2">
                 <p className={`text-lg font-semibold ${montserrat.className}`}>
-                  December 6th - 7th, 2024
+                  December 9th - 10th, 2025
                 </p>
               </div>
               <div className={`text-white text-center px-4 py-2 ${montserrat.className}`}>
                 <p className="text-lg font-semibold">
-                  Laxmi Memorial Institute of Engineering and Technology, Kottarachowki, Mangaluru
+                  A J INSTITUTE OF ENGINEERING AND TECHNOLOGY, Kottarachowki, Mangaluru
                 </p>
               </div>
             </div>
