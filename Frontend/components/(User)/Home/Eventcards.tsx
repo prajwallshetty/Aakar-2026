@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import React from "react"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function Eventcards() {
   return (
@@ -19,10 +20,10 @@ export default function Eventcards() {
 
 function CardGrid() {
   const cards = [
-    { id: 1, frontText: "CULTURAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png" },
-    { id: 2, frontText: "TECHNICAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png" },
-    { id: 3, frontText: "GAMING", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png" },
-    { id: 4, frontText: "SPECIAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png" },
+    { id: 1, frontText: "CULTURAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/cultural" },
+    { id: 2, frontText: "TECHNICAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/technical" },
+    { id: 3, frontText: "GAMING", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/gaming" },
+    { id: 4, frontText: "SPECIAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/special" },
   ]
 
   const [visibleCards, setVisibleCards] = useState<number[]>([])
@@ -104,6 +105,7 @@ function CardGrid() {
     >
       {cards.map((card, index) => (
         <FlipCard
+          href={card.href}
           key={card.id}
           frontText={card.frontText}
           frontImage={card.frontImage}
@@ -131,10 +133,11 @@ type FlipCardProps = {
   totalCards: number
   isMobile: boolean
   id: number
+  href: string
 }
 
 const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
-  ({ frontText, frontImage, backImage, index, isVisible, totalCards, isMobile, id }, ref) => {
+  ({ frontText, frontImage, backImage, index, isVisible, totalCards, isMobile, id, href }, ref) => {
     const calculateCardStyle = () => {
       if (isMobile) {
         return {
@@ -181,56 +184,58 @@ const FlipCard = React.forwardRef<HTMLDivElement, FlipCardProps>(
     }
 
     return (
-      <div
-        ref={ref}
-        data-id={id}
-        className={`transition-transform duration-500 ${isMobile ? "" : "absolute"}`}
-        style={{
-          ...calculateCardStyle(),
-          ...getCardSize(),
-          perspective: "1000px",
-          transitionDelay: isMobile ? "0ms" : `${index * 100}ms`,
-        }}
-      >
+      <Link href={href}>
         <div
-          className="w-full h-full relative transition-all duration-1000 ease-in-out"
+          ref={ref}
+          data-id={id}
+          className={`transition-transform duration-500 ${isMobile ? "" : "absolute"}`}
           style={{
-            transformStyle: "preserve-3d",
-            transform: isVisible ? "rotateY(180deg)" : "rotateY(0deg)",
-            transitionDelay: isMobile ? "0ms" : "300ms",
+            ...calculateCardStyle(),
+            ...getCardSize(),
+            perspective: "1000px",
+            transitionDelay: isMobile ? "0ms" : `${index * 100}ms`,
           }}
         >
           <div
-            className="absolute w-full h-full rounded-lg flex items-center justify-center overflow-hidden"
+            className="w-full h-full relative transition-all duration-1000 ease-in-out"
             style={{
-              backfaceVisibility: "hidden",
+              transformStyle: "preserve-3d",
+              transform: isVisible ? "rotateY(180deg)" : "rotateY(0deg)",
+              transitionDelay: isMobile ? "0ms" : "300ms",
             }}
           >
-            <Image
-              src={frontImage || "/placeholder.svg"}
-              alt={frontText}
-              fill
-              className="object-cover rounded"
-              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 40vw, 220px"
-            />
-          </div>
+            <div
+              className="absolute w-full h-full rounded-lg flex items-center justify-center overflow-hidden"
+              style={{
+                backfaceVisibility: "hidden",
+              }}
+            >
+              <Image
+                src={frontImage || "/placeholder.svg"}
+                alt={frontText}
+                fill
+                className="object-cover rounded"
+                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 40vw, 220px"
+              />
+            </div>
 
-          <div
-            className="absolute w-full h-full rounded-lg flex items-center justify-center"
-            style={{
-              backfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
-              backgroundImage: `url(${backImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <span className="text-red-600 font-bold text-xl sm:text-2xl tracking-wider bg-opacity-50 px-4 py-2 rounded">
-              {frontText}
-            </span>
+            <div
+              className="absolute w-full h-full rounded-lg flex items-center justify-center"
+              style={{
+                backfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+                backgroundImage: `url(${backImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <span className="text-red-600 font-bold text-xl sm:text-2xl tracking-wider bg-opacity-50 px-4 py-2 rounded">
+                {frontText}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
     )
   }
 )
