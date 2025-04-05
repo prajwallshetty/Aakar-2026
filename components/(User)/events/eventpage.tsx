@@ -31,8 +31,18 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
             </h1>
 
             {loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="relative">
+                            <div className="w-90 h-100 rounded-4xl bg-gray-300 dark:bg-gray-700 animate-pulse"></div>
+                            <div
+                                className="w-30 h-35 bg-contain bg-no-repeat absolute bottom-2 right-[-40]"
+                                style={{
+                                    backgroundImage: `url('/eventcard-ch${(i % 3) + 1}.png')`,
+                                }}
+                            ></div>
+                        </div>
+                    ))}
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
