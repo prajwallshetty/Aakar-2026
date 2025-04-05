@@ -33,14 +33,14 @@ const Footer = () => {
             </li>
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
               <FaPhone />
-              <Link href="tel:+91628759863" target="_blank" rel="noopener noreferrer">
-                +91 62875 9863
+              <Link href="tel:+918242862200" target="_blank" rel="noopener noreferrer">
+                +91 824 286 2200
               </Link>
             </li>
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
               <FaEnvelope />
-              <Link href="mailto:aakaar@gmail.com" target="_blank" rel="noopener noreferrer">
-                aakar@gmail.com
+              <Link href="mailto:aakaar2025@ajiet.edu.in" target="_blank" rel="noopener noreferrer">
+                aakar2025@ajiet.edu.in
               </Link>
             </li>
           </ul>
