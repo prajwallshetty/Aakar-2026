@@ -2,6 +2,8 @@ import { Prisma } from "@prisma/client";
 import db from "./db";
 
 //Todo: need auth to complete this function
+//Todo: need to improve error handling for the frontend with proper format. Maybe {data,error}?
+
 export async function isAdmin() {
 
 }
