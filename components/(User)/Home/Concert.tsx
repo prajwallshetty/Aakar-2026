@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image'
 import React, { useState } from 'react'
 
 const Concert = () => {
@@ -18,9 +19,11 @@ const Concert = () => {
         </p>
 
         <div className="relative w-full max-w-xl mx-auto cursor-pointer group" onClick={openModal}>
-          <img
+          <Image
             src="/concert.jpeg"
             alt="Concert Preview"
+            width={800}
+            height={450}
             className="rounded-[3rem] object-cover w-full h-auto shadow-lg group-hover:opacity-80 transition duration-300"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-opacity-50 opacity-0 group-hover:opacity-100 transition">

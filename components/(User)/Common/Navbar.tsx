@@ -214,7 +214,6 @@ export default function Navbar() {
                         </ul>
                     </div>
 
-                    {/* Auth Section at Bottom */}
                     <div className="p-6 border-t border-gray-800">
                         {isLoggedIn ? (
                             <Link

@@ -27,7 +27,6 @@ const Register = () => {
 
 
   const [selectedCollege, setSelectedCollege] = useState<string>("");
-  // College List
   const colleges: string[] = [
     "A J Institute of Engineering and Technology, Mangalore",
     "Alva's Ayurveda Medical College, Moodbidri",
@@ -161,11 +160,11 @@ const Register = () => {
             </label>
             <Select
             id="events"
-            instanceId="events-select" // ✅ Ensures stable SSR hydration
+            instanceId="events-select"
             options={events}
             isMulti
             value={selectedEvents}
-            onChange={handleSelectChange} // ✅ Correct function handling
+            onChange={handleSelectChange}
             placeholder="Select event(s)..."
             className="border border-gray-300 rounded w-full md:w-3xl focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
