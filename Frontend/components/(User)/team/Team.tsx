@@ -6,7 +6,6 @@ interface TeamMember {
     name: string;
     role: string;
     image: string;
-    shape: 'square' | 'circle' | 'triangle';
 }
 
 interface TeamCategory {
@@ -16,217 +15,101 @@ interface TeamCategory {
 
 const teamData: TeamCategory[] = [
     {
-        name: 'Executive',
+        name: 'Executive Committee',
         members: [
-            {
-                name: 'Dr. A. J. Shetty',
-                role: 'Chairman, LMET',
-                image: '/Team/executive/ajshetty.png',
-                shape: 'triangle',
-            },
-            {
-                name: 'Mrs. Sharada J. Shetty',
-                role: 'Director, LMET',
-                image: '/Team/executive/sharadha.png',
-                shape: 'square',
-            },
-            {
-                name: 'Mr. Prashanth Shetty',
-                role: 'Vice President, LMET',
-                image: '/Team/executive/prashanth.png',
-                shape: 'circle',
-            },
-            {
-                name: 'Mrs. Ashritha P. Shetty',
-                role: 'Director, LMET',
-                image: '/Team/executive/ashritha.png',
-                shape: 'triangle',
-            },
-            {
-                name: 'Dr. Prashanth Marla K',
-                role: 'Director, LMET',
-                image: '/Team/executive/prashanthM.png',
-                shape: 'square',
-            },
-
-            {
-                name: 'Dr. Amitha P. Marla',
-                role: 'Director, LMET',
-                image: '/Team/executive/amithaM.png',
-                shape: 'circle',
-            },
-            {
-                name: 'Mr. Ranga B. Shetty',
-                role: 'Director, LMET',
-                image: '/Team/executive/ranga.png',
-                shape: 'triangle',
-            },
-            {
-                name: 'Mrs. Vinuth R. Shetty',
-                role: 'Director, LMET',
-                image: '/Team/executive/vinutha.png',
-                shape: 'square',
-            },
-
-
+            { name: 'Dr. A. J. Shetty', role: 'Chairman, LMET', image: '/Team/executive/ajshetty.png' },
+            { name: 'Mrs. Sharada J. Shetty', role: 'Director, LMET', image: '/Team/executive/sharadha.png' },
+            { name: 'Mr. Prashanth Shetty', role: 'Vice President, LMET', image: '/Team/executive/prashanth.png' },
+            { name: 'Mrs. Ashritha P. Shetty', role: 'Director, LMET', image: '/Team/executive/ashritha.png' },
+            { name: 'Dr. Prashanth Marla K', role: 'Director, LMET', image: '/Team/executive/prashanthM.png' },
+            { name: 'Dr. Amitha P. Marla', role: 'Director, LMET', image: '/Team/executive/amithaM.png' },
+            { name: 'Mr. Ranga B. Shetty', role: 'Director, LMET', image: '/Team/executive/ranga.png' },
+            { name: 'Mrs. Vinuth R. Shetty', role: 'Director, LMET', image: '/Team/executive/vinutha.png' },
+            { name: 'Shantharama Rai. C.', role: 'Principal, AJIET', image: '/Team/executive/princi.jpg' },
+            { name: 'Dr. Antony P.J.', role: 'Vice Principal, AJIET', image: '/Team/executive/vice.jpg' },
+            { name: 'Dr. P.Mahabaleswarappa', role: 'Dean, AJIET', image: '/Team/executive/dean.jpg' },
         ],
     },
     {
-        name: 'Lecturers',
+        name: 'Mentorship Panel',
         members: [
-            {
-                name: 'Mr. Suhan das',
-                role: 'Main Coordinator',
-                image: '/Team/Lecturer/suhan.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'Mr. Vinod T Dsouza',
-                role: 'member',
-                image: '/Team/Lecturer/vinod.png',
-                shape: 'square',
-            },
-            {
-                name: 'Mrs. Sharanya P S',
-                role: 'member',
-                image: '/Team/Lecturer/sharanya.png',
-                shape: 'circle',
-            },
-            {
-                name: 'Ms. Disha C Shetty',
-                role: 'member',
-                image: '/Team/Lecturer/disha.png',
-                shape: 'triangle',
-            },
+            { name: 'Mr. Vinod T Dsouza', role: 'Main Coordinator', image: '/Team/Lecturer/vinod.png' },
+            { name: 'Mr. Suhan Das', role: 'Faculty Mentor', image: '/Team/Lecturer/suhan.jpg' },
+            { name: 'Mrs. Sharanya P S', role: 'Faculty Mentor', image: '/Team/Lecturer/sharanya.png' },
+            { name: 'Ms. Disha C Shetty', role: 'Faculty Mentor', image: '/Team/Lecturer/disha.png' },
         ],
     },
     {
         name: 'Core Committee',
         members: [
-
-            {
-                name: 'AYAN A THONSE',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/ayan.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'GAURESH G PAI',
-                role: 'WEB LEAD',
-                image: '/Team/Core-Committee/gauresh.png',
-                shape: 'square',
-            },
-            {
-                name: 'SHREYA DK',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/shreya.jpg',
-                shape: 'circle',
-            },
-            {
-                name: 'ANAUM FATHIMA',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/anaum.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'THASHVY S SUVARNA',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/thashvy.jpg',
-                shape: 'square',
-            },
-            {
-                name: 'MOHAMMAD AAWAN SHAIKH',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/aawan.jpg',
-                shape: 'circle',
-            },
-            {
-                name: 'THANISHA DEVADIGA',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/thanisha.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'NISHANTH SHETTY B',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/nishant.jpg',
-                shape: 'square',
-            },
-            {
-                name: 'Manya',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/manya.jpg',
-                shape: 'circle',
-            },
-            {
-                name: 'Sahana',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/sahana.jpg',
-                shape: 'triangle',
-            },
-            {
-                name: 'Farhan',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/farhan.jpg',
-                shape: 'square',
-            },
-            {
-                name: 'MONITH K',
-                role: 'MEMBER',
-                image: '/Team/Core-Committee/monith.jpg',
-                shape: 'circle',
-            },
+            { name: 'Ayan A Thonse', role: 'President', image: '/Team/Core-Committee/ayan.jpg' },
+            { name: 'Aawan Shaikh', role: 'Vice President', image: '/Team/Core-Committee/aawan.jpg' },
+            { name: 'Anaum Fathima', role: 'Secretary', image: '/Team/Core-Committee/anaum.jpg' },
+            { name: 'Shreya Dk', role: 'Culture Lead', image: '/Team/Core-Committee/shreya.jpg' },
+            { name: 'Thashvy S Suvarna', role: 'Tech Lead', image: '/Team/Core-Committee/thashvy.jpg' },
+            { name: 'Manya Shetty', role: 'Management Lead', image: '/Team/Core-Committee/manya.jpg' },
+            { name: 'Sahana', role: 'Media Lead', image: '/Team/Core-Committee/sahana.jpg' },
+            { name: 'Monith K', role: 'Design Lead', image: '/Team/Core-Committee/monith.png' },
+            { name: 'Gauresh G Pai', role: 'Web Lead', image: '/Team/Core-Committee/gauresh.png' },
+            { name: 'Nishanth Shetty B', role: 'Executive Member', image: '/Team/Core-Committee/nishant.jpg' },
+            { name: 'Thanisha Devadiga', role: 'Executive Member', image: '/Team/Core-Committee/thanisha.jpg' },
+            { name: 'Farhan', role: 'Executive Member', image: '/Team/Core-Committee/farhan.jpg' },
         ],
     },
 ];
 
 const shapeImages = {
-    square: '/teamcard-1-square.png',
-    circle: '/teamcard-3-circle.png',
-    triangle: '/teamcard-2-triangle.png',
+    0: '/teamcard-2-triangle.png',
+    1: '/teamcard-1-square.png',
+    2: '/teamcard-3-circle.png',
 };
 
 const Team = () => {
     return (
         <div className="flex flex-col items-center justify-center py-10 px-4">
-            <h1 className="text-white text-4xl font-bold mb-12">OUR TEAM</h1>
+            <h1 className="text-white text-4xl font-bold mb-12 font-GameOfSquids">OUR TEAM</h1>
 
             {teamData.map((category) => (
-                <div key={category.name} className=" max-w-7xl">
+                <div key={category.name} className="max-w-7xl">
                     <h2 className="text-white text-2xl font-semibold mb-8 text-center">
                         {category.name}
                     </h2>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-7 gap-y-0 justify-center relative top-20 ">
-                        {category.members.map((member, index) => (
-                            <Card key={index} className="relative  w-[300] h-[69%] mx-auto">
-                                <CardContent className="p-4">
-                                    <div className="absolute -top-17 left-1/2 transform -translate-x-1/2 w-30 h-30 z-3">
-                                        <Image
-                                            src={shapeImages[member.shape]}
-                                            alt="shape"
-                                            width={1080}
-                                            height={1080}
-                                            className="object-contain  "
-                                        />
-                                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-0 justify-center relative top-20">
+                        {category.members.map((member, index) => {
+                            const shapeIndex = index % 3;
+                            const shapeImage = shapeImages[shapeIndex as 0 | 1 | 2];
 
-                                    <div className="pt-6">
-                                        <Image
-                                            src={member.image}
-                                            alt={member.name}
-                                            width={1080}
-                                            height={1080}
-                                            className="rounded-xl w-full aspect-square object-cover relative -top-7 z-2 "
-                                        />
+                            return (
+                                <Card key={index} className="relative w-[300] h-[69%] mx-auto">
+                                    <CardContent className="p-4">
+                                        <div className="absolute -top-17 left-1/2 transform -translate-x-1/2 w-30 h-30 z-3">
+                                            <Image
+                                                src={shapeImage}
+                                                alt="shape"
+                                                width={1080}
+                                                height={1080}
+                                                className="object-contain"
+                                            />
+                                        </div>
+
+                                        <div className="pt-6">
+                                            <Image
+                                                src={member.image}
+                                                alt={member.name}
+                                                width={1080}
+                                                height={1080}
+                                                className="rounded-xl w-full aspect-square object-cover relative -top-7 z-2"
+                                            />
+                                        </div>
+                                    </CardContent>
+                                    <div className="bg-black/55 text-white text-center p-3 rounded-b-2xl relative left-4 bottom-35 z-2 w-[266]">
+                                        <h2 className="text-lg font-semibold truncate">{member.name}</h2>
+                                        <p className="text-sm opacity-90">{member.role}</p>
                                     </div>
-                                </CardContent>
-                                <div className="bg-black/55 text-white text-center p-3 rounded-b-2xl relative left-4 bottom-35 z-2 w-[266]">
-                                    <h2 className="text-lg font-semibold truncate">{member.name}</h2>
-                                    <p className="text-sm opacity-90">{member.role}</p>
-                                </div>
-                            </Card>
-                        ))}
+                                </Card>
+                            );
+                        })}
                     </div>
                 </div>
             ))}

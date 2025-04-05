@@ -154,8 +154,6 @@
   -webkit-text-stroke: 2px blue;
 }
 
-
-
 @layer utilities {
   .perspective-1000 {
     perspective: 1000px;
