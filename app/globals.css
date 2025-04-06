@@ -203,3 +203,17 @@
   color: transparent;
   -webkit-text-stroke: 2px white;
 }
+
+input,
+select,
+textarea {
+  font-family: '--default-mono-font-family', sans-serif;
+  color: #000;
+}
+
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+  font-family: '--default-mono-font-family', sans-serif;
+  color: #999;
+}
