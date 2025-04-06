@@ -1,4 +1,5 @@
 "use client"
+import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import React, { useState } from 'react'
 
@@ -47,12 +48,12 @@ const Concert = () => {
               ></iframe>
             </div>
             <div className="text-right p-2">
-              <button
+              <Button
                 onClick={closeModal}
                 className="text-white text-sm cursor-pointer hover:text-red-400"
               >
                 Close ✖
-              </button>
+              </Button>
             </div>
           </div>
         </div>

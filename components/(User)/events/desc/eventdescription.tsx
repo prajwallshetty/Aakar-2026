@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Error from "next/error";
 import { Event } from "@prisma/client";
 import { ExtendedEvent } from "@/types";
+import { Button } from "@/components/ui/button";
 
 const EventDescriptionSkeleton = () => {
     return (
@@ -157,6 +158,13 @@ const Eventdescription = ({
 
     if (!eventData) return <Error statusCode={404} />;
 
+    // Ensure coordinators is an array before mapping over it
+    const coordinators = Array.isArray(eventData.coordinators)
+        ? eventData.coordinators
+        : eventData.coordinators
+            ? [eventData.coordinators].flat() // If it's an object or string, convert to array
+            : []; // If it's null or undefined, use empty array
+
     return (
         <div className="min-h-screen text-black p-6 md:p-15 flex flex-col items-center justify-center">
             <div className="w-full max-w-7xl mt-12 flex flex-col md:flex-row items-start justify-between gap-8">
@@ -184,12 +192,12 @@ const Eventdescription = ({
 
                     <div className="flex flex-wrap gap-4">
                         <Link href="/register">
-                            <button className="bg-red-600 cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
+                            <Button className="bg-red-600 cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
                                 Register
-                            </button>
+                            </Button>
                         </Link>
 
-                        <button
+                        <Button
                             onClick={addToCart}
                             className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${isInCart
                                     ? "bg-green-600 hover:bg-green-700"
@@ -202,7 +210,7 @@ const Eventdescription = ({
                                 <ShoppingCart className="h-5 w-5" />
                             )}
                             {buttonText}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -242,12 +250,19 @@ const Eventdescription = ({
                 </h2>
                 <div className="bg-black/40 rounded-lg p-6">
                     <ul className="text-gray-300 space-y-2">
-                        {eventData.rules.map((rule, index) => (
-                            <li key={index} className="flex items-start">
+                        {Array.isArray(eventData.rules) ? (
+                            eventData.rules.map((rule, index) => (
+                                <li key={index} className="flex items-start">
+                                    <span className="mr-2">•</span>
+                                    <span>{rule}</span>
+                                </li>
+                            ))
+                        ) : (
+                            <li className="flex items-start">
                                 <span className="mr-2">•</span>
-                                <span>{rule}</span>
+                                <span>No rules specified</span>
                             </li>
-                        ))}
+                        )}
                     </ul>
                 </div>
             </div>
@@ -257,20 +272,28 @@ const Eventdescription = ({
                     EVENT COORDINATORS
                 </h2>
                 <div className="flex flex-col md:flex-row justify-center gap-6">
-                    {eventData.coordinators.map((coordinator, index) => (
-                        <div
-                            key={index}
-                            className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700"
-                        >
-                            <p className="text-white font-medium text-xl">
-                                {coordinator.name}
-                            </p>
-                            <div className="flex items-center text-gray-300 mt-2">
-                                <Phone className="h-5 w-5 mr-2" />
-                                <p>{coordinator.phone}</p>
+                    {coordinators.length > 0 ? (
+                        coordinators.map((coordinator, index) => (
+                            <div
+                                key={index}
+                                className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700"
+                            >
+                                <p className="text-white font-medium text-xl">
+                                    {coordinator.name}
+                                </p>
+                                <div className="flex items-center text-gray-300 mt-2">
+                                    <Phone className="h-5 w-5 mr-2" />
+                                    <p>{coordinator.phone}</p>
+                                </div>
                             </div>
+                        ))
+                    ) : (
+                        <div className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700">
+                            <p className="text-white font-medium text-xl">
+                                No coordinator information available
+                            </p>
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
         </div>

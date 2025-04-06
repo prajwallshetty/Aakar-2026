@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 
 const inter = Inter({ subsets: ['latin'], weight: '400' })
 
@@ -27,9 +28,9 @@ const RegisterSection = () => {
                 </p>
 
                 <Link href="/register">
-                    <button className="mt-6 bg-[#AA1F26] hover:bg-red-700 cursor-pointer transition duration-300 text-white font-light py-4 px-8 rounded-full text-xl leading-none">
+                    <Button size={"lg"} className="mt-6 bg-[#AA1F26] hover:bg-red-700 cursor-pointer transition duration-300 text-white font-light py-8 px-8 rounded-full text-xl leading-none">
                         Register Now
-                    </button>
+                    </Button>
                 </Link>
             </div>
         </section>

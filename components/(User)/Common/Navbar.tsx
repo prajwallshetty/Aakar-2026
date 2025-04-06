@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaUserCircle, FaBars, FaTimes, FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Montserrat } from "next/font/google";
+import { Button } from "@/components/ui/button";
 
 const montserrat = Montserrat({
     weight: "600",
@@ -86,14 +87,14 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li ref={dropdownRef} className="relative">
-                            <button
+                            <Button
                                 className="flex items-center hover:text-pink-400 transition cursor-pointer focus:outline-none"
                                 onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
                                 onMouseEnter={() => setEventsDropdownOpen(true)}
                             >
                                 Events
                                 <FaChevronDown className="ml-1 text-sm" />
-                            </button>
+                            </Button>
 
                             <div
                                 className={`absolute left-0 mt-2 w-48 bg-gray-900 rounded-lg shadow-lg overflow-hidden transform transition-all duration-200 origin-top-left ${eventsDropdownOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
@@ -128,13 +129,13 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    <button
+                    <Button
                         className="md:hidden text-white text-2xl cursor-pointer focus:outline-none z-50"
                         onClick={toggleSidebar}
                         aria-label="Toggle menu"
                     >
                         {sidebarOpen ? <FaTimes /> : <FaBars />}
-                    </button>
+                    </Button>
                 </div>
             </nav>
 
@@ -185,7 +186,7 @@ export default function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <button
+                                <Button
                                     className="flex items-center justify-between w-full py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                     onClick={toggleMobileEvents}
                                 >
@@ -195,7 +196,7 @@ export default function Navbar() {
                                     ) : (
                                         <FaChevronRight className="ml-2" />
                                     )}
-                                </button>
+                                </Button>
 
                                 <div className={`mt-2 ml-4 space-y-3 overflow-hidden transition-all duration-300 ${mobileEventsExpanded ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
                                     }`}>

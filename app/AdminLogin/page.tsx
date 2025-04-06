@@ -48,7 +48,7 @@ const AdminLogin = () => {
 
                 <div className="mt-6 pt-4 border-t border-border text-center">
                     <Link href="/">
-                        <Button variant="outline">Back to Main Site</Button>
+                        <Button variant="outline" className="cursor-pointer">Back to Main Site</Button>
                     </Link>
                 </div>
             </div>

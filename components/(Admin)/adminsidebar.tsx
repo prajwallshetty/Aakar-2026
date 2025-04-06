@@ -10,6 +10,7 @@ import {
     ChevronLeft,
     LogOut,
 } from "lucide-react";
+import { Button } from "../ui/button";
 
 const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -43,12 +44,12 @@ const AdminSidebar = () => {
                     <div>
                         <div className="flex justify-between items-center p-4">
                             {isOpen && <h1 className="text-xl font-bold">Admin Panel</h1>}
-                            <button
+                            <Button
                                 onClick={toggleSidebar}
                                 className="text-gray-300 hover:text-white cursor-pointer"
                             >
                                 {isOpen ? <ChevronLeft size={24} /> : <Menu size={24} />}
-                            </button>
+                            </Button>
                         </div>
 
                         <ul className="mt-2 space-y-1">
@@ -82,10 +83,10 @@ const AdminSidebar = () => {
                             </div>
                         )}
 
-                        <button className="flex items-center text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer">
+                        <Button className="flex items-center text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer">
                             <LogOut size={18} />
                             {isOpen && <span className="ml-2">Logout</span>}
-                        </button>
+                        </Button>
                     </div>
 
                     {isOpen && (
