@@ -25,10 +25,6 @@ function validateParticipantData(data: Prisma.ParticipantCreateInput): { [key: s
         errors.phone = "Valid 10-digit phone number is required";
     }
 
-    if (!data.password || data.password.length < 6) {
-        errors.password = "Password should be minimum 6 characters";
-    }
-
     if (!data.college || data.college.length < 3) {
         errors.college = "College name is required";
     }
@@ -36,7 +32,7 @@ function validateParticipantData(data: Prisma.ParticipantCreateInput): { [key: s
     return Object.keys(errors).length > 0 ? errors : null;
 }
 
-//todo: group events need to be added
+//todo: group events need to be added, normal events also needs to be accepted
 export async function createParticipant(data: Prisma.ParticipantCreateInput): Promise<ServiceResponse<Omit<Participant, "password">>> {
     try {
         const validationErrors = validateParticipantData(data);
@@ -62,13 +58,8 @@ export async function createParticipant(data: Prisma.ParticipantCreateInput): Pr
             };
         }
 
-        let { password } = data;
-        data.password = bcrypt.hashSync(password, 10);
-
         const participant = await db.participant.create({ data });
-
-        const { password: _, ...participantWithoutPassword } = participant;
-        return { data: participantWithoutPassword, error: null };
+        return { data: participant, error: null };
     } catch (error) {
         console.error("Error creating participant:", error);
         return {
@@ -80,37 +71,6 @@ export async function createParticipant(data: Prisma.ParticipantCreateInput): Pr
     }
 }
 
-export async function verifyParticipant(phone: string, password: string): Promise<ServiceResponse<Omit<Participant, "password">>> {
-    try {
-        if (!phone || !password) {
-            return {
-                data: null,
-                error: {
-                    ...(phone ? {} : { phone: "Phone number is required" }),
-                    ...(password ? {} : { password: "Password is required" })
-                }
-            };
-        }
-
-        const participant = await db.participant.findUnique({ where: { phone } });
-
-        if (!participant) {
-            return { data: null, error: "Invalid phone number or password" };
-        }
-
-        const { password: storedPassword, ...participantWithoutPassword } = participant;
-        const isPasswordValid = bcrypt.compareSync(password, storedPassword);
-
-        if (!isPasswordValid) {
-            return { data: null, error: "Invalid phone number or password" };
-        }
-
-        return { data: participantWithoutPassword, error: null };
-    } catch (error) {
-        console.error("Error verifying participant:", error);
-        return { data: null, error: "Authentication failed" };
-    }
-}
 
 export async function getParticipant(id: number): Promise<ServiceResponse<Omit<Participant, "password">>> {
     try {
@@ -119,8 +79,7 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Omit<P
         }
 
         const participant = await db.participant.findUnique({
-            where: { id },
-            omit: { password: true }
+            where: { id }
         });
 
         if (!participant) {
@@ -142,7 +101,7 @@ export async function getParticipants(): Promise<ServiceResponse<Omit<Participan
             return { data: null, error: "Not authorized" };
         }
 
-        const participants = await db.participant.findMany({ omit: { password: true } });
+        const participants = await db.participant.findMany();
 
         return { data: participants, error: null };
     } catch (error) {
@@ -163,17 +122,12 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
             return { data: null, error: "Not authorized" };
         }
 
-        if (data.password) {
-            data.password = bcrypt.hashSync(data.password as string, 10);
-        }
-
         const updatedParticipant = await db.participant.update({
             where: { id },
             data
         });
 
-        const { password: _, ...updatedParticipantWithoutPassword } = updatedParticipant;
-        return { data: updatedParticipantWithoutPassword, error: null };
+        return { data: updatedParticipant, error: null };
     } catch (error) {
         console.error("Error updating participant:", error);
 
@@ -203,8 +157,7 @@ export async function deleteParticipant(id: number): Promise<ServiceResponse<Omi
         }
 
         const deletedParticipant = await db.participant.delete({
-            where: { id },
-            omit: { password: true }
+            where: { id }
         });
 
         return { data: deletedParticipant, error: null };

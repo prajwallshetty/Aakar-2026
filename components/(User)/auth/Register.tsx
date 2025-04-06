@@ -126,6 +126,7 @@ const Register = () => {
         setGeneralError("");
 
         try {
+            //Todo: fix group and events
             // Extract events from the selected options
             const events = selectedEvents.map((event) => parseInt(event.value));
 
@@ -136,7 +137,7 @@ const Register = () => {
             };
 
             // Call your backend function to create the participant
-            const { data, error } = await createParticipant(participantData);
+            const { data, error } = await createParticipant(formData);
 
             if (error) {
                 setIsRegistering(false);
