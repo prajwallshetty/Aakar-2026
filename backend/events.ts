@@ -2,6 +2,7 @@
 import { eventType, Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
+import { GroupBase, OptionsOrGroups } from "react-select";
 
 // Create a new event
 export async function createEvent(event: Prisma.EventCreateInput) {
@@ -56,6 +57,59 @@ export async function getEventsByType(eventType: eventType) {
     } catch (e) {
         console.error("Get Category Events Error:", e);
         return [];
+    }
+}
+
+export async function getEventOptions(): Promise<OptionsOrGroups<
+    { value: string; label: string },
+    GroupBase<{ value: string; label: string }>
+>> {
+    try {
+        const eventTypes = await db.event.findMany({
+            select: {
+                eventType: true,
+            },
+            distinct: ["eventType"],
+        });
+
+        const mappedOptions = await Promise.all(eventTypes.map(async (e) => {
+            let events = await getEventsByType(e.eventType);
+            let ne = events.map((event) => {
+                return {
+                    value: event.id.toString(),
+                    label: event.eventName,
+                }
+            })
+            return {
+                label: e.eventType,
+                options: ne
+            }
+        }));
+
+        return mappedOptions;
+    } catch (e) {
+        console.error("Get Formatted Events Error:", e);
+        return [];
+    }
+}
+
+export async function getEventsTotalFee(eventIds: number[]) {
+    try {
+        return await db.event.findMany({
+            where: {
+                id: {
+                    in: eventIds
+                }
+            },
+            select: {
+                fee: true
+            }
+        }).then((events) => {
+            return events.reduce((acc, event) => acc + event.fee, 0);
+        });
+    } catch (e) {
+        console.error("Get Events Total Fee Error:", e);
+        return 0;
     }
 }
 
