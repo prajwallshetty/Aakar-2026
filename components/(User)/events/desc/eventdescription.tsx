@@ -192,7 +192,7 @@ const Eventdescription = ({
 
                     <div className="flex flex-wrap gap-4">
                         <Link href="/register">
-                            <Button className="bg-red-600 cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
+                            <Button className="bg-red-600  cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
                                 Register
                             </Button>
                         </Link>

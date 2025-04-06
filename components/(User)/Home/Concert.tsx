@@ -50,7 +50,7 @@ const Concert = () => {
             <div className="text-right p-2">
               <Button
                 onClick={closeModal}
-                className="text-white text-sm cursor-pointer hover:text-red-400"
+                className="text-white bg-transparent text-sm cursor-pointer hover:text-red-400"
               >
                 Close ✖
               </Button>
