@@ -1,50 +1,18 @@
-import React from 'react';
-import Link from 'next/link';
-import { Calendar, Clock, Wallet, Phone } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
-
-interface EventDetail {
-    id: string;
-    name: string;
-    description: string;
-    imageUrl: string;
-    date: string;
-    time: string;
-    price: string;
-    rules: string[];
-    coordinators: {
-        name: string;
-        phone: string;
-    }[];
-}
-
-const sampleEventData: EventDetail = {
-    id: "blitzbot-soccer",
-    name: "BLITZBOT SOCCER",
-    description: "BlitzBot Soccer offers a dynamic twist to traditional soccer, featuring high-speed matches played by robots. With rapid actions and energetic gameplay, it's an exhilarating spectacle for both players and spectators.",
-    imageUrl: "/events/event2.jpg",
-    date: "May 9th",
-    time: "10 PM",
-    price: "₹300/P",
-    rules: [
-        "The game is played on a designated arena with obstacles and a goal at each end.",
-        "One ball is placed in the center of the arena at the start of each match.",
-        "Robots are placed at their respective goal posts at the start of each match.",
-        "Time Limit: The game has a set time limit (e.g., 3 minutes).",
-        "Movement: Robots can be controlled by participants (wired, wireless, or autonomous).",
-        "Scoring: Robots can push or hit the ball to score by sending it into the opponent's goal."
-    ],
-    coordinators: [
-        {
-            name: "Gagan Rao",
-            phone: "948042128"
-        },
-        {
-            name: "Anup Krishna N",
-            phone: "6364000253"
-        }
-    ]
-};
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+    Calendar,
+    Clock,
+    Wallet,
+    Phone,
+    ShoppingCart,
+    Check,
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import Error from "next/error";
+import { Event } from "@prisma/client";
+import { ExtendedEvent } from "@/types";
 
 const EventDescriptionSkeleton = () => {
     return (
@@ -69,7 +37,10 @@ const EventDescriptionSkeleton = () => {
                         </div>
                     </div>
 
-                    <Skeleton className="h-12 w-32 rounded-lg" />
+                    <div className="flex space-x-4">
+                        <Skeleton className="h-12 w-32 rounded-lg" />
+                        <Skeleton className="h-12 w-32 rounded-lg" />
+                    </div>
                 </div>
 
                 <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
@@ -86,12 +57,14 @@ const EventDescriptionSkeleton = () => {
                 <Skeleton className="h-8 w-48 mx-auto mb-6" />
                 <div className="bg-black/40 rounded-lg p-6">
                     <div className="space-y-2">
-                        {Array(6).fill(0).map((_, index) => (
-                            <div key={index} className="flex items-start">
-                                <Skeleton className="h-4 w-4 mr-2 mt-1" />
-                                <Skeleton className="h-4 w-full" />
-                            </div>
-                        ))}
+                        {Array(6)
+                            .fill(0)
+                            .map((_, index) => (
+                                <div key={index} className="flex items-start">
+                                    <Skeleton className="h-4 w-4 mr-2 mt-1" />
+                                    <Skeleton className="h-4 w-full" />
+                                </div>
+                            ))}
                     </div>
                 </div>
             </div>
@@ -99,15 +72,20 @@ const EventDescriptionSkeleton = () => {
             <div className="w-full max-w-7xl mt-12">
                 <Skeleton className="h-8 w-64 mx-auto mb-6" />
                 <div className="flex flex-col md:flex-row justify-center gap-6">
-                    {Array(2).fill(0).map((_, index) => (
-                        <div key={index} className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700">
-                            <Skeleton className="h-6 w-32" />
-                            <div className="flex items-center mt-2">
-                                <Skeleton className="h-5 w-5 mr-2 rounded-full" />
-                                <Skeleton className="h-5 w-28" />
+                    {Array(2)
+                        .fill(0)
+                        .map((_, index) => (
+                            <div
+                                key={index}
+                                className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700"
+                            >
+                                <Skeleton className="h-6 w-32" />
+                                <div className="flex items-center mt-2">
+                                    <Skeleton className="h-5 w-5 mr-2 rounded-full" />
+                                    <Skeleton className="h-5 w-28" />
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </div>
         </div>
@@ -115,32 +93,84 @@ const EventDescriptionSkeleton = () => {
 };
 
 const Eventdescription = ({
-    eventData = sampleEventData,
-    isLoading = false
+    eventData,
+    isLoading = false,
 }: {
-    eventData?: EventDetail;
+    eventData?: ExtendedEvent | null;
     isLoading?: boolean;
 }) => {
+    const [isInCart, setIsInCart] = useState(false);
+    const [buttonText, setButtonText] = useState("Add to Cart");
+
+    // Check if event is already in cart when component mounts
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const cartItems = JSON.parse(
+                localStorage.getItem("eventCart") || "[]"
+            );
+            const eventInCart = cartItems.some(
+                (id: number) => id === eventData?.id
+            );
+            setIsInCart(eventInCart);
+            if (eventInCart) {
+                setButtonText("Added to Cart");
+            }
+        }
+    }, [eventData?.id]);
+
+    const addToCart = () => {
+        if (typeof window !== "undefined" && eventData) {
+            const cartItems = JSON.parse(
+                localStorage.getItem("eventCart") || "[]"
+            );
+
+            // Check if event is already in cart
+            const eventExists = cartItems.some(
+                (item: Event) => item.id === eventData.id
+            );
+
+            if (!eventExists) {
+                cartItems.push(eventData.id);
+                localStorage.setItem("eventCart", JSON.stringify(cartItems));
+                setIsInCart(true);
+                setButtonText("Added to Cart");
+
+                // Show temporary feedback message
+                setTimeout(() => {
+                    setButtonText("Added to Cart");
+                }, 1500);
+            } else {
+                // Remove from cart if already there
+                const updatedCart = cartItems.filter(
+                    (item: Event) => item.id !== eventData.id
+                );
+                localStorage.setItem("eventCart", JSON.stringify(updatedCart));
+                setIsInCart(false);
+                setButtonText("Add to Cart");
+            }
+        }
+    };
+
     if (isLoading) {
         return <EventDescriptionSkeleton />;
     }
 
+    if (!eventData) return <Error statusCode={404} />;
+
     return (
         <div className="min-h-screen text-black p-6 md:p-15 flex flex-col items-center justify-center">
-            <div className="w-full max-w-7xl mt-12 flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
-                <div className="md:w-1/2 flex flex-col space-y-6">
+            <div className="w-full max-w-7xl mt-12 flex flex-col md:flex-row items-start justify-between gap-8">
+                <div className="md:w-2/3 flex flex-col space-y-6">
                     <h1 className="text-4xl md:text-5xl font-bold tracking-wider text-white">
-                        {eventData.name}
+                        {eventData.eventName}
                     </h1>
 
-                    <p className="text-gray-300">
-                        {eventData.description}
-                    </p>
+                    <p className="text-gray-300">{eventData.description}</p>
 
                     <div className="flex flex-col space-y-4 text-xl md:text-2xl text-white">
                         <div className="flex items-center">
                             <Calendar className="h-6 w-6 mr-3" />
-                            <p>{eventData.date}</p>
+                            <p>{eventData.date.toDateString()}</p>
                         </div>
                         <div className="flex items-center">
                             <Clock className="h-6 w-6 mr-3" />
@@ -148,25 +178,54 @@ const Eventdescription = ({
                         </div>
                         <div className="flex items-center">
                             <Wallet className="h-6 w-6 mr-3" />
-                            <p>{eventData.price}</p>
+                            <p>{eventData.fee}</p>
                         </div>
                     </div>
 
-                    <Link href="/register">
-                        <button className="bg-red-600 cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
-                            Register
+                    <div className="flex flex-wrap gap-4">
+                        <Link href="/register">
+                            <button className="bg-red-600 cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
+                                Register
+                            </button>
+                        </Link>
+
+                        <button
+                            onClick={addToCart}
+                            className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${
+                                isInCart
+                                    ? "bg-green-600 hover:bg-green-700"
+                                    : "bg-blue-600 hover:bg-blue-700"
+                            } text-white`}
+                        >
+                            {isInCart ? (
+                                <Check className="h-5 w-5" />
+                            ) : (
+                                <ShoppingCart className="h-5 w-5" />
+                            )}
+                            {buttonText}
                         </button>
-                    </Link>
+                    </div>
                 </div>
 
-                <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
-                    <div className="relative">
+                <div className="md:w-1/3 max-w-[30%] flex justify-center relative">
+                    <div className="relative h-full w-full flex items-center justify-center">
                         <div
-                            className="w-80 md:w-90 h-100 rounded-4xl bg-cover bg-center"
+                            className="rounded-4xl overflow-hidden"
                             style={{
-                                backgroundImage: `url('${eventData.imageUrl}')`,
+                                width: "100%",
+                                height: "0",
+                                paddingBottom:
+                                    "177.78%" /* 16:9 inverse aspect ratio (9/16 = 0.5625) expressed as percentage: 177.78% */,
+                                position: "relative",
+                                maxHeight: "100%",
                             }}
                         >
+                            <div
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{
+                                    backgroundImage: `url('${eventData.imageUrl}')`,
+                                }}
+                            ></div>
                         </div>
                         <div
                             className="w-32 h-24 bg-contain bg-no-repeat absolute bottom-2 right-[-40px]"
@@ -179,7 +238,9 @@ const Eventdescription = ({
             </div>
 
             <div className="w-full max-w-7xl mt-16">
-                <h2 className="text-3xl font-semibold text-center mb-6 text-white">RULES</h2>
+                <h2 className="text-3xl font-semibold text-center mb-6 text-white">
+                    RULES
+                </h2>
                 <div className="bg-black/40 rounded-lg p-6">
                     <ul className="text-gray-300 space-y-2">
                         {eventData.rules.map((rule, index) => (
@@ -193,11 +254,18 @@ const Eventdescription = ({
             </div>
 
             <div className="w-full max-w-7xl mt-12">
-                <h2 className="text-2xl font-semibold text-center mb-6 text-white">EVENT COORDINATORS</h2>
+                <h2 className="text-2xl font-semibold text-center mb-6 text-white">
+                    EVENT COORDINATORS
+                </h2>
                 <div className="flex flex-col md:flex-row justify-center gap-6">
                     {eventData.coordinators.map((coordinator, index) => (
-                        <div key={index} className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700">
-                            <p className="text-white font-medium text-xl">{coordinator.name}</p>
+                        <div
+                            key={index}
+                            className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700"
+                        >
+                            <p className="text-white font-medium text-xl">
+                                {coordinator.name}
+                            </p>
                             <div className="flex items-center text-gray-300 mt-2">
                                 <Phone className="h-5 w-5 mr-2" />
                                 <p>{coordinator.phone}</p>
