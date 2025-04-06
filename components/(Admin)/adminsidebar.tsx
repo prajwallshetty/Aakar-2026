@@ -90,7 +90,7 @@ const AdminSidebar = () => {
                     </div>
 
                     {isOpen && (
-                        <div className="absolute bottom-0 left-0 w-1/2 hidden md:block">
+                        <div className="absolute bottom-0 left-0 w-1/2 block">
                             <img
                                 src="/profile-ch-left.png"
                                 alt="Sidebar Character"
