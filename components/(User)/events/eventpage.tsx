@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Event, eventType } from "@prisma/client";
-import { getEventsByType } from "@/backend/events";
+import { eventCategory } from "@prisma/client";
+import { getEventsByCategory } from "@/backend/events";
 import { ExtendedEvent } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const Eventpage = ({ eventType }: { eventType: eventType }) => {
+const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
     const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -14,7 +14,7 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
         const fetchEvents = async () => {
             try {
                 setLoading(true);
-                const data = await getEventsByType(eventType);
+                const data = await getEventsByCategory(eventCategory);
                 setEvents(data);
             } catch (error) {
                 console.error("Failed to fetch events:", error);
@@ -29,7 +29,7 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
     return (
         <div className="min-h-screen text-black p-15 flex flex-col items-center justify-center">
             <h1 className="text-2xl font-bold text-white mb-12">
-                {eventType} Events
+                {eventCategory} Events
             </h1>
 
             {loading ? (
