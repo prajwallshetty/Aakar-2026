@@ -32,15 +32,17 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
             </h1>
 
             {loading ? (
-                <div className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[9/16] w-60 bg-cover bg-center cursor-pointer transition-transform hover:scale-105">
-                    {Array.from({ length: 20 }).map((_, i) => (
-                        <div key={i} className="relative">
-                            <div className="w-90 h-100 rounded-4xl bg-gray-300 dark:bg-gray-700 animate-pulse"></div>
+                <div className="max-w-6xl m-auto flex gap-6 w-full flex-wrap justify-center">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <div
+                            key={i}
+                            className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[9/16] w-60 bg-cover bg-center cursor-pointer animate-pulse"
+                        >
+                            <div className="w-full h-full rounded-3xl bg-gray-300 dark:bg-gray-700"></div>
                             <div
-                                className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20]"
+                                className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20px]"
                                 style={{
-                                    backgroundImage: `url('/eventcard-ch${(i % 3) + 1
-                                        }.png')`,
+                                    backgroundImage: `url('/eventcard-ch${(i % 3) + 1}.png')`,
                                 }}
                             ></div>
                         </div>
