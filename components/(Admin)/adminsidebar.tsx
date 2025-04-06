@@ -21,11 +21,6 @@ const AdminSidebar = () => {
             href: "/AdminPortal",
         },
         {
-            icon: <UserPlus size={18} />,
-            label: "Create Admins",
-            href: "/CreateAdmins",
-        },
-        {
             icon: <CalendarDays size={18} />,
             label: "Events",
             href: "/EventsCRUD",
