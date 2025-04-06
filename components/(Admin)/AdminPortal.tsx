@@ -13,132 +13,85 @@ import { Badge } from '../ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
+import { toast } from 'sonner';
 
+// Import server actions
+import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/backend/admin';
+
+// Define proper types based on your Prisma schema
 type Admin = {
   id: number;
   name: string;
   email: string;
   phone: string;
-  role?: string;
 };
 
-type Event = {
-  id: number;
-  eventName: string;
-  eventType: string;
-  date: Date;
-  fee: number;
-};
+// Interface for error responses from backend
+interface ErrorResponse {
+  error: string;
+}
 
-type Registration = {
-  id: number;
-  userId: number;
-  userName: string;
-  userEmail: string;
-  eventId: number;
-  eventName: string;
-  registrationDate: Date;
-  paymentStatus: 'Pending' | 'Completed' | 'Failed';
-};
-
-// Mock data generators
-const generateMockAdmins = (): Admin[] => [
-  { id: 1, name: 'Admin One', email: 'admin1@fest.com', phone: '1234567890', role: 'Super Admin' },
-  { id: 2, name: 'Admin Two', email: 'admin2@fest.com', phone: '2345678901', role: 'Event Manager' },
-  { id: 3, name: 'Admin Three', email: 'admin3@fest.com', phone: '3456789012', role: 'Content Manager' },
-];
-
-const generateMockRegistrations = (events: Event[]): Registration[] => {
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com' },
-    { id: 4, name: 'Alice Williams', email: 'alice@example.com' },
-    { id: 5, name: 'Charlie Brown', email: 'charlie@example.com' },
-  ];
-
-  const statuses: ('Pending' | 'Completed' | 'Failed')[] = ['Pending', 'Completed', 'Failed'];
-
-  return Array.from({ length: 25 }, (_, i) => {
-    const user = users[Math.floor(Math.random() * users.length)];
-    const event = events[Math.floor(Math.random() * events.length)];
-    const daysAgo = Math.floor(Math.random() * 30);
-    const regDate = new Date();
-    regDate.setDate(regDate.getDate() - daysAgo);
-
-    return {
-      id: i + 1,
-      userId: user.id,
-      userName: user.name,
-      userEmail: user.email,
-      eventId: event.id,
-      eventName: event.eventName,
-      registrationDate: regDate,
-      paymentStatus: statuses[Math.floor(Math.random() * statuses.length)]
-    };
-  });
-};
-
-const generateRegistrationData = (): { date: string; registrations: number }[] => {
-  const today = new Date();
-  const may10 = new Date('2024-05-10');
-  const daysLeft = Math.ceil((may10.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-  return Array.from({ length: daysLeft + 1 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
-    return {
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      registrations: Math.floor(Math.random() * 20) + 5 // Random between 5-25
-    };
-  });
-};
+// Helper to check if response is an error
+function isErrorResponse(response: any): response is ErrorResponse {
+  return response && typeof response === 'object' && 'error' in response;
+}
 
 const AdminPortal = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
-  const [registrationData, setRegistrationData] = useState<{ date: string; registrations: number }[]>([]);
   const [loading, setLoading] = useState({
     admins: true,
-    events: true,
-    registrations: true,
     stats: true
-  });
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    recentSubmissions: 0
   });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
-    role: 'Administrator'
   });
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState('');
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    recentSubmissions: 0
+  });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState<number | null>(null);
 
   // Fetch all data on mount
   useEffect(() => {
     fetchAdmins();
     fetchStats();
-    setRegistrationData(generateRegistrationData());
   }, []);
 
   const fetchAdmins = async () => {
     setLoading(prev => ({ ...prev, admins: true }));
     try {
-      // Mock API call
-      setTimeout(() => {
-        setAdmins(generateMockAdmins());
-        setLoading(prev => ({ ...prev, admins: false }));
-      }, 800);
+      const response = await getAdmins();
+      if (response?.length === 0) {
+        setAdmins([]);
+        setError('No admin users found. Create your first admin user.');
+        return;
+      }
+
+      if (!response) {
+        throw new Error("No response from server");
+      }
+
+      if (isErrorResponse(response)) {
+        toast.error(response.error);
+        setError(response.error);
+      } else {
+        // If not an error, it's an array of admins
+        setAdmins(response as Admin[]);
+        setError('');
+      }
     } catch (error) {
       console.error("Error fetching admins:", error);
       setError("Could not fetch admin users.");
+      toast.error("Failed to load admin users");
+    } finally {
       setLoading(prev => ({ ...prev, admins: false }));
     }
   };
@@ -146,11 +99,11 @@ const AdminPortal = () => {
   const fetchStats = async () => {
     setLoading(prev => ({ ...prev, stats: true }));
     try {
-      // Mock API call
+      // For demo purposes, using static data
       setTimeout(() => {
         setStats({
-          totalUsers: 125, // Mock total users
-          recentSubmissions: 12 // Mock recent submissions
+          totalUsers: 125,
+          recentSubmissions: 12
         });
         setLoading(prev => ({ ...prev, stats: false }));
       }, 600);
@@ -171,10 +124,10 @@ const AdminPortal = () => {
       email: '',
       phone: '',
       password: '',
-      role: 'Administrator'
     });
     setIsEditing(false);
     setCurrentId(null);
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -183,26 +136,65 @@ const AdminPortal = () => {
 
     try {
       if (isEditing && currentId) {
-        // Mock update
-        const updatedAdmins = admins.map(admin =>
-          admin.id === currentId ? { ...admin, ...formData } : admin
-        );
-        setAdmins(updatedAdmins);
-        resetForm();
-        setOpenDialog(false);
+        // Update existing admin
+        const adminData = { ...formData };
+        // Only include password if it's not empty
+        if (!adminData.password) {
+          const { password, ...rest } = adminData;
+          const response = await updateAdmin(currentId, rest);
+
+          if (!response) {
+            throw new Error("No response from server");
+          }
+
+          if (isErrorResponse(response)) {
+            setError(response.error);
+            toast.error(response.error);
+          } else {
+            toast.success("Admin updated successfully");
+            await fetchAdmins();
+            resetForm();
+            setOpenDialog(false);
+          }
+        } else {
+          const response = await updateAdmin(currentId, adminData);
+
+          if (!response) {
+            throw new Error("No response from server");
+          }
+
+          if (isErrorResponse(response)) {
+            setError(response.error);
+            toast.error(response.error);
+          } else {
+            toast.success("Admin updated successfully");
+            await fetchAdmins();
+            resetForm();
+            setOpenDialog(false);
+          }
+        }
       } else {
-        // Mock create
-        const newAdmin = {
-          id: Math.max(...admins.map(a => a.id)) + 1,
-          ...formData
-        };
-        setAdmins([...admins, newAdmin]);
-        resetForm();
-        setOpenDialog(false);
+        // Create new admin
+        const response = await createAdmin(formData);
+
+        if (!response) {
+          throw new Error("No response from server");
+        }
+
+        if (isErrorResponse(response)) {
+          setError(response.error);
+          toast.error(response.error);
+        } else {
+          toast.success("New admin created successfully");
+          await fetchAdmins();
+          resetForm();
+          setOpenDialog(false);
+        }
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       setError("An error occurred. Please try again.");
+      toast.error("An unexpected error occurred");
     }
   };
 
@@ -214,18 +206,35 @@ const AdminPortal = () => {
       email: admin.email || '',
       phone: admin.phone || '',
       password: '',
-      role: admin.role || 'Administrator'
     });
     setOpenDialog(true);
   };
 
+  const confirmDelete = (id: number) => {
+    setAdminToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
   const handleDelete = async (id: number) => {
     try {
-      // Mock delete
-      setAdmins(admins.filter(admin => admin.id !== id));
+      const response = await deleteAdmin(id);
+
+      if (!response) {
+        throw new Error("No response from server");
+      }
+
+      if (isErrorResponse(response)) {
+        toast.error(response.error);
+      } else {
+        toast.success("Admin deleted successfully");
+        await fetchAdmins();
+      }
     } catch (error) {
       console.error("Error deleting admin:", error);
-      setError("Failed to delete admin.");
+      toast.error("Failed to delete admin");
+    } finally {
+      setDeleteDialogOpen(false);
+      setAdminToDelete(null);
     }
   };
 
@@ -233,14 +242,8 @@ const AdminPortal = () => {
     <div className="p-6 space-y-6 bg-slate-50 min-h-screen">
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/">
-            <Button variant="ghost" className="flex items-center gap-2 mb-4">
-              <ChevronLeft size={16} />
-              Back to Home
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold tracking-tight">Fest Management Portal</h1>
-          <p className="text-muted-foreground">Manage admins, events, and registrations for May 9-10 fest</p>
+          <h1 className="text-3xl font-bold tracking-tight">Aakar Management Portal</h1>
+          <p className="text-muted-foreground">Manage admins, events, and registrations for Aakar</p>
         </div>
       </div>
 
@@ -287,14 +290,13 @@ const AdminPortal = () => {
             ) : (
               <>
                 <div className="text-2xl font-bold">{admins.length}</div>
-                <p className="text-xs text-muted-foreground">3 with full access</p>
               </>
             )}
           </CardContent>
         </Card>
       </div>
 
-      <Tabs className="w-full">
+      <Tabs defaultValue="admins" className="w-full">
 
         {/* Admins Tab */}
         <TabsContent value="admins" className="mt-6">
@@ -311,7 +313,7 @@ const AdminPortal = () => {
               </div>
               <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogTrigger asChild>
-                  <Button className="flex items-center gap-2">
+                  <Button className="flex items-center cursor-pointer gap-2">
                     <UserPlus size={16} />
                     Add Admin
                   </Button>
@@ -365,52 +367,39 @@ const AdminPortal = () => {
                           required
                         />
                       </div>
-                      {!isEditing && (
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="password" className="text-right">
-                            Password
-                          </Label>
-                          <Input
-                            id="password"
-                            name="password"
-                            type="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            className="col-span-3"
-                            required={!isEditing}
-                          />
-                        </div>
-                      )}
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="role" className="text-right">
-                          Role
+                        <Label htmlFor="password" className="text-right">
+                          Password
                         </Label>
-                        <select
-                          title='Role'
-                          id="role"
-                          name="role"
-                          value={formData.role}
-                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                          className="col-span-3 border rounded-md p-2"
-                        >
-                          <option value="Administrator">Administrator</option>
-                          <option value="Event Manager">Event Manager</option>
-                          <option value="Content Manager">Content Manager</option>
-                        </select>
+                        <Input
+                          id="password"
+                          name="password"
+                          type="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          className="col-span-3"
+                          required={!isEditing}
+                          placeholder={isEditing ? "Leave blank to keep current password" : ""}
+                        />
                       </div>
                     </div>
+
                     {error && (
-                      <div className="flex items-center gap-2 text-red-500 mb-4">
+                      <div className="bg-red-50 text-red-600 p-3 rounded-md flex items-center gap-2 mb-4">
                         <AlertCircle size={16} />
-                        <span>{error}</span>
+                        {error}
                       </div>
                     )}
+
                     <DialogFooter>
-                      <Button type="button" variant="outline" onClick={() => setOpenDialog(false)}>
+                      <Button type="button" variant="outline" onClick={() => {
+                        resetForm();
+                        setOpenDialog(false);
+                      }}>
                         Cancel
                       </Button>
                       <Button type="submit">
-                        {isEditing ? 'Update' : 'Create'}
+                        {isEditing ? 'Save Changes' : 'Create Admin'}
                       </Button>
                     </DialogFooter>
                   </form>
@@ -419,73 +408,80 @@ const AdminPortal = () => {
             </CardHeader>
             <CardContent>
               {loading.admins ? (
-                <div className="space-y-4">
-                  {[...Array(3)].map((_, i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
-                  ))}
+                <div className="space-y-2">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
                 </div>
-              ) : admins.length > 0 ? (
+              ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
-                      <TableHead>Role</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {admins.map((admin) => (
-                      <TableRow key={admin.id}>
-                        <TableCell className="font-medium">{admin.name}</TableCell>
-                        <TableCell>{admin.role}</TableCell>
-                        <TableCell>{admin.email}</TableCell>
-                        <TableCell>{admin.phone}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" size="icon" onClick={() => handleEdit(admin)}>
-                              <Pencil size={16} />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="destructive" size="icon">
-                                  <Trash2 size={16} />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This will permanently delete admin {admin.name}.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => handleDelete(admin.id)}>
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
+                    {admins.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                          No admin users found. Create your first admin user.
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      admins.map((admin) => (
+                        <TableRow key={admin.id}>
+                          <TableCell className="font-medium">{admin.name}</TableCell>
+                          <TableCell>{admin.email}</TableCell>
+                          <TableCell>{admin.phone}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleEdit(admin)}
+                              >
+                                <Pencil size={16} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => confirmDelete(admin.id)}
+                              >
+                                <Trash2 size={16} />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No admin users found</p>
-                  <Button className="mt-4" onClick={() => setOpenDialog(true)}>
-                    Create First Admin
-                  </Button>
-                </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the admin account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => adminToDelete && handleDelete(adminToDelete)} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
