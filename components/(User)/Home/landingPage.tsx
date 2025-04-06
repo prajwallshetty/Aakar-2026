@@ -68,7 +68,7 @@ const LandingPage = () => {
                 <div className="w-1/4 flex items-center justify-center">
                     <div className="relative right-[-20vw] top-[-50px] z-30 overflow-hidden">
                         <Image
-                            src="/Aakarlogo.png"
+                            src="/Aakarlogo.svg"
                             alt="AAKAR Logo"
                             width={300}
                             height={150}
@@ -170,7 +170,7 @@ const LandingPage = () => {
                 <div className="flex flex-col h-[90vh] items-center justify-center space-y-16">
                     <div className="text-white text-6xl font-bold tracking-wider relative top-[30px] text-centeroverflow-hidden">
                         <Image
-                            src="/Aakarlogo.png"
+                            src="/Aakarlogo.svg"
                             alt="AAKAR Logo"
                             width={200}
                             height={100}
