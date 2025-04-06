@@ -986,7 +986,7 @@ const Register = () => {
                                                             <ul className="ml-4 mt-1 text-xs text-gray-600">
                                                                 {groupEventData[eventId].members.map((member, idx) => (
                                                                     <li key={idx}>
-                                                                        Member {idx + 1}: {member.name} ({member.usn})
+                                                                        Member {idx + 1}: {member.name} ({member.usn} - {member.email})
                                                                     </li>
                                                                 ))}
                                                             </ul>
