@@ -1,8 +1,6 @@
 "use client"
 
 import type React from "react"
-
-import Link from "next/link"
 import { useEffect, useState } from "react"
 import { createParticipant } from "@/backend/participant"
 import { signIn } from "@/auth"
@@ -20,8 +18,8 @@ const Register = () => {
     const [totalAmount, setTotalAmount] = useState(0)
     const [showQRCode, setShowQRCode] = useState(false)
     const [qrImageUrl, setQrImageUrl] = useState("")
-    const [paymentStep, setPaymentStep] = useState("details") 
-    
+    const [paymentStep, setPaymentStep] = useState("details")
+
     // Form state
     const [formData, setFormData] = useState({
         name: "",
@@ -41,7 +39,7 @@ const Register = () => {
     const [groupEventData, setGroupEventData] = useState<{
         [groupId: string]: {
             participantCount: number
-            members: { name: string; usn: string, email: string }[]
+            members: { name: string; usn: string; email: string }[]
         }
     }>({})
 
@@ -78,8 +76,7 @@ const Register = () => {
     }
 
     // Handle event selection
-    const handleEventSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value)
+    const handleEventSelection = (selectedOptions: string[]) => {
         setSelectedEvents(selectedOptions)
 
         // Update cart events based on selection
@@ -364,6 +361,30 @@ const Register = () => {
                 if (cartData) {
                     const events = JSON.parse(cartData)
                     setCartEvents(events)
+
+                    // If there are already selected events, update the selection
+                    const currentSelection = localStorage.getItem("selectedEvents")
+                    if (currentSelection) {
+                        const selectedIds = JSON.parse(currentSelection)
+                        setSelectedEvents(selectedIds)
+
+                        // Initialize group event data for selected group events
+                        const newGroupData = { ...groupEventData }
+                        events.forEach((event: any) => {
+                            if (event.type === "group" && selectedIds.includes(event.id) && !newGroupData[event.id]) {
+                                newGroupData[event.id] = {
+                                    participantCount: 1,
+                                    members: [{ name: "", usn: "", email: "" }],
+                                }
+                            }
+                        })
+                        setGroupEventData(newGroupData)
+
+                        // Calculate total amount
+                        const selected = events.filter((event: any) => selectedIds.includes(event.id))
+                        const amount = selected.reduce((sum: number, event: any) => sum + (event.price || 0), 0)
+                        setTotalAmount(amount)
+                    }
                 } else {
                     // Set empty events array instead of redirecting
                     setCartEvents([])
@@ -435,7 +456,7 @@ const Register = () => {
         "S NM Polytechnic, Moodbidri",
         "Udupi Group of Institutions",
         "Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi",
-    ];
+    ]
 
     if (isLoading) {
         return (
@@ -478,148 +499,343 @@ const Register = () => {
                     {paymentStep === "verification" && "Verify Payment"}
                 </h2>
 
-                {paymentStep === "details" && (
-                    <p className="text-gray-600 text-md mb-4 flex justify-end">
-                        Already have an account?&nbsp;
-                        <Link href="/login" className="underline text-black">
-                            {" "}
-                            Login
-                        </Link>
-                    </p>
-                )}
-
                 {generalError && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{generalError}</div>}
 
                 {paymentStep === "details" && (
                     <form className="flex flex-col gap-4" onSubmit={proceedToPayment}>
-                        {/* Event Selection */}
-                        <div className="flex flex-col gap-4 mb-6 border-b pb-4">
-                            <h3 className="font-semibold">Select Events</h3>
+                        <h3 className="font-semibold">Event Registration</h3>
 
+                        {/* Personal Details */}
+                        <div className="flex flex-col gap-4 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name" className="text-gray-700">
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        placeholder="Enter your name"
+                                        required
+                                        className={`border ${formErrors.name ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="email" className="text-gray-700">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        placeholder="Enter your email"
+                                        required
+                                        className={`border ${formErrors.email ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="phone" className="text-gray-700">
+                                        Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        placeholder="Enter your phone number"
+                                        required
+                                        className={`border ${formErrors.phone ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="usn" className="text-gray-700">
+                                        USN
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="usn"
+                                        value={formData.usn}
+                                        onChange={handleChange}
+                                        placeholder="Enter your USN"
+                                        required
+                                        className={`border ${formErrors.usn ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.usn && <p className="text-red-500 text-xs mt-1">{formErrors.usn}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="college" className="text-gray-700">
+                                        College Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="college"
+                                        list="collegeList"
+                                        value={formData.college}
+                                        onChange={handleChange}
+                                        placeholder="Search or enter your college"
+                                        required
+                                        className={`border ${formErrors.college ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.college && <p className="text-red-500 text-xs mt-1">{formErrors.college}</p>}
+                                    <datalist id="collegeList">
+                                        {colleges.map((college) => (
+                                            <option key={college} value={college} className="cursor-pointer">
+                                                {college}
+                                            </option>
+                                        ))}
+                                    </datalist>
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="year" className="text-gray-700">
+                                        Year
+                                    </label>
+                                    <input
+                                        id="year"
+                                        value={formData.year}
+                                        placeholder="Enter your year"
+                                        onChange={handleChange}
+                                        required
+                                        className={`border ${formErrors.year ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.year && <p className="text-red-500 text-xs mt-1">{formErrors.year}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="department" className="text-gray-700">
+                                        Department
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="department"
+                                        value={formData.department}
+                                        onChange={handleChange}
+                                        placeholder="Enter your department"
+                                        required
+                                        className={`border ${formErrors.department ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.department && <p className="text-red-500 text-xs mt-1">{formErrors.department}</p>}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Event Selection */}
+                        <div className="flex flex-col gap-4 mt-4">
+                            <h3 className="font-semibold">Event Selection</h3>
+
+                            {/* Display Already Selected Events from Cache */}
+                            {selectedEvents.length > 0 && (
+                                <div className="mb-4">
+                                    <h4 className="text-sm font-medium mb-2">Selected Events:</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedEvents.map((eventId) => {
+                                            const event = cartEvents.find((e) => e.id === eventId)
+                                            return (
+                                                <div key={eventId} className="bg-pink-100 px-3 py-1 rounded-full flex items-center">
+                                                    <span>
+                                                        {event?.name} - ₹{event?.price || 0}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            // Remove event handler
+                                                            const updatedSelection = selectedEvents.filter((id) => id !== eventId)
+                                                            setSelectedEvents(updatedSelection)
+
+                                                            // Remove group data if it's a group event
+                                                            if (groupEventData[eventId]) {
+                                                                setGroupEventData((prev) => {
+                                                                    const updated = { ...prev }
+                                                                    delete updated[eventId]
+                                                                    return updated
+                                                                })
+                                                            }
+
+                                                            // Update total amount
+                                                            const selected = cartEvents.filter((event) => updatedSelection.includes(event.id))
+                                                            const amount = selected.reduce((sum, event) => sum + (event.price || 0), 0)
+                                                            setTotalAmount(amount)
+                                                        }}
+                                                        className="ml-2 text-pink-700 hover:text-pink-900"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <div className="mt-3">
+                                        <p className="font-bold">Total: ₹{totalAmount}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Dropdown to Add More Events */}
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="events" className="text-gray-700">
-                                    Available Events
+                                <label htmlFor="add-event" className="text-gray-700">
+                                    Add Events
                                 </label>
                                 <select
-                                    id="events"
-                                    multiple
-                                    value={selectedEvents}
-                                    onChange={handleEventSelection}
-                                    className={`border ${formErrors.events ? "border-red-500" : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 min-h-[120px]`}
+                                    id="add-event"
+                                    value=""
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            // Add the selected event if not already added
+                                            if (!selectedEvents.includes(e.target.value)) {
+                                                const newSelection = [...selectedEvents, e.target.value]
+                                                setSelectedEvents(newSelection)
+
+                                                // Update group event data if needed
+                                                const selectedEvent = cartEvents.find((event) => event.id === e.target.value)
+                                                if (selectedEvent?.type === "group") {
+                                                    setGroupEventData((prev) => ({
+                                                        ...prev,
+                                                        [e.target.value]: {
+                                                            participantCount: 1,
+                                                            members: [{ name: "", usn: "", email: "" }],
+                                                        },
+                                                    }))
+                                                }
+
+                                                // Update total amount
+                                                const selected = cartEvents.filter((event) =>
+                                                    [...selectedEvents, e.target.value].includes(event.id),
+                                                )
+                                                const amount = selected.reduce((sum, event) => sum + (event.price || 0), 0)
+                                                setTotalAmount(amount)
+                                            }
+                                            // Reset the dropdown
+                                            e.target.value = ""
+                                        }
+                                    }}
+                                    className="border border-gray-300 rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 >
+                                    <option value="">Select an event to add</option>
                                     {cartEvents.map((event) => (
-                                        <option key={event.id} value={event.id}>
+                                        <option key={event.id} value={event.id} disabled={selectedEvents.includes(event.id)}>
                                             {event.name} - ₹{event.price || 0} ({event.type === "group" ? "Group" : "Individual"})
                                         </option>
                                     ))}
                                 </select>
                                 {formErrors.events && <p className="text-red-500 text-xs mt-1">{formErrors.events}</p>}
-                                {cartEvents.length === 0 && (
-                                    <p className="text-gray-600 text-sm">
-                                        No events available.{" "}
-                                        <Link href="/events" className="text-pink-700 underline">
-                                            Browse events
-                                        </Link>
-                                    </p>
-                                )}
                             </div>
-
-                            {selectedEvents.length > 0 && (
-                                <div className="mt-2">
-                                    <p className="font-bold">Total: ₹{totalAmount}</p>
-                                </div>
-                            )}
                         </div>
 
-                        {/* Group Event Configuration */}
-                        {selectedEvents.length > 0 && Object.entries(groupEventData).length > 0 && (
-                            <div className="flex flex-col gap-4 mb-6 border-b pb-4">
-                                <h3 className="font-semibold">Group Event Details</h3>
+                        {/* Group Events Team Members */}
+                        {selectedEvents.length > 0 && (
+                            <div className="mt-4">
+                                {selectedEvents.map((eventId) => {
+                                    const event = cartEvents.find((e) => e.id === eventId)
+                                    if (event?.type !== "group") return null
 
-                                {Object.entries(groupEventData).map(([groupId, groupData]) => {
-                                    const event = cartEvents.find((e) => e.id === groupId)
-                                    if (!selectedEvents.includes(groupId)) return null
+                                    const groupData = groupEventData[eventId] || {
+                                        participantCount: 1,
+                                        members: [{ name: "", usn: "", email: "" }],
+                                    }
 
                                     return (
-                                        <div key={groupId} className="border rounded p-4 mb-2">
-                                            <h4 className="font-medium mb-2">{event?.name || `Group Event ${groupId}`}</h4>
+                                        <div key={eventId} className="mb-6 p-4 border rounded-lg bg-gray-50">
+                                            <h4 className="font-medium mb-3">{event.name} - Team Details</h4>
 
                                             <div className="mb-4">
-                                                <label htmlFor={`participant-count-${groupId}`} className="text-gray-700 text-sm block mb-1">
-                                                    Number of Participants
+                                                <label htmlFor={`participant-count-${eventId}`} className="text-gray-700 text-sm block mb-1">
+                                                    Number of Team Members
                                                 </label>
                                                 <input
                                                     type="number"
-                                                    id={`participant-count-${groupId}`}
+                                                    id={`participant-count-${eventId}`}
                                                     min="1"
                                                     max="10"
                                                     value={groupData.participantCount}
-                                                    onChange={(e) => handleParticipantCountChange(groupId, Number.parseInt(e.target.value) || 1)}
+                                                    onChange={(e) => handleParticipantCountChange(eventId, Number.parseInt(e.target.value) || 1)}
                                                     className="border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-pink-500"
                                                 />
                                             </div>
 
                                             {groupData.members.map((member, index) => (
-                                                <div key={index} className="flex flex-col gap-2 mb-3 pb-3 border-b last:border-b-0">
-                                                    <p className="text-sm text-gray-700">Member {index + 1}</p>
+                                                <div key={index} className="mb-4 p-3 border rounded-md bg-white">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <p className="font-medium text-sm">Team Member {index + 1}</p>
+                                                        {index > 0 && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const updatedMembers = [...groupData.members]
+                                                                    updatedMembers.splice(index, 1)
+                                                                    setGroupEventData((prev) => ({
+                                                                        ...prev,
+                                                                        [eventId]: {
+                                                                            ...prev[eventId],
+                                                                            participantCount: prev[eventId].participantCount - 1,
+                                                                            members: updatedMembers,
+                                                                        },
+                                                                    }))
+                                                                }}
+                                                                className="text-red-500 text-sm hover:text-red-700"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        )}
+                                                    </div>
 
-                                                    <div className="flex flex-col md:flex-row gap-2">
-                                                        <div className="w-full">
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                        <div>
                                                             <label className="text-xs text-gray-500">Full Name</label>
                                                             <input
                                                                 type="text"
                                                                 value={member.name}
-                                                                onChange={(e) => handleGroupMemberChange(groupId, index, "name", e.target.value)}
+                                                                onChange={(e) => handleGroupMemberChange(eventId, index, "name", e.target.value)}
                                                                 placeholder="Member Name"
                                                                 required
-                                                                className={`border ${formErrors[`group_${groupId}_member_${index}_name`]
-                                                                    ? "border-red-500"
-                                                                    : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                className={`border ${formErrors[`group_${eventId}_member_${index}_name`] ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                             />
-                                                            {formErrors[`group_${groupId}_member_${index}_name`] && (
+                                                            {formErrors[`group_${eventId}_member_${index}_name`] && (
                                                                 <p className="text-red-500 text-xs mt-1">
-                                                                    {formErrors[`group_${groupId}_member_${index}_name`]}
+                                                                    {formErrors[`group_${eventId}_member_${index}_name`]}
                                                                 </p>
                                                             )}
                                                         </div>
 
-                                                        <div className="w-full">
+                                                        <div>
                                                             <label className="text-xs text-gray-500">USN</label>
                                                             <input
                                                                 type="text"
                                                                 value={member.usn}
-                                                                onChange={(e) => handleGroupMemberChange(groupId, index, "usn", e.target.value)}
+                                                                onChange={(e) => handleGroupMemberChange(eventId, index, "usn", e.target.value)}
                                                                 placeholder="Member USN"
                                                                 required
-                                                                className={`border ${formErrors[`group_${groupId}_member_${index}_usn`]
-                                                                    ? "border-red-500"
-                                                                    : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                className={`border ${formErrors[`group_${eventId}_member_${index}_usn`] ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                             />
-                                                            {formErrors[`group_${groupId}_member_${index}_usn`] && (
+                                                            {formErrors[`group_${eventId}_member_${index}_usn`] && (
                                                                 <p className="text-red-500 text-xs mt-1">
-                                                                    {formErrors[`group_${groupId}_member_${index}_usn`]}
+                                                                    {formErrors[`group_${eventId}_member_${index}_usn`]}
                                                                 </p>
                                                             )}
                                                         </div>
-                                                        <div className="w-full">
+
+                                                        <div>
                                                             <label className="text-xs text-gray-500">Email</label>
                                                             <input
                                                                 type="text"
                                                                 value={member.email}
-                                                                onChange={(e) => handleGroupMemberChange(groupId, index, "email", e.target.value)}
-                                                                placeholder="Member email"
+                                                                onChange={(e) => handleGroupMemberChange(eventId, index, "email", e.target.value)}
+                                                                placeholder="Member Email"
                                                                 required
-                                                                className={`border ${formErrors[`group_${groupId}_member_${index}_email`]
-                                                                    ? "border-red-500"
-                                                                    : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                className={`border ${formErrors[`group_${eventId}_member_${index}_email`] ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                             />
-                                                            {formErrors[`group_${groupId}_member_${index}_email`] && (
+                                                            {formErrors[`group_${eventId}_member_${index}_email`] && (
                                                                 <p className="text-red-500 text-xs mt-1">
-                                                                    {formErrors[`group_${groupId}_member_${index}_email`]}
+                                                                    {formErrors[`group_${eventId}_member_${index}_email`]}
                                                                 </p>
                                                             )}
                                                         </div>
@@ -632,161 +848,10 @@ const Register = () => {
                             </div>
                         )}
 
-                        {/* Personal Details */}
-                        <div className="flex flex-col gap-4">
-                            <h3 className="font-semibold">Personal Details</h3>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="name" className="text-gray-700 w-3xs whitespace-nowrap">
-                                    Full Name
-                                </label>
-                                <div className="w-full">
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        placeholder="Enter your name"
-                                        required
-                                        className={`border ${formErrors.name ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    />
-                                    {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="email" className="text-gray-700 w-3xs">
-                                    Email
-                                </label>
-                                <div className="w-full">
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        placeholder="Enter your email"
-                                        required
-                                        className={`border ${formErrors.email ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    />
-                                    {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="phone" className="text-gray-700 w-3xs whitespace-nowrap">
-                                    Phone Number
-                                </label>
-                                <div className="w-full">
-                                    <input
-                                        type="tel"
-                                        id="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        placeholder="Enter your phone number"
-                                        required
-                                        className={`border ${formErrors.phone ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    />
-                                    {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="college" className="text-gray-700 w-3xs whitespace-nowrap">
-                                    College Name
-                                </label>
-                                <div className="w-full">
-                                    <input
-                                        type="text"
-                                        id="college"
-                                        list="collegeList"
-                                        value={formData.college}
-                                        onChange={handleChange}
-                                        placeholder="Search or enter your college"
-                                        required
-                                        className={`border ${formErrors.college ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full md:w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    />
-                                    {formErrors.college && <p className="text-red-500 text-xs mt-1">{formErrors.college}</p>}
-                                    <datalist id="collegeList">
-                                        {colleges.map((college) => (
-                                            <option key={college} value={college} className="cursor-pointer">
-                                                {college}
-                                            </option>
-                                        ))}
-                                    </datalist>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="year" className="text-gray-700 w-3xs">
-                                    Year
-                                </label>
-                                <div className="w-full">
-                                    <select
-                                        id="year"
-                                        value={formData.year}
-                                        onChange={handleSelectChange}
-                                        required
-                                        className={`border ${formErrors.year ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    >
-                                        <option value="">Select Year</option>
-                                        <option value="1">1st Year</option>
-                                        <option value="2">2nd Year</option>
-                                        <option value="3">3rd Year</option>
-                                        <option value="4">4th Year</option>
-                                        <option value="5">5th Year</option>
-                                    </select>
-                                    {formErrors.year && <p className="text-red-500 text-xs mt-1">{formErrors.year}</p>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="department" className="text-gray-700 w-3xs whitespace-nowrap">
-                                    Department
-                                </label>
-                                <div className="w-full">
-                                    <input
-                                        type="text"
-                                        id="department"
-                                        value={formData.department}
-                                        onChange={handleChange}
-                                        placeholder="Enter your department"
-                                        required
-                                        className={`border ${formErrors.department ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    />
-                                    {formErrors.department && <p className="text-red-500 text-xs mt-1">{formErrors.department}</p>}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row gap-1">
-                                <label htmlFor="usn" className="text-gray-700 w-3xs whitespace-nowrap">
-                                    USN
-                                </label>
-                                <div className="w-full">
-                                    <input
-                                        type="text"
-                                        id="usn"
-                                        value={formData.usn}
-                                        onChange={handleChange}
-                                        placeholder="Enter your USN"
-                                        required
-                                        className={`border ${formErrors.usn ? "border-red-500" : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                    />
-                                    {formErrors.usn && <p className="text-red-500 text-xs mt-1">{formErrors.usn}</p>}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-row justify-center gap-4 mt-4">
+                        <div className="flex justify-center mt-6">
                             <button
                                 type="submit"
-                                className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 cursor-pointer disabled:opacity-70"
+                                className="bg-pink-800 text-white py-2 px-6 rounded-full hover:bg-pink-700 cursor-pointer disabled:opacity-70"
                             >
                                 Proceed to Payment
                             </button>
@@ -822,7 +887,9 @@ const Register = () => {
                                     </div>
 
                                     <div className="flex flex-col gap-3">
-                                        <p className="text-sm text-gray-700 font-medium">After payment, please enter your transaction details:</p>
+                                        <p className="text-sm text-gray-700 font-medium">
+                                            After payment, please enter your transaction details:
+                                        </p>
 
                                         <div>
                                             <label htmlFor="transactionId" className="text-gray-700 text-sm">
@@ -837,7 +904,9 @@ const Register = () => {
                                                 className={`border ${formErrors.transactionId ? "border-red-500" : "border-gray-300"
                                                     } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                             />
-                                            {formErrors.transactionId && <p className="text-red-500 text-xs mt-1">{formErrors.transactionId}</p>}
+                                            {formErrors.transactionId && (
+                                                <p className="text-red-500 text-xs mt-1">{formErrors.transactionId}</p>
+                                            )}
                                         </div>
 
                                         <div>
@@ -1000,8 +1069,18 @@ const Register = () => {
                     </div>
                 )}
             </div>
+            <div className="h-96 w-64 bg-transparent absolute bottom-0 left-0 hidden md:block">
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                        backgroundImage: "url('/register-ch.png')",
+                        backgroundSize: "contain",
+                        backgroundRepeat: "no-repeat",
+                    }}
+                ></div>
+            </div>
         </div>
-    );
-};
+    )
+}
 
-export default Register;
+export default Register
