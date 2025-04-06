@@ -76,7 +76,7 @@ const Login = () => {
                         />
                     </div>
                     <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-                        <button 
+                        <button
                             type="submit"
                             disabled={isLoading}
                             className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 w-full sm:w-32 cursor-pointer disabled:opacity-70">

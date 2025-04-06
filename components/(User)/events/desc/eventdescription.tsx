@@ -191,11 +191,10 @@ const Eventdescription = ({
 
                         <button
                             onClick={addToCart}
-                            className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${
-                                isInCart
+                            className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${isInCart
                                     ? "bg-green-600 hover:bg-green-700"
                                     : "bg-blue-600 hover:bg-blue-700"
-                            } text-white`}
+                                } text-white`}
                         >
                             {isInCart ? (
                                 <Check className="h-5 w-5" />

@@ -94,7 +94,7 @@ export default function Navbar() {
                                 Events
                                 <FaChevronDown className="ml-1 text-sm" />
                             </button>
-                            
+
                             <div
                                 className={`absolute left-0 mt-2 w-48 bg-gray-900 rounded-lg shadow-lg overflow-hidden transform transition-all duration-200 origin-top-left ${eventsDropdownOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
                                     }`}
@@ -115,7 +115,7 @@ export default function Navbar() {
                             </div>
                         </li>
                     </ul>
-                    
+
                     <div className="hidden md:block">
                         {isLoggedIn ? (
                             <Link href="/profile">
