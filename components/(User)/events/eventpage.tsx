@@ -33,8 +33,8 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
             </h1>
 
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
+                <div className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[9/16] w-60 bg-cover bg-center cursor-pointer transition-transform hover:scale-105">
+                    {Array.from({ length: 20 }).map((_, i) => (
                         <div key={i} className="relative">
                             <Skeleton className="w-90 h-100 rounded-4xl"></Skeleton>
                         </div>

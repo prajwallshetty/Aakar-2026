@@ -1,65 +1,405 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import Select from "react-select";
-import { GroupBase, OptionsOrGroups } from "react-select";
-import { createParticipant } from "@/backend/participant";
-import { useRouter } from "next/navigation";
-import { signIn } from "@/auth";
-import { getEventOptions } from "@/backend/events";
-import { Skeleton } from "@/components/ui/skeleton";
+import type React from "react"
+import { useEffect, useState } from "react"
+import { createParticipant } from "@/backend/participant"
+import { signIn } from "@/auth"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/navigation"
 
 const Register = () => {
-    const router = useRouter();
-    const [isRegistering, setIsRegistering] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter()
+    const [isRegistering, setIsRegistering] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [formErrors, setFormErrors] = useState<{
-        [key: string]: string | undefined;
-    }>({});
-    const [generalError, setGeneralError] = useState("");
+        [key: string]: string | undefined
+    }>({})
+    const [generalError, setGeneralError] = useState("")
+    const [totalAmount, setTotalAmount] = useState(0)
+    const [showQRCode, setShowQRCode] = useState(false)
+    const [qrImageUrl, setQrImageUrl] = useState("")
+    const [paymentStep, setPaymentStep] = useState("details")
 
     // Form state
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        password: "",
         phone: "",
         college: "",
         year: "",
         department: "",
         usn: "",
-    });
+        transactionId: "",
+        paymentScreenshot: null as File | null,
+    })
 
-    const [selectedEvents, setSelectedEvents] = useState<
-        { value: string; label: string }[]
-    >([]);
-    const [events, setEvents] = useState<
-        OptionsOrGroups<
-            { value: string; label: string },
-            GroupBase<{ value: string; label: string }>
-        >
-    >([]);
+    // Cart and events state
+    const [cartEvents, setCartEvents] = useState<any[]>([])
+    const [selectedEvents, setSelectedEvents] = useState<string[]>([])
+    const [groupEventData, setGroupEventData] = useState<{
+        [groupId: string]: {
+            participantCount: number
+            members: { name: string; usn: string; email: string }[]
+        }
+    }>({})
 
     // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = e.target;
+        const { id, value } = e.target
         setFormData((prev) => ({
             ...prev,
             [id]: value,
-        }));
+        }))
 
         if (formErrors[id]) {
             setFormErrors((prev) => ({
                 ...prev,
                 [id]: undefined,
-            }));
+            }))
         }
-    };
-  
-    const handleSelectChange = (selectedOptions: any) => {
-        setSelectedEvents(selectedOptions || []);
-    };
+    }
+
+    // Handle select changes
+    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { id, value } = e.target
+        setFormData((prev) => ({
+            ...prev,
+            [id]: value,
+        }))
+
+        if (formErrors[id]) {
+            setFormErrors((prev) => ({
+                ...prev,
+                [id]: undefined,
+            }))
+        }
+    }
+
+    // Handle event selection
+    const handleEventSelection = (selectedOptions: string[]) => {
+        setSelectedEvents(selectedOptions)
+
+        // Update cart events based on selection
+        const selected = cartEvents.filter((event) => selectedOptions.includes(event.id))
+
+        // Initialize group event data for newly selected group events
+        const newGroupData = { ...groupEventData }
+
+        selected.forEach((event) => {
+            if (event.type === "group" && !newGroupData[event.id]) {
+                newGroupData[event.id] = {
+                    participantCount: 1,
+                    members: [{ name: "", usn: "", email: "" }],
+                }
+            }
+        })
+
+        // Remove group data for unselected events
+        Object.keys(newGroupData).forEach((groupId) => {
+            if (!selectedOptions.includes(groupId)) {
+                delete newGroupData[groupId]
+            }
+        })
+
+        setGroupEventData(newGroupData)
+
+        // Calculate total amount
+        const amount = selected.reduce((sum, event) => sum + (event.price || 0), 0)
+        setTotalAmount(amount)
+    }
+
+    // Handle participant count change
+    const handleParticipantCountChange = (groupId: string, count: number) => {
+        const currentMembers = groupEventData[groupId]?.members || []
+        const newCount = Math.max(1, count)
+
+        let newMembers = [...currentMembers]
+
+        // Add or remove members based on new count
+        if (newCount > currentMembers.length) {
+            // Add empty members
+            for (let i = currentMembers.length; i < newCount; i++) {
+                newMembers.push({ name: "", usn: "", email: "" })
+            }
+        } else if (newCount < currentMembers.length) {
+            // Remove excess members
+            newMembers = newMembers.slice(0, newCount)
+        }
+
+        setGroupEventData((prev) => ({
+            ...prev,
+            [groupId]: {
+                participantCount: newCount,
+                members: newMembers,
+            },
+        }))
+    }
+
+    // Handle file upload
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setFormData((prev) => ({
+                ...prev,
+                paymentScreenshot: e.target.files![0],
+            }))
+        }
+    }
+
+    // Handle group member changes
+    const handleGroupMemberChange = (groupId: string, index: number, field: string, value: string) => {
+        setGroupEventData((prev) => {
+            const updatedMembers = [...prev[groupId].members]
+            updatedMembers[index] = {
+                ...updatedMembers[index],
+                [field]: value,
+            }
+            return {
+                ...prev,
+                [groupId]: {
+                    ...prev[groupId],
+                    members: updatedMembers,
+                },
+            }
+        })
+    }
+
+    // Generate QR code based on selected events
+    const generateQRCode = () => {
+        // Calculate total amount based on selected events
+        const amount =
+            selectedEvents.length > 0
+                ? cartEvents
+                    .filter((event) => selectedEvents.includes(event.id))
+                    .reduce((sum, event) => sum + (event.price || 0), 0)
+                : 0
+
+        setTotalAmount(amount)
+
+        // UPI ID for Google Pay - Replace with your actual Google Pay UPI ID
+        const upiId = "yourname@okicici" // Replace with your actual UPI ID
+        const payeeName = "Tech Fest Registration"
+        const transactionNote = "Event Registration Payment"
+
+        // Create UPI payment URL for Google Pay
+        // Format: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=CURRENCY&tn=NOTE
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`
+
+        // Generate QR code using QR code API service
+        setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`)
+        setShowQRCode(true)
+    }
+
+    // Proceed to payment step
+    const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        // Basic validation
+        const errors: { [key: string]: string } = {}
+
+        if (!formData.name) errors.name = "Name is required"
+        if (!formData.email) errors.email = "Email is required"
+        if (!formData.phone) errors.phone = "Phone number is required"
+        if (!formData.college) errors.college = "College name is required"
+        if (!formData.year) errors.year = "Year is required"
+        if (!formData.department) errors.department = "Department is required"
+        if (!formData.usn) errors.usn = "USN is required"
+
+        if (selectedEvents.length === 0) {
+            errors.events = "Please select at least one event"
+        }
+
+        // Validate group members if applicable
+        Object.keys(groupEventData).forEach((groupId) => {
+            if (selectedEvents.includes(groupId)) {
+                groupEventData[groupId].members.forEach((member, index) => {
+                    if (!member.name) {
+                        errors[`group_${groupId}_member_${index}_name`] = "Member name is required"
+                    }
+                    if (!member.usn) {
+                        errors[`group_${groupId}_member_${index}_usn`] = "Member USN is required"
+                    }
+                    if (!member.email) {
+                        errors[`group_${groupId}_member_${index}_email`] = "Member Email is required"
+                    }
+                })
+            }
+        })
+
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors)
+            return
+        }
+
+        // If validation passes, proceed to payment
+        setPaymentStep("payment")
+        generateQRCode()
+    }
+
+    // Handle payment verification step
+    const proceedToVerification = () => {
+        if (!formData.transactionId) {
+            setFormErrors({ transactionId: "Transaction ID is required" })
+            return
+        }
+
+        if (!formData.paymentScreenshot) {
+            setFormErrors({ paymentScreenshot: "Payment screenshot is required" })
+            return
+        }
+
+        setPaymentStep("verification")
+    }
+
+    // Handle form submission (final step)
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setIsRegistering(true)
+        setFormErrors({})
+        setGeneralError("")
+
+        try {
+            // Create event data structure in the format requested
+            const eventData: {
+                single: string[]
+                group: {
+                    [key: string]: {
+                        name: string
+                        usn: string
+                        email: string
+                    }[]
+                }
+            } = {
+                single: [],
+                group: {},
+            }
+
+            // Format the events data according to the requested structure
+            selectedEvents.forEach((eventId) => {
+                const event = cartEvents.find((e) => e.id === eventId)
+                if (event) {
+                    if (event.type === "single") {
+                        eventData.single.push(eventId)
+                    } else if (event.type === "group") {
+                        // Format group event data with members
+                        eventData.group[eventId] = groupEventData[eventId]?.members || []
+                    }
+                }
+            })
+
+            // Create the participant data object
+            const participantData = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                college: formData.college,
+                year: formData.year,
+                department: formData.department,
+                usn: formData.usn,
+                events: eventData,
+                payment: {
+                    amount: totalAmount,
+                    transactionId: formData.transactionId,
+                },
+            }
+
+            // For file upload handling, create a FormData object
+            const formDataObj = new FormData()
+            formDataObj.append("participantData", JSON.stringify(participantData))
+
+            // Add the payment screenshot if available
+            if (formData.paymentScreenshot) {
+                formDataObj.append("paymentScreenshot", formData.paymentScreenshot)
+            }
+
+            // Call your backend function to create the participant
+            const { data, error } = await createParticipant(participantData, formData.paymentScreenshot)
+
+            if (error) {
+                setIsRegistering(false)
+
+                // Handle different error formats
+                if (typeof error === "object") {
+                    // Field-specific errors
+                    setFormErrors(error)
+                } else {
+                    // General error message
+                    setGeneralError(error)
+                }
+                return
+            }
+
+            // After successful registration, sign in the user
+            const signInResult = await signIn("credentials", {
+                email: formData.email,
+                redirect: false,
+            })
+
+            if (signInResult?.error) {
+                setGeneralError(
+                    "Registration successful, but there was an issue signing in. Please check your email for confirmation and details.",
+                )
+                router.push("/registration-success")
+            } else {
+                // Successful registration and login
+                router.push("/registration-success")
+                router.refresh()
+            }
+        } catch (error) {
+            setGeneralError("Something went wrong during registration. Please try again.")
+            console.error("Registration error:", error)
+            setIsRegistering(false)
+        }
+    }
+
+    // Fetch cart data on component mount
+    useEffect(() => {
+        const fetchCartData = async () => {
+            setIsLoading(true)
+            try {
+                // Get cart data from localStorage or your state management solution
+                const cartData = localStorage.getItem("eventCart")
+                if (cartData) {
+                    const events = JSON.parse(cartData)
+                    setCartEvents(events)
+
+                    // If there are already selected events, update the selection
+                    const currentSelection = localStorage.getItem("selectedEvents")
+                    if (currentSelection) {
+                        const selectedIds = JSON.parse(currentSelection)
+                        setSelectedEvents(selectedIds)
+
+                        // Initialize group event data for selected group events
+                        const newGroupData = { ...groupEventData }
+                        events.forEach((event: any) => {
+                            if (event.type === "group" && selectedIds.includes(event.id) && !newGroupData[event.id]) {
+                                newGroupData[event.id] = {
+                                    participantCount: 1,
+                                    members: [{ name: "", usn: "", email: "" }],
+                                }
+                            }
+                        })
+                        setGroupEventData(newGroupData)
+
+                        // Calculate total amount
+                        const selected = events.filter((event: any) => selectedIds.includes(event.id))
+                        const amount = selected.reduce((sum: number, event: any) => sum + (event.price || 0), 0)
+                        setTotalAmount(amount)
+                    }
+                } else {
+                    // Set empty events array instead of redirecting
+                    setCartEvents([])
+                }
+            } catch (error) {
+                console.error("Error fetching cart data:", error)
+                setGeneralError("Failed to load event data. Please try again.")
+                // Set empty events array on error
+                setCartEvents([])
+            }
+            setIsLoading(false)
+        }
+
+        fetchCartData()
+    }, [])
 
     // College List
     const colleges: string[] = [
@@ -116,103 +456,26 @@ const Register = () => {
         "S NM Polytechnic, Moodbidri",
         "Udupi Group of Institutions",
         "Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi",
-    ];
-
-    // Handle form submission
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsRegistering(true);
-        setFormErrors({});
-        setGeneralError("");
-
-        try {
-            //Todo: fix group and events
-            // Extract events from the selected options
-            const events = selectedEvents.map((event) => parseInt(event.value));
-
-            // Create the participant data object
-            const participantData = {
-                ...formData,
-                events,
-            };
-
-            // Call your backend function to create the participant
-            const { data, error } = await createParticipant(formData);
-
-            if (error) {
-                setIsRegistering(false);
-
-                // Handle different error formats
-                if (typeof error === "object") {
-                    // Field-specific errors
-                    setFormErrors(error);
-                } else {
-                    // General error message
-                    setGeneralError(error);
-                }
-                return;
-            }
-
-            // After successful registration, sign in the user
-            const signInResult = await signIn("credentials", {
-                email: formData.email,
-                password: formData.password,
-                redirect: false,
-            });
-
-            if (signInResult?.error) {
-                setGeneralError(
-                    "Registration successful, but there was an issue signing in. Please try logging in."
-                );
-                router.push("/login");
-            } else {
-                // Successful registration and login
-                router.push("/dashboard");
-                router.refresh();
-            }
-        } catch (error) {
-            setGeneralError(
-                "Something went wrong during registration. Please try again."
-            );
-            console.error("Registration error:", error);
-            setIsRegistering(false);
-        }
-    };
-
-    useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            const events = await getEventOptions();
-            setEvents(events);
-            setIsLoading(false);
-        })();
-    }, []);
+    ]
 
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen px-4 md:px-8 py-8 md:py-12 relative">
                 <div className="flex flex-col bg-white w-200 p-6 rounded shadow-md space-y-4">
                     <Skeleton className="h-6 bg-gray-300 rounded w-1/3 mx-auto"></Skeleton>
-
                     <Skeleton className="h-4 bg-gray-200 rounded w-2/3 self-end mb-2"></Skeleton>
-
                     {[...Array(9)].map((_, index) => (
-                        <div
-                            key={index}
-                            className="flex flex-col md:flex-row gap-1"
-                        >
+                        <div key={index} className="flex flex-col md:flex-row gap-1">
                             <Skeleton className="bg-gray-200 h-5 w-32 rounded"></Skeleton>
                             <div className="w-full">
                                 <Skeleton className="h-10 bg-gray-200 rounded"></Skeleton>
                             </div>
                         </div>
                     ))}
-
                     <div className="flex justify-center">
                         <Skeleton className="h-10 w-32 bg-gray-300 rounded-full"></Skeleton>
                     </div>
                 </div>
-
                 <div className="h-96 w-64 bg-transparent absolute bottom-0 left-0 hidden md:block">
                     <div
                         className="absolute inset-0 bg-cover bg-center"
@@ -224,307 +487,587 @@ const Register = () => {
                     ></div>
                 </div>
             </div>
-        );
+        )
     }
 
     return (
         <div className="flex items-center justify-center min-h-screen px-4 md:px-8 py-8 md:py-12 relative">
             <div className="flex flex-col bg-white w-200 p-6 rounded shadow-md">
                 <h2 className="text-black text-lg font-semibold mb-4 flex justify-center">
-                    Register
+                    {paymentStep === "details" && "Register"}
+                    {paymentStep === "payment" && "Make Payment"}
+                    {paymentStep === "verification" && "Verify Payment"}
                 </h2>
-                <p className="text-gray-600 text-md mb-4 flex justify-end">
-                    Already have an account?&nbsp;
-                    <Link href="/login" className="underline text-black">
-                        {" "}
-                        Login
-                    </Link>
-                </p>
 
-                {generalError && (
-                    <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-                        {generalError}
-                    </div>
+                {generalError && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{generalError}</div>}
+
+                {paymentStep === "details" && (
+                    <form className="flex flex-col gap-4" onSubmit={proceedToPayment}>
+                        <h3 className="font-semibold">Event Registration</h3>
+
+                        {/* Personal Details */}
+                        <div className="flex flex-col gap-4 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="name" className="text-gray-700">
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        placeholder="Enter your name"
+                                        required
+                                        className={`border ${formErrors.name ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="email" className="text-gray-700">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        placeholder="Enter your email"
+                                        required
+                                        className={`border ${formErrors.email ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="phone" className="text-gray-700">
+                                        Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        placeholder="Enter your phone number"
+                                        required
+                                        className={`border ${formErrors.phone ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="usn" className="text-gray-700">
+                                        USN
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="usn"
+                                        value={formData.usn}
+                                        onChange={handleChange}
+                                        placeholder="Enter your USN"
+                                        required
+                                        className={`border ${formErrors.usn ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.usn && <p className="text-red-500 text-xs mt-1">{formErrors.usn}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="college" className="text-gray-700">
+                                        College Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="college"
+                                        list="collegeList"
+                                        value={formData.college}
+                                        onChange={handleChange}
+                                        placeholder="Search or enter your college"
+                                        required
+                                        className={`border ${formErrors.college ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.college && <p className="text-red-500 text-xs mt-1">{formErrors.college}</p>}
+                                    <datalist id="collegeList">
+                                        {colleges.map((college) => (
+                                            <option key={college} value={college} className="cursor-pointer">
+                                                {college}
+                                            </option>
+                                        ))}
+                                    </datalist>
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="year" className="text-gray-700">
+                                        Year
+                                    </label>
+                                    <input
+                                        id="year"
+                                        value={formData.year}
+                                        placeholder="Enter your year"
+                                        onChange={handleChange}
+                                        required
+                                        className={`border ${formErrors.year ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.year && <p className="text-red-500 text-xs mt-1">{formErrors.year}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="department" className="text-gray-700">
+                                        Department
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="department"
+                                        value={formData.department}
+                                        onChange={handleChange}
+                                        placeholder="Enter your department"
+                                        required
+                                        className={`border ${formErrors.department ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                    />
+                                    {formErrors.department && <p className="text-red-500 text-xs mt-1">{formErrors.department}</p>}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Event Selection */}
+                        <div className="flex flex-col gap-4 mt-4">
+                            <h3 className="font-semibold">Event Selection</h3>
+
+                            {/* Display Already Selected Events from Cache */}
+                            {selectedEvents.length > 0 && (
+                                <div className="mb-4">
+                                    <h4 className="text-sm font-medium mb-2">Selected Events:</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedEvents.map((eventId) => {
+                                            const event = cartEvents.find((e) => e.id === eventId)
+                                            return (
+                                                <div key={eventId} className="bg-pink-100 px-3 py-1 rounded-full flex items-center">
+                                                    <span>
+                                                        {event?.name} - ₹{event?.price || 0}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            // Remove event handler
+                                                            const updatedSelection = selectedEvents.filter((id) => id !== eventId)
+                                                            setSelectedEvents(updatedSelection)
+
+                                                            // Remove group data if it's a group event
+                                                            if (groupEventData[eventId]) {
+                                                                setGroupEventData((prev) => {
+                                                                    const updated = { ...prev }
+                                                                    delete updated[eventId]
+                                                                    return updated
+                                                                })
+                                                            }
+
+                                                            // Update total amount
+                                                            const selected = cartEvents.filter((event) => updatedSelection.includes(event.id))
+                                                            const amount = selected.reduce((sum, event) => sum + (event.price || 0), 0)
+                                                            setTotalAmount(amount)
+                                                        }}
+                                                        className="ml-2 text-pink-700 hover:text-pink-900"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <div className="mt-3">
+                                        <p className="font-bold">Total: ₹{totalAmount}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Dropdown to Add More Events */}
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="add-event" className="text-gray-700">
+                                    Add Events
+                                </label>
+                                <select
+                                    id="add-event"
+                                    value=""
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            // Add the selected event if not already added
+                                            if (!selectedEvents.includes(e.target.value)) {
+                                                const newSelection = [...selectedEvents, e.target.value]
+                                                setSelectedEvents(newSelection)
+
+                                                // Update group event data if needed
+                                                const selectedEvent = cartEvents.find((event) => event.id === e.target.value)
+                                                if (selectedEvent?.type === "group") {
+                                                    setGroupEventData((prev) => ({
+                                                        ...prev,
+                                                        [e.target.value]: {
+                                                            participantCount: 1,
+                                                            members: [{ name: "", usn: "", email: "" }],
+                                                        },
+                                                    }))
+                                                }
+
+                                                // Update total amount
+                                                const selected = cartEvents.filter((event) =>
+                                                    [...selectedEvents, e.target.value].includes(event.id),
+                                                )
+                                                const amount = selected.reduce((sum, event) => sum + (event.price || 0), 0)
+                                                setTotalAmount(amount)
+                                            }
+                                            // Reset the dropdown
+                                            e.target.value = ""
+                                        }
+                                    }}
+                                    className="border border-gray-300 rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                >
+                                    <option value="">Select an event to add</option>
+                                    {cartEvents.map((event) => (
+                                        <option key={event.id} value={event.id} disabled={selectedEvents.includes(event.id)}>
+                                            {event.name} - ₹{event.price || 0} ({event.type === "group" ? "Group" : "Individual"})
+                                        </option>
+                                    ))}
+                                </select>
+                                {formErrors.events && <p className="text-red-500 text-xs mt-1">{formErrors.events}</p>}
+                            </div>
+                        </div>
+
+                        {/* Group Events Team Members */}
+                        {selectedEvents.length > 0 && (
+                            <div className="mt-4">
+                                {selectedEvents.map((eventId) => {
+                                    const event = cartEvents.find((e) => e.id === eventId)
+                                    if (event?.type !== "group") return null
+
+                                    const groupData = groupEventData[eventId] || {
+                                        participantCount: 1,
+                                        members: [{ name: "", usn: "", email: "" }],
+                                    }
+
+                                    return (
+                                        <div key={eventId} className="mb-6 p-4 border rounded-lg bg-gray-50">
+                                            <h4 className="font-medium mb-3">{event.name} - Team Details</h4>
+
+                                            <div className="mb-4">
+                                                <label htmlFor={`participant-count-${eventId}`} className="text-gray-700 text-sm block mb-1">
+                                                    Number of Team Members
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`participant-count-${eventId}`}
+                                                    min="1"
+                                                    max="10"
+                                                    value={groupData.participantCount}
+                                                    onChange={(e) => handleParticipantCountChange(eventId, Number.parseInt(e.target.value) || 1)}
+                                                    className="border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                                />
+                                            </div>
+
+                                            {groupData.members.map((member, index) => (
+                                                <div key={index} className="mb-4 p-3 border rounded-md bg-white">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <p className="font-medium text-sm">Team Member {index + 1}</p>
+                                                        {index > 0 && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const updatedMembers = [...groupData.members]
+                                                                    updatedMembers.splice(index, 1)
+                                                                    setGroupEventData((prev) => ({
+                                                                        ...prev,
+                                                                        [eventId]: {
+                                                                            ...prev[eventId],
+                                                                            participantCount: prev[eventId].participantCount - 1,
+                                                                            members: updatedMembers,
+                                                                        },
+                                                                    }))
+                                                                }}
+                                                                className="text-red-500 text-sm hover:text-red-700"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                        <div>
+                                                            <label className="text-xs text-gray-500">Full Name</label>
+                                                            <input
+                                                                type="text"
+                                                                value={member.name}
+                                                                onChange={(e) => handleGroupMemberChange(eventId, index, "name", e.target.value)}
+                                                                placeholder="Member Name"
+                                                                required
+                                                                className={`border ${formErrors[`group_${eventId}_member_${index}_name`] ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                            />
+                                                            {formErrors[`group_${eventId}_member_${index}_name`] && (
+                                                                <p className="text-red-500 text-xs mt-1">
+                                                                    {formErrors[`group_${eventId}_member_${index}_name`]}
+                                                                </p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="text-xs text-gray-500">USN</label>
+                                                            <input
+                                                                type="text"
+                                                                value={member.usn}
+                                                                onChange={(e) => handleGroupMemberChange(eventId, index, "usn", e.target.value)}
+                                                                placeholder="Member USN"
+                                                                required
+                                                                className={`border ${formErrors[`group_${eventId}_member_${index}_usn`] ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                            />
+                                                            {formErrors[`group_${eventId}_member_${index}_usn`] && (
+                                                                <p className="text-red-500 text-xs mt-1">
+                                                                    {formErrors[`group_${eventId}_member_${index}_usn`]}
+                                                                </p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="text-xs text-gray-500">Email</label>
+                                                            <input
+                                                                type="text"
+                                                                value={member.email}
+                                                                onChange={(e) => handleGroupMemberChange(eventId, index, "email", e.target.value)}
+                                                                placeholder="Member Email"
+                                                                required
+                                                                className={`border ${formErrors[`group_${eventId}_member_${index}_email`] ? "border-red-500" : "border-gray-300"} rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                            />
+                                                            {formErrors[`group_${eventId}_member_${index}_email`] && (
+                                                                <p className="text-red-500 text-xs mt-1">
+                                                                    {formErrors[`group_${eventId}_member_${index}_email`]}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
+
+                        <div className="flex justify-center mt-6">
+                            <button
+                                type="submit"
+                                className="bg-pink-800 text-white py-2 px-6 rounded-full hover:bg-pink-700 cursor-pointer disabled:opacity-70"
+                            >
+                                Proceed to Payment
+                            </button>
+                        </div>
+                    </form>
                 )}
 
-                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="name"
-                            className="text-gray-700 w-3xs whitespace-nowrap"
-                        >
-                            Full Name
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="text"
-                                id="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="Enter your name"
-                                required
-                                className={`border ${
-                                    formErrors.name
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.name && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.name}
-                                </p>
+                {paymentStep === "payment" && (
+                    <div className="flex flex-col gap-4">
+                        <div className="text-center mb-4">
+                            {paymentStep === "payment" && (
+                                <div className="flex flex-col gap-4">
+                                    <div className="text-center mb-4">
+                                        <p className="font-bold text-lg">Total Amount: ₹{totalAmount}</p>
+                                        <p className="text-gray-600">Please scan the QR code to make payment</p>
+                                    </div>
+
+                                    <div className="flex justify-center mb-4">
+                                        {showQRCode ? (
+                                            <img src={qrImageUrl || "/placeholder.svg"} alt="Payment QR Code" className="w-64 h-64 border" />
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-3">
+                                                <p className="text-gray-700">Click the button below to generate payment QR code</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={generateQRCode}
+                                                    className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                                >
+                                                    Generate QR Code
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-sm text-gray-700 font-medium">
+                                            After payment, please enter your transaction details:
+                                        </p>
+
+                                        <div>
+                                            <label htmlFor="transactionId" className="text-gray-700 text-sm">
+                                                Transaction ID / Reference Number
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="transactionId"
+                                                value={formData.transactionId}
+                                                onChange={handleChange}
+                                                placeholder="Enter transaction ID"
+                                                className={`border ${formErrors.transactionId ? "border-red-500" : "border-gray-300"
+                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                            />
+                                            {formErrors.transactionId && (
+                                                <p className="text-red-500 text-xs mt-1">{formErrors.transactionId}</p>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="paymentScreenshot" className="text-gray-700 text-sm">
+                                                Upload Payment Screenshot
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="paymentScreenshot"
+                                                accept="image/*"
+                                                onChange={handleFileUpload}
+                                                className={`border ${formErrors.paymentScreenshot ? "border-red-500" : "border-gray-300"
+                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                            />
+                                            {formErrors.paymentScreenshot && (
+                                                <p className="text-red-500 text-xs mt-1">{formErrors.paymentScreenshot}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-row justify-center gap-4 mt-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPaymentStep("details")}
+                                            className="bg-gray-300 text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
+                                        >
+                                            Back
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={proceedToVerification}
+                                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                        >
+                                            Verify Payment
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {paymentStep === "verification" && (
+                                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                                    <div className="text-center mb-4">
+                                        <p className="font-medium">Please review your details before submitting</p>
+                                    </div>
+
+                                    {/* Display review information */}
+                                    <div className="border rounded p-4 mb-4">
+                                        <h3 className="font-semibold mb-2">Personal Information</h3>
+                                        <ul className="text-sm space-y-1">
+                                            <li>
+                                                <span className="font-medium">Name:</span> {formData.name}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">Email:</span> {formData.email}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">Phone:</span> {formData.phone}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">College:</span> {formData.college}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">USN:</span> {formData.usn}
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="border rounded p-4 mb-4">
+                                        <h3 className="font-semibold mb-2">Selected Events</h3>
+                                        <ul className="text-sm space-y-1">
+                                            {selectedEvents.map((eventId) => {
+                                                const event = cartEvents.find((e) => e.id === eventId)
+                                                return event ? (
+                                                    <li key={eventId}>
+                                                        <span className="font-medium">{event.name}</span> - ₹{event.price || 0}
+                                                        {event.type === "group" && groupEventData[eventId] && (
+                                                            <ul className="ml-4 mt-1 text-xs text-gray-600">
+                                                                {groupEventData[eventId].members.map((member, idx) => (
+                                                                    <li key={idx}>
+                                                                        Member {idx + 1}: {member.name} ({member.usn} - {member.email})
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        )}
+                                                    </li>
+                                                ) : null
+                                            })}
+                                        </ul>
+                                        <p className="font-bold mt-2">Total: ₹{totalAmount}</p>
+                                    </div>
+
+                                    <div className="border rounded p-4 mb-4">
+                                        <h3 className="font-semibold mb-2">Payment Information</h3>
+                                        <ul className="text-sm space-y-1">
+                                            <li>
+                                                <span className="font-medium">Transaction ID:</span> {formData.transactionId}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">Payment Screenshot:</span>{" "}
+                                                {formData.paymentScreenshot?.name || "No file selected"}
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="flex flex-row justify-center gap-4 mt-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPaymentStep("payment")}
+                                            className="bg-gray-300 text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
+                                        >
+                                            Back
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={isRegistering}
+                                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 disabled:opacity-70 flex items-center gap-2"
+                                        >
+                                            {isRegistering ? (
+                                                <>
+                                                    <svg
+                                                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <circle
+                                                            className="opacity-25"
+                                                            cx="12"
+                                                            cy="12"
+                                                            r="10"
+                                                            stroke="currentColor"
+                                                            strokeWidth="4"
+                                                        ></circle>
+                                                        <path
+                                                            className="opacity-75"
+                                                            fill="currentColor"
+                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                        ></path>
+                                                    </svg>
+                                                    Registering...
+                                                </>
+                                            ) : (
+                                                "Complete Registration"
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
                             )}
                         </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label htmlFor="email" className="text-gray-700 w-3xs">
-                            Email
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Enter your email"
-                                required
-                                className={`border ${
-                                    formErrors.email
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.email && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.email}
-                                </p>
-                            )}
+                        <div className="h-96 w-64 bg-transparent absolute bottom-0 left-0 hidden md:block">
+                            <div
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{
+                                    backgroundImage: "url('/register-ch.png')",
+                                    backgroundSize: "contain",
+                                    backgroundRepeat: "no-repeat",
+                                }}
+                            ></div>
                         </div>
                     </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="password"
-                            className="text-gray-700 w-3xs"
-                        >
-                            Password
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="password"
-                                id="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Enter your password"
-                                required
-                                className={`border ${
-                                    formErrors.password
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.password && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.password}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="phone"
-                            className="text-gray-700 w-3xs whitespace-nowrap"
-                        >
-                            Phone Number
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="tel"
-                                id="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                placeholder="Enter your phone number"
-                                required
-                                className={`border ${
-                                    formErrors.phone
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.phone && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.phone}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="event"
-                            className="text-gray-700 w-3xs whitespace-nowrap"
-                        >
-                            Select Event
-                        </label>
-                        <div className="w-full">
-                            <Select
-                                id="events"
-                                instanceId="events-select"
-                                options={events}
-                                isMulti
-                                value={selectedEvents}
-                                onChange={handleSelectChange}
-                                placeholder="Select event(s)..."
-                                className={`${
-                                    formErrors.events ? "border-red-500" : ""
-                                } w-full`}
-                                classNamePrefix="select"
-                            />
-                            {formErrors.events && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.events}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="college"
-                            className="text-gray-700 w-3xs whitespace-nowrap"
-                        >
-                            College Name
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="text"
-                                id="college"
-                                list="collegeList"
-                                value={formData.college}
-                                onChange={handleChange}
-                                placeholder="Search or enter your college"
-                                required
-                                className={`border ${
-                                    formErrors.college
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full md:w-1xl focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.college && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.college}
-                                </p>
-                            )}
-                            <datalist id="collegeList">
-                                {colleges.map((college) => (
-                                    <option
-                                        key={college}
-                                        value={college}
-                                        className="cursor-pointer"
-                                    >
-                                        {college}
-                                    </option>
-                                ))}
-                            </datalist>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label htmlFor="year" className="text-gray-700 w-3xs">
-                            Year
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="text"
-                                id="year"
-                                value={formData.year}
-                                onChange={handleChange}
-                                placeholder="Enter the year of study"
-                                required
-                                className={`border ${
-                                    formErrors.year
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.year && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.year}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="department"
-                            className="text-gray-700 w-3xs whitespace-nowrap"
-                        >
-                            Department
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="text"
-                                id="department"
-                                value={formData.department}
-                                onChange={handleChange}
-                                placeholder="Enter your department"
-                                required
-                                className={`border ${
-                                    formErrors.department
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.department && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.department}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-1">
-                        <label
-                            htmlFor="usn"
-                            className="text-gray-700 w-3xs whitespace-nowrap"
-                        >
-                            USN
-                        </label>
-                        <div className="w-full">
-                            <input
-                                type="text"
-                                id="usn"
-                                value={formData.usn}
-                                onChange={handleChange}
-                                placeholder="Enter your USN"
-                                required
-                                className={`border ${
-                                    formErrors.usn
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                            />
-                            {formErrors.usn && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {formErrors.usn}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-row justify-center gap-4">
-                        <button
-                            type="submit"
-                            disabled={isRegistering}
-                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 cursor-pointer disabled:opacity-70"
-                        >
-                            {isRegistering ? "Registering..." : "Register"}
-                        </button>
-                    </div>
-                </form>
+                )}
             </div>
             <div className="h-96 w-64 bg-transparent absolute bottom-0 left-0 hidden md:block">
                 <div
@@ -537,7 +1080,7 @@ const Register = () => {
                 ></div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Register;
+export default Register
