@@ -4,7 +4,7 @@ import React from 'react'
 const page = () => {
   return (
     <div>
-      <Eventpage eventType='Gaming'/>
+      <Eventpage eventCategory='Gaming'/>
     </div>
   )
 }

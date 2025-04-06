@@ -1,5 +1,5 @@
 "use server"
-import { eventType, Prisma } from "@prisma/client";
+import { eventCategory, eventType, Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { GroupBase, OptionsOrGroups } from "react-select";
@@ -45,11 +45,11 @@ export async function getAllEvents() {
 }
 
 // Get events by type
-export async function getEventsByType(eventType: eventType) {
+export async function getEventsByCategory(eventCategory: eventCategory) {
     try {
         return await db.event.findMany({
             where: {
-                eventType
+                eventCategory
             },
             orderBy: {
                 date: "asc"
@@ -66,24 +66,25 @@ export async function getEventOptions(): Promise<OptionsOrGroups<
     GroupBase<{ value: string; label: string }>
 >> {
     try {
-        const eventTypes = await db.event.findMany({
+        const eventCategorys = await db.event.findMany({
             select: {
-                eventType: true,
+                eventCategory: true,
             },
-            distinct: ["eventType"],
+            distinct: ["eventCategory"],
         });
 
-        const mappedOptions = await Promise.all(eventTypes.map(async (e) => {
-            let events = await getEventsByType(e.eventType);
+        const mappedOptions = await Promise.all(eventCategorys.map(async (e) => {
+            let events = await getEventsByCategory(e.eventCategory);
             let ne = events?.map((event) => {
                 return {
                     value: event.id.toString(),
                     label: event.eventName,
+                    type: event.eventType
                 }
             })
             return {
-                label: e.eventType,
-                options: []
+                label: e.eventCategory,
+                options: ne
             }
         }));
 
