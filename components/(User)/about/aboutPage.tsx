@@ -70,7 +70,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* About AAKAR Section */}
           <div className="rounded-xl overflow-hidden p-6 md:p-10">
             <h2 className="text-4xl font-bold text-center text-white mb-8">
               About AAKAR
@@ -113,7 +112,6 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Video Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
           <div className="bg-black rounded-2xl overflow-hidden max-w-3xl w-full">

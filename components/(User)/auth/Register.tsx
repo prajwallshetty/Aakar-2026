@@ -49,7 +49,6 @@ const Register = () => {
             [id]: value,
         }));
 
-        // Clear the error for this field when user starts typing
         if (formErrors[id]) {
             setFormErrors((prev) => ({
                 ...prev,
@@ -57,7 +56,7 @@ const Register = () => {
             }));
         }
     };
-
+  
     const handleSelectChange = (selectedOptions: any) => {
         setSelectedEvents(selectedOptions || []);
     };
