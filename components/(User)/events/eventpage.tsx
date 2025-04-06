@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Event, eventType } from "@prisma/client";
 import { getEventsByType } from "@/backend/events";
+import { ExtendedEvent } from "@/types";
 
 const Eventpage = ({ eventType }: { eventType: eventType }) => {
-    const [events, setEvents] = useState<Event[]>([]);
+    const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -35,27 +36,21 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
                     {Array.from({ length: 6 }).map((_, i) => (
                         <div key={i} className="relative">
                             <div className="w-90 h-100 rounded-4xl bg-gray-300 dark:bg-gray-700 animate-pulse"></div>
-                            <div
-                                className="w-30 h-35 bg-contain bg-no-repeat absolute bottom-2 right-[-40]"
-                                style={{
-                                    backgroundImage: `url('/eventcard-ch${(i % 3) + 1}.png')`,
-                                }}
-                            ></div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="max-w-6xl m-auto flex gap-6 w-full">
                     {events.map((event, index) => (
-                        <Link href="desc" key={event.id}>
+                        <Link href={"/events/" + event.id} key={event.id}>
                             <div
-                                className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center h-100 w-90 bg-cover bg-center cursor-pointer transition-transform hover:scale-105"
+                                className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[9/16] w-60 bg-cover bg-center cursor-pointer transition-transform hover:scale-105"
                                 style={{
                                     backgroundImage: `url('${event.imageUrl}')`,
                                 }}
                             >
                                 <div
-                                    className="w-30 h-35 bg-contain bg-no-repeat absolute bottom-2 right-[-40]"
+                                    className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20]"
                                     style={{
                                         backgroundImage: `url('/eventcard-ch${
                                             (index % 3) + 1
