@@ -15,36 +15,24 @@ enum eventType {
 }
 
 model Participant {
-  id            Int            @id @default(autoincrement())
-  name          String
-  usn           String
-  phone         String         @unique
-  college       String
-  registrations Registration[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  password      String
-  email         String         @unique
-}
-
-model Registration {
-  id                  Int         @id @default(autoincrement())
-  event_id            Int?
-  ticket_url          String?
-  amount              Int?
-  order_id            String?
-  payment_status      String?
-  razorpay_payment_id String?
-  registration_date   DateTime    @default(now())
-  participantId       Int
-  participant         Participant @relation(fields: [participantId], references: [id])
+  id                 Int      @id @default(autoincrement())
+  name               String
+  usn                String
+  phone              String
+  college            String
+  events             Event[]
+  transaction_id     String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  email              String   @unique
 }
 
 model Event {
-  id                         Int       @id @default(autoincrement())
+  id                         Int          @id @default(autoincrement())
   eventName                  String
   eventType                  eventType
   description                String
+  fee                        Int
   date                       DateTime
   time                       String
   venue                      String
@@ -52,6 +40,8 @@ model Event {
   studentCoordinatorContacts String[]
   rules                      String[]
   imageUrl                   String
+  Participants               Participant? @relation(fields: [participantId], references: [id])
+  participantId              Int?
 }
 
 model Admin {
