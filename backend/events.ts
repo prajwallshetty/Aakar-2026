@@ -3,6 +3,7 @@ import { eventType, Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { GroupBase, OptionsOrGroups } from "react-select";
+import { ExtendedEvent } from "@/types";
 
 // Create a new event
 export async function createEvent(event: Prisma.EventCreateInput) {
@@ -10,7 +11,7 @@ export async function createEvent(event: Prisma.EventCreateInput) {
         if (!await isAdmin()) throw new Error("Not authorized");
         return await db.event.create({
             data: event
-        });
+        }) as ExtendedEvent | null;
     } catch (e) {
         console.error("Create Event Error:", e);
         return null;
@@ -22,7 +23,7 @@ export async function getEventById(id: number) {
     try {
         return await db.event.findUnique({
             where: { id }
-        });
+        }) as ExtendedEvent | null;
     } catch (e) {
         console.error("Get Event By ID Error:", e);
         return null;
@@ -36,7 +37,7 @@ export async function getAllEvents() {
             orderBy: {
                 date: "asc"
             }
-        });
+        }) as ExtendedEvent[];
     } catch (e) {
         console.error("Get All Events Error:", e);
         return [];
@@ -53,7 +54,7 @@ export async function getEventsByType(eventType: eventType) {
             orderBy: {
                 date: "asc"
             }
-        });
+        }) as ExtendedEvent[];
     } catch (e) {
         console.error("Get Category Events Error:", e);
         return [];
@@ -74,7 +75,7 @@ export async function getEventOptions(): Promise<OptionsOrGroups<
 
         const mappedOptions = await Promise.all(eventTypes.map(async (e) => {
             let events = await getEventsByType(e.eventType);
-            let ne = events.map((event) => {
+            let ne = events?.map((event) => {
                 return {
                     value: event.id.toString(),
                     label: event.eventName,
@@ -82,7 +83,7 @@ export async function getEventOptions(): Promise<OptionsOrGroups<
             })
             return {
                 label: e.eventType,
-                options: ne
+                options: []
             }
         }));
 
@@ -120,7 +121,7 @@ export async function updateEvent(id: number, data: Prisma.EventUpdateInput) {
         return await db.event.update({
             where: { id },
             data
-        });
+        }) as ExtendedEvent | null;
     } catch (e) {
         console.error("Update Event Error:", e);
         return null;
@@ -133,7 +134,7 @@ export async function deleteEvent(id: number) {
         if (!await isAdmin()) throw new Error("Not authorized");
         return await db.event.delete({
             where: { id }
-        });
+        }) as ExtendedEvent | null;
     } catch (e) {
         console.error("Delete Event Error:", e);
         return null;
