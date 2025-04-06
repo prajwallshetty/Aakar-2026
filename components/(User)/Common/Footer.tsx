@@ -11,7 +11,6 @@ const Footer = () => {
   return (
     <section className={`bg-black text-white py-10 px-5 ${montserrat.className}`}>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
         <div>
           <h4 className="text-lg font-medium mb-4">Explore</h4>
           <ul className="space-y-2">
@@ -63,6 +62,10 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      <p className="text-center text-sm text-gray-500 mt-10">
+        Designed and developed by the Technical Committee, AJIET.
+      </p>
     </section>
   );
 };
