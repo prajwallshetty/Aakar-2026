@@ -132,6 +132,23 @@ export async function getParticipants(): Promise<ServiceResponse<Participant[]>>
     }
 }
 
+export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<Participant[]>> {
+    try {
+        const isUserAdmin = await isAdmin();
+
+        if (!isUserAdmin) {
+            return { data: null, error: "Not authorized" };
+        }
+
+        const participants = await db.participant.findMany({ where });
+
+        return { data: participants, error: null };
+    } catch (error) {
+        console.error("Error fetching participants:", error);
+        return { data: null, error: "Failed to fetch participants" };
+    }
+}
+
 export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<Participant>> {
     try {
         if (!id) {
