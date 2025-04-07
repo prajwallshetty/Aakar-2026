@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -8,7 +9,6 @@ import {
     Phone,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Event } from "@prisma/client";
 import { ExtendedEvent } from "@/types";
 import { Button } from "@/components/ui/button";
 
@@ -128,7 +128,6 @@ const EventDescription = ({
                         </div>
                     </div>
 
-                    {/* Right Image Section */}
                     <div className="lg:w-1/3 flex justify-center relative">
                         <div className="w-full aspect-[4/5] relative rounded-2xl overflow-hidden border-2 border-gray-700/50">
                             <img
@@ -141,7 +140,6 @@ const EventDescription = ({
                     </div>
                 </div>
 
-                {/* Rules */}
                 <div className="mt-16 space-y-6">
                     <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         Event Rules
@@ -160,7 +158,6 @@ const EventDescription = ({
                     </div>
                 </div>
 
-                {/* Coordinators */}
                 <div className="mt-16 space-y-6">
                     <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
                         Event Coordinators

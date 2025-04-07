@@ -3,7 +3,6 @@ import React from 'react'
 const ArenaBanner = () => {
     return (
         <div className="w-full text-white py-16 px-6 text-center relative overflow-hidden">
-            {/* Text Content */}
             <h2 className="text-3xl md:text-6xl font-extrabold tracking-wide leading-tight animate-pulse z-10 relative">
                 All in or out
                 <br />

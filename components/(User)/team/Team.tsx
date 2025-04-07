@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 interface TeamMember {
     name: string;
@@ -14,22 +13,6 @@ interface TeamCategory {
 }
 
 const teamData: TeamCategory[] = [
-    {
-        name: 'Executive Committee',
-        members: [
-            { name: 'Dr. A. J. Shetty', role: 'Chairman, LMET', image: '/Team/executive/ajshetty.png' },
-            { name: 'Mrs. Sharada J. Shetty', role: 'Director, LMET', image: '/Team/executive/sharadha.png' },
-            { name: 'Mr. Prashanth Shetty', role: 'Vice President, LMET', image: '/Team/executive/prashanth.png' },
-            { name: 'Mrs. Ashritha P. Shetty', role: 'Director, LMET', image: '/Team/executive/ashritha.png' },
-            { name: 'Dr. Prashanth Marla K', role: 'Director, LMET', image: '/Team/executive/prashanthM.png' },
-            { name: 'Dr. Amitha P. Marla', role: 'Director, LMET', image: '/Team/executive/amithaM.png' },
-            { name: 'Mr. Ranga B. Shetty', role: 'Director, LMET', image: '/Team/executive/ranga.png' },
-            { name: 'Mrs. Vinuth R. Shetty', role: 'Director, LMET', image: '/Team/executive/vinutha.png' },
-            { name: 'Shantharama Rai. C.', role: 'Principal, AJIET', image: '/Team/executive/princi.jpg' },
-            { name: 'Dr. Antony P.J.', role: 'Vice Principal, AJIET', image: '/Team/executive/vice.jpg' },
-            { name: 'Dr. P.Mahabaleswarappa', role: 'Dean, AJIET', image: '/Team/executive/dean.jpg' },
-        ],
-    },
     {
         name: 'Mentorship Panel',
         members: [

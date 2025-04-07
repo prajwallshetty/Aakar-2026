@@ -5,7 +5,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -22,7 +21,6 @@ import {
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -35,7 +33,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
     AlertDialog,
@@ -129,7 +126,7 @@ const EventsCRUD = () => {
         eventType: "Solo",
         description: "",
         fee: 0,
-        date: new Date("2024-05-09"), // Default to May 9
+        date: new Date("2024-05-09"),
         time: "",
         venue: "",
         coordinators: [],
@@ -357,7 +354,6 @@ const EventsCRUD = () => {
     return (
         <div className="container mx-auto py-8 px-4">
             <div className="flex flex-col space-y-6">
-                {/* Header Section */}
                 <div className="flex flex-col space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight">
                         Events Management
@@ -368,7 +364,6 @@ const EventsCRUD = () => {
                     </p>
                 </div>
 
-                {/* Error Display */}
                 {error && (
                     <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
                         <div className="flex items-center gap-2">
@@ -378,7 +373,6 @@ const EventsCRUD = () => {
                     </div>
                 )}
 
-                {/* Main Content Card */}
                 <Card className="shadow-sm">
                     <CardHeader className="border-b">
                         <div className="flex items-center justify-between">
@@ -567,7 +561,6 @@ const EventsCRUD = () => {
                     </CardContent>
                 </Card>
 
-                {/* Event Form Dialog */}
                 <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                     <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
@@ -582,7 +575,6 @@ const EventsCRUD = () => {
                         </DialogHeader>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 gap-4">
-                                {/* Basic Info */}
                                 <div className="space-y-2">
                                     <Label htmlFor="eventName">
                                         Event Name
@@ -654,7 +646,6 @@ const EventsCRUD = () => {
                                     />
                                 </div>
 
-                                {/* Date and Time */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label>Date</Label>
@@ -713,7 +704,6 @@ const EventsCRUD = () => {
                                     />
                                 </div>
 
-                                {/* Image Upload */}
                                 <div className="space-y-2">
                                     <Label>Event Poster</Label>
                                     {previewUrl ? (
@@ -767,7 +757,6 @@ const EventsCRUD = () => {
 
                                 <Separator />
 
-                                {/* Coordinators */}
                                 <div className="space-y-2">
                                     <Label>Coordinators</Label>
                                     <div className="space-y-3">
@@ -846,7 +835,6 @@ const EventsCRUD = () => {
 
                                 <Separator />
 
-                                {/* Rules */}
                                 <div className="space-y-2">
                                     <Label>Rules</Label>
                                     <div className="space-y-3">
