@@ -63,12 +63,14 @@ const EventDescriptionSkeleton = () => {
                 <div className="mt-16 space-y-6">
                     <Skeleton className="h-8 w-48 mx-auto rounded-lg" />
                     <div className="bg-gray-800/50 rounded-xl p-6 space-y-4">
-                        {Array(4).fill(0).map((_, i) => (
-                            <div key={i} className="flex gap-3">
-                                <Skeleton className="h-5 w-5 rounded-full mt-1" />
-                                <Skeleton className="h-5 w-full rounded-md" />
-                            </div>
-                        ))}
+                        {Array(4)
+                            .fill(0)
+                            .map((_, i) => (
+                                <div key={i} className="flex gap-3">
+                                    <Skeleton className="h-5 w-5 rounded-full mt-1" />
+                                    <Skeleton className="h-5 w-full rounded-md" />
+                                </div>
+                            ))}
                     </div>
                 </div>
 
@@ -76,15 +78,20 @@ const EventDescriptionSkeleton = () => {
                 <div className="mt-16 space-y-6">
                     <Skeleton className="h-8 w-64 mx-auto rounded-lg" />
                     <div className="flex flex-col md:flex-row justify-center gap-6">
-                        {Array(2).fill(0).map((_, i) => (
-                            <div key={i} className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md">
-                                <Skeleton className="h-7 w-40 rounded-md mb-3" />
-                                <div className="flex items-center gap-3">
-                                    <Skeleton className="h-6 w-6 rounded-full" />
-                                    <Skeleton className="h-5 w-32 rounded-md" />
+                        {Array(2)
+                            .fill(0)
+                            .map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md"
+                                >
+                                    <Skeleton className="h-7 w-40 rounded-md mb-3" />
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton className="h-6 w-6 rounded-full" />
+                                        <Skeleton className="h-5 w-32 rounded-md" />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 </div>
             </div>
@@ -150,11 +157,16 @@ const EventDescription = ({
 
     if (!eventData) return <Error statusCode={404} />;
 
-    const coordinators = Array.isArray(eventData.coordinators)
-        ? eventData.coordinators
-        : eventData.coordinators
-            ? [eventData.coordinators].flat()
-            : [];
+    const studentCoordinators = Array.isArray(eventData.studentCoordinators)
+        ? eventData.studentCoordinators
+        : eventData.studentCoordinators
+        ? [eventData.studentCoordinators].flat()
+        : [];
+    const facultyCoordinators = Array.isArray(eventData.facultyCoordinators)
+        ? eventData.facultyCoordinators
+        : eventData.facultyCoordinators
+        ? [eventData.facultyCoordinators].flat()
+        : [];
 
     return (
         <div className="min-h-screen p-4 md:p-8 text-white">
@@ -220,7 +232,9 @@ const EventDescription = ({
                         <div className="w-full aspect-[4/5] relative rounded-2xl overflow-hidden border-2 border-gray-700/50">
                             <div
                                 className="absolute inset-0 bg-cover bg-center"
-                                style={{ backgroundImage: `url('${eventData.imageUrl}')` }}
+                                style={{
+                                    backgroundImage: `url('${eventData.imageUrl}')`,
+                                }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                         </div>
@@ -241,7 +255,9 @@ const EventDescription = ({
                                 </div>
                             ))
                         ) : (
-                            <p className="text-gray-400 italic">No rules specified for this event.</p>
+                            <p className="text-gray-400 italic">
+                                No rules specified for this event.
+                            </p>
                         )}
                     </div>
                 </div>
@@ -252,30 +268,62 @@ const EventDescription = ({
                         Event Coordinators
                     </h2>
                     <div className="flex flex-col md:flex-row justify-center gap-6">
-                        {coordinators.length > 0 ? (
-                            coordinators.map((coordinator, index) => (
-                                <div
-                                    key={index}
-                                    className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md hover:border-cyan-500/30 transition-colors"
-                                >
-                                    <p className="text-xl font-semibold text-white mb-2">
-                                        {coordinator.name}
-                                    </p>
-                                    <div className="flex items-center gap-3 text-gray-300">
-                                        <Phone className="h-5 w-5 text-blue-400" />
-                                        <a
-                                            href={`tel:${coordinator.phone}`}
-                                            className="hover:text-blue-400 transition-colors"
+                        {studentCoordinators.length > 0 ? (
+                            <>
+                                <h3 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
+                                    Student Coordinators
+                                </h3>
+                                {studentCoordinators.map(
+                                    (coordinator, index) => (
+                                        <div
+                                            key={index}
+                                            className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md hover:border-cyan-500/30 transition-colors"
                                         >
-                                            {coordinator.phone}
-                                        </a>
-                                    </div>
-                                </div>
-                            ))
+                                            <p className="text-xl font-semibold text-white mb-2">
+                                                {coordinator.name}
+                                            </p>
+                                            <div className="flex items-center gap-3 text-gray-300">
+                                                <Phone className="h-5 w-5 text-blue-400" />
+                                                <a
+                                                    href={`tel:${coordinator.phone}`}
+                                                    className="hover:text-blue-400 transition-colors"
+                                                >
+                                                    {coordinator.phone}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    )
+                                )}
+                                <h3 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
+                                    Faculty Coordinators
+                                </h3>
+                                {facultyCoordinators.map(
+                                    (coordinator, index) => (
+                                        <div
+                                            key={index}
+                                            className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md hover:border-cyan-500/30 transition-colors"
+                                        >
+                                            <p className="text-xl font-semibold text-white mb-2">
+                                                {coordinator.name}
+                                            </p>
+                                            <div className="flex items-center gap-3 text-gray-300">
+                                                <Phone className="h-5 w-5 text-blue-400" />
+                                                <a
+                                                    href={`tel:${coordinator.phone}`}
+                                                    className="hover:text-blue-400 transition-colors"
+                                                >
+                                                    {coordinator.phone}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    )
+                                )}
+                            </>
                         ) : (
                             <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 text-center">
                                 <p className="text-gray-400 italic">
-                                    Coordinator information will be available soon
+                                    Coordinator information will be available
+                                    soon
                                 </p>
                             </div>
                         )}

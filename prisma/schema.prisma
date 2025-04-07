@@ -38,22 +38,23 @@ model Participant {
 }
 
 model Event {
-  id            Int           @id @default(autoincrement())
-  eventName     String
-  eventCategory eventCategory @default(Technical)
-  eventType     eventType     @default(Solo)
-  minMembers    Int           @default(1)
-  maxMembers    Int           @default(1)
-  description   String
-  fee           Int
-  date          DateTime
-  time          String
-  venue         String
-  coordinators  Json          @default("[]") //[{name,phone},..]
-  rules         String[]
-  imageUrl      String
-  Participants  Participant?  @relation(fields: [participantId], references: [id])
-  participantId Int?
+  id                  Int           @id @default(autoincrement())
+  eventName           String
+  eventCategory       eventCategory @default(Technical)
+  eventType           eventType     @default(Solo)
+  minMembers          Int           @default(1)
+  maxMembers          Int           @default(1)
+  description         String
+  fee                 Int
+  date                DateTime
+  time                String
+  venue               String
+  studentCoordinators Json          @default("[]") //[{name,phone},..]
+  facultyCoordinators Json          @default("[]") //[{name,phone},..]
+  rules               String[]
+  imageUrl            String
+  Participants        Participant?  @relation(fields: [participantId], references: [id])
+  participantId       Int?
 }
 
 model Admin {
