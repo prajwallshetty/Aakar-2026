@@ -2,7 +2,6 @@
 import { eventCategory, eventType, Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
-import { GroupBase, OptionsOrGroups } from "react-select";
 import { ExtendedEvent } from "@/types";
 
 // Create a new event
@@ -61,10 +60,7 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
     }
 }
 
-export async function getEventOptions(): Promise<OptionsOrGroups<
-    { value: string; label: string },
-    GroupBase<{ value: string; label: string }>
->> {
+export async function getEventOptions() {
     try {
         const eventCategorys = await db.event.findMany({
             select: {
@@ -72,21 +68,22 @@ export async function getEventOptions(): Promise<OptionsOrGroups<
             },
             distinct: ["eventCategory"],
         });
-
-        const mappedOptions = await Promise.all(eventCategorys.map(async (e) => {
-            let events = await getEventsByCategory(e.eventCategory);
-            let ne = events?.map((event) => {
+        const events = await getAllEvents(); 
+        const mappedOptions = eventCategorys.map((e) => {
+            let sevents = events.filter(ev=>ev.eventCategory === e.eventCategory);
+            let ne = sevents?.map((event) => {
                 return {
                     value: event.id.toString(),
                     label: event.eventName,
-                    type: event.eventType
+                    type: event.eventType,
+                    id: event.id,
                 }
             })
             return {
                 label: e.eventCategory,
                 options: ne
             }
-        }));
+        });
 
         return mappedOptions;
     } catch (e) {
