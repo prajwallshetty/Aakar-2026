@@ -17,14 +17,7 @@ import { toast } from 'sonner';
 
 // Import server actions
 import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/backend/admin';
-
-// Define proper types based on your Prisma schema
-type Admin = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-};
+import { Admin } from '@prisma/client';
 
 // Interface for error responses from backend
 interface ErrorResponse {
