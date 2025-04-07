@@ -5,6 +5,7 @@ import { db } from ".";
 import bcrypt from "bcryptjs";
 import { isAdmin } from "./admin";
 import { ExtendedParticipantCreateInput } from "@/types";
+import { sendEmail } from "./nodemailer";
 
 type ServiceResponse<T> = {
     data: T | null;
@@ -74,11 +75,13 @@ export async function createParticipant(data: ExtendedParticipantCreateInput): P
 
 export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
     try {
-        const { data: participant, error } = await createParticipant({...data, events: { connect: events.map(e => ({ id: e })) }});
+        const { data: participant, error } = await createParticipant({ ...data, events: { connect: events.map(e => ({ id: e })) } });
 
         if (error || !participant) {
             return { data: null, error };
         }
+
+        await sendEmail(participant.email, "Registration Successful", "You have successfully registered for the event(s).");
 
         return { data: participant, error: null };
     } catch (error) {
