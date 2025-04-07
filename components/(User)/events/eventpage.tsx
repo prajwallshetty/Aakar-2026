@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Event, eventType } from "@prisma/client";
-import { getEventsByType } from "@/backend/events";
+import { eventCategory } from "@prisma/client";
+import { getEventsByCategory } from "@/backend/events";
 import { ExtendedEvent } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const Eventpage = ({ eventType }: { eventType: eventType }) => {
+const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
     const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -14,7 +14,7 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
         const fetchEvents = async () => {
             try {
                 setLoading(true);
-                const data = await getEventsByType(eventType);
+                const data = await getEventsByCategory(eventCategory);
                 setEvents(data);
             } catch (error) {
                 console.error("Failed to fetch events:", error);
@@ -29,16 +29,37 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
     return (
         <div className="min-h-screen text-black p-15 flex flex-col items-center justify-center">
             <h1 className="text-2xl font-bold text-white mb-12">
-                {eventType} Events
+                {eventCategory} Events
             </h1>
 
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="relative">
-                            <Skeleton className="w-90 h-100 rounded-4xl"></Skeleton>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl px-4" >
+                    {
+                        Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="relative aspect-[9/16] w-full bg-gray-300 rounded-4xl overflow-hidden">
+                                <Skeleton className="w-full h-full" />
+                                <div
+                                    className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20] 
+                  transition-all duration-300 ease-in-out
+                  group-hover:scale-110 
+                  group-hover:translate-y-[-8px] 
+                  group-hover:rotate-6
+                  drop-shadow-sm 
+                  group-hover:drop-shadow-lg
+                  group-hover:filter group-hover:brightness-110"
+                                    style={{
+                                        backgroundImage: `url('/eventcard-ch${(i % 3) + 1
+                                            }.png')`,
+                                        transformOrigin: "bottom center",
+                                    }}
+                                >
+                                    {/* Bounce shadow that separates from character */}
+                                    <div className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 w-14 h-2 bg-black/20 rounded-full blur-sm scale-0 group-hover:scale-100 transition-all duration-300 ease-in-out"></div>
+                                </div>
+
+                            </div>
+                        ))
+                    }
                 </div>
             ) : (
                 <div className="max-w-6xl m-auto flex gap-6 w-full">
@@ -72,9 +93,8 @@ const Eventpage = ({ eventType }: { eventType: eventType }) => {
                   group-hover:drop-shadow-lg
                   group-hover:filter group-hover:brightness-110"
                                     style={{
-                                        backgroundImage: `url('/eventcard-ch${
-                                            (index % 3) + 1
-                                        }.png')`,
+                                        backgroundImage: `url('/eventcard-ch${(index % 3) + 1
+                                            }.png')`,
                                         transformOrigin: "bottom center",
                                     }}
                                 >

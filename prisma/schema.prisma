@@ -7,39 +7,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum eventType {
+enum eventCategory {
   Technical
   Cultural
   Gaming
   Special
 }
 
+enum eventType {
+  Solo
+  Team
+}
+
 model Participant {
-  id             Int      @id @default(autoincrement())
-  name           String
-  usn            String   @unique
-  phone          String
-  college        String
-  events         Event[]
-  transaction_id String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  email          String   @unique
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  usn                  String   @unique
+  phone                String
+  college              String
+  events               Event[]
+  transaction_id       String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  email                String   @unique
+  paymentScreenshotUrl String?
+  department           String?
+  amount               Int      @default(0)
+  year                 Int      @default(1)
+  groupMembersData     Json?    @default("[]")
 }
 
 model Event {
-  id            Int          @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   eventName     String
-  eventType     eventType
+  eventCategory eventCategory @default(Technical)
+  eventType     eventType     @default(Solo)
+  minMembers    Int           @default(1)
+  maxMembers    Int           @default(1)
   description   String
   fee           Int
   date          DateTime
   time          String
   venue         String
-  coordinators  Json         @default("[]") //[{name,phone},..]
+  coordinators  Json          @default("[]") //[{name,phone},..]
   rules         String[]
   imageUrl      String
-  Participants  Participant? @relation(fields: [participantId], references: [id])
+  Participants  Participant?  @relation(fields: [participantId], references: [id])
   participantId Int?
 }
 

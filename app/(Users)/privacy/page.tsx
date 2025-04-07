@@ -1,8 +1,15 @@
 import React from 'react';
+import { Montserrat } from 'next/font/google';
+
+const montserrat = Montserrat({
+  weight: '600',
+  subsets: ['latin'],
+});
+
 
 const PrivacyPolicyPage = () => {
     return (
-        <div className="min-h-screen px-6 py-12 text-white bg-gradient-to-b from-black to-gray-900">
+        <div className={`min-h-screen px-6 py-12 text-white ${montserrat.className}`}>
             <div className="max-w-4xl mx-auto space-y-8">
                 <h1 className="text-4xl font-bold text-center">Privacy Policy</h1>
 

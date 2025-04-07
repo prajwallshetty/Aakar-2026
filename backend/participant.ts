@@ -4,13 +4,14 @@ import { Participant, Prisma } from "@prisma/client";
 import { db } from ".";
 import bcrypt from "bcryptjs";
 import { isAdmin } from "./admin";
+import { ExtendedParticipantCreateInput } from "@/types";
 
 type ServiceResponse<T> = {
     data: T | null;
     error: { [key: string]: string } | string | null;
 }
 
-function validateParticipantData(data: Prisma.ParticipantCreateInput): { [key: string]: string } | null {
+function validateParticipantData(data: ExtendedParticipantCreateInput): { [key: string]: string } | null {
     const errors: { [key: string]: string } = {};
 
     if (!data.name || data.name.length < 2) {
@@ -33,7 +34,7 @@ function validateParticipantData(data: Prisma.ParticipantCreateInput): { [key: s
 }
 
 //todo: group events need to be added, normal events also needs to be accepted
-export async function createParticipant(data: Prisma.ParticipantCreateInput): Promise<ServiceResponse<Omit<Participant, "password">>> {
+export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<Participant>> {
     try {
         const validationErrors = validateParticipantData(data);
         if (validationErrors) {
@@ -71,8 +72,26 @@ export async function createParticipant(data: Prisma.ParticipantCreateInput): Pr
     }
 }
 
+export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
+    try {
+        const { data: participant, error } = await createParticipant({...data, events: { connect: events.map(e => ({ id: e })) }});
 
-export async function getParticipant(id: number): Promise<ServiceResponse<Omit<Participant, "password">>> {
+        if (error || !participant) {
+            return { data: null, error };
+        }
+
+        return { data: participant, error: null };
+    } catch (error) {
+        console.error("Error registering participant for events:", error);
+        return {
+            data: null,
+            error: "Failed to register participant for events"
+        };
+    }
+}
+
+
+export async function getParticipant(id: number): Promise<ServiceResponse<Participant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -93,7 +112,7 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Omit<P
     }
 }
 
-export async function getParticipants(): Promise<ServiceResponse<Omit<Participant, "password">[]>> {
+export async function getParticipants(): Promise<ServiceResponse<Participant[]>> {
     try {
         const isUserAdmin = await isAdmin();
 
@@ -110,7 +129,7 @@ export async function getParticipants(): Promise<ServiceResponse<Omit<Participan
     }
 }
 
-export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<Omit<Participant, "password">>> {
+export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<Participant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -144,7 +163,7 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
     }
 }
 
-export async function deleteParticipant(id: number): Promise<ServiceResponse<Omit<Participant, "password">>> {
+export async function deleteParticipant(id: number): Promise<ServiceResponse<Participant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };

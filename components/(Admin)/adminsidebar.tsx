@@ -10,6 +10,7 @@ import {
     ChevronLeft,
     LogOut,
 } from "lucide-react";
+import { Button } from "../ui/button";
 
 const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,11 +20,6 @@ const AdminSidebar = () => {
             icon: <LayoutDashboard size={18} />,
             label: "Admin Portal",
             href: "/AdminPortal",
-        },
-        {
-            icon: <UserPlus size={18} />,
-            label: "Create Admins",
-            href: "/CreateAdmins",
         },
         {
             icon: <CalendarDays size={18} />,
@@ -48,12 +44,12 @@ const AdminSidebar = () => {
                     <div>
                         <div className="flex justify-between items-center p-4">
                             {isOpen && <h1 className="text-xl font-bold">Admin Panel</h1>}
-                            <button
+                            <Button
                                 onClick={toggleSidebar}
-                                className="text-gray-300 hover:text-white cursor-pointer"
+                                className="text-gray-300 bg-transparenthover:text-white cursor-pointer"
                             >
                                 {isOpen ? <ChevronLeft size={24} /> : <Menu size={24} />}
-                            </button>
+                            </Button>
                         </div>
 
                         <ul className="mt-2 space-y-1">
@@ -87,14 +83,14 @@ const AdminSidebar = () => {
                             </div>
                         )}
 
-                        <button className="flex items-center text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer">
+                        <Button className="flex items-center bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer">
                             <LogOut size={18} />
                             {isOpen && <span className="ml-2">Logout</span>}
-                        </button>
+                        </Button>
                     </div>
 
                     {isOpen && (
-                        <div className="absolute bottom-0 left-0 w-1/2 hidden md:block">
+                        <div className="absolute bottom-0 left-0 w-1/2 block">
                             <img
                                 src="/profile-ch-left.png"
                                 alt="Sidebar Character"
