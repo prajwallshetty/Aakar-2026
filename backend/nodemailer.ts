@@ -1,6 +1,20 @@
 "use server";
 
-import { transporter } from ".";
+import nodemailer from "nodemailer";
+
+export const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    type: 'OAuth2',
+    user: process.env.MAIL_USER,
+    clientId: process.env.MAIL_CLIENT_ID,
+    clientSecret: process.env.MAIL_CLIENT_SECRET,
+    accessToken: process.env.MAIL_ACCESS_TOKEN,
+    refreshToken: process.env.MAIL_REFRESH_TOKEN
+  }
+});
 
 export async function sendEmail(to: string, subject: string, text: string) {
   try {
