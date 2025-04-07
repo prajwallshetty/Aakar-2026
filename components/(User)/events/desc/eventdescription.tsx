@@ -12,7 +12,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import Error from "next/error";
 import { Event } from "@prisma/client";
-import { ExtendedEvent } from "@/types";
+import { CartEvents, ExtendedEvent } from "@/types";
 
 const EventDescriptionSkeleton = () => {
     return (
@@ -107,10 +107,8 @@ const Eventdescription = ({
         if (typeof window !== "undefined") {
             const cartItems = JSON.parse(
                 localStorage.getItem("eventCart") || "[]"
-            );
-            const eventInCart = cartItems.some(
-                (id: number) => id === eventData?.id
-            );
+            ) as CartEvents;
+            const eventInCart = cartItems.some((id) => id === eventData?.id);
             setIsInCart(eventInCart);
             if (eventInCart) {
                 setButtonText("Added to Cart");
@@ -122,12 +120,10 @@ const Eventdescription = ({
         if (typeof window !== "undefined" && eventData) {
             const cartItems = JSON.parse(
                 localStorage.getItem("eventCart") || "[]"
-            );
+            ) as CartEvents;
 
             // Check if event is already in cart
-            const eventExists = cartItems.some(
-                (item: Event) => item.id === eventData.id
-            );
+            const eventExists = cartItems.some((id) => id === eventData.id);
 
             if (!eventExists) {
                 cartItems.push(eventData.id);
@@ -142,7 +138,7 @@ const Eventdescription = ({
             } else {
                 // Remove from cart if already there
                 const updatedCart = cartItems.filter(
-                    (item: Event) => item.id !== eventData.id
+                    (id) => id !== eventData.id
                 );
                 localStorage.setItem("eventCart", JSON.stringify(updatedCart));
                 setIsInCart(false);
@@ -191,10 +187,11 @@ const Eventdescription = ({
 
                         <button
                             onClick={addToCart}
-                            className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${isInCart
+                            className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${
+                                isInCart
                                     ? "bg-green-600 hover:bg-green-700"
                                     : "bg-blue-600 hover:bg-blue-700"
-                                } text-white`}
+                            } text-white`}
                         >
                             {isInCart ? (
                                 <Check className="h-5 w-5" />
