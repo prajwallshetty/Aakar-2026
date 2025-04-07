@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { Montserrat } from 'next/font/google';
+import Link from 'next/link';
 
 const montserrat = Montserrat({
   weight: '600',
@@ -16,9 +17,9 @@ const ContactPage = () => {
                 <section className="space-y-4">
                     <h2 className="text-2xl font-semibold">General Info</h2>
                     <div className="space-y-2">
-                        <p className={`flex items-center gap-2 ${montserrat.className}`}><FaEnvelope /> <a href="mailto:aakaar@gmail.com" className="text-blue-400">aakaar@gmail.com</a></p>
-                        <p className={`flex items-center gap-2 ${montserrat.className}`}><FaPhone /> <a href="tel:+91628759863" className="text-blue-400">+91 62875 9863</a></p>
-                        <p className={`flex items-center gap-2 ${montserrat.className}`}><FaInstagram /> <a href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer" className="text-blue-400">@aakar_25</a></p>
+                        <p className={`flex items-center gap-2 ${montserrat.className}`}><FaEnvelope /> <Link href="mailto:aakar2025@ajiet.edu.in" className="text-blue-400">aakar2025@ajiet.edu.in</Link></p>
+                        <p className={`flex items-center gap-2 ${montserrat.className}`}><FaPhone /> <Link href="tel:+919611829800" className="text-blue-400">+91 96118 29800</Link></p>
+                        <p className={`flex items-center gap-2 ${montserrat.className}`}><FaInstagram /> <Link href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer" className="text-blue-400">@aakar_25</Link></p>
                     </div>
                 </section>
 

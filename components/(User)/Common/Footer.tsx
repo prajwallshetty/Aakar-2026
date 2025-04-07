@@ -64,7 +64,7 @@ const Footer = () => {
       </div>
 
       <p className="text-center text-sm text-gray-500 mt-10">
-        Designed and developed by the Technical Committee, AJIET.
+        Designed and developed by the Aakar Technical Committee, AJIET.
       </p>
     </section>
   );

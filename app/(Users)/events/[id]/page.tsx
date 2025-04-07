@@ -7,9 +7,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const eventData = await getEventById(parseInt(id));
 
     return (
-        <div>
-            <Eventdescription eventData={eventData}/>
-        </div>
+        <Eventdescription eventData={eventData}/>
     );
 };
 
