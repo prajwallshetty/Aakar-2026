@@ -5,6 +5,7 @@ import { Montserrat } from "next/font/google";
 import Image from 'next/image';
 import { FiChevronDown } from 'react-icons/fi';
 import { FaPlay } from "react-icons/fa";
+import { Button } from '@/components/ui/button';
 
 const montserrat = Montserrat({
     weight: "600",
@@ -68,7 +69,7 @@ const LandingPage = () => {
                 <div className="w-1/4 flex items-center justify-center">
                     <div className="relative right-[-20vw] top-[-50px] z-30 overflow-hidden">
                         <Image
-                            src="/Aakarlogo.png"
+                            src="/Aakarlogo.svg"
                             alt="AAKAR Logo"
                             width={300}
                             height={150}
@@ -83,15 +84,15 @@ const LandingPage = () => {
                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                         <div className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}>
-                            <button className="flex items-center px-6 py-3 text-white cursor-pointer transition duration-300 group" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
+                            <Button className="flex items-center px-6 py-3 text-white bg-transparent hover:bg-transparent cursor-pointer transition duration-300 group" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
                                     <FaPlay className="text-sm" />
                                 </div>
 
-                                <span className="text-white font-semibold transition-colors duration-300 group-hover:text-white/80">
+                                <span className="text-white bg-transparents font-semibold transition-colors duration-300 group-hover:text-white/80">
                                     Play Trailer
                                 </span>
-                            </button>
+                            </Button>
                         </div>
                     </div>
                     <div className="flex justify-center h-[10vh] mt-4 animate-blink text-red-400">
@@ -154,12 +155,12 @@ const LandingPage = () => {
                         <div className="bg-black rounded-2xl overflow-hidden max-w-3xl w-full">
                             <video src={activeVideo} controls autoPlay className="w-full h-auto" />
                             <div className="text-right p-2">
-                                <button
+                                <Button
                                     onClick={closeModal}
                                     className="text-white text-sm cursor-pointer hover:text-red-400"
                                 >
                                     Close ✖
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -170,7 +171,7 @@ const LandingPage = () => {
                 <div className="flex flex-col h-[90vh] items-center justify-center space-y-16">
                     <div className="text-white text-6xl font-bold tracking-wider relative top-[30px] text-centeroverflow-hidden">
                         <Image
-                            src="/Aakarlogo.png"
+                            src="/Aakarlogo.svg"
                             alt="AAKAR Logo"
                             width={200}
                             height={100}
@@ -183,12 +184,12 @@ const LandingPage = () => {
                             style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
                         </div>
                         <div className={`mt-8 absolute bottom-12 ${montserrat.className}`}>
-                            <button className="flex items-center bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
+                            <Button className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
                                 <div className="mr-3 w-10 h-10 rounded-full border-2 b-white flex items-center justify-center">
                                     <FaPlay className="text-sm" />
                                 </div>
                                 Play Trailer
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

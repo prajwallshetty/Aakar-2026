@@ -33,12 +33,33 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
             </h1>
 
             {loading ? (
-                <div className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[9/16] w-60 bg-cover bg-center cursor-pointer transition-transform hover:scale-105">
-                    {Array.from({ length: 20 }).map((_, i) => (
-                        <div key={i} className="relative">
-                            <Skeleton className="w-90 h-100 rounded-4xl"></Skeleton>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl px-4" >
+                    {
+                        Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="relative aspect-[9/16] w-full bg-gray-300 rounded-4xl overflow-hidden">
+                                <Skeleton className="w-full h-full" />
+                                <div
+                                    className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20] 
+                  transition-all duration-300 ease-in-out
+                  group-hover:scale-110 
+                  group-hover:translate-y-[-8px] 
+                  group-hover:rotate-6
+                  drop-shadow-sm 
+                  group-hover:drop-shadow-lg
+                  group-hover:filter group-hover:brightness-110"
+                                    style={{
+                                        backgroundImage: `url('/eventcard-ch${(i % 3) + 1
+                                            }.png')`,
+                                        transformOrigin: "bottom center",
+                                    }}
+                                >
+                                    {/* Bounce shadow that separates from character */}
+                                    <div className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 w-14 h-2 bg-black/20 rounded-full blur-sm scale-0 group-hover:scale-100 transition-all duration-300 ease-in-out"></div>
+                                </div>
+
+                            </div>
+                        ))
+                    }
                 </div>
             ) : (
                 <div className="max-w-6xl m-auto flex gap-6 w-full">
@@ -72,9 +93,8 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
                   group-hover:drop-shadow-lg
                   group-hover:filter group-hover:brightness-110"
                                     style={{
-                                        backgroundImage: `url('/eventcard-ch${
-                                            (index % 3) + 1
-                                        }.png')`,
+                                        backgroundImage: `url('/eventcard-ch${(index % 3) + 1
+                                            }.png')`,
                                         transformOrigin: "bottom center",
                                     }}
                                 >

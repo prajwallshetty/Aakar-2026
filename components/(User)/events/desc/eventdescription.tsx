@@ -13,86 +13,86 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Error from "next/error";
 import { Event } from "@prisma/client";
 import { CartEvents, ExtendedEvent } from "@/types";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const EventDescriptionSkeleton = () => {
     return (
-        <div className="min-h-screen text-black p-6 md:p-15 flex flex-col items-center justify-center">
-            <div className="w-full max-w-7xl mt-12 flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
-                <div className="md:w-1/2 flex flex-col space-y-6">
-                    <Skeleton className="h-12 w-full max-w-md" />
-                    <Skeleton className="h-24 w-full" />
+        <div className="min-h-screen p-4 md:p-8">
+            <div className="max-w-7xl mx-auto mt-8 md:mt-12">
+                <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
+                    {/* Left column */}
+                    <div className="flex-1 space-y-8">
+                        <Skeleton className="h-12 w-3/4 rounded-lg" />
 
-                    <div className="flex flex-col space-y-4">
-                        <div className="flex items-center">
-                            <Skeleton className="h-6 w-6 mr-3 rounded-full" />
-                            <Skeleton className="h-6 w-32" />
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-full rounded-md" />
+                            <Skeleton className="h-6 w-5/6 rounded-md" />
+                            <Skeleton className="h-6 w-4/5 rounded-md" />
                         </div>
-                        <div className="flex items-center">
-                            <Skeleton className="h-6 w-6 mr-3 rounded-full" />
-                            <Skeleton className="h-6 w-24" />
+
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="h-8 w-8 rounded-full" />
+                                <Skeleton className="h-6 w-32 rounded-md" />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="h-8 w-8 rounded-full" />
+                                <Skeleton className="h-6 w-28 rounded-md" />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="h-8 w-8 rounded-full" />
+                                <Skeleton className="h-6 w-36 rounded-md" />
+                            </div>
                         </div>
-                        <div className="flex items-center">
-                            <Skeleton className="h-6 w-6 mr-3 rounded-full" />
-                            <Skeleton className="h-6 w-28" />
+
+                        <div className="flex flex-wrap gap-4 pt-4">
+                            <Skeleton className="h-12 w-36 rounded-lg" />
+                            <Skeleton className="h-12 w-36 rounded-lg" />
                         </div>
                     </div>
 
-                    <div className="flex space-x-4">
-                        <Skeleton className="h-12 w-32 rounded-lg" />
-                        <Skeleton className="h-12 w-32 rounded-lg" />
+                    {/* Right column - image */}
+                    <div className="lg:w-1/3 flex justify-center relative">
+                        <Skeleton className="w-full aspect-[4/5] rounded-2xl" />
+                        <Skeleton className="absolute -bottom-4 -right-4 w-24 h-20 rounded-lg" />
+                    </div>
+                </div>
+
+                {/* Rules section */}
+                <div className="mt-16 space-y-6">
+                    <Skeleton className="h-8 w-48 mx-auto rounded-lg" />
+                    <div className="bg-gray-800/50 rounded-xl p-6 space-y-4">
+                        {Array(4).fill(0).map((_, i) => (
+                            <div key={i} className="flex gap-3">
+                                <Skeleton className="h-5 w-5 rounded-full mt-1" />
+                                <Skeleton className="h-5 w-full rounded-md" />
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
-                    <div className="relative">
-                        <Skeleton className="w-80 md:w-90 h-100 rounded-4xl" />
-                        <div className="w-32 h-24 absolute bottom-2 right-[-40px]">
-                            <Skeleton className="w-full h-full" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="w-full max-w-7xl mt-16">
-                <Skeleton className="h-8 w-48 mx-auto mb-6" />
-                <div className="bg-black/40 rounded-lg p-6">
-                    <div className="space-y-2">
-                        {Array(6)
-                            .fill(0)
-                            .map((_, index) => (
-                                <div key={index} className="flex items-start">
-                                    <Skeleton className="h-4 w-4 mr-2 mt-1" />
-                                    <Skeleton className="h-4 w-full" />
-                                </div>
-                            ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="w-full max-w-7xl mt-12">
-                <Skeleton className="h-8 w-64 mx-auto mb-6" />
-                <div className="flex flex-col md:flex-row justify-center gap-6">
-                    {Array(2)
-                        .fill(0)
-                        .map((_, index) => (
-                            <div
-                                key={index}
-                                className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700"
-                            >
-                                <Skeleton className="h-6 w-32" />
-                                <div className="flex items-center mt-2">
-                                    <Skeleton className="h-5 w-5 mr-2 rounded-full" />
-                                    <Skeleton className="h-5 w-28" />
+                {/* Coordinators section */}
+                <div className="mt-16 space-y-6">
+                    <Skeleton className="h-8 w-64 mx-auto rounded-lg" />
+                    <div className="flex flex-col md:flex-row justify-center gap-6">
+                        {Array(2).fill(0).map((_, i) => (
+                            <div key={i} className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md">
+                                <Skeleton className="h-7 w-40 rounded-md mb-3" />
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="h-6 w-6 rounded-full" />
+                                    <Skeleton className="h-5 w-32 rounded-md" />
                                 </div>
                             </div>
                         ))}
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-const Eventdescription = ({
+const EventDescription = ({
     eventData,
     isLoading = false,
 }: {
@@ -102,7 +102,6 @@ const Eventdescription = ({
     const [isInCart, setIsInCart] = useState(false);
     const [buttonText, setButtonText] = useState("Add to Cart");
 
-    // Check if event is already in cart when component mounts
     useEffect(() => {
         if (typeof window !== "undefined") {
             const cartItems = JSON.parse(
@@ -131,12 +130,10 @@ const Eventdescription = ({
                 setIsInCart(true);
                 setButtonText("Added to Cart");
 
-                // Show temporary feedback message
                 setTimeout(() => {
                     setButtonText("Added to Cart");
                 }, 1500);
             } else {
-                // Remove from cart if already there
                 const updatedCart = cartItems.filter(
                     (id) => id !== eventData.id
                 );
@@ -153,125 +150,140 @@ const Eventdescription = ({
 
     if (!eventData) return <Error statusCode={404} />;
 
+    const coordinators = Array.isArray(eventData.coordinators)
+        ? eventData.coordinators
+        : eventData.coordinators
+            ? [eventData.coordinators].flat()
+            : [];
+
     return (
-        <div className="min-h-screen text-black p-6 md:p-15 flex flex-col items-center justify-center">
-            <div className="w-full max-w-7xl mt-12 flex flex-col md:flex-row items-start justify-between gap-8">
-                <div className="md:w-2/3 flex flex-col space-y-6">
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-wider text-white">
-                        {eventData.eventName}
-                    </h1>
+        <div className="min-h-screen p-4 md:p-8 text-white">
+            <div className="max-w-7xl mx-auto mt-8 md:mt-12">
+                <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
+                    {/* Left column - content */}
+                    <div className="flex-1 space-y-8">
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                            {eventData.eventName}
+                        </h1>
 
-                    <p className="text-gray-300">{eventData.description}</p>
+                        <p className="text-gray-300 text-lg leading-relaxed">
+                            {eventData.description}
+                        </p>
 
-                    <div className="flex flex-col space-y-4 text-xl md:text-2xl text-white">
-                        <div className="flex items-center">
-                            <Calendar className="h-6 w-6 mr-3" />
-                            <p>{eventData.date.toDateString()}</p>
-                        </div>
-                        <div className="flex items-center">
-                            <Clock className="h-6 w-6 mr-3" />
-                            <p>{eventData.time}</p>
-                        </div>
-                        <div className="flex items-center">
-                            <Wallet className="h-6 w-6 mr-3" />
-                            <p>{eventData.fee}</p>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-4">
-                        <Link href="/register">
-                            <button className="bg-red-600 cursor-pointer hover:bg-red-800 text-white py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105">
-                                Register
-                            </button>
-                        </Link>
-
-                        <button
-                            onClick={addToCart}
-                            className={`flex items-center gap-2 cursor-pointer py-3 px-8 md:px-12 rounded-lg w-fit transition-transform hover:scale-105 ${
-                                isInCart
-                                    ? "bg-green-600 hover:bg-green-700"
-                                    : "bg-blue-600 hover:bg-blue-700"
-                            } text-white`}
-                        >
-                            {isInCart ? (
-                                <Check className="h-5 w-5" />
-                            ) : (
-                                <ShoppingCart className="h-5 w-5" />
-                            )}
-                            {buttonText}
-                        </button>
-                    </div>
-                </div>
-
-                <div className="md:w-1/3 max-w-[30%] flex justify-center relative">
-                    <div className="relative h-full w-full flex items-center justify-center">
-                        <div
-                            className="rounded-4xl overflow-hidden"
-                            style={{
-                                width: "100%",
-                                height: "0",
-                                paddingBottom:
-                                    "177.78%" /* 16:9 inverse aspect ratio (9/16 = 0.5625) expressed as percentage: 177.78% */,
-                                position: "relative",
-                                maxHeight: "100%",
-                            }}
-                        >
-                            <div
-                                className="absolute inset-0 bg-cover bg-center"
-                                style={{
-                                    backgroundImage: `url('${eventData.imageUrl}')`,
-                                }}
-                            ></div>
-                        </div>
-                        <div
-                            className="w-32 h-24 bg-contain bg-no-repeat absolute bottom-2 right-[-40px]"
-                            style={{
-                                backgroundImage: `url('/eventcard-ch1.png')`,
-                            }}
-                        ></div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="w-full max-w-7xl mt-16">
-                <h2 className="text-3xl font-semibold text-center mb-6 text-white">
-                    RULES
-                </h2>
-                <div className="bg-black/40 rounded-lg p-6">
-                    <ul className="text-gray-300 space-y-2">
-                        {eventData.rules.map((rule, index) => (
-                            <li key={index} className="flex items-start">
-                                <span className="mr-2">•</span>
-                                <span>{rule}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-
-            <div className="w-full max-w-7xl mt-12">
-                <h2 className="text-2xl font-semibold text-center mb-6 text-white">
-                    EVENT COORDINATORS
-                </h2>
-                <div className="flex flex-col md:flex-row justify-center gap-6">
-                    {eventData.coordinators.map((coordinator, index) => (
-                        <div
-                            key={index}
-                            className="bg-black/40 px-8 py-4 rounded-lg border border-gray-700"
-                        >
-                            <p className="text-white font-medium text-xl">
-                                {coordinator.name}
-                            </p>
-                            <div className="flex items-center text-gray-300 mt-2">
-                                <Phone className="h-5 w-5 mr-2" />
-                                <p>{coordinator.phone}</p>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-4 text-xl">
+                                <Calendar className="h-7 w-7 text-red-500" />
+                                <span>{eventData.date.toDateString()}</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-xl">
+                                <Clock className="h-7 w-7 text-blue-500" />
+                                <span>{eventData.time}</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-xl">
+                                <Wallet className="h-7 w-7 text-green-500" />
+                                <span>{eventData.fee}</span>
                             </div>
                         </div>
-                    ))}
+
+                        <div className="flex flex-wrap gap-4 pt-4">
+                            <Link href="/register">
+                                <Button
+                                    size="lg"
+                                    className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg transition-all hover:scale-105"
+                                >
+                                    Register Now
+                                </Button>
+                            </Link>
+
+                            <Button
+                                size="lg"
+                                onClick={addToCart}
+                                className={cn(
+                                    "gap-2 transition-all hover:scale-105 shadow-lg",
+                                    isInCart
+                                        ? "bg-green-600 hover:bg-green-700"
+                                        : "bg-blue-600 hover:bg-blue-700"
+                                )}
+                            >
+                                {isInCart ? (
+                                    <Check className="h-5 w-5" />
+                                ) : (
+                                    <ShoppingCart className="h-5 w-5" />
+                                )}
+                                {buttonText}
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Right column - image */}
+                    <div className="lg:w-1/3 flex justify-center relative">
+                        <div className="w-full aspect-[4/5] relative rounded-2xl overflow-hidden border-2 border-gray-700/50">
+                            <div
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{ backgroundImage: `url('${eventData.imageUrl}')` }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Rules section */}
+                <div className="mt-16 space-y-6">
+                    <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        Event Rules
+                    </h2>
+                    <div className="bg-gray-800/50 rounded-xl p-6 space-y-3">
+                        {Array.isArray(eventData.rules) ? (
+                            eventData.rules.map((rule, index) => (
+                                <div key={index} className="flex gap-3">
+                                    <span className="text-red-500 mt-1">•</span>
+                                    <p className="text-gray-300">{rule}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-400 italic">No rules specified for this event.</p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Coordinators section */}
+                <div className="mt-16 space-y-6">
+                    <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
+                        Event Coordinators
+                    </h2>
+                    <div className="flex flex-col md:flex-row justify-center gap-6">
+                        {coordinators.length > 0 ? (
+                            coordinators.map((coordinator, index) => (
+                                <div
+                                    key={index}
+                                    className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex-1 max-w-md hover:border-cyan-500/30 transition-colors"
+                                >
+                                    <p className="text-xl font-semibold text-white mb-2">
+                                        {coordinator.name}
+                                    </p>
+                                    <div className="flex items-center gap-3 text-gray-300">
+                                        <Phone className="h-5 w-5 text-blue-400" />
+                                        <a
+                                            href={`tel:${coordinator.phone}`}
+                                            className="hover:text-blue-400 transition-colors"
+                                        >
+                                            {coordinator.phone}
+                                        </a>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 text-center">
+                                <p className="text-gray-400 italic">
+                                    Coordinator information will be available soon
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-export default Eventdescription;
+export default EventDescription;

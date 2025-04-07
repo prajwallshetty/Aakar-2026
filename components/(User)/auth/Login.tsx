@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { signIn } from '@/auth'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -76,16 +77,16 @@ const Login = () => {
                         />
                     </div>
                     <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-                        <button
+                        <Button
                             type="submit"
                             disabled={isLoading}
                             className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 w-full sm:w-32 cursor-pointer disabled:opacity-70">
                             {isLoading ? 'Loading...' : 'Login'}
-                        </button>
+                        </Button>
                         <Link href="/register">
-                            <button type="button" className="text-pink-800 py-2 px-4 rounded-full border-pink-800 border-2 w-full sm:w-32 cursor-pointer">
+                            <Button type="button" className="text-pink-800 py-2 px-4 rounded-full border-pink-800 border-2 w-full sm:w-32 cursor-pointer">
                                 Register
-                            </button>
+                            </Button>
                         </Link>
                     </div>
                 </form>
