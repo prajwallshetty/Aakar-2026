@@ -2,9 +2,8 @@
 
 import { Participant, Prisma } from "@prisma/client";
 import { db } from ".";
-import bcrypt from "bcryptjs";
 import { isAdmin } from "./admin";
-import { ExtendedParticipantCreateInput } from "@/types";
+import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
 import { sendEmail } from "./nodemailer";
 
 type ServiceResponse<T> = {
@@ -94,7 +93,7 @@ export async function registerParticipant(data: ExtendedParticipantCreateInput, 
 }
 
 
-export async function getParticipant(id: number): Promise<ServiceResponse<Participant>> {
+export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -108,7 +107,7 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Partic
             return { data: null, error: "Participant not found" };
         }
 
-        return { data: participant, error: null };
+        return { data: participant as ExtendedParticipant, error: null };
     } catch (error) {
         console.error("Error fetching participant:", error);
         return { data: null, error: "Failed to fetch participant" };
@@ -153,12 +152,6 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
-        }
-
-        const isUserAdmin = await isAdmin();
-
-        if (!isUserAdmin) {
-            return { data: null, error: "Not authorized" };
         }
 
         const updatedParticipant = await db.participant.update({
