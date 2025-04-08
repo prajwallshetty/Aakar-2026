@@ -326,6 +326,7 @@ const Register = () => {
                 transaction_ids: [formData.transactionId],
                 paymentScreenshotUrls: [fileUrl],
                 groupMembersData: groupEventData,
+                amount: totalAmount
             };
 
             const { data, error } = await registerParticipant(

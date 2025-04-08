@@ -119,6 +119,7 @@ export default function AddAdditionalEvents({
             events: { connect: data.map((e) => ({ id: e.id })) },
             paymentScreenshotUrls: { push: fileUrl },
             groupMembersData: groupData || [],
+            amount: (userInfo?.amount || 0) + totalAmount,
         });
     }
 
