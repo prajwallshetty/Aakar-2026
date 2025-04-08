@@ -38,7 +38,7 @@ const Register = () => {
         email: "",
         phone: "",
         college: "",
-        year: 1,
+        year: 0,
         department: "",
         usn: "",
         transactionId: "",
@@ -326,6 +326,7 @@ const Register = () => {
                 transaction_ids: [formData.transactionId],
                 paymentScreenshotUrls: [fileUrl],
                 groupMembersData: groupEventData,
+                amount: totalAmount
             };
 
             const { data, error } = await registerParticipant(
@@ -623,11 +624,14 @@ const Register = () => {
                                         htmlFor="year"
                                         className="text-gray-700"
                                     >
-                                        Year
+                                        Year (1,2,3 or 4)
                                     </label>
                                     <input
                                         id="year"
                                         value={formData.year||""}
+                                        min={1}
+                                        max={8}
+                                        step={1}
                                         placeholder="Enter your year"
                                         onChange={handleChange}
                                         required

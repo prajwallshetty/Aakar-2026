@@ -46,7 +46,7 @@ export default function AboutPage() {
                   AJ INSTITUTE OF ENGINEERING AND TECHNOLOGY
                 </h3>
                 <div className={`space-y-4 text-base md:text-lg ${montserrat.className}`}>
-                  <p>Established in 2005, Kottara, Mangaluru</p>
+                  <p>Established in 2016, Kottara, Mangaluru</p>
                   <p>Affiliated to Visvesvaraya Technological University, Belagavi</p>
                   <p>Recognized by AICTE, New Delhi</p>
                 </div>

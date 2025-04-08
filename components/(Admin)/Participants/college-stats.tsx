@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
-import type { Participant } from "@prisma/client"
 import { downloadCollegeData } from "@/app/(Admin)/Participants/utils"
+import { ExtendedParticipant } from "@/types"
 
 interface CollegeStatsProps {
-  participants: Participant[]
+  participants: ExtendedParticipant[]
 }
 
 export function CollegeStats({ participants }: CollegeStatsProps) {

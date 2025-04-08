@@ -1,11 +1,11 @@
 "use server"
 
-import { Participant, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
 import { sendEmail } from "./nodemailer";
-import { getEventsOfUser } from "./events";
+import { getEventById, getEventsOfUser } from "./events";
 
 type ServiceResponse<T> = {
     data: T | null;
@@ -42,7 +42,7 @@ export async function validateParticipantData(data: ExtendedParticipantCreateInp
     return Object.keys(errors).length > 0 ? errors : null;
 }
 
-export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<Participant>> {
+export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         const validationErrors = await validateParticipantData(data);
         if (validationErrors) {
@@ -50,7 +50,7 @@ export async function createParticipant(data: ExtendedParticipantCreateInput): P
         }
 
         const participant = await db.participant.create({ data: { ...data, email: data.email.toLowerCase(), usn: data.usn.toUpperCase() } });
-        return { data: participant, error: null };
+        return { data: participant as ExtendedParticipant, error: null };
     } catch (error) {
         console.error("Error creating participant:", error);
         return {
@@ -62,7 +62,7 @@ export async function createParticipant(data: ExtendedParticipantCreateInput): P
     }
 }
 
-export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
+export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         const { data: participant, error } = await createParticipant({ ...data, events: { connect: events.map(e => ({ id: e })) }, email: data.email.toLowerCase(), usn: data.usn.toUpperCase() });
 
@@ -70,7 +70,7 @@ export async function registerParticipant(data: ExtendedParticipantCreateInput, 
             return { data: null, error };
         }
 
-        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName+` on `+e.date.toDateString()).join("\n");
+        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n");
 
         await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
 
@@ -86,7 +86,7 @@ ${eventN}
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 
 If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
-👉 https://aakar2025.ajiet.edu.in/addevents/${participant.id}
+👉 https://aakar2025.in/addevents/${participant.id}
 
 We look forward to your participation!
 
@@ -103,6 +103,64 @@ Aakar 2025 Team`);
     }
 }
 
+export async function getParticipantsCount() {
+    const usns = new Set();
+    const participants = await db.participant.findMany({ select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
+    participants.forEach(p => {
+        usns.add(p.usn);
+        if (p.groupMembersData) {
+            Object.keys(p.groupMembersData).forEach(groupEvent=>{
+                p.groupMembersData![groupEvent].members.forEach(member=>{
+                    usns.add(member.usn);
+                })
+            });
+        }
+    })
+
+    return usns.size;
+}
+
+export async function getParticipantsCountForEvent(eventId: number) {
+    const event = await getEventById(eventId);
+    if (!event) {
+        return -1;
+    }
+    const participants = await db.participant.findMany({ where: { events: { some: { id: eventId } } }, select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
+    const usns = new Set();
+    participants.forEach(p => {
+        usns.add(p.usn);
+        if (p.groupMembersData) {
+            Object.keys(p.groupMembersData).forEach(groupEvent=>{
+                p.groupMembersData![groupEvent].members.forEach(member=>{
+                    usns.add(member.usn);
+                })
+            });
+        }
+    })
+
+    return usns.size;
+}
+
+export async function getParticipantsCountForCollege(collegeName: string) {
+    const participants = await db.participant.findMany({ where: { college: collegeName }, select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
+    const usns = new Set();
+    participants.forEach(p => {
+        usns.add(p.usn);
+        if (p.groupMembersData) {
+            Object.keys(p.groupMembersData).forEach(groupEvent=>{
+                p.groupMembersData![groupEvent].members.forEach(member=>{
+                    usns.add(member.usn);
+                })
+            });
+        }
+    })
+
+    return usns.size;
+}
+
+export async function getCollegeNames(){
+
+}
 
 export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
@@ -125,7 +183,7 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Extend
     }
 }
 
-export async function getParticipants(): Promise<ServiceResponse<Participant[]>> {
+export async function getParticipants(): Promise<ServiceResponse<ExtendedParticipant[]>> {
     try {
         const isUserAdmin = await isAdmin();
 
@@ -135,14 +193,14 @@ export async function getParticipants(): Promise<ServiceResponse<Participant[]>>
 
         const participants = await db.participant.findMany();
 
-        return { data: participants, error: null };
+        return { data: participants as ExtendedParticipant[], error: null };
     } catch (error) {
         console.error("Error fetching participants:", error);
         return { data: null, error: "Failed to fetch participants" };
     }
 }
 
-export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<Participant[]>> {
+export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<ExtendedParticipant[]>> {
     try {
         const isUserAdmin = await isAdmin();
 
@@ -152,7 +210,7 @@ export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereIn
 
         const participants = await db.participant.findMany({ where });
 
-        return { data: participants, error: null };
+        return { data: participants as ExtendedParticipant[], error: null };
     } catch (error) {
         console.error("Error fetching participants:", error);
         return { data: null, error: "Failed to fetch participants" };
@@ -169,7 +227,7 @@ export async function updateParticipantWithNotify(id: number, data: Prisma.Parti
         const participant = res.data;
 
 
-        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName+` on `+e.date.toDateString()).join("\n");
+        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n");
 
         await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
 
@@ -185,7 +243,7 @@ ${eventN}
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 
 If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
-👉 https://aakar2025.ajiet.edu.in/addevents/${participant.id}
+👉 https://aakar2025.in/addevents/${participant.id}
 
 We look forward to your participation!
 
@@ -230,7 +288,7 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
     }
 }
 
-export async function deleteParticipant(id: number): Promise<ServiceResponse<Participant>> {
+export async function deleteParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -246,7 +304,7 @@ export async function deleteParticipant(id: number): Promise<ServiceResponse<Par
             where: { id }
         });
 
-        return { data: deletedParticipant, error: null };
+        return { data: deletedParticipant as ExtendedParticipant, error: null };
     } catch (error) {
         console.error("Error deleting participant:", error);
 
