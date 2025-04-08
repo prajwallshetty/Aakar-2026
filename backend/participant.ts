@@ -11,7 +11,7 @@ type ServiceResponse<T> = {
     error: { [key: string]: string } | string | null;
 }
 
-function validateParticipantData(data: ExtendedParticipantCreateInput): { [key: string]: string } | null {
+export async function validateParticipantData(data: ExtendedParticipantCreateInput): Promise<{ [key: string]: string } | null> {
     const errors: { [key: string]: string } = {};
 
     if (!data.name || data.name.length < 2) {
@@ -30,194 +30,202 @@ function validateParticipantData(data: ExtendedParticipantCreateInput): { [key: 
         errors.college = "College name is required";
     }
 
-    return Object.keys(errors).length > 0 ? errors : null;
+    if (await db.participant.findFirst({ where:{ email: data.email } })) {
+        errors.email = "Email already registered";
+    }
+
+    if (await db.participant.findFirst({ where:{ usn: data.usn } })) {
+        errors.usn = "USN already registered";
+    }
+
+        return Object.keys(errors).length > 0 ? errors : null;
 }
 
-//todo: group events need to be added, normal events also needs to be accepted
-export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<Participant>> {
-    try {
-        const validationErrors = validateParticipantData(data);
-        if (validationErrors) {
-            return { data: null, error: validationErrors };
-        }
-
-        const existingParticipant = await db.participant.findFirst({
-            where: {
-                OR: [
-                    { email: data.email },
-                    { phone: data.phone }
-                ]
+    //todo: group events need to be added, normal events also needs to be accepted
+    export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<Participant>> {
+        try {
+            const validationErrors = await validateParticipantData(data);
+            if (validationErrors) {
+                return { data: null, error: validationErrors };
             }
-        });
 
-        if (existingParticipant) {
+            const existingParticipant = await db.participant.findFirst({
+                where: {
+                    OR: [
+                        { email: data.email },
+                        { phone: data.phone }
+                    ]
+                }
+            });
+
+            if (existingParticipant) {
+                return {
+                    data: null,
+                    error: existingParticipant.email === data.email
+                        ? { email: "Email already registered" }
+                        : { phone: "Phone number already registered" }
+                };
+            }
+
+            const participant = await db.participant.create({ data });
+            return { data: participant, error: null };
+        } catch (error) {
+            console.error("Error creating participant:", error);
             return {
                 data: null,
-                error: existingParticipant.email === data.email
-                    ? { email: "Email already registered" }
-                    : { phone: "Phone number already registered" }
+                error: error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
+                    ? "A participant with this email or phone already exists"
+                    : "Failed to create participant"
             };
         }
-
-        const participant = await db.participant.create({ data });
-        return { data: participant, error: null };
-    } catch (error) {
-        console.error("Error creating participant:", error);
-        return {
-            data: null,
-            error: error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
-                ? "A participant with this email or phone already exists"
-                : "Failed to create participant"
-        };
     }
-}
 
-export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
-    try {
-        const { data: participant, error } = await createParticipant({ ...data, events: { connect: events.map(e => ({ id: e })) } });
+    export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
+        try {
+            const { data: participant, error } = await createParticipant({ ...data, events: { connect: events.map(e => ({ id: e })) } });
 
-        if (error || !participant) {
-            return { data: null, error };
+            if (error || !participant) {
+                return { data: null, error };
+            }
+
+            await sendEmail(participant.email, "Registration Successful", "You have successfully registered for the event(s).");
+
+            return { data: participant, error: null };
+        } catch (error) {
+            console.error("Error registering participant for events:", error);
+            return {
+                data: null,
+                error: "Failed to register participant for events"
+            };
         }
-
-        await sendEmail(participant.email, "Registration Successful", "You have successfully registered for the event(s).");
-
-        return { data: participant, error: null };
-    } catch (error) {
-        console.error("Error registering participant for events:", error);
-        return {
-            data: null,
-            error: "Failed to register participant for events"
-        };
     }
-}
 
 
-export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
-    try {
-        if (!id) {
-            return { data: null, error: { id: "Participant ID is required" } };
+    export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
+        try {
+            if (!id) {
+                return { data: null, error: { id: "Participant ID is required" } };
+            }
+
+            const participant = await db.participant.findUnique({
+                where: { id }
+            });
+
+            if (!participant) {
+                return { data: null, error: "Participant not found" };
+            }
+
+            return { data: participant as ExtendedParticipant, error: null };
+        } catch (error) {
+            console.error("Error fetching participant:", error);
+            return { data: null, error: "Failed to fetch participant" };
         }
-
-        const participant = await db.participant.findUnique({
-            where: { id }
-        });
-
-        if (!participant) {
-            return { data: null, error: "Participant not found" };
-        }
-
-        return { data: participant as ExtendedParticipant, error: null };
-    } catch (error) {
-        console.error("Error fetching participant:", error);
-        return { data: null, error: "Failed to fetch participant" };
     }
-}
 
-export async function getParticipants(): Promise<ServiceResponse<Participant[]>> {
-    try {
-        const isUserAdmin = await isAdmin();
+    export async function getParticipants(): Promise<ServiceResponse<Participant[]>> {
+        try {
+            const isUserAdmin = await isAdmin();
 
-        if (!isUserAdmin) {
-            return { data: null, error: "Not authorized" };
+            if (!isUserAdmin) {
+                return { data: null, error: "Not authorized" };
+            }
+
+            const participants = await db.participant.findMany();
+
+            return { data: participants, error: null };
+        } catch (error) {
+            console.error("Error fetching participants:", error);
+            return { data: null, error: "Failed to fetch participants" };
         }
-
-        const participants = await db.participant.findMany();
-
-        return { data: participants, error: null };
-    } catch (error) {
-        console.error("Error fetching participants:", error);
-        return { data: null, error: "Failed to fetch participants" };
     }
-}
 
-export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<Participant[]>> {
-    try {
-        const isUserAdmin = await isAdmin();
+    export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<Participant[]>> {
+        try {
+            const isUserAdmin = await isAdmin();
 
-        if (!isUserAdmin) {
-            return { data: null, error: "Not authorized" };
+            if (!isUserAdmin) {
+                return { data: null, error: "Not authorized" };
+            }
+
+            const participants = await db.participant.findMany({ where });
+
+            return { data: participants, error: null };
+        } catch (error) {
+            console.error("Error fetching participants:", error);
+            return { data: null, error: "Failed to fetch participants" };
         }
-
-        const participants = await db.participant.findMany({ where });
-
-        return { data: participants, error: null };
-    } catch (error) {
-        console.error("Error fetching participants:", error);
-        return { data: null, error: "Failed to fetch participants" };
     }
-}
 
-export async function updateParticipantWithNotify(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
-    try {
-        let res = await updateParticipant(id, data);
-        if (!res.data || res.error) {
+    export async function updateParticipantWithNotify(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
+        try {
+            let res = await updateParticipant(id, data);
+            if (!res.data || res.error) {
+                return res;
+            }
+            await sendEmail(res.data.email, "Update Successful", "Your information has been successfully updated.");
             return res;
-        }
-        await sendEmail(res.data.email, "Update Successful", "Your information has been successfully updated.");
-        return res;
-    } catch (error) {
-        console.error("Error updating participant:", error);
+        } catch (error) {
+            console.error("Error updating participant:", error);
 
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    return { data: null, error: "Participant not found" };
+                }
+            }
+
+            return { data: null, error: "Failed to update participant" };
+        }
+    }
+
+    export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
+        try {
+            if (!id) {
+                return { data: null, error: { id: "Participant ID is required" } };
+            }
+
+            const updatedParticipant = await db.participant.update({
+                where: { id },
+                data
+            }) as ExtendedParticipant;
+
+            return { data: updatedParticipant, error: null };
+        } catch (error) {
+            console.error("Error updating participant:", error);
+
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    return { data: null, error: "Participant not found" };
+                }
+            }
+
+            return { data: null, error: "Failed to update participant" };
+        }
+    }
+
+    export async function deleteParticipant(id: number): Promise<ServiceResponse<Participant>> {
+        try {
+            if (!id) {
+                return { data: null, error: { id: "Participant ID is required" } };
+            }
+
+            const isUserAdmin = await isAdmin();
+
+            if (!isUserAdmin) {
+                return { data: null, error: "Not authorized" };
+            }
+
+            const deletedParticipant = await db.participant.delete({
+                where: { id }
+            });
+
+            return { data: deletedParticipant, error: null };
+        } catch (error) {
+            console.error("Error deleting participant:", error);
+
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
                 return { data: null, error: "Participant not found" };
             }
-        }
 
-        return { data: null, error: "Failed to update participant" };
+            return { data: null, error: "Failed to delete participant" };
+        }
     }
-}
-
-export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
-    try {
-        if (!id) {
-            return { data: null, error: { id: "Participant ID is required" } };
-        }
-
-        const updatedParticipant = await db.participant.update({
-            where: { id },
-            data
-        }) as ExtendedParticipant;
-
-        return { data: updatedParticipant, error: null };
-    } catch (error) {
-        console.error("Error updating participant:", error);
-
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
-                return { data: null, error: "Participant not found" };
-            }
-        }
-
-        return { data: null, error: "Failed to update participant" };
-    }
-}
-
-export async function deleteParticipant(id: number): Promise<ServiceResponse<Participant>> {
-    try {
-        if (!id) {
-            return { data: null, error: { id: "Participant ID is required" } };
-        }
-
-        const isUserAdmin = await isAdmin();
-
-        if (!isUserAdmin) {
-            return { data: null, error: "Not authorized" };
-        }
-
-        const deletedParticipant = await db.participant.delete({
-            where: { id }
-        });
-
-        return { data: deletedParticipant, error: null };
-    } catch (error) {
-        console.error("Error deleting participant:", error);
-
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            return { data: null, error: "Participant not found" };
-        }
-
-        return { data: null, error: "Failed to delete participant" };
-    }
-}

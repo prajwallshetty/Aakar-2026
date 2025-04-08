@@ -2,7 +2,10 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { registerParticipant } from "@/backend/participant";
+import {
+    registerParticipant,
+    validateParticipantData,
+} from "@/backend/participant";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
@@ -12,7 +15,7 @@ import {
     ExtendedEvent,
     ExtendedParticipantCreateInput,
 } from "@/types";
-import { eventType, Prisma } from "@prisma/client";
+import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 
 const Register = () => {
@@ -35,7 +38,7 @@ const Register = () => {
         email: "",
         phone: "",
         college: "",
-        year: "",
+        year: 1,
         department: "",
         usn: "",
         transactionId: "",
@@ -105,22 +108,7 @@ const Register = () => {
         const { id, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [id]: value,
-        }));
-
-        if (formErrors[id]) {
-            setFormErrors((prev) => ({
-                ...prev,
-                [id]: undefined,
-            }));
-        }
-    };
-
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: value,
+            [id]: id === "year" ? parseInt(value) : value,
         }));
 
         if (formErrors[id]) {
@@ -259,18 +247,10 @@ const Register = () => {
         setShowQRCode(true);
     };
 
-    const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
+    const proceedToPayment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const errors: { [key: string]: string } = {};
-
-        if (!formData.name) errors.name = "Name is required";
-        if (!formData.email) errors.email = "Email is required";
-        if (!formData.phone) errors.phone = "Phone number is required";
-        if (!formData.college) errors.college = "College name is required";
-        if (!formData.year) errors.year = "Year is required";
-        if (!formData.department) errors.department = "Department is required";
-        if (!formData.usn) errors.usn = "USN is required";
+        const errors = (await validateParticipantData(formData)) || {};
 
         if (selectedEvents.length === 0) {
             errors.events = "Please select at least one event";
@@ -340,7 +320,7 @@ const Register = () => {
                 email: formData.email,
                 phone: formData.phone,
                 college: formData.college,
-                year: parseInt(formData.year),
+                year: formData.year,
                 department: formData.department,
                 usn: formData.usn.toUpperCase(),
                 transaction_ids: [formData.transactionId],
@@ -364,7 +344,7 @@ const Register = () => {
                 }
                 return;
             }
-            
+
             router.push("/registration-success");
             router.refresh();
         } catch (error) {
