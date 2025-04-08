@@ -44,7 +44,6 @@ const AdminLogin = () => {
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-muted px-4 sm:px-8">
       <div className="bg-background w-full max-w-md rounded-lg border border-border p-8 shadow-lg">
-        {/* Header */}
         <div className="flex items-center justify-center mb-6">
           <div className="bg-primary p-3 rounded-full">
             <LockKeyhole className="w-6 h-6 text-white" />
@@ -52,7 +51,6 @@ const AdminLogin = () => {
           <h2 className="ml-3 text-2xl font-bold text-foreground">Admin Portal</h2>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="email">Admin Email</Label>

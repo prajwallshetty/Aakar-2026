@@ -13,7 +13,6 @@ const montserrat = Montserrat({
 })
 
 export default function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
     const [mobileEventsExpanded, setMobileEventsExpanded] = useState(false);
@@ -118,15 +117,13 @@ export default function Navbar() {
                     </ul>
 
                     <div className="hidden md:block">
-                        {isLoggedIn ? (
-                            <Link href="/profile">
-                                <FaUserCircle className="text-white text-2xl cursor-pointer hover:text-pink-400 transition" />
-                            </Link>
-                        ) : (
-                            <Link href="/register" className="text-white font-semibold hover:text-pink-400 transition">
-                                Register
-                            </Link>
-                        )}
+                        <Link
+                            href="/register"
+                            className="relative inline-flex items-center justify-center w-full py-2 px-8 overflow-hidden font-semibold text-white transition-all duration-300 bg-[#9d0208] rounded-lg group hover:bg-black hover:text-[#ff006e] shadow-md shadow-[#ff006e]/30"
+                        >
+                            <span className="absolute inset-0 w-full h-full transition-all duration-500 bg-[#ff006e] opacity-10 group-hover:scale-100 rounded-lg blur-sm"></span>
+                            <span className="relative z-10 group-hover:tracking-wider transition-all duration-300">Register</span>
+                        </Link>
                     </div>
 
                     <Button
@@ -216,23 +213,13 @@ export default function Navbar() {
                     </div>
 
                     <div className="p-6 border-t border-gray-800">
-                        {isLoggedIn ? (
-                            <Link
-                                href="/profile"
-                                className="flex items-center py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
-                                onClick={closeSidebar}
-                            >
-                                <FaUserCircle className="mr-3 text-2xl" /> Profile
-                            </Link>
-                        ) : (
-                            <Link
-                                href="/register"
-                                className="flex items-center justify-center w-full py-3 bg-pink-500 hover:bg-pink-600 rounded-lg transition font-semibold"
-                                onClick={closeSidebar}
-                            >
-                                Register
-                            </Link>
-                        )}
+                        <Link
+                            href="/register"
+                            className="flex items-center justify-center w-full py-3 bg-pink-500 hover:bg-pink-600 rounded-lg transition font-semibold"
+                            onClick={closeSidebar}
+                        >
+                            Register
+                        </Link>
                     </div>
                 </div>
             </div>
