@@ -65,7 +65,7 @@ import {
     deleteEvent,
 } from "@/backend/events";
 import { uploadFile, deleteFiles } from "@/backend/supabase";
-import { eventType } from "@prisma/client";
+import { eventCategory, eventType } from "@prisma/client";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { ExtendedEvent } from "@/types";
@@ -80,9 +80,15 @@ interface EventTypeOption {
     label: string;
 }
 
+interface EventCategoryOption {
+    value: eventCategory;
+    label: string;
+}
+
 interface FormData {
     eventName: string;
     eventType: eventType;
+    eventCategory: eventCategory;
     description: string;
     fee: number;
     date: Date;
@@ -117,6 +123,7 @@ const EventsCRUD = () => {
     const [formData, setFormData] = useState<FormData>({
         eventName: "",
         eventType: "Solo",
+        eventCategory: "Cultural",
         description: "",
         fee: 0,
         date: new Date("2024-05-09"),
@@ -132,6 +139,12 @@ const EventsCRUD = () => {
     const eventTypes: EventTypeOption[] = [
         { value: "Solo", label: "Solo" },
         { value: "Team", label: "Team" },
+    ];
+
+    const eventCategorys: EventCategoryOption[] = [
+        { value: "Technical", label: "Technical" },
+        { value: "Cultural", label: "Cultural" },
+        { value: "Gaming", label: "Gaming" },
     ];
 
     const dateOptions = [
@@ -211,7 +224,7 @@ const EventsCRUD = () => {
 
     const handleSelectChange = (
         name: keyof FormData,
-        value: eventType | Date
+        value: eventCategory | eventType | Date
     ) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
@@ -281,6 +294,7 @@ const EventsCRUD = () => {
         setFormData({
             eventName: "",
             eventType: "Solo",
+            eventCategory: "Cultural",
             description: "",
             fee: 0,
             date: new Date("2024-05-09"),
@@ -352,6 +366,7 @@ const EventsCRUD = () => {
         setFormData({
             eventName: event.eventName,
             eventType: event.eventType,
+            eventCategory: event.eventCategory,
             description: event.description,
             fee: event.fee,
             date: new Date(event.date),
@@ -470,6 +485,7 @@ const EventsCRUD = () => {
                                             Event
                                         </TableHead>
                                         <TableHead>Type</TableHead>
+                                        <TableHead>Category</TableHead>
                                         <TableHead>Date & Time</TableHead>
                                         <TableHead>Venue</TableHead>
                                         <TableHead>Fee</TableHead>
@@ -491,6 +507,11 @@ const EventsCRUD = () => {
                                             <TableCell>
                                                 <Badge variant="secondary">
                                                     {event.eventType}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary">
+                                                    {event.eventCategory}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
@@ -647,6 +668,35 @@ const EventsCRUD = () => {
                                     </div>
 
                                     <div className="space-y-2">
+                                        <Label htmlFor="eventCategory">
+                                            Event Category
+                                        </Label>
+                                        <Select
+                                            value={formData.eventCategory}
+                                            onValueChange={(value: eventCategory) =>
+                                                handleSelectChange(
+                                                    "eventCategory",
+                                                    value
+                                                )
+                                            }
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select event type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {eventCategorys.map((type) => (
+                                                    <SelectItem
+                                                        key={type.value}
+                                                        value={type.value}
+                                                    >
+                                                        {type.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="space-y-2">
                                         <Label htmlFor="fee">Fee (₹)</Label>
                                         <Input
                                             id="fee"
@@ -785,7 +835,6 @@ const EventsCRUD = () => {
 
                                 <Separator />
 
-                                {/* Student Coordinators */}
                                 <div className="space-y-2">
                                     <Label>Student Coordinators</Label>
                                     <div className="space-y-3">
@@ -869,7 +918,6 @@ const EventsCRUD = () => {
                                     </div>
                                 </div>
 
-                                {/* Faculty Coordinators */}
                                 <div className="space-y-2">
                                     <Label>Faculty Coordinators</Label>
                                     <div className="space-y-3">
@@ -888,10 +936,6 @@ const EventsCRUD = () => {
                                                                         coordinator.name
                                                                     }
                                                                 </span>
-                                                                // Continuing
-                                                                from where the
-                                                                code was cut
-                                                                off...
                                                                 <span className="text-muted-foreground ml-2">
                                                                     (
                                                                     {

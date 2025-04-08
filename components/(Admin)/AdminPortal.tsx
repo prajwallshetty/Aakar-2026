@@ -36,6 +36,7 @@ const AdminPortal = () => {
     password: '',
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);  
   const [currentId, setCurrentId] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState('');
@@ -121,9 +122,12 @@ const AdminPortal = () => {
     try {
       if (isEditing && currentId) {
         const adminData = { ...formData };
+        
         if (!adminData.password) {
           const { password, ...rest } = adminData;
+          setIsSubmitting(true);
           const response = await updateAdmin(currentId, rest);
+          setIsSubmitting(false);
 
           if (!response) {
             throw new Error("No response from server");
@@ -156,7 +160,9 @@ const AdminPortal = () => {
           }
         }
       } else {
+        setIsSubmitting(true);
         const response = await createAdmin(formData);
+        setIsSubmitting(false);
 
         if (!response) {
           throw new Error("No response from server");
@@ -377,7 +383,7 @@ const AdminPortal = () => {
                         Cancel
                       </Button>
                       <Button type="submit">
-                        {isEditing ? 'Save Changes' : 'Create Admin'}
+                        {isEditing ?( isSubmitting ? 'Updating...' : 'Save Changes') : isSubmitting ? 'Creating...' : 'Create Admin'}
                       </Button>
                     </DialogFooter>
                   </form>

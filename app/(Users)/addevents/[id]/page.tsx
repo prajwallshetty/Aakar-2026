@@ -9,8 +9,13 @@ import {
     getEventOptions,
     getEventsOfUser,
 } from "@/backend/events";
-import { getParticipant, updateParticipant } from "@/backend/participant";
+import {
+    getParticipant,
+    updateParticipantWithNotify,
+} from "@/backend/participant";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
+import { uploadFile } from "@/backend/supabase";
+import Error from "next/error";
 
 interface FormErrors {
     [key: string]: string;
@@ -53,6 +58,10 @@ export default function AddAdditionalEvents({
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+    const [transactionId, setTransactionId] = useState<string>("");
+    const [paymentScreenshot, setPaymentScreenshot] = useState<File>();
+    const [qrImageUrl, setQrImageUrl] = useState<string>("");
+    const [showQRCode, setShowQRCode] = useState<boolean>(false);
 
     // Fetch user data and available events
     useEffect(() => {
@@ -62,27 +71,34 @@ export default function AddAdditionalEvents({
             setIsLoading(true);
             try {
                 setEvents(await getAllEvents());
-                
+
                 // Fetch user's existing registrations
                 const { data: userData, error } = await getParticipant(userId);
                 setUserInfo(userData);
-                
-                let userEvents = (await getEventsOfUser(userId))?.map((event) => ({
-                    label: event.eventName,
-                    value: event.id.toString(),
-                    type: event.eventType,
-                    id: event.id,
-                }));
-                
+
+                let userEvents = (await getEventsOfUser(userId))?.map(
+                    (event) => ({
+                        label: event.eventName,
+                        value: event.id.toString(),
+                        type: event.eventType,
+                        id: event.id,
+                    })
+                );
+
                 // Set existing events as read-only items
                 if (userEvents) {
-                    setExistingEvents(
-                        userEvents
-                    );
+                    setExistingEvents(userEvents);
                 }
 
                 const eventOpts = await getEventOptions();
-                setEventOptions(eventOpts.map(eC=>({label:eC.label,options:eC.options.filter(e=>!userEvents?.some(ex => ex.id === e.id))})));
+                setEventOptions(
+                    eventOpts.map((eC) => ({
+                        label: eC.label,
+                        options: eC.options.filter(
+                            (e) => !userEvents?.some((ex) => ex.id === e.id)
+                        ),
+                    }))
+                );
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -97,8 +113,11 @@ export default function AddAdditionalEvents({
         data: typeof selectedEvents,
         groupData: typeof groupEventData
     ): Promise<void> {
-        await updateParticipant(userId, {
+        let fileUrl = await uploadFile(paymentScreenshot!);
+        if (!fileUrl) return;
+        await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
+            paymentScreenshotUrls: { push: fileUrl },
             groupMembersData: groupData || [],
         });
     }
@@ -128,6 +147,36 @@ export default function AddAdditionalEvents({
                 }));
             }
         });
+    };
+
+    const generateQRCode = () => {
+        const amount =
+            selectedEvents.length > 0
+                ? events
+                      .filter((event) =>
+                          selectedEvents.find((e) => e.id === event.id)
+                      )
+                      .reduce((sum, event) => sum + (event.fee || 0), 0)
+                : 0;
+
+        setTotalAmount(amount);
+
+        const upiId = "8861621934@upi";
+        const payeeName = "Aakar 2025 Regitsration";
+        const transactionNote = "Aakar 2025 Regitsration";
+
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(
+            upiId
+        )}&pn=${encodeURIComponent(
+            payeeName
+        )}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+        setQrImageUrl(
+            `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                upiUrl
+            )}`
+        );
+        setShowQRCode(true);
     };
 
     // Handle participant count change for team events
@@ -251,7 +300,7 @@ export default function AddAdditionalEvents({
 
             // Redirect after success
             setTimeout(() => {
-                router.push(`/users/${userId}/dashboard`);
+                router.push(`/`);
             }, 2000);
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -273,6 +322,8 @@ export default function AddAdditionalEvents({
             </div>
         );
     }
+
+    if (!userInfo) return <Error statusCode={404} />;
 
     return (
         <div className="bg-gray-50 min-h-screen py-8">
@@ -696,6 +747,105 @@ export default function AddAdditionalEvents({
                                     })}
                             </div>
                         )}
+
+                        <div className="flex flex-col gap-4 mt-4">
+                            <div className="text-center mb-4">
+                                <p className="font-bold text-lg">
+                                    Total Amount: ₹{totalAmount}
+                                </p>
+                                <p className="text-gray-600">
+                                    Please scan the QR code to make payment
+                                </p>
+                            </div>
+
+                            <div className="flex justify-center mb-4">
+                                {showQRCode ? (
+                                    <img
+                                        src={qrImageUrl || "/placeholder.svg"}
+                                        alt="Payment QR Code"
+                                        className="w-64 h-64 border"
+                                    />
+                                ) : (
+                                    <div className="flex flex-col items-center gap-3">
+                                        <p className="text-gray-700">
+                                            Click the button below to generate
+                                            payment QR code
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={generateQRCode}
+                                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                        >
+                                            Generate QR Code
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                                <p className="text-sm text-gray-700 font-medium">
+                                    After payment, please enter your transaction
+                                    details:
+                                </p>
+
+                                <div>
+                                    <label
+                                        htmlFor="transactionId"
+                                        className="text-gray-700 text-sm"
+                                    >
+                                        Transaction ID / Reference Number
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="transactionId"
+                                        value={transactionId}
+                                        onChange={(e) =>
+                                            setTransactionId(e.target.value)
+                                        }
+                                        placeholder="Enter transaction ID"
+                                        className={`border ${
+                                            formErrors.transactionId
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                    />
+                                    {formErrors.transactionId && (
+                                        <p className="text-red-500 text-xs mt-1">
+                                            {formErrors.transactionId}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label
+                                        htmlFor="paymentScreenshot"
+                                        className="text-gray-700 text-sm"
+                                    >
+                                        Upload Payment Screenshot
+                                    </label>
+                                    <input
+                                        type="file"
+                                        id="paymentScreenshot"
+                                        accept="image/*"
+                                        onChange={(e) =>
+                                            setPaymentScreenshot(
+                                                e.target.files![0]
+                                            )
+                                        }
+                                        className={`border ${
+                                            formErrors.paymentScreenshot
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                    />
+                                    {formErrors.paymentScreenshot && (
+                                        <p className="text-red-500 text-xs mt-1">
+                                            {formErrors.paymentScreenshot}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Form Submission */}
                         <div className="mt-8 flex justify-between items-center">

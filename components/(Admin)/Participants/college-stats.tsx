@@ -6,7 +6,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recha
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import type { Participant } from "@prisma/client"
-import { downloadCollegeData } from "./actions"
+import { downloadCollegeData } from "@/app/(Admin)/Participants/utils"
 
 interface CollegeStatsProps {
   participants: Participant[]
@@ -35,7 +35,6 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
       try {
         setIsLoading(true)
 
-        // Count participants by college
         const collegeCounts: Record<string, number> = {}
 
         for (const participant of participants) {
@@ -46,12 +45,10 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
           collegeCounts[college]++
         }
 
-        // Convert to array format for chart
         let formattedData = Object.entries(collegeCounts)
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value)
 
-        // If there are more than 10 colleges, group the smallest ones as "Others"
         if (formattedData.length > 10) {
           const topColleges = formattedData.slice(0, 9)
           const otherColleges = formattedData.slice(9)

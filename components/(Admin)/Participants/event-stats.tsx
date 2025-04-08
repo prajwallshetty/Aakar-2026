@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
-import { downloadEventData } from "./actions"
+import { downloadEventData } from "@/app/(Admin)/Participants/utils"
 import { getParticipantEvents } from "@/backend/new"
 import { Participant } from "@prisma/client"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface EventStatsProps {
   participants: Participant[]
@@ -42,12 +43,9 @@ export function EventStats({ participants }: EventStatsProps) {
       try {
         setIsLoading(true)
 
-        // Get events for each participant
         const eventCounts: Record<string, { count: number; category: string }> = {}
 
-        // Process each participant's events
         for (const participant of participants) {
-          // Fetch events for this participant
           const events = await getParticipantEvents(participant.id)
 
           if (events && Array.isArray(events)) {
@@ -64,14 +62,12 @@ export function EventStats({ participants }: EventStatsProps) {
           }
         }
 
-        // Convert to array format for chart
         const formattedData = Object.entries(eventCounts).map(([name, data]) => ({
           name,
           count: data.count,
           category: data.category,
         }))
 
-        // Sort by count (descending)
         formattedData.sort((a, b) => b.count - a.count)
 
         setEventData(formattedData)
@@ -98,7 +94,41 @@ export function EventStats({ participants }: EventStatsProps) {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center p-8">Loading event statistics...</div>
+    return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <Skeleton className="h-9 w-64" />
+        <Skeleton className="h-9 w-36" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Skeleton className="h-28 w-full rounded-lg" />
+        <Skeleton className="h-28 w-full rounded-lg" />
+        <Skeleton className="h-28 w-full rounded-lg" />
+      </div>
+
+      <div className="rounded-lg border p-4">
+        <Skeleton className="h-8 w-48 mb-6" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+      
+      <div className="rounded-lg border">
+        <div className="p-4 border-b">
+          <Skeleton className="h-6 w-36" />
+        </div>
+        <div className="p-4">
+          <div className="space-y-3">
+            {Array(5).fill(0).map((_, i) => (
+              <div key={i} className="flex justify-between">
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-6 w-16" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    )
   }
 
   if (error) {

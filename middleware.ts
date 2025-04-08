@@ -15,20 +15,20 @@ export default auth(async (req, ctx) => {
             if (adminData.isAdmin) {
                 return NextResponse.redirect(req.nextUrl.origin + '/AdminPortal');
             } else {
-                return NextResponse.redirect(req.nextUrl.origin + '/');
+                return NextResponse.redirect(req.nextUrl.origin);
             }
         }
 
         const adminProtected = ["/adminportal", "/eventscrud"];
         if (adminProtected.includes(req.nextUrl.pathname.toLowerCase())) {
             const adminCheckResponse = await fetch(req.nextUrl.origin + "/api/isAdmin", {
-                body: JSON.stringify({ email: req.auth.user.email }),
+                body: JSON.stringify({ email: req.auth.user.email||"" }),
                 method: "POST"
             });
             const adminData = await adminCheckResponse.json();
 
             if (!adminData.isAdmin) {
-                return NextResponse.redirect(req.nextUrl.origin + '/profile');
+                return NextResponse.redirect(req.nextUrl.origin + '/AdminLogin');
             }
         }
 
