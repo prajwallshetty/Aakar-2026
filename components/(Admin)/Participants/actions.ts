@@ -1,29 +1,62 @@
 "use server"
 
 import type { Participant, Event } from "@prisma/client"
-import * as XLSX from "xlsx"
 
 type ExtendedParticipant = Participant & {
   events?: Event[]
 }
 
-export async function downloadParticipantData(participants: ExtendedParticipant[], groupByCollege = false) {
-  // Create workbook
-  const wb = XLSX.utils.book_new()
+/**
+ * Convert array of objects to CSV string
+ */
+function objectsToCsv(data: any) {
+  if (data.length === 0) return '';
 
+  // Get headers
+  const headers = Object.keys(data[0]);
+
+  // Create CSV header row
+  const headerRow = headers.join(',');
+
+  // Create data rows
+  const rows = data.map((obj: any) => {
+    return headers.map(header => {
+      let value = obj[header];
+
+      // Handle values that need quoting (contain commas, quotes, or newlines)
+      if (value === null || value === undefined) {
+        value = '';
+      } else if (typeof value === 'string') {
+        // Escape quotes by doubling them and wrap in quotes
+        value = `"${value.replace(/"/g, '""')}"`;
+      } else {
+        value = String(value);
+      }
+
+      return value;
+    }).join(',');
+  });
+
+  // Combine header and rows
+  return [headerRow, ...rows].join('\n');
+}
+
+export async function downloadParticipantData(participants: ExtendedParticipant[], groupByCollege = false) {
   if (groupByCollege) {
     // Group participants by college
-    const collegeGroups: Record<string, ExtendedParticipant[]> = {}
+    const collegeGroups: Record<string, ExtendedParticipant[]> = {};
 
     participants.forEach((participant) => {
       if (!collegeGroups[participant.college]) {
-        collegeGroups[participant.college] = []
+        collegeGroups[participant.college] = [];
       }
-      collegeGroups[participant.college].push(participant)
-    })
+      collegeGroups[participant.college].push(participant);
+    });
 
-    // Create a worksheet for each college
-    Object.entries(collegeGroups).forEach(([college, collegeParticipants]) => {
+    // Create CSV for each college and return a combined ZIP file
+    const csvFiles = [];
+
+    for (const [college, collegeParticipants] of Object.entries(collegeGroups)) {
       const wsData = collegeParticipants.map((p) => ({
         ID: p.id,
         Name: p.name,
@@ -36,13 +69,22 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
         "Amount Paid": p.amount,
         "Transaction ID": p.transaction_ids.join(", ") || "N/A",
         Events: p.events ? p.events.map((e) => e.eventName).join(", ") : "None",
-      }))
+      }));
 
-      const ws = XLSX.utils.json_to_sheet(wsData)
-      XLSX.utils.book_append_sheet(wb, ws, college.substring(0, 31)) // Excel sheet names limited to 31 chars
-    })
+      const csvContent = objectsToCsv(wsData);
+      csvFiles.push({
+        name: `${college.replace(/[^a-zA-Z0-9]/g, '_')}.csv`,
+        content: csvContent
+      });
+    }
+
+    // Return an object with multiple CSV files
+    return {
+      type: 'multi-csv',
+      files: csvFiles
+    };
   } else {
-    // Create a single worksheet with all participants
+    // Create a single CSV with all participants
     const wsData = participants.map((p) => ({
       ID: p.id,
       Name: p.name,
@@ -56,76 +98,67 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
       "Amount Paid": p.amount,
       "Transaction ID": p.transaction_ids.join(", ") || "N/A",
       Events: p.events ? p.events.map((e) => e.eventName).join(", ") : "None",
-    }))
+    }));
 
-    const ws = XLSX.utils.json_to_sheet(wsData)
-    XLSX.utils.book_append_sheet(wb, ws, "All Participants")
+    const csvContent = objectsToCsv(wsData);
+
+    // Convert the CSV string to a buffer
+    const textEncoder = new TextEncoder();
+    const csvBuffer = textEncoder.encode(csvContent);
+
+    return csvBuffer;
   }
-
-  // Generate Excel file
-  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" })
-
-  return excelBuffer
 }
 
 export async function downloadEventData(eventData: { name: string; count: number; category: string }[]) {
-  // Create workbook
-  const wb = XLSX.utils.book_new()
-
-  // Create worksheet for event data
+  // Create data for CSV
   const wsData = eventData.map((event) => ({
     "Event Name": event.name,
     Category: event.category,
     Registrations: event.count,
-  }))
+  }));
 
-  const ws = XLSX.utils.json_to_sheet(wsData)
-  XLSX.utils.book_append_sheet(wb, ws, "Event Statistics")
+  const csvContent = objectsToCsv(wsData);
 
-  // Generate Excel file
-  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" })
+  // Convert the CSV string to a buffer
+  const textEncoder = new TextEncoder();
+  const csvBuffer = textEncoder.encode(csvContent);
 
-  return excelBuffer
+  return csvBuffer;
 }
 
 export async function downloadCollegeData(participants: ExtendedParticipant[]) {
-  // Create workbook
-  const wb = XLSX.utils.book_new()
-
   // Group participants by college
-  const collegeGroups: Record<string, ExtendedParticipant[]> = {}
+  const collegeGroups: Record<string, ExtendedParticipant[]> = {};
 
   participants.forEach((participant) => {
     if (!collegeGroups[participant.college]) {
-      collegeGroups[participant.college] = []
+      collegeGroups[participant.college] = [];
     }
-    collegeGroups[participant.college].push(participant)
-  })
+    collegeGroups[participant.college].push(participant);
+  });
 
-  // Create worksheet for college statistics
+  // Create data for college statistics
   const collegeStats = Object.entries(collegeGroups).map(([college, participants]) => ({
     "College Name": college,
     Participants: participants.length,
     "Total Amount": participants.reduce((sum, p) => sum + p.amount, 0),
-  }))
+  }));
 
   // Sort by number of participants (descending)
-  collegeStats.sort((a, b) => b.Participants - a.Participants)
+  collegeStats.sort((a, b) => b.Participants - a.Participants);
 
-  const ws = XLSX.utils.json_to_sheet(collegeStats)
-  XLSX.utils.book_append_sheet(wb, ws, "College Statistics")
+  const csvContent = objectsToCsv(collegeStats);
 
-  // Generate Excel file
-  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" })
+  // Convert the CSV string to a buffer
+  const textEncoder = new TextEncoder();
+  const csvBuffer = textEncoder.encode(csvContent);
 
-  return excelBuffer
+  return csvBuffer;
 }
 
 export async function downloadParticipantDetail(participant: ExtendedParticipant) {
-  // Create workbook
-  const wb = XLSX.utils.book_new()
-
-  // Create worksheet for participant details
+  // Create data for participant details CSV
   const participantData = [
     {
       ID: participant.id,
@@ -140,12 +173,17 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
       "Amount Paid": participant.amount,
       "Transaction ID": participant.transaction_ids.join(", ") || "N/A",
     },
-  ]
+  ];
 
-  const participantWs = XLSX.utils.json_to_sheet(participantData)
-  XLSX.utils.book_append_sheet(wb, participantWs, "Participant Details")
+  const csvFiles = [];
 
-  // Create worksheet for events
+  // Add participant details CSV
+  csvFiles.push({
+    name: "participant_details.csv",
+    content: objectsToCsv(participantData)
+  });
+
+  // Add events CSV if available
   if (participant.events && participant.events.length > 0) {
     const eventsData = participant.events.map((event) => ({
       "Event Name": event.eventName,
@@ -155,31 +193,43 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
       Time: event.time,
       Venue: event.venue,
       Fee: event.fee,
-    }))
+    }));
 
-    const eventsWs = XLSX.utils.json_to_sheet(eventsData)
-    XLSX.utils.book_append_sheet(wb, eventsWs, "Registered Events")
+    csvFiles.push({
+      name: "registered_events.csv",
+      content: objectsToCsv(eventsData)
+    });
   }
 
-  // Create worksheet for group members if available
+  // Add group members CSV if available
   if (participant.groupMembersData) {
     try {
       const groupMembers =
         typeof participant.groupMembersData === "string"
           ? JSON.parse(participant.groupMembersData)
-          : participant.groupMembersData
+          : participant.groupMembersData;
 
       if (Array.isArray(groupMembers) && groupMembers.length > 0) {
-        const groupMembersWs = XLSX.utils.json_to_sheet(groupMembers)
-        XLSX.utils.book_append_sheet(wb, groupMembersWs, "Group Members")
+        csvFiles.push({
+          name: "group_members.csv",
+          content: objectsToCsv(groupMembers)
+        });
       }
     } catch (error) {
-      console.error("Error parsing group members data:", error)
+      console.error("Error parsing group members data:", error);
     }
   }
 
-  // Generate Excel file
-  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" })
+  // If there's only one file, return its buffer
+  if (csvFiles.length === 1) {
+    const textEncoder = new TextEncoder();
+    const csvBuffer = textEncoder.encode(csvFiles[0].content);
+    return csvBuffer;
+  }
 
-  return excelBuffer
+  // Otherwise return the multi-CSV object
+  return {
+    type: 'multi-csv',
+    files: csvFiles
+  };
 }
