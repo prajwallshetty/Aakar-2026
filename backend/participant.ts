@@ -5,7 +5,7 @@ import { db } from ".";
 import { isAdmin } from "./admin";
 import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
 import { sendEmail } from "./nodemailer";
-import { getEventsOfUser } from "./events";
+import { getEventById, getEventsOfUser } from "./events";
 
 type ServiceResponse<T> = {
     data: T | null;
@@ -70,7 +70,7 @@ export async function registerParticipant(data: ExtendedParticipantCreateInput, 
             return { data: null, error };
         }
 
-        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName+` on `+e.date.toDateString()).join("\n");
+        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n");
 
         await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
 
@@ -103,6 +103,64 @@ Aakar 2025 Team`);
     }
 }
 
+export async function getParticipantsCount() {
+    const usns = new Set();
+    const participants = await db.participant.findMany({ select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
+    participants.forEach(p => {
+        usns.add(p.usn);
+        if (p.groupMembersData) {
+            Object.keys(p.groupMembersData).forEach(groupEvent=>{
+                p.groupMembersData![groupEvent].members.forEach(member=>{
+                    usns.add(member.usn);
+                })
+            });
+        }
+    })
+
+    return usns.size;
+}
+
+export async function getParticipantsCountForEvent(eventId: number) {
+    const event = await getEventById(eventId);
+    if (!event) {
+        return -1;
+    }
+    const participants = await db.participant.findMany({ where: { events: { some: { id: eventId } } }, select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
+    const usns = new Set();
+    participants.forEach(p => {
+        usns.add(p.usn);
+        if (p.groupMembersData) {
+            Object.keys(p.groupMembersData).forEach(groupEvent=>{
+                p.groupMembersData![groupEvent].members.forEach(member=>{
+                    usns.add(member.usn);
+                })
+            });
+        }
+    })
+
+    return usns.size;
+}
+
+export async function getParticipantsCountForCollege(collegeName: string) {
+    const participants = await db.participant.findMany({ where: { college: collegeName }, select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
+    const usns = new Set();
+    participants.forEach(p => {
+        usns.add(p.usn);
+        if (p.groupMembersData) {
+            Object.keys(p.groupMembersData).forEach(groupEvent=>{
+                p.groupMembersData![groupEvent].members.forEach(member=>{
+                    usns.add(member.usn);
+                })
+            });
+        }
+    })
+
+    return usns.size;
+}
+
+export async function getCollegeNames(){
+    
+}
 
 export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
@@ -169,7 +227,7 @@ export async function updateParticipantWithNotify(id: number, data: Prisma.Parti
         const participant = res.data;
 
 
-        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName+` on `+e.date.toDateString()).join("\n");
+        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n");
 
         await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
 
