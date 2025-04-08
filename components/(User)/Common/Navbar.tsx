@@ -87,7 +87,7 @@ export default function Navbar() {
                         </li>
                         <li ref={dropdownRef} className="relative">
                             <Button
-                                className="flex items-center bg-transparent hover:text-pink-400 hover:bg-transparent transition cursor-pointer focus:outline-none"
+                                className={`flex items-center bg-transparent text-lg hover:text-pink-400 hover:bg-transparent transition cursor-pointer focus:outline-none ${montserrat.className}`}
                                 onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
                                 onMouseEnter={() => setEventsDropdownOpen(true)}
                             >
@@ -179,7 +179,7 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Button
-                                    className="flex items-center justify-between w-full bg-transparent hover:bg-transparent py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
+                                    className={`flex items-center justify-between w-full text-lg bg-transparent hover:bg-transparent py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200 ${montserrat.className}`}
                                     onClick={toggleMobileEvents}
                                 >
                                     Events
