@@ -241,7 +241,7 @@ const Register = () => {
 
         setTotalAmount(amount);
 
-        const upiId = "8861621934@upi";
+        const upiId = "ajiet@cnrb";
         const payeeName = "Aakar 2025 Regitsration";
         const transactionNote = "Aakar 2025 Regitsration";
 

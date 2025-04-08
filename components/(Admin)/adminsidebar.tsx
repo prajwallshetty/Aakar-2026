@@ -8,6 +8,7 @@ import {
     Menu,
     ChevronLeft,
     LogOut,
+    User,
 } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -25,6 +26,11 @@ const AdminSidebar = () => {
             label: "Events",
             href: "/EventsCRUD",
         },
+        {
+            icon: <User size={18} />,
+            label: "Participants",
+            href: "/Participants",
+        }
     ];
 
     const toggleSidebar = () => setIsOpen(!isOpen);
