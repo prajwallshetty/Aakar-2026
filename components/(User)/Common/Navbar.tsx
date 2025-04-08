@@ -66,7 +66,7 @@ export default function Navbar() {
             <nav className={`fixed top-0 left-0 w-full bg-transparent backdrop-blur-md z-40 ${montserrat.className}`}>
                 <div className="container mx-auto flex items-center justify-between max-w-7xl px-6 py-8">
                     <Link href="/" className="flex items-center max-h-[20px]">
-                        <Image src="/ajlogo.png" alt="Logo" width={40} height={40} />
+                        <Image src="/logo1.png" alt="Logo" width={480} height={120} className="max-w-[80%]"/>
                     </Link>
 
                     <ul className="hidden md:flex space-x-8 lg:space-x-16 text-white text-lg font-semibold">
@@ -149,7 +149,7 @@ export default function Navbar() {
                 <div className="flex flex-col h-full">
                     <div className="p-6 border-b border-gray-800 flex items-center justify-between">
                         <Link href="/" onClick={closeSidebar}>
-                            <Image src="/ajlogo.png" alt="Logo" width={40} height={40} />
+                            <Image src="/logo1.png" alt="Logo" width={40} height={40} />
                         </Link>
                     </div>
 

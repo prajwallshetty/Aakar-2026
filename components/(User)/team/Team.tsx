@@ -32,7 +32,7 @@ const teamData: TeamCategory[] = [
             { name: 'Thashvy S Suvarna', role: 'Tech Lead', image: '/Team/Core-Committee/thashvy.jpg' },
             { name: 'Manya Shetty', role: 'Management Lead', image: '/Team/Core-Committee/manya.jpg' },
             { name: 'Sahana', role: 'Media Lead', image: '/Team/Core-Committee/sahana.jpg' },
-            { name: 'Monith K', role: 'Design Lead', image: '/Team/Core-Committee/monith.png' },
+            { name: 'Monith K', role: 'Design Lead', image: '/Team/Core-Committee/monith.jpg' },
             { name: 'Gauresh G Pai', role: 'Web Lead', image: '/Team/Core-Committee/gauresh.png' },
             { name: 'Nishanth Shetty B', role: 'Executive Member', image: '/Team/Core-Committee/nishant.jpg' },
             { name: 'Thanisha Devadiga', role: 'Executive Member', image: '/Team/Core-Committee/thanisha.jpg' },

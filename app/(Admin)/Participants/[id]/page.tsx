@@ -8,7 +8,6 @@ import { ArrowLeft, Download, Calendar, Phone, Mail, School, User, Users, Tag, C
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { getParticipant } from "@/backend/participant"
-import { downloadParticipantDetail } from "../../../../components/(Admin)/Participants/actions"
 import Link from "next/link"
 import type { Participant, Event } from "@prisma/client"
 
@@ -70,17 +69,6 @@ export default function ParticipantDetailPage() {
     fetchParticipantDetails()
   }, [id])
 
-  const handleDownloadDetails = async () => {
-    if (!participant) return
-
-    try {
-      await downloadParticipantDetail(participant)
-    } catch (error) {
-      console.error("Error downloading participant details:", error)
-      setError("Failed to download participant details")
-    }
-  }
-
   if (isLoading) {
     return (
       <div className="container mx-auto py-6 flex justify-center items-center min-h-[50vh]">
@@ -115,14 +103,10 @@ export default function ParticipantDetailPage() {
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="outline" asChild>
-          <Link href="/admin/participants" className="cursor-pointer">
+          <Link href="/Participants" className="cursor-pointer">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Participants
           </Link>
-        </Button>
-        <Button onClick={handleDownloadDetails} className="cursor-pointer">
-          <Download className="mr-2 h-4 w-4" />
-          Download Details
         </Button>
       </div>
 

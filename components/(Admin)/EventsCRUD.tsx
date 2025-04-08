@@ -835,7 +835,6 @@ const EventsCRUD = () => {
 
                                 <Separator />
 
-                                {/* Student Coordinators */}
                                 <div className="space-y-2">
                                     <Label>Student Coordinators</Label>
                                     <div className="space-y-3">
@@ -919,7 +918,6 @@ const EventsCRUD = () => {
                                     </div>
                                 </div>
 
-                                {/* Faculty Coordinators */}
                                 <div className="space-y-2">
                                     <Label>Faculty Coordinators</Label>
                                     <div className="space-y-3">
