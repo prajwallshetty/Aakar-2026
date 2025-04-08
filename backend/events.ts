@@ -126,6 +126,26 @@ export async function getEventsOfUser(userId: number) {
     }
 }
 
+export async function getEventsOfAllUsers() {
+    try {
+        return await db.participant.findMany({
+            select: {
+                id: true,
+                events: true
+            }
+        }).then((participants) => {
+            let a = {} as Record<number, ExtendedEvent[]>;
+            participants.forEach((participant) => {
+                a[participant.id] = participant.events as ExtendedEvent[];
+            })
+            return a;
+        })
+    } catch (e) {
+        console.error("Get Events Of All Users Error:", e);
+        return [];
+    }
+}
+
 export async function getEventOptions() {
     try {
         const events = await getAllEvents();
