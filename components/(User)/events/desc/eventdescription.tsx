@@ -142,7 +142,7 @@ const EventDescription = ({
                             <Link href="/register">
                                 <Button
                                     size="lg"
-                                    className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg transition-all hover:scale-105"
+                                    className="bg-gradient-to-r cursor-pointer from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg transition-all hover:scale-105"
                                 >
                                     Register Now
                                 </Button>

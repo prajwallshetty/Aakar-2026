@@ -376,13 +376,13 @@ const AdminPortal = () => {
                     )}
 
                     <DialogFooter>
-                      <Button type="button" variant="outline" onClick={() => {
+                      <Button type="button" variant="outline" className='cursor-pointer' onClick={() => {
                         resetForm();
                         setOpenDialog(false);
                       }}>
                         Cancel
                       </Button>
-                      <Button type="submit">
+                      <Button type="submit" className='cursor-pointer'>
                         {isEditing ?( isSubmitting ? 'Updating...' : 'Save Changes') : isSubmitting ? 'Creating...' : 'Create Admin'}
                       </Button>
                     </DialogFooter>
@@ -425,12 +425,14 @@ const AdminPortal = () => {
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                className='cursor-pointer'
                                 onClick={() => handleEdit(admin)}
                               >
                                 <Pencil size={16} />
                               </Button>
                               <Button
                                 variant="ghost"
+                                className='cursor-pointer'
                                 size="icon"
                                 onClick={() => confirmDelete(admin.id)}
                               >

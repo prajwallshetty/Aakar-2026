@@ -87,7 +87,7 @@ export default function Navbar() {
                         </li>
                         <li ref={dropdownRef} className="relative">
                             <Button
-                                className="flex items-center bg-transparent hover:text-pink-400 transition cursor-pointer focus:outline-none"
+                                className="flex items-center bg-transparent hover:text-pink-400 hover:bg-transparent transition cursor-pointer focus:outline-none"
                                 onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
                                 onMouseEnter={() => setEventsDropdownOpen(true)}
                             >
@@ -127,7 +127,7 @@ export default function Navbar() {
                     </div>
 
                     <Button
-                        className="md:hidden text-white bg-transparent text-2xl cursor-pointer focus:outline-none z-50"
+                        className="md:hidden text-white bg-transparent hover:bg-transparent text-2xl cursor-pointer focus:outline-none z-50"
                         onClick={toggleSidebar}
                         aria-label="Toggle menu"
                     >
@@ -184,7 +184,7 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Button
-                                    className="flex items-center justify-between w-full py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
+                                    className="flex items-center justify-between w-full bg-transparent hover:bg-transparent py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
                                     onClick={toggleMobileEvents}
                                 >
                                     Events

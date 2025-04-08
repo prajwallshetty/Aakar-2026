@@ -627,7 +627,7 @@ const Register = () => {
                                     </label>
                                     <input
                                         id="year"
-                                        value={formData.year}
+                                        value={formData.year||""}
                                         placeholder="Enter your year"
                                         onChange={handleChange}
                                         required
@@ -757,7 +757,7 @@ const Register = () => {
                                                                 amount
                                                             );
                                                         }}
-                                                        className="ml-2 text-pink-700 hover:text-pink-900"
+                                                        className="ml-2 text-pink-700 cursor-pointer hover:text-pink-900"
                                                     >
                                                         ×
                                                     </button>
@@ -901,7 +901,7 @@ const Register = () => {
                                                                             })
                                                                         );
                                                                     }}
-                                                                    className="text-red-500 text-sm hover:text-red-700"
+                                                                    className="text-red-500 cursor-pointer text-sm hover:text-red-700"
                                                                 >
                                                                     Remove
                                                                 </button>
@@ -1091,7 +1091,7 @@ const Register = () => {
                                             <button
                                                 type="button"
                                                 onClick={generateQRCode}
-                                                className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                                className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700"
                                             >
                                                 Generate QR Code
                                             </button>
@@ -1163,14 +1163,14 @@ const Register = () => {
                                         onClick={() =>
                                             setPaymentStep("details")
                                         }
-                                        className="bg-gray-300 text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
+                                        className="bg-gray-300 cursor-pointer text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
                                     >
                                         Back
                                     </button>
                                     <button
                                         type="button"
                                         onClick={proceedToVerification}
-                                        className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                        className="bg-pink-800 cursor-pointer text-white py-2 px-4 rounded-full hover:bg-pink-700"
                                     >
                                         Verify Payment
                                     </button>
@@ -1327,14 +1327,14 @@ const Register = () => {
                                             onClick={() =>
                                                 setPaymentStep("payment")
                                             }
-                                            className="bg-gray-300 text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
+                                            className="bg-gray-300 text-gray-700 cursor-pointer py-2 px-4 rounded-full hover:bg-gray-400"
                                         >
                                             Back
                                         </button>
                                         <button
                                             type="submit"
                                             disabled={isRegistering}
-                                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 disabled:opacity-70 flex items-center gap-2"
+                                            className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700 disabled:opacity-70 flex items-center gap-2"
                                         >
                                             {isRegistering ? (
                                                 <>
