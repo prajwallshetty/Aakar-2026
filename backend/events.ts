@@ -202,6 +202,15 @@ export async function getEventsTotalFee(eventIds: number[]) {
     }
 }
 
+export async function getTotalEvents() {
+    try {
+        return await db.event.count();
+    } catch (e) {
+        console.error("Get Total Events Error:", e);
+        return 0;
+    }
+}
+
 export async function updateEvent(id: number, data: ExtendedEventCreateInput) {
     try {
         if (!await isAdmin()) throw new Error("Not authorized");
