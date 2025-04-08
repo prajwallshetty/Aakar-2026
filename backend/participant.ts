@@ -1,6 +1,6 @@
 "use server"
 
-import { Participant, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
@@ -42,7 +42,7 @@ export async function validateParticipantData(data: ExtendedParticipantCreateInp
     return Object.keys(errors).length > 0 ? errors : null;
 }
 
-export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<Participant>> {
+export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         const validationErrors = await validateParticipantData(data);
         if (validationErrors) {
@@ -50,7 +50,7 @@ export async function createParticipant(data: ExtendedParticipantCreateInput): P
         }
 
         const participant = await db.participant.create({ data: { ...data, email: data.email.toLowerCase(), usn: data.usn.toUpperCase() } });
-        return { data: participant, error: null };
+        return { data: participant as ExtendedParticipant, error: null };
     } catch (error) {
         console.error("Error creating participant:", error);
         return {
@@ -62,7 +62,7 @@ export async function createParticipant(data: ExtendedParticipantCreateInput): P
     }
 }
 
-export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
+export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         const { data: participant, error } = await createParticipant({ ...data, events: { connect: events.map(e => ({ id: e })) }, email: data.email.toLowerCase(), usn: data.usn.toUpperCase() });
 
@@ -159,7 +159,7 @@ export async function getParticipantsCountForCollege(collegeName: string) {
 }
 
 export async function getCollegeNames(){
-    
+
 }
 
 export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
@@ -183,7 +183,7 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Extend
     }
 }
 
-export async function getParticipants(): Promise<ServiceResponse<Participant[]>> {
+export async function getParticipants(): Promise<ServiceResponse<ExtendedParticipant[]>> {
     try {
         const isUserAdmin = await isAdmin();
 
@@ -193,14 +193,14 @@ export async function getParticipants(): Promise<ServiceResponse<Participant[]>>
 
         const participants = await db.participant.findMany();
 
-        return { data: participants, error: null };
+        return { data: participants as ExtendedParticipant[], error: null };
     } catch (error) {
         console.error("Error fetching participants:", error);
         return { data: null, error: "Failed to fetch participants" };
     }
 }
 
-export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<Participant[]>> {
+export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<ExtendedParticipant[]>> {
     try {
         const isUserAdmin = await isAdmin();
 
@@ -210,7 +210,7 @@ export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereIn
 
         const participants = await db.participant.findMany({ where });
 
-        return { data: participants, error: null };
+        return { data: participants as ExtendedParticipant[], error: null };
     } catch (error) {
         console.error("Error fetching participants:", error);
         return { data: null, error: "Failed to fetch participants" };
@@ -288,7 +288,7 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
     }
 }
 
-export async function deleteParticipant(id: number): Promise<ServiceResponse<Participant>> {
+export async function deleteParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -304,7 +304,7 @@ export async function deleteParticipant(id: number): Promise<ServiceResponse<Par
             where: { id }
         });
 
-        return { data: deletedParticipant, error: null };
+        return { data: deletedParticipant as ExtendedParticipant, error: null };
     } catch (error) {
         console.error("Error deleting participant:", error);
 
