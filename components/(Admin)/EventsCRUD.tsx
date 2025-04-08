@@ -5,7 +5,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -22,7 +21,6 @@ import {
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -35,7 +33,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
     AlertDialog,
@@ -61,7 +58,6 @@ import {
     Upload,
     X,
 } from "lucide-react";
-import { format } from "date-fns";
 import {
     getAllEvents,
     createEvent,
@@ -72,20 +68,7 @@ import { uploadFile, deleteFiles } from "@/backend/supabase";
 import { eventType } from "@prisma/client";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-
-interface Event {
-    id: number;
-    eventName: string;
-    eventType: eventType;
-    description: string;
-    fee: number;
-    date: Date;
-    time: string;
-    venue: string;
-    coordinators: Coordinator[];
-    rules: string[];
-    imageUrl: string;
-}
+import { ExtendedEvent } from "@/types";
 
 interface Coordinator {
     name: string;
@@ -105,22 +88,29 @@ interface FormData {
     date: Date;
     time: string;
     venue: string;
-    coordinators: Coordinator[];
+    studentCoordinators: Coordinator[];
+    facultyCoordinators: Coordinator[];
     rules: string[];
     imageUrl: string;
 }
 
 const EventsCRUD = () => {
-    const [events, setEvents] = useState<Event[]>([]);
+    const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentId, setCurrentId] = useState<number | null>(null);
     const [error, setError] = useState("");
-    const [newCoordinator, setNewCoordinator] = useState<Coordinator>({
-        name: "",
-        phone: "",
-    });
+    const [newStudentCoordinator, setNewStudentCoordinator] =
+        useState<Coordinator>({
+            name: "",
+            phone: "",
+        });
+    const [newFacultyCoordinator, setNewFacultyCoordinator] =
+        useState<Coordinator>({
+            name: "",
+            phone: "",
+        });
     const [newRule, setNewRule] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(false);
@@ -129,10 +119,11 @@ const EventsCRUD = () => {
         eventType: "Solo",
         description: "",
         fee: 0,
-        date: new Date("2024-05-09"), // Default to May 9
+        date: new Date("2024-05-09"),
         time: "",
         venue: "",
-        coordinators: [],
+        studentCoordinators: [],
+        facultyCoordinators: [],
         rules: [],
         imageUrl: "",
     });
@@ -175,10 +166,14 @@ const EventsCRUD = () => {
                     data.map((event) => ({
                         ...event,
                         date: new Date(event.date),
-                        coordinators:
-                            typeof event.coordinators === "string"
-                                ? JSON.parse(event.coordinators)
-                                : event.coordinators,
+                        studentCoordinators:
+                            typeof event.studentCoordinators === "string"
+                                ? JSON.parse(event.studentCoordinators)
+                                : event.studentCoordinators,
+                        facultyCoordinators:
+                            typeof event.facultyCoordinators === "string"
+                                ? JSON.parse(event.facultyCoordinators)
+                                : event.facultyCoordinators,
                     }))
                 );
             }
@@ -221,20 +216,47 @@ const EventsCRUD = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleAddCoordinator = () => {
-        if (newCoordinator.name && newCoordinator.phone) {
+    const handleAddStudentCoordinator = () => {
+        if (newStudentCoordinator.name && newStudentCoordinator.phone) {
             setFormData((prev) => ({
                 ...prev,
-                coordinators: [...prev.coordinators, { ...newCoordinator }],
+                studentCoordinators: [
+                    ...prev.studentCoordinators,
+                    { ...newStudentCoordinator },
+                ],
             }));
-            setNewCoordinator({ name: "", phone: "" });
+            setNewStudentCoordinator({ name: "", phone: "" });
         }
     };
 
-    const handleRemoveCoordinator = (index: number) => {
+    const handleAddFacultyCoordinator = () => {
+        if (newFacultyCoordinator.name && newFacultyCoordinator.phone) {
+            setFormData((prev) => ({
+                ...prev,
+                facultyCoordinators: [
+                    ...prev.facultyCoordinators,
+                    { ...newFacultyCoordinator },
+                ],
+            }));
+            setNewFacultyCoordinator({ name: "", phone: "" });
+        }
+    };
+
+    const handleRemoveStudentCoordinator = (index: number) => {
         setFormData((prev) => ({
             ...prev,
-            coordinators: prev.coordinators.filter((_, i) => i !== index),
+            studentCoordinators: prev.studentCoordinators.filter(
+                (_, i) => i !== index
+            ),
+        }));
+    };
+
+    const handleRemoveFacultyCoordinator = (index: number) => {
+        setFormData((prev) => ({
+            ...prev,
+            facultyCoordinators: prev.facultyCoordinators.filter(
+                (_, i) => i !== index
+            ),
         }));
     };
 
@@ -264,13 +286,15 @@ const EventsCRUD = () => {
             date: new Date("2024-05-09"),
             time: "",
             venue: "",
-            coordinators: [],
+            studentCoordinators: [],
+            facultyCoordinators: [],
             rules: [],
             imageUrl: "",
         });
         setIsEditing(false);
         setCurrentId(null);
-        setNewCoordinator({ name: "", phone: "" });
+        setNewStudentCoordinator({ name: "", phone: "" });
+        setNewFacultyCoordinator({ name: "", phone: "" });
         setNewRule("");
         setSelectedFile(null);
         setPreviewUrl("");
@@ -299,7 +323,12 @@ const EventsCRUD = () => {
                 ...formData,
                 imageUrl,
                 fee: formData.fee,
-                coordinators: JSON.stringify(formData.coordinators),
+                studentCoordinators: JSON.stringify(
+                    formData.studentCoordinators
+                ),
+                facultyCoordinators: JSON.stringify(
+                    formData.facultyCoordinators
+                ),
             };
 
             if (isEditing && currentId) {
@@ -319,7 +348,7 @@ const EventsCRUD = () => {
         }
     };
 
-    const handleEdit = (event: Event) => {
+    const handleEdit = (event: ExtendedEvent) => {
         setFormData({
             eventName: event.eventName,
             eventType: event.eventType,
@@ -328,7 +357,8 @@ const EventsCRUD = () => {
             date: new Date(event.date),
             time: event.time,
             venue: event.venue,
-            coordinators: event.coordinators || [],
+            studentCoordinators: event.studentCoordinators || [],
+            facultyCoordinators: event.facultyCoordinators || [],
             rules: event.rules || [],
             imageUrl: event.imageUrl,
         });
@@ -357,7 +387,6 @@ const EventsCRUD = () => {
     return (
         <div className="container mx-auto py-8 px-4">
             <div className="flex flex-col space-y-6">
-                {/* Header Section */}
                 <div className="flex flex-col space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight">
                         Events Management
@@ -368,7 +397,6 @@ const EventsCRUD = () => {
                     </p>
                 </div>
 
-                {/* Error Display */}
                 {error && (
                     <div className="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
                         <div className="flex items-center gap-2">
@@ -378,7 +406,6 @@ const EventsCRUD = () => {
                     </div>
                 )}
 
-                {/* Main Content Card */}
                 <Card className="shadow-sm">
                     <CardHeader className="border-b">
                         <div className="flex items-center justify-between">
@@ -469,12 +496,7 @@ const EventsCRUD = () => {
                                             <TableCell>
                                                 <div className="flex flex-col">
                                                     <span>
-                                                        {format(
-                                                            new Date(
-                                                                event.date
-                                                            ),
-                                                            "MMM d"
-                                                        )}
+                                                        {event.date.toDateString()}
                                                     </span>
                                                     <span className="text-xs text-muted-foreground flex items-center mt-1">
                                                         <Clock className="h-3 w-3 mr-1" />{" "}
@@ -567,7 +589,6 @@ const EventsCRUD = () => {
                     </CardContent>
                 </Card>
 
-                {/* Event Form Dialog */}
                 <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                     <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
@@ -582,7 +603,6 @@ const EventsCRUD = () => {
                         </DialogHeader>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 gap-4">
-                                {/* Basic Info */}
                                 <div className="space-y-2">
                                     <Label htmlFor="eventName">
                                         Event Name
@@ -654,7 +674,6 @@ const EventsCRUD = () => {
                                     />
                                 </div>
 
-                                {/* Date and Time */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label>Date</Label>
@@ -713,7 +732,6 @@ const EventsCRUD = () => {
                                     />
                                 </div>
 
-                                {/* Image Upload */}
                                 <div className="space-y-2">
                                     <Label>Event Poster</Label>
                                     {previewUrl ? (
@@ -767,13 +785,14 @@ const EventsCRUD = () => {
 
                                 <Separator />
 
-                                {/* Coordinators */}
+                                {/* Student Coordinators */}
                                 <div className="space-y-2">
-                                    <Label>Coordinators</Label>
+                                    <Label>Student Coordinators</Label>
                                     <div className="space-y-3">
-                                        {formData.coordinators.length > 0 && (
+                                        {formData.studentCoordinators.length >
+                                            0 && (
                                             <div className="space-y-2">
-                                                {formData.coordinators.map(
+                                                {formData.studentCoordinators.map(
                                                     (coordinator, index) => (
                                                         <div
                                                             key={index}
@@ -799,7 +818,7 @@ const EventsCRUD = () => {
                                                                 className="cursor-pointer"
                                                                 size="sm"
                                                                 onClick={() =>
-                                                                    handleRemoveCoordinator(
+                                                                    handleRemoveStudentCoordinator(
                                                                         index
                                                                     )
                                                                 }
@@ -814,20 +833,24 @@ const EventsCRUD = () => {
                                         <div className="flex gap-2">
                                             <Input
                                                 placeholder="Name"
-                                                value={newCoordinator.name}
+                                                value={
+                                                    newStudentCoordinator.name
+                                                }
                                                 onChange={(e) =>
-                                                    setNewCoordinator({
-                                                        ...newCoordinator,
+                                                    setNewStudentCoordinator({
+                                                        ...newStudentCoordinator,
                                                         name: e.target.value,
                                                     })
                                                 }
                                             />
                                             <Input
                                                 placeholder="Phone"
-                                                value={newCoordinator.phone}
+                                                value={
+                                                    newStudentCoordinator.phone
+                                                }
                                                 onChange={(e) =>
-                                                    setNewCoordinator({
-                                                        ...newCoordinator,
+                                                    setNewStudentCoordinator({
+                                                        ...newStudentCoordinator,
                                                         phone: e.target.value,
                                                     })
                                                 }
@@ -836,7 +859,97 @@ const EventsCRUD = () => {
                                                 type="button"
                                                 variant="outline"
                                                 className="cursor-pointer"
-                                                onClick={handleAddCoordinator}
+                                                onClick={
+                                                    handleAddStudentCoordinator
+                                                }
+                                            >
+                                                Add
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Faculty Coordinators */}
+                                <div className="space-y-2">
+                                    <Label>Faculty Coordinators</Label>
+                                    <div className="space-y-3">
+                                        {formData.facultyCoordinators.length >
+                                            0 && (
+                                            <div className="space-y-2">
+                                                {formData.facultyCoordinators.map(
+                                                    (coordinator, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <div className="flex-1 rounded-md border p-3 text-sm">
+                                                                <span className="font-medium">
+                                                                    {
+                                                                        coordinator.name
+                                                                    }
+                                                                </span>
+                                                                // Continuing
+                                                                from where the
+                                                                code was cut
+                                                                off...
+                                                                <span className="text-muted-foreground ml-2">
+                                                                    (
+                                                                    {
+                                                                        coordinator.phone
+                                                                    }
+                                                                    )
+                                                                </span>
+                                                            </div>
+                                                            <Button
+                                                                type="button"
+                                                                variant="destructive"
+                                                                className="cursor-pointer"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                    handleRemoveFacultyCoordinator(
+                                                                        index
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                        <div className="flex gap-2">
+                                            <Input
+                                                placeholder="Name"
+                                                value={
+                                                    newFacultyCoordinator.name
+                                                }
+                                                onChange={(e) =>
+                                                    setNewFacultyCoordinator({
+                                                        ...newFacultyCoordinator,
+                                                        name: e.target.value,
+                                                    })
+                                                }
+                                            />
+                                            <Input
+                                                placeholder="Phone"
+                                                value={
+                                                    newFacultyCoordinator.phone
+                                                }
+                                                onChange={(e) =>
+                                                    setNewFacultyCoordinator({
+                                                        ...newFacultyCoordinator,
+                                                        phone: e.target.value,
+                                                    })
+                                                }
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="cursor-pointer"
+                                                onClick={
+                                                    handleAddFacultyCoordinator
+                                                }
                                             >
                                                 Add
                                             </Button>
@@ -846,9 +959,8 @@ const EventsCRUD = () => {
 
                                 <Separator />
 
-                                {/* Rules */}
                                 <div className="space-y-2">
-                                    <Label>Rules</Label>
+                                    <Label>Event Rules</Label>
                                     <div className="space-y-3">
                                         {formData.rules.length > 0 && (
                                             <div className="space-y-2">
@@ -859,16 +971,13 @@ const EventsCRUD = () => {
                                                             className="flex items-center gap-2"
                                                         >
                                                             <div className="flex-1 rounded-md border p-3 text-sm">
-                                                                <span>
-                                                                    {index + 1}.{" "}
-                                                                    {rule}
-                                                                </span>
+                                                                {rule}
                                                             </div>
                                                             <Button
                                                                 type="button"
                                                                 variant="destructive"
-                                                                size="sm"
                                                                 className="cursor-pointer"
+                                                                size="sm"
                                                                 onClick={() =>
                                                                     handleRemoveRule(
                                                                         index
@@ -889,12 +998,11 @@ const EventsCRUD = () => {
                                                 onChange={(e) =>
                                                     setNewRule(e.target.value)
                                                 }
-                                                className="flex-1"
                                             />
                                             <Button
                                                 type="button"
-                                                className="cursor-pointer"
                                                 variant="outline"
+                                                className="cursor-pointer"
                                                 onClick={handleAddRule}
                                             >
                                                 Add
@@ -906,13 +1014,32 @@ const EventsCRUD = () => {
 
                             <DialogFooter>
                                 <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        resetForm();
+                                        setOpenDialog(false);
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
                                     type="submit"
                                     className="cursor-pointer"
                                     disabled={uploadProgress}
                                 >
-                                    {uploadProgress
-                                        ? "Saving..."
-                                        : "Save Event"}
+                                    {uploadProgress ? (
+                                        <>
+                                            <span className="mr-2">
+                                                Saving...
+                                            </span>
+                                        </>
+                                    ) : isEditing ? (
+                                        "Update Event"
+                                    ) : (
+                                        "Create Event"
+                                    )}
                                 </Button>
                             </DialogFooter>
                         </form>

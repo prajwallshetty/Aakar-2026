@@ -6,16 +6,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        phone: {},
+        email: {},
         password: {},
       },
       authorize: async (credentials) => {
-        if (!credentials?.phone || !credentials?.password) throw new Error("No credentials found.")
-        let adm = await verifyAdmin(credentials.phone as string, credentials.password as string);
+        if (!credentials?.email || !credentials?.password) throw new Error("No credentials found.")
+        let adm = await verifyAdmin(credentials.email as string, credentials.password as string);
         if (adm)
           return {
             id: `${adm.id}`,
-            phone: adm.phone,
+            email: adm.email,
             name: adm.name,
             role: "admin"
           }

@@ -3,28 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronLeft, UserPlus, Trash2, Pencil, User, AlertCircle, CalendarDays, Ticket, Users } from 'lucide-react';
-import Link from 'next/link';
-import { Badge } from '../ui/badge';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { UserPlus, Trash2, Pencil, User, AlertCircle, Ticket, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { toast } from 'sonner';
-
-// Import server actions
 import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/backend/admin';
 import { Admin } from '@prisma/client';
 
-// Interface for error responses from backend
 interface ErrorResponse {
   error: string;
 }
 
-// Helper to check if response is an error
 function isErrorResponse(response: any): response is ErrorResponse {
   return response && typeof response === 'object' && 'error' in response;
 }
@@ -52,7 +46,6 @@ const AdminPortal = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<number | null>(null);
 
-  // Fetch all data on mount
   useEffect(() => {
     fetchAdmins();
     fetchStats();
@@ -76,7 +69,6 @@ const AdminPortal = () => {
         toast.error(response.error);
         setError(response.error);
       } else {
-        // If not an error, it's an array of admins
         setAdmins(response as Admin[]);
         setError('');
       }
@@ -92,7 +84,6 @@ const AdminPortal = () => {
   const fetchStats = async () => {
     setLoading(prev => ({ ...prev, stats: true }));
     try {
-      // For demo purposes, using static data
       setTimeout(() => {
         setStats({
           totalUsers: 125,
@@ -129,9 +120,7 @@ const AdminPortal = () => {
 
     try {
       if (isEditing && currentId) {
-        // Update existing admin
         const adminData = { ...formData };
-        // Only include password if it's not empty
         if (!adminData.password) {
           const { password, ...rest } = adminData;
           const response = await updateAdmin(currentId, rest);
@@ -167,7 +156,6 @@ const AdminPortal = () => {
           }
         }
       } else {
-        // Create new admin
         const response = await createAdmin(formData);
 
         if (!response) {
@@ -240,7 +228,6 @@ const AdminPortal = () => {
         </div>
       </div>
 
-      {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -290,8 +277,6 @@ const AdminPortal = () => {
       </div>
 
       <Tabs defaultValue="admins" className="w-full">
-
-        {/* Admins Tab */}
         <TabsContent value="admins" className="mt-6">
           <Card>
             <CardHeader className="flex flex-row justify-between items-center">
@@ -457,8 +442,7 @@ const AdminPortal = () => {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Delete confirmation dialog */}
+      
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

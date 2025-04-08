@@ -3,9 +3,7 @@ import React from "react";
 
 const page = () => {
     return (
-        <div>
-            <Eventpage eventCategory="Technical" />
-        </div>
+        <Eventpage eventCategory="Technical" />
     );
 };
 

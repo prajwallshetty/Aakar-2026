@@ -2,9 +2,9 @@
 
 import { Participant, Prisma } from "@prisma/client";
 import { db } from ".";
-import bcrypt from "bcryptjs";
 import { isAdmin } from "./admin";
-import { ExtendedParticipantCreateInput } from "@/types";
+import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
+import { sendEmail } from "./nodemailer";
 
 type ServiceResponse<T> = {
     data: T | null;
@@ -74,11 +74,13 @@ export async function createParticipant(data: ExtendedParticipantCreateInput): P
 
 export async function registerParticipant(data: ExtendedParticipantCreateInput, events: number[]): Promise<ServiceResponse<Participant>> {
     try {
-        const { data: participant, error } = await createParticipant({...data, events: { connect: events.map(e => ({ id: e })) }});
+        const { data: participant, error } = await createParticipant({ ...data, events: { connect: events.map(e => ({ id: e })) } });
 
         if (error || !participant) {
             return { data: null, error };
         }
+
+        await sendEmail(participant.email, "Registration Successful", "You have successfully registered for the event(s).");
 
         return { data: participant, error: null };
     } catch (error) {
@@ -91,7 +93,7 @@ export async function registerParticipant(data: ExtendedParticipantCreateInput, 
 }
 
 
-export async function getParticipant(id: number): Promise<ServiceResponse<Participant>> {
+export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -105,7 +107,7 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Partic
             return { data: null, error: "Participant not found" };
         }
 
-        return { data: participant, error: null };
+        return { data: participant as ExtendedParticipant, error: null };
     } catch (error) {
         console.error("Error fetching participant:", error);
         return { data: null, error: "Failed to fetch participant" };
@@ -129,16 +131,27 @@ export async function getParticipants(): Promise<ServiceResponse<Participant[]>>
     }
 }
 
-export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<Participant>> {
+export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereInput): Promise<ServiceResponse<Participant[]>> {
     try {
-        if (!id) {
-            return { data: null, error: { id: "Participant ID is required" } };
-        }
-
         const isUserAdmin = await isAdmin();
 
         if (!isUserAdmin) {
             return { data: null, error: "Not authorized" };
+        }
+
+        const participants = await db.participant.findMany({ where });
+
+        return { data: participants, error: null };
+    } catch (error) {
+        console.error("Error fetching participants:", error);
+        return { data: null, error: "Failed to fetch participants" };
+    }
+}
+
+export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<Participant>> {
+    try {
+        if (!id) {
+            return { data: null, error: { id: "Participant ID is required" } };
         }
 
         const updatedParticipant = await db.participant.update({

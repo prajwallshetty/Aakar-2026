@@ -20,14 +20,12 @@ export default function AboutPage() {
     <main className="min-h-screen text-white">
       <div className="py-8">
         <div className="container mx-auto max-w-6xl px-4 md:px-8">
-          {/* Institution Section */}
           <h2 className="text-3xl md:text-4xl font-bold text-center py-6">
             About our Institution
           </h2>
 
           <div className="rounded-xl overflow-hidden p-4 md:p-10">
             <div className="flex flex-col md:flex-row items-center gap-8">
-              {/* Left - Image */}
               <div className="w-full md:w-1/2">
                 <div className="relative group w-full cursor-pointer" onClick={openModal}>
                   <Image
@@ -43,7 +41,6 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Right - Content */}
               <div className="w-full md:w-1/2 px-2 md:px-4">
                 <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">
                   AJ INSTITUTE OF ENGINEERING AND TECHNOLOGY
@@ -69,7 +66,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* AAKAR Section */}
           <div className="rounded-xl overflow-hidden p-4 md:p-10 mt-10">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
               About AAKAR
@@ -107,7 +103,6 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-opacity-90 z-50 flex items-center justify-center p-4 overflow-auto">
           <div className="bg-zinc-900 rounded-2xl overflow-hidden max-w-3xl w-full shadow-lg">

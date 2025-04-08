@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
     LayoutDashboard,
-    UserPlus,
     CalendarDays,
     Menu,
     ChevronLeft,
@@ -32,10 +31,7 @@ const AdminSidebar = () => {
 
     return (
         <>
-            {/* Static closed sidebar space */}
             <div className="w-16 shrink-0" />
-
-            {/* Actual overlay sidebar */}
             <div
                 className={`fixed top-0 left-0 z-50 bg-black text-white h-full transition-all duration-300 ${isOpen ? "w-64" : "w-16"
                     }`}
@@ -67,7 +63,6 @@ const AdminSidebar = () => {
                         </ul>
                     </div>
 
-                    {/* Admin Info & Logout */}
                     <div className="p-4 relative z-10">
                         {isOpen && (
                             <div className="mb-4">

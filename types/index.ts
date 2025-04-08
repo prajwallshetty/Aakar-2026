@@ -1,7 +1,8 @@
 import { Event, Participant, Prisma } from "@prisma/client";
 
 export interface ExtendedEvent extends Event {
-    coordinators: { name: string, phone: string }[]
+    studentCoordinators: { name: string, phone: string }[]
+    facultyCoordinators: { name: string, phone: string }[]
 }
 
 export interface ExtendedParticipant extends Participant {

@@ -3,9 +3,7 @@ import React from 'react'
 
 const page = () => {
     return (
-        <div>
-            <Eventpage eventCategory='Cultural'/>
-        </div>
+        <Eventpage eventCategory='Cultural'/>
     )
 }
 

@@ -60,6 +60,22 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
     }
 }
 
+export async function getEventsOfUser(userId: number) {
+    try {
+        return (await db.participant.findUnique({
+            where: {
+                id: userId
+            },
+            select: {
+                events: true
+            }
+        }))?.events as ExtendedEvent[] | null;
+    } catch (e) {
+        console.error("Get Events Of User Error:", e);
+        return [];
+    }
+}
+
 export async function getEventOptions() {
     try {
         const eventCategorys = await db.event.findMany({

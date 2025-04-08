@@ -8,7 +8,7 @@ import ArenaBanner from "@/components/(User)/Home/ArenaBanner";
 
 export default function Home() {
   return (
-    <div className="">
+    <>
       <LandingPage />
       <Eventcards />
       <GlimpseOfAakar />
@@ -16,6 +16,6 @@ export default function Home() {
       <Concert/>
       <RegisterSection />
       <ArenaBanner />
-    </div>
+    </>
   );
 }

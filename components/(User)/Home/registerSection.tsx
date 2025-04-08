@@ -1,10 +1,10 @@
-import { Inter } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 
-const inter = Inter({ subsets: ['latin'], weight: '400' })
+const montserrat = Montserrat({ subsets: ['latin'], weight: '400' })
 
 const RegisterSection = () => {
     return (
@@ -12,7 +12,7 @@ const RegisterSection = () => {
             <div className="text-center max-w-3xl">
                 <h2 className="text-3xl md:text-5xl font-light pb-6">Register Now</h2>
 
-                <p className={`text-xl md:text-2xl py-6 ${inter.className}`}>
+                <p className={`text-xl md:text-2xl py-6 ${montserrat.className}`}>
                     Don’t miss out on the ultimate techno-cultural experience!
                     <br />
                     Register now and be part of the excitement at

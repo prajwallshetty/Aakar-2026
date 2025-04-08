@@ -2,18 +2,17 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { createParticipant, registerParticipant } from "@/backend/participant";
-import { signIn } from "@/auth";
+import { registerParticipant } from "@/backend/participant";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
-import Select, { MultiValue } from "react-select";
+import Select from "react-select";
 import { getAllEvents, getEventOptions } from "@/backend/events";
 import {
     CartEvents,
     ExtendedEvent,
     ExtendedParticipantCreateInput,
 } from "@/types";
-import { eventCategory, eventType, Prisma } from "@prisma/client";
+import { eventType, Prisma } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 
 const Register = () => {
@@ -31,7 +30,6 @@ const Register = () => {
         "details" | "payment" | "verification"
     >("details");
 
-    // Form state
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -44,7 +42,6 @@ const Register = () => {
         paymentScreenshot: null as File | null,
     });
 
-    // Cart and events state
     const [cartEvents, setCartEvents] = useState<CartEvents>([]);
     const [eventOptions, setEventOptions] = useState<
         Awaited<ReturnType<typeof getEventOptions>>
@@ -104,7 +101,6 @@ const Register = () => {
         })();
     }, []);
 
-    // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData((prev) => ({
@@ -120,7 +116,6 @@ const Register = () => {
         }
     };
 
-    // Handle select changes
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { id, value } = e.target;
         setFormData((prev) => ({
@@ -136,23 +131,18 @@ const Register = () => {
         }
     };
 
-    // Handle event selection
     const handleEventSelection = (selectedOptions: any) => {
         setSelectedEvents(selectedOptions);
 
-        // Extract the actual event IDs from the selectedOptions structure
         const selectedEventIds = selectedOptions.map(
             (option: any) => option.id
         );
 
-        // Initialize group event data for newly selected group events
         const newGroupData = { ...groupEventData };
 
         selectedEvents.forEach((event) => {
-            // Find the event object using the ID
             const eventObj = events.find((e) => e.id === event.id);
 
-            // Check if it's a group event and doesn't have data yet
             if (
                 eventObj &&
                 eventObj.eventType === "Team" &&
@@ -165,7 +155,6 @@ const Register = () => {
             }
         });
 
-        // Remove group data for unselected events
         Object.keys(newGroupData).forEach((groupId) => {
             if (!selectedEventIds.includes(Number(groupId))) {
                 delete newGroupData[groupId];
@@ -175,7 +164,6 @@ const Register = () => {
         setGroupEventData(newGroupData);
         console.log(selectedEvents);
 
-        // Calculate total amount by looking up each event's price
         const amount = selectedOptions.reduce((sum: number, event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
             return sum + (eventObj?.fee || 0);
@@ -184,7 +172,6 @@ const Register = () => {
         setTotalAmount(amount);
     };
 
-    // Handle participant count change
     const handleParticipantCountChange = (
         groupId: string | number,
         count: number
@@ -194,14 +181,11 @@ const Register = () => {
 
         let newMembers = [...currentMembers];
 
-        // Add or remove members based on new count
         if (newCount > currentMembers.length) {
-            // Add empty members
             for (let i = currentMembers.length; i < newCount; i++) {
                 newMembers.push({ name: "", usn: "", email: "" });
             }
         } else if (newCount < currentMembers.length) {
-            // Remove excess members
             newMembers = newMembers.slice(0, newCount);
         }
 
@@ -214,7 +198,6 @@ const Register = () => {
         }));
     };
 
-    // Handle file upload
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFormData((prev) => ({
@@ -224,7 +207,6 @@ const Register = () => {
         }
     };
 
-    // Handle group member changes
     const handleGroupMemberChange = (
         groupId: number | string,
         index: number,
@@ -247,9 +229,7 @@ const Register = () => {
         });
     };
 
-    // Generate QR code based on selected events
     const generateQRCode = () => {
-        // Calculate total amount based on selected events
         const amount =
             selectedEvents.length > 0
                 ? events
@@ -261,20 +241,16 @@ const Register = () => {
 
         setTotalAmount(amount);
 
-        // UPI ID for Google Pay - Replace with your actual Google Pay UPI ID
-        const upiId = "yourname@okicici"; // Replace with your actual UPI ID
-        const payeeName = "Tech Fest Registration";
-        const transactionNote = "Event Registration Payment";
+        const upiId = "8861621934@upi";
+        const payeeName = "Aakar 2025 Regitsration";
+        const transactionNote = "Aakar 2025 Regitsration";
 
-        // Create UPI payment URL for Google Pay
-        // Format: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=CURRENCY&tn=NOTE
         const upiUrl = `upi://pay?pa=${encodeURIComponent(
             upiId
         )}&pn=${encodeURIComponent(
             payeeName
         )}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
 
-        // Generate QR code using QR code API service
         setQrImageUrl(
             `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
                 upiUrl
@@ -283,11 +259,9 @@ const Register = () => {
         setShowQRCode(true);
     };
 
-    // Proceed to payment step
     const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Basic validation
         const errors: { [key: string]: string } = {};
 
         if (!formData.name) errors.name = "Name is required";
@@ -302,7 +276,6 @@ const Register = () => {
             errors.events = "Please select at least one event";
         }
 
-        // Validate group members if applicable
         Object.keys(groupEventData).forEach((groupId) => {
             if (
                 selectedEvents.find(
@@ -331,12 +304,10 @@ const Register = () => {
             return;
         }
 
-        // If validation passes, proceed to payment
         setPaymentStep("payment");
         generateQRCode();
     };
 
-    // Handle payment verification step
     const proceedToVerification = () => {
         if (!formData.transactionId) {
             setFormErrors({ transactionId: "Transaction ID is required" });
@@ -353,7 +324,6 @@ const Register = () => {
         setPaymentStep("verification");
     };
 
-    // Handle form submission (final step)
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsRegistering(true);
@@ -361,12 +331,10 @@ const Register = () => {
         setGeneralError("");
 
         try {
-            // Upload file
             const fileUrl = await uploadFile(formData.paymentScreenshot!);
             console.log(fileUrl);
             if (!fileUrl) return setGeneralError("File not found!");
 
-            // Create the participant data object
             const participantData: ExtendedParticipantCreateInput = {
                 name: formData.name,
                 email: formData.email,
@@ -375,12 +343,11 @@ const Register = () => {
                 year: parseInt(formData.year),
                 department: formData.department,
                 usn: formData.usn.toUpperCase(),
-                transaction_id: formData.transactionId,
-                paymentScreenshotUrl: fileUrl,
+                transaction_ids: [formData.transactionId],
+                paymentScreenshotUrls: [fileUrl],
                 groupMembersData: groupEventData,
             };
 
-            // Call your backend function to create the participant
             const { data, error } = await registerParticipant(
                 participantData,
                 selectedEvents.map((e) => e.id)
@@ -390,12 +357,9 @@ const Register = () => {
             if (error) {
                 setIsRegistering(false);
 
-                // Handle different error formats
                 if (typeof error === "object") {
-                    // Field-specific errors
                     setFormErrors(error);
                 } else {
-                    // General error message
                     setGeneralError(error);
                 }
                 return;
@@ -412,7 +376,6 @@ const Register = () => {
         }
     };
 
-    // College List
     const colleges: string[] = [
         "A J Institute of Engineering and Technology, Mangalore",
         "Alva's Ayurveda Medical College, Moodbidri",
@@ -526,7 +489,6 @@ const Register = () => {
                     >
                         <h3 className="font-semibold">Event Registration</h3>
 
-                        {/* Personal Details */}
                         <div className="flex flex-col gap-4 mb-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-1">
@@ -731,11 +693,9 @@ const Register = () => {
                             </div>
                         </div>
 
-                        {/* Event Selection */}
                         <div className="flex flex-col gap-4 mt-4">
                             <h3 className="font-semibold">Event Selection</h3>
 
-                            {/* Display Already Selected Events from Cache */}
                             {selectedEvents.length > 0 && (
                                 <div className="mb-4">
                                     <h4 className="text-sm font-medium mb-2">
@@ -759,7 +719,6 @@ const Register = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => {
-                                                            // Remove event handler
                                                             const updatedSelection =
                                                                 selectedEvents.filter(
                                                                     (
@@ -772,7 +731,6 @@ const Register = () => {
                                                                 updatedSelection
                                                             );
 
-                                                            // Remove group data if it's a group event
                                                             if (
                                                                 groupEventData[
                                                                     event.id
@@ -793,7 +751,6 @@ const Register = () => {
                                                                 );
                                                             }
 
-                                                            // Update total amount
                                                             const selected =
                                                                 events.filter(
                                                                     (event) =>
@@ -836,7 +793,6 @@ const Register = () => {
                                 </div>
                             )}
 
-                            {/* Dropdown to Add More Events */}
                             <div className="flex flex-col gap-2">
                                 <label
                                     htmlFor="add-event"
@@ -867,7 +823,6 @@ const Register = () => {
                             </div>
                         </div>
 
-                        {/* Group Events Team Members */}
                         {selectedEvents.length > 0 && (
                             <div className="mt-4">
                                 {selectedEvents.map((event) => {
@@ -1254,7 +1209,6 @@ const Register = () => {
                                         </p>
                                     </div>
 
-                                    {/* Display review information */}
                                     <div className="border rounded p-4 mb-4">
                                         <h3 className="font-semibold mb-2">
                                             Personal Information
