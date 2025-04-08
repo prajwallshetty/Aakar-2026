@@ -1,7 +1,6 @@
 "use server"
 import { Prisma } from "@prisma/client";
 import { db } from ".";
-import bcrypt from "bcryptjs";
 import { auth } from "../auth";
 
 //Todo: need to improve error handling for the frontend with proper format. Maybe {data,error}?
