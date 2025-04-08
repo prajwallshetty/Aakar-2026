@@ -5,6 +5,7 @@ import { db } from ".";
 import { isAdmin } from "./admin";
 import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
 import { sendEmail } from "./nodemailer";
+import { getEventsOfUser } from "./events";
 
 type ServiceResponse<T> = {
     data: T | null;
@@ -69,7 +70,28 @@ export async function registerParticipant(data: ExtendedParticipantCreateInput, 
             return { data: null, error };
         }
 
-        await sendEmail(participant.email, "Registration Successful", "You have successfully registered for the event(s).");
+        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName+` on `+e.date.toDateString()).join("\n");
+
+        await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
+
+Thank you for registering for Aakar 2025. We are pleased to confirm that your registration has been successfully completed.
+
+Here are your registration details:
+
+Name: ${participant.name}
+
+Events: 
+${eventN}
+
+Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
+
+If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
+👉 https://aakar2025.ajiet.edu.in/addevents/${participant.id}
+
+We look forward to your participation!
+
+Warm regards,
+Aakar 2025 Team`);
 
         return { data: participant, error: null };
     } catch (error) {
@@ -143,7 +165,32 @@ export async function updateParticipantWithNotify(id: number, data: Prisma.Parti
         if (!res.data || res.error) {
             return res;
         }
-        await sendEmail(res.data.email, "Update Successful", "Your information has been successfully updated.");
+
+        const participant = res.data;
+
+
+        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName+` on `+e.date.toDateString()).join("\n");
+
+        await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
+
+Thank you for registering for Aakar 2025. We are pleased to confirm that your registration has been successfully completed.
+
+Here are your registration details:
+
+Name: ${participant.name}
+
+Events: 
+${eventN}
+
+Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
+
+If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
+👉 https://aakar2025.ajiet.edu.in/addevents/${participant.id}
+
+We look forward to your participation!
+
+Warm regards,
+Aakar 2025 Team`);
         return res;
     } catch (error) {
         console.error("Error updating participant:", error);
