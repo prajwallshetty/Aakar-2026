@@ -34,7 +34,7 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
         Year: p.year,
         "Registered On": new Date(p.createdAt).toLocaleString(),
         "Amount Paid": p.amount,
-        "Transaction ID": p.transaction_id || "N/A",
+        "Transaction ID": p.transaction_ids.join(", ") || "N/A",
         Events: p.events ? p.events.map((e) => e.eventName).join(", ") : "None",
       }))
 
@@ -54,7 +54,7 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
       Year: p.year,
       "Registered On": new Date(p.createdAt).toLocaleString(),
       "Amount Paid": p.amount,
-      "Transaction ID": p.transaction_id || "N/A",
+      "Transaction ID": p.transaction_ids.join(", ") || "N/A",
       Events: p.events ? p.events.map((e) => e.eventName).join(", ") : "None",
     }))
 
@@ -138,7 +138,7 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
       Year: participant.year,
       "Registered On": new Date(participant.createdAt).toLocaleString(),
       "Amount Paid": participant.amount,
-      "Transaction ID": participant.transaction_id || "N/A",
+      "Transaction ID": participant.transaction_ids.join(", ") || "N/A",
     },
   ]
 

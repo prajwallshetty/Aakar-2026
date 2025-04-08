@@ -219,21 +219,23 @@ export default function ParticipantDetailPage() {
                   <Tag className="h-5 w-5 mr-2 text-muted-foreground" />
                   <div>
                     <div className="font-medium">Transaction ID</div>
-                    <div>{participant.transaction_id || "N/A"}</div>
+                    <div>{participant.transaction_ids.join(", ") || "N/A"}</div>
                   </div>
                 </div>
 
-                {participant.paymentScreenshotUrl && (
+                {participant.paymentScreenshotUrls && (
+                  participant.paymentScreenshotUrls.map(pS=>(
                   <div>
                     <div className="font-medium mb-2">Payment Screenshot</div>
                     <div className="border rounded-md overflow-hidden max-w-xs">
                       <img
-                        src={participant.paymentScreenshotUrl || "/placeholder.svg"}
+                        src={pS || "/placeholder.svg"}
                         alt="Payment Screenshot"
                         className="w-full h-auto"
                       />
                     </div>
                   </div>
+                  ))
                 )}
               </div>
             </div>
