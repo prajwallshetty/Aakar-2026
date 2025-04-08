@@ -34,10 +34,10 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
             </h1>
 
             {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl px-4" >
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-7xl px-4" >
                     {
                         Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="relative aspect-[9/16] w-full bg-gray-300 rounded-4xl overflow-hidden">
+                            <div key={i} className="relative aspect-[1/1.414] w-full bg-gray-300 rounded-4xl overflow-hidden">
                                 <Skeleton className="w-full h-full" />
                                 <div
                                     className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20] 
@@ -62,11 +62,11 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
                     }
                 </div>
             ) : (
-                <div className="max-w-6xl m-auto flex gap-6 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full md:max-w-7xl md:px-4">
                     {events.map((event, index) => (
-                        <Link href={"/events/" + event.id} key={event.id}>
+                        <Link href={"/events/" + event.id} key={event.id} className="w-full">
                             <div
-                                className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[9/16] w-60 bg-cover bg-center cursor-pointer transition-all duration-300 hover:scale-105 group overflow-hidden"
+                                className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[1/1.414] w-full bg-cover bg-center cursor-pointer transition-all duration-300 hover:scale-105 group overflow-hidden"
                                 style={{
                                     backgroundImage: `url('${event.imageUrl}')`,
                                 }}
@@ -79,7 +79,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
                                     <div className="absolute h-1.5 w-1.5 rounded-full bg-white/70 animate-ping bottom-1/3 left-1/2 delay-500"></div>
                                     <div className="absolute h-2 w-2 rounded-full bg-white/70 animate-ping bottom-1/4 right-1/4 delay-700"></div>
                                 </div>
-                                
+
                                 <div
                                     className="w-20 h-25 bg-contain bg-no-repeat absolute bottom-2 right-[-20] 
                                                 transition-all duration-300 ease-in-out
