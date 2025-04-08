@@ -343,8 +343,8 @@ const Register = () => {
                 year: parseInt(formData.year),
                 department: formData.department,
                 usn: formData.usn.toUpperCase(),
-                transaction_id: formData.transactionId,
-                paymentScreenshotUrl: fileUrl,
+                transaction_ids: [formData.transactionId],
+                paymentScreenshotUrls: [fileUrl],
                 groupMembersData: groupEventData,
             };
 
