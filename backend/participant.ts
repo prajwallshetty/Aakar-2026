@@ -123,7 +123,7 @@ export async function getParticipantsCount() {
 export async function getParticipantsCountForEvent(eventId: number) {
     const event = await getEventById(eventId);
     if (!event) {
-        return -1;
+        return 0;
     }
     const participants = await db.participant.findMany({ where: { events: { some: { id: eventId } } }, select: { usn: true, groupMembersData: true } }) as ExtendedParticipant[];
     const usns = new Set();

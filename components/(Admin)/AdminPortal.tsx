@@ -14,6 +14,8 @@ import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/backend/admin';
 import { Admin } from '@prisma/client';
+import { getParticipantsCount } from '@/backend/participant';
+import { getTotalEvents } from '@/backend/events';
 
 interface ErrorResponse {
   error: string;
@@ -42,7 +44,7 @@ const AdminPortal = () => {
   const [error, setError] = useState('');
   const [stats, setStats] = useState({
     totalUsers: 0,
-    recentSubmissions: 0
+    totalEvents: 0
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<number | null>(null);
@@ -85,14 +87,14 @@ const AdminPortal = () => {
   const fetchStats = async () => {
     setLoading(prev => ({ ...prev, stats: true }));
     try {
-      setTimeout(() => {
-        setStats({
-          totalUsers: 125,
-          recentSubmissions: 12
-        });
-        setLoading(prev => ({ ...prev, stats: false }));
-      }, 600);
-    } catch (error) {
+        (async()=>{
+          setStats({
+            totalUsers: await getParticipantsCount(),
+            totalEvents: await getTotalEvents()
+          });
+          setLoading(prev => ({ ...prev, stats: false }));
+        })()
+      } catch (error) {
       console.error("Error fetching stats:", error);
       setLoading(prev => ({ ...prev, stats: false }));
     }
@@ -252,7 +254,7 @@ const AdminPortal = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recent Submissions</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Events</CardTitle>
             <Ticket className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -260,7 +262,7 @@ const AdminPortal = () => {
               <Skeleton className="h-8 w-[100px]" />
             ) : (
               <>
-                <div className="text-2xl font-bold">{stats.recentSubmissions}</div>
+                <div className="text-2xl font-bold">{stats.totalEvents}</div>
               </>
             )}
           </CardContent>
