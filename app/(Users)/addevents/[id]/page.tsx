@@ -260,7 +260,7 @@ export default function AddAdditionalEvents({
                         if (!member.usn || member.usn.trim() === "") {
                             errors[`group_${event.id}_member_${index}_usn`] =
                                 "USN is required";
-                        } else if (!/^[1-9][A-Z0-9]+$/i.test(member.usn)) {
+                        } else if (!/^[A-Z0-9]+$/i.test(member.usn)) {
                             errors[`group_${event.id}_member_${index}_usn`] =
                                 "Enter a valid USN";
                         }
@@ -448,7 +448,7 @@ export default function AddAdditionalEvents({
                                                                 amount
                                                             );
                                                         }}
-                                                        className="ml-2 text-pink-700 hover:text-pink-900"
+                                                        className="ml-2 text-pink-700 cursor-pointer hover:text-pink-900"
                                                     >
                                                         ×
                                                     </button>
@@ -599,7 +599,7 @@ export default function AddAdditionalEvents({
                                                                                 })
                                                                             );
                                                                         }}
-                                                                        className="text-red-500 text-sm hover:text-red-700"
+                                                                        className="text-red-500 cursor-pointer text-sm hover:text-red-700"
                                                                     >
                                                                         Remove
                                                                     </button>
@@ -774,7 +774,7 @@ export default function AddAdditionalEvents({
                                         <button
                                             type="button"
                                             onClick={generateQRCode}
-                                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                            className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700"
                                         >
                                             Generate QR Code
                                         </button>
@@ -861,7 +861,7 @@ export default function AddAdditionalEvents({
                                 disabled={
                                     isSubmitting || selectedEvents.length === 0
                                 }
-                                className={`px-5 py-2 bg-pink-600 text-white rounded-md ${
+                                className={`px-5 py-2 bg-pink-600 cursor-pointer text-white rounded-md ${
                                     isSubmitting || selectedEvents.length === 0
                                         ? "opacity-50 cursor-not-allowed"
                                         : "hover:bg-pink-700"
@@ -892,12 +892,10 @@ export default function AddAdditionalEvents({
                                         Processing...
                                     </span>
                                 ) : (
-                                    "Register Additional Events"
+                                    "Register"
                                 )}
                             </button>
                         </div>
-
-                        {/* Form error message */}
                         {formErrors.submit && (
                             <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
                                 {formErrors.submit}

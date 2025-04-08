@@ -29,10 +29,10 @@ export default function AboutPage() {
               <div className="w-full md:w-1/2">
                 <div className="relative group w-full cursor-pointer" onClick={openModal}>
                   <Image
-                    src="/college.jpg"
+                    src="/college2.png"
                     width={600}
+                    alt="AJ Institute of Engineering and Technology"
                     height={400}
-                    alt="Watch AJ Institute Video"
                     className="w-full object-cover rounded-lg"
                   />
                   <div className="absolute inset-0 bg-opacity-40 flex items-center justify-center rounded-lg transition duration-300 group-hover:bg-opacity-60">
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
             <div className="flex flex-col items-center gap-4 mb-6">
               <p className={`text-base md:text-lg font-semibold ${montserrat.className}`}>
-                December 9th - 10th, 2025
+                May 9th - 10th, 2025
               </p>
               <p className={`text-base md:text-lg font-semibold text-center ${montserrat.className}`}>
                 A J INSTITUTE OF ENGINEERING AND TECHNOLOGY, Kottarachowki, Mangaluru
@@ -83,15 +83,12 @@ export default function AboutPage() {
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="w-full md:w-1/2">
                 <p className={`text-base md:text-lg mb-6 ${montserrat.className}`}>
-                  Our institution stands as a beacon of academic brilliance, fostering innovation and excellence in engineering education.
-                </p>
-                <p className={`text-base md:text-lg mb-6 ${montserrat.className}`}>
-                  We provide a holistic educational experience combining rigorous academics with practical skill development, creativity, and problem-solving.
+                  Aakar 2024 is a state-level techno-cultural fest that brings together innovation, creativity, and entertainment under one roof. The event aims to push the boundaries of technology and culture, providing a platform for students, professionals, and enthusiasts to showcase their skills and talent. With an exciting mix of technical competitions, cultural performances and interactive sessions.
                 </p>
               </div>
               <div className="w-full md:w-1/2">
                 <Image
-                  src="/co.jpg"
+                  src="/2024.png"
                   width={600}
                   height={400}
                   alt="AAKAR Event Venue"

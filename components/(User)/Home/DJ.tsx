@@ -36,15 +36,14 @@ const DJ = () => {
         <div className="fixed inset-0 bg-opacity-80 z-50 flex items-center justify-center p-4">
           <div className="bg-black rounded-2xl overflow-hidden max-w-3xl w-full">
             <div className="w-full aspect-video">
-              <iframe
-                className="w-full h-full rounded-2xl"
-                src="https://www.youtube.com/embed/BwY6LD7KAQk?si=d0FCTIpTplXm9DdU&autoplay=1"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              ></iframe>
+              <video
+                className="w-full h-full object-cover cursor-pointer"
+                src="/dj.mp4"
+                muted
+                loop
+                autoPlay
+                playsInline
+              />
             </div>
             <div className="text-right p-2">
               <Button

@@ -86,7 +86,7 @@ export default function ParticipantDetailPage() {
           <CardContent className="pt-6">
             <div className="bg-red-50 text-red-500 p-4 rounded-md">{error || "Participant not found"}</div>
             <div className="mt-4">
-              <Button asChild>
+              <Button asChild className="cursor-pointer">
                 <Link href="/admin/participants">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Participants
@@ -102,7 +102,7 @@ export default function ParticipantDetailPage() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center justify-between">
-        <Button variant="outline" asChild>
+        <Button variant="outline" asChild className="cursor-pointer">
           <Link href="/Participants" className="cursor-pointer">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Participants
