@@ -485,6 +485,7 @@ const EventsCRUD = () => {
                                             Event
                                         </TableHead>
                                         <TableHead>Type</TableHead>
+                                        <TableHead>Category</TableHead>
                                         <TableHead>Date & Time</TableHead>
                                         <TableHead>Venue</TableHead>
                                         <TableHead>Fee</TableHead>
@@ -506,6 +507,11 @@ const EventsCRUD = () => {
                                             <TableCell>
                                                 <Badge variant="secondary">
                                                     {event.eventType}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary">
+                                                    {event.eventCategory}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
