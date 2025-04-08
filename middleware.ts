@@ -19,7 +19,7 @@ export default auth(async (req, ctx) => {
             }
         }
 
-        const adminProtected = ["/adminportal", "/eventscrud"];
+        const adminProtected = ["/adminportal", "/eventscrud", "/participants"];
         if (adminProtected.includes(req.nextUrl.pathname.toLowerCase())) {
             const adminCheckResponse = await fetch(req.nextUrl.origin + "/api/isAdmin", {
                 body: JSON.stringify({ email: req.auth.user.email||"" }),
