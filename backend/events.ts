@@ -1,8 +1,8 @@
 "use server"
-import { eventCategory, Prisma } from "@prisma/client";
+import { eventCategory } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
-import { ExtendedEvent } from "@/types";
+import { ExtendedEvent, ExtendedEventCreateInput } from "@/types";
 
 const eventsCache = {
     date: null as Date | null,
@@ -18,7 +18,7 @@ function isCacheValid(cacheDate: Date | null) {
     return cacheDate > now;
 }
 
-export async function createEvent(event: Prisma.EventCreateInput) {
+export async function createEvent(event: ExtendedEventCreateInput) {
     try {
         if (!await isAdmin()) throw new Error("Not authorized");
         const newEvent = await db.event.create({
@@ -202,7 +202,7 @@ export async function getEventsTotalFee(eventIds: number[]) {
     }
 }
 
-export async function updateEvent(id: number, data: Prisma.EventUpdateInput) {
+export async function updateEvent(id: number, data: ExtendedEventCreateInput) {
     try {
         if (!await isAdmin()) throw new Error("Not authorized");
         const updatedEvent = await db.event.update({
