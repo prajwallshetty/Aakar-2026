@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DownloadCloud, Filter, Search, Calendar, School, FileSpreadsheet } from "lucide-react"
-import { DatePickerWithRange } from "@/components/(Admin)/Participants/date-range-picker"
 import type { Participant } from "@prisma/client"
 import { getParticipants } from "@/backend/participant"
 import { downloadParticipantData } from "@/components/(Admin)/Participants/actions"
@@ -15,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { EventStats } from "@/components/(Admin)/Participants/event-stats"
 import { CollegeStats } from "@/components/(Admin)/Participants/college-stats"
-import type { DateRange } from "react-day-picker"
 
 
 export default function ParticipantsPage() {
@@ -23,7 +21,6 @@ export default function ParticipantsPage() {
   const [filteredParticipants, setFilteredParticipants] = useState<Participant[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [selectedCollege, setSelectedCollege] = useState<string>("")
   const [colleges, setColleges] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -73,13 +70,6 @@ export default function ParticipantsPage() {
       )
     }
 
-    // Apply date range filter
-    if (dateRange?.from && dateRange?.to) {
-      result = result.filter((p) => {
-        const createdAt = new Date(p.createdAt)
-        return createdAt >= dateRange.from! && createdAt <= dateRange.to!
-      })
-    }
 
     // Apply college filter
     if (selectedCollege) {
@@ -87,7 +77,7 @@ export default function ParticipantsPage() {
     }
 
     setFilteredParticipants(result)
-  }, [searchQuery, dateRange, selectedCollege, participants])
+  }, [searchQuery, selectedCollege, participants])
 
   const handleDownloadAll = async () => {
     try {
@@ -109,7 +99,6 @@ export default function ParticipantsPage() {
 
   const resetFilters = () => {
     setSearchQuery("")
-    setDateRange(undefined)
     setSelectedCollege("")
     setFilteredParticipants(participants)
   }
@@ -152,8 +141,6 @@ export default function ParticipantsPage() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                    <DatePickerWithRange date={dateRange} setDate={setDateRange} />
-
                     <Select value={selectedCollege} onValueChange={setSelectedCollege}>
                       <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
                         <SelectValue placeholder="College" />
@@ -184,12 +171,6 @@ export default function ParticipantsPage() {
                       <Badge variant="secondary">
                         <School className="mr-1 h-3 w-3" />
                         {selectedCollege}
-                      </Badge>
-                    )}
-                    {dateRange?.from && dateRange?.to && (
-                      <Badge variant="secondary">
-                        <Calendar className="mr-1 h-3 w-3" />
-                        {dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()}
                       </Badge>
                     )}
                   </div>

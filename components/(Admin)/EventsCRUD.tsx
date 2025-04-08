@@ -58,7 +58,6 @@ import {
     Upload,
     X,
 } from "lucide-react";
-import { format } from "date-fns";
 import {
     getAllEvents,
     createEvent,
@@ -497,12 +496,7 @@ const EventsCRUD = () => {
                                             <TableCell>
                                                 <div className="flex flex-col">
                                                     <span>
-                                                        {format(
-                                                            new Date(
-                                                                event.date
-                                                            ),
-                                                            "MMM d"
-                                                        )}
+                                                        {event.date.toDateString()}
                                                     </span>
                                                     <span className="text-xs text-muted-foreground flex items-center mt-1">
                                                         <Clock className="h-3 w-3 mr-1" />{" "}
