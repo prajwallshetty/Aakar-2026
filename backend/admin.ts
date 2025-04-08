@@ -7,21 +7,26 @@ import { auth } from "../auth";
 //Todo: need to improve error handling for the frontend with proper format. Maybe {data,error}?
 
 export async function isAdmin(email?: string) {
-    if (email) {
-        return !!await db.admin.findUnique({
-            where: {
-                email: email
-            }
-        })
-    }
-    let session = await auth();
-    if (!session || !session.user || !session.user.id) return false;
-    let user = await db.admin.findUnique({
-        where: {
-            id: parseInt(session.user.id)
+    try{
+        if (email) {
+            return !!(await db.admin.findUnique({
+                where: {
+                    email: email
+                }
+            }))
         }
-    })
-    return !!user;
+        let session = await auth();
+        if (!session || !session.user || !session.user.email) return false;
+        let user = await db.admin.findUnique({
+            where: {
+                email: session.user.email
+            }
+        });
+        return !!user;
+    }catch (e) {
+        console.log(e);
+        return false;
+    }
 }
 
 export async function getAdmins() {
@@ -68,14 +73,20 @@ export async function updateAdmin(id: number, admin: Prisma.AdminUpdateInput) {
 }
 
 export async function verifyAdmin(email: string, password: string) {
-    const ad = await db.admin.findUnique({
-        where: {
-            email: email,
-            password: password
-        },
-    })
-    if (!ad) return null;
-    let { password: pass, ...rest } = ad;
-    if (password === pass) return rest;
-    else return null;
+    try{
+
+        const ad = await db.admin.findUnique({
+            where: {
+                email: email,
+                password: password
+            },
+        })
+        if (!ad) return null;
+        let { password: pass, ...rest } = ad;
+        if (password === pass) return rest;
+        else return null;
+    }catch (e) {
+        console.log(e);
+        return null;
+    }
 }
