@@ -6,24 +6,46 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DownloadCloud, Filter, Search, Calendar, School, FileSpreadsheet } from "lucide-react"
-import type { Participant } from "@prisma/client"
+import {
+  DownloadCloud,
+  Filter,
+  Search,
+  School,
+  FileSpreadsheet,
+  Users,
+  ChevronDown,
+  ChevronRight,
+  Calendar,
+} from "lucide-react"
+import React from "react"
 import { getParticipants } from "@/backend/participant"
-import { downloadParticipantData } from "@/components/(Admin)/Participants/actions"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { EventStats } from "@/components/(Admin)/Participants/event-stats"
 import { CollegeStats } from "@/components/(Admin)/Participants/college-stats"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Participant } from "@prisma/client"
+import { downloadParticipantData } from "./utils"
 
+interface ExtendedParticipant extends Participant {
+  groupMembers?: {
+    name: string
+    usn: string
+    department?: string
+    year?: number
+  }[]
+  isExpanded?: boolean
+}
 
 export default function ParticipantsPage() {
-  const [participants, setParticipants] = useState<Participant[]>([])
-  const [filteredParticipants, setFilteredParticipants] = useState<Participant[]>([])
+  const [participants, setParticipants] = useState<ExtendedParticipant[]>([])
+  const [filteredParticipants, setFilteredParticipants] = useState<ExtendedParticipant[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCollege, setSelectedCollege] = useState<string>("")
   const [colleges, setColleges] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [expandedParticipant, setExpandedParticipant] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchParticipants = async () => {
@@ -37,11 +59,29 @@ export default function ParticipantsPage() {
         }
 
         if (response.data) {
-          setParticipants(response.data)
-          setFilteredParticipants(response.data)
+          const processedParticipants = response.data.map((p: ExtendedParticipant) => {
+            let groupMembers = []
 
-          // Extract unique colleges
-          const uniqueColleges = Array.from(new Set(response.data.map((p: Participant) => p.college))) as string[]
+            if (p.groupMembersData && p.groupMembersData !== "[]") {
+              try {
+                groupMembers =
+                  typeof p.groupMembersData === "string" ? JSON.parse(p.groupMembersData) : p.groupMembersData
+              } catch (e) {
+                console.error("Error parsing group members data", e)
+              }
+            }
+
+            return {
+              ...p,
+              groupMembers,
+              isExpanded: false,
+            }
+          })
+
+          setParticipants(processedParticipants)
+          setFilteredParticipants(processedParticipants)
+
+          const uniqueColleges = Array.from(new Set(processedParticipants.map((p) => p.college))) as string[]
           setColleges(uniqueColleges)
         }
       } catch (err) {
@@ -58,7 +98,6 @@ export default function ParticipantsPage() {
   useEffect(() => {
     let result = [...participants]
 
-    // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       result = result.filter(
@@ -66,13 +105,14 @@ export default function ParticipantsPage() {
           p.name.toLowerCase().includes(query) ||
           p.email.toLowerCase().includes(query) ||
           p.phone.includes(query) ||
-          p.college.toLowerCase().includes(query),
+          p.college.toLowerCase().includes(query) ||
+          p.usn.toLowerCase().includes(query) ||
+          (p.groupMembers &&
+            p.groupMembers.some((m) => m.name.toLowerCase().includes(query) || m.usn.toLowerCase().includes(query))),
       )
     }
 
-
-    // Apply college filter
-    if (selectedCollege) {
+    if (selectedCollege && selectedCollege !== "all") {
       result = result.filter((p) => p.college === selectedCollege)
     }
 
@@ -103,6 +143,45 @@ export default function ParticipantsPage() {
     setFilteredParticipants(participants)
   }
 
+  const toggleParticipantExpanded = (id: number) => {
+    setExpandedParticipant(expandedParticipant === id.toString() ? null : id.toString())
+  }
+
+  const TableSkeleton = () => (
+    <>
+      {Array(5)
+        .fill(0)
+        .map((_, i) => (
+          <TableRow key={i}>
+            <TableCell>
+              <Skeleton className="h-5 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-32" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-28" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-20" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-8" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-5 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-8 w-24" />
+            </TableCell>
+          </TableRow>
+        ))}
+    </>
+  )
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card>
@@ -114,12 +193,15 @@ export default function ParticipantsPage() {
           <Tabs defaultValue="participants">
             <TabsList className="mb-4">
               <TabsTrigger value="participants" className="cursor-pointer">
+                <Users className="mr-2 h-4 w-4" />
                 Participants
               </TabsTrigger>
               <TabsTrigger value="events" className="cursor-pointer">
+                <Calendar className="mr-2 h-4 w-4" />
                 Event Statistics
               </TabsTrigger>
               <TabsTrigger value="colleges" className="cursor-pointer">
+                <School className="mr-2 h-4 w-4" />
                 College Statistics
               </TabsTrigger>
             </TabsList>
@@ -132,8 +214,8 @@ export default function ParticipantsPage() {
                       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                       <Input
                         type="search"
-                        placeholder="Search participants..."
-                        className="pl-8"
+                        placeholder="Search participants, USN, email..."
+                        className="pl-8 w-full"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
@@ -167,7 +249,7 @@ export default function ParticipantsPage() {
                 <div className="flex flex-wrap gap-2 justify-between items-center">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">{filteredParticipants.length} participants</Badge>
-                    {selectedCollege && (
+                    {selectedCollege && selectedCollege !== "all" && (
                       <Badge variant="secondary">
                         <School className="mr-1 h-3 w-3" />
                         {selectedCollege}
@@ -175,21 +257,21 @@ export default function ParticipantsPage() {
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Button onClick={handleDownloadAll} className="cursor-pointer">
                       <DownloadCloud className="mr-2 h-4 w-4" />
-                      Download Data
+                      <span className="whitespace-nowrap">Download Data</span>
                     </Button>
                     <Button variant="outline" onClick={handleDownloadByCollege} className="cursor-pointer">
                       <FileSpreadsheet className="mr-2 h-4 w-4" />
-                      Download by College
+                      <span className="whitespace-nowrap">Download by College</span>
                     </Button>
                   </div>
                 </div>
 
                 {error && <div className="bg-red-50 text-red-500 p-3 rounded-md">{error}</div>}
 
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -199,44 +281,96 @@ export default function ParticipantsPage() {
                         <TableHead>College</TableHead>
                         <TableHead>Department</TableHead>
                         <TableHead>Year</TableHead>
+                        <TableHead>USN</TableHead>
+                        <TableHead>Amount</TableHead>
                         <TableHead>Registered On</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {isLoading ? (
-                        <TableRow>
-                          <TableCell colSpan={8} className="text-center py-10">
-                            Loading participants...
-                          </TableCell>
-                        </TableRow>
+                        <TableSkeleton />
                       ) : filteredParticipants.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={8} className="text-center py-10">
+                          <TableCell colSpan={10} className="text-center py-10">
                             No participants found
                           </TableCell>
                         </TableRow>
                       ) : (
                         filteredParticipants.map((participant) => (
-                          <TableRow key={participant.id}>
-                            <TableCell>{participant.name}</TableCell>
-                            <TableCell>{participant.email}</TableCell>
-                            <TableCell>{participant.phone}</TableCell>
-                            <TableCell>{participant.college}</TableCell>
-                            <TableCell>{participant.department || "N/A"}</TableCell>
-                            <TableCell>{participant.year}</TableCell>
-                            <TableCell>{new Date(participant.createdAt).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => (window.location.href = `/admin/participants/${participant.id}`)}
-                                className="cursor-pointer"
-                              >
-                                View Details
-                              </Button>
-                            </TableCell>
-                          </TableRow>
+                          <React.Fragment key={participant.id}>
+                            <TableRow className={expandedParticipant === participant.id.toString() ? "border-b-0" : ""}>
+                              <TableCell className="font-medium">{participant.name}</TableCell>
+                              <TableCell>{participant.email}</TableCell>
+                              <TableCell>{participant.phone}</TableCell>
+                              <TableCell>{participant.college}</TableCell>
+                              <TableCell>{participant.department || "N/A"}</TableCell>
+                              <TableCell>{participant.year}</TableCell>
+                              <TableCell>{participant.usn}</TableCell>
+                              <TableCell>₹{participant.amount}</TableCell>
+                              <TableCell>{new Date(participant.createdAt).toLocaleDateString()}</TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => (window.location.href = `/Participants/${participant.id}`)}
+                                    className="cursor-pointer"
+                                  >
+                                    View
+                                  </Button>
+
+                                  {participant.groupMembers && participant.groupMembers.length > 0 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => toggleParticipantExpanded(participant.id)}
+                                      className="cursor-pointer"
+                                    >
+                                      {expandedParticipant === participant.id.toString() ? (
+                                        <ChevronDown className="h-4 w-4" />
+                                      ) : (
+                                        <ChevronRight className="h-4 w-4" />
+                                      )}
+                                      Group
+                                    </Button>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+
+                            {participant.groupMembers &&
+                              participant.groupMembers.length > 0 &&
+                              expandedParticipant === participant.id.toString() && (
+                                <TableRow className="bg-muted/50">
+                                  <TableCell colSpan={10} className="py-2">
+                                    <div className="pl-6 border-l-2 border-primary/20 ml-2 mt-2 overflow-x-auto">
+                                      <h4 className="font-medium text-sm mb-2">Group Members</h4>
+                                      <Table>
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead className="w-1/4">Name</TableHead>
+                                            <TableHead className="w-1/4">USN</TableHead>
+                                            <TableHead className="w-1/4">Department</TableHead>
+                                            <TableHead className="w-1/4">Year</TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {participant.groupMembers.map((member, idx) => (
+                                            <TableRow key={idx}>
+                                              <TableCell>{member.name}</TableCell>
+                                              <TableCell>{member.usn}</TableCell>
+                                              <TableCell>{member.department || "N/A"}</TableCell>
+                                              <TableCell>{member.year || "N/A"}</TableCell>
+                                            </TableRow>
+                                          ))}
+                                        </TableBody>
+                                      </Table>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                          </React.Fragment>
                         ))
                       )}
                     </TableBody>
@@ -246,11 +380,33 @@ export default function ParticipantsPage() {
             </TabsContent>
 
             <TabsContent value="events">
-              <EventStats participants={participants} />
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-8 w-64" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                  </div>
+                  <Skeleton className="h-64 w-full" />
+                </div>
+              ) : (
+                <EventStats participants={participants} />
+              )}
             </TabsContent>
 
             <TabsContent value="colleges">
-              <CollegeStats participants={participants} />
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-8 w-64" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-64 w-full" />
+                  </div>
+                </div>
+              ) : (
+                <CollegeStats participants={participants} />
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
