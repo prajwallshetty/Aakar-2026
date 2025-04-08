@@ -148,7 +148,28 @@ export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereIn
     }
 }
 
-export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<Participant>> {
+export async function updateParticipantWithNotify(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
+    try {
+        let res = await updateParticipant(id, data);
+        if (!res.data || res.error) {
+            return res;
+        }
+        await sendEmail(res.data.email, "Update Successful", "Your information has been successfully updated.");
+        return res;
+    } catch (error) {
+        console.error("Error updating participant:", error);
+
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return { data: null, error: "Participant not found" };
+            }
+        }
+
+        return { data: null, error: "Failed to update participant" };
+    }
+}
+
+export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
@@ -157,7 +178,7 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
         const updatedParticipant = await db.participant.update({
             where: { id },
             data
-        });
+        }) as ExtendedParticipant;
 
         return { data: updatedParticipant, error: null };
     } catch (error) {
@@ -166,9 +187,6 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2025') {
                 return { data: null, error: "Participant not found" };
-            }
-            if (error.code === 'P2002') {
-                return { data: null, error: "Email or phone number already in use" };
             }
         }
 
