@@ -9,7 +9,10 @@ import {
     getEventOptions,
     getEventsOfUser,
 } from "@/backend/events";
-import { getParticipant, updateParticipant } from "@/backend/participant";
+import {
+    getParticipant,
+    updateParticipantWithNotify,
+} from "@/backend/participant";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
 import { uploadFile } from "@/backend/supabase";
 import Error from "next/error";
@@ -112,7 +115,7 @@ export default function AddAdditionalEvents({
     ): Promise<void> {
         let fileUrl = await uploadFile(paymentScreenshot!);
         if (!fileUrl) return;
-        await updateParticipant(userId, {
+        await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
             paymentScreenshotUrls: { push: fileUrl },
             groupMembersData: groupData || [],
