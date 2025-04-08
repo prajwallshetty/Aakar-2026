@@ -624,11 +624,14 @@ const Register = () => {
                                         htmlFor="year"
                                         className="text-gray-700"
                                     >
-                                        Year
+                                        Year (1,2,3 or 4)
                                     </label>
                                     <input
                                         id="year"
                                         value={formData.year||""}
+                                        min={1}
+                                        max={8}
+                                        step={1}
                                         placeholder="Enter your year"
                                         onChange={handleChange}
                                         required
