@@ -327,7 +327,7 @@ export default function AddAdditionalEvents({
     if (!userInfo) return <Error statusCode={404} />;
 
     return (
-        <div className="bg-gray-50 min-h-screen py-8">
+        <div className="min-h-screen py-8 px-4">
             <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
                 <div className="border-b pb-4 mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">
@@ -337,573 +337,573 @@ export default function AddAdditionalEvents({
                         {userInfo && `${userInfo.name} (${userInfo.usn})`}
                     </p>
                 </div>
+                <form onSubmit={handleSubmit}>
+                    {/* Display existing registrations (read-only) */}
+                    {existingEvents.length > 0 && (
+                        <div className="mb-6">
+                            <h2 className="text-lg font-semibold mb-3">
+                                Already Registered Events
+                            </h2>
+                            <div className="bg-gray-100 p-4 rounded-md">
+                                <div className="flex flex-wrap gap-2">
+                                    {existingEvents.map((event) => (
+                                        <div
+                                            key={event.id}
+                                            className="bg-gray-200 px-3 py-1 rounded-full flex items-center"
+                                        >
+                                            <span>{event.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-                {submitSuccess ? (
-                    <div className="bg-green-100 text-green-700 p-4 rounded-md mb-6">
-                        <p className="font-medium">
-                            Events added successfully!
-                        </p>
-                        <p>Redirecting to your dashboard...</p>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit}>
-                        {/* Display existing registrations (read-only) */}
-                        {existingEvents.length > 0 && (
-                            <div className="mb-6">
-                                <h2 className="text-lg font-semibold mb-3">
-                                    Already Registered Events
-                                </h2>
-                                <div className="bg-gray-100 p-4 rounded-md">
-                                    <div className="flex flex-wrap gap-2">
-                                        {existingEvents.map((event) => (
+                    {/* Event Selection */}
+                    <div className="flex flex-col gap-4 mt-4">
+                        <h3 className="font-semibold">
+                            Additional Event Selection
+                        </h3>
+
+                        {/* Display Already Selected Events */}
+                        {selectedEvents.length > 0 && (
+                            <div className="mb-4">
+                                <h4 className="text-sm font-medium mb-2">
+                                    Selected Additional Events:
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedEvents.map((selectedEvent) => {
+                                        return (
                                             <div
-                                                key={event.id}
-                                                className="bg-gray-200 px-3 py-1 rounded-full flex items-center"
+                                                key={selectedEvent.id}
+                                                className="bg-pink-100 px-3 py-1 rounded-full flex items-center"
                                             >
-                                                <span>{event.label}</span>
+                                                <span>
+                                                    {selectedEvent.label}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        // Remove event handler
+                                                        const updatedSelection =
+                                                            selectedEvents.filter(
+                                                                (event) =>
+                                                                    event.id !==
+                                                                    selectedEvent.id
+                                                            );
+                                                        setSelectedEvents(
+                                                            updatedSelection
+                                                        );
+
+                                                        // Remove group data if it's a group event
+                                                        if (
+                                                            groupEventData?.[
+                                                                selectedEvent
+                                                                    .id
+                                                            ]
+                                                        ) {
+                                                            setGroupEventData(
+                                                                (prev) => {
+                                                                    const updated =
+                                                                        {
+                                                                            ...prev,
+                                                                        };
+                                                                    delete updated[
+                                                                        selectedEvent
+                                                                            .id
+                                                                    ];
+                                                                    return updated;
+                                                                }
+                                                            );
+                                                        }
+
+                                                        // Update total amount
+                                                        const amount =
+                                                            updatedSelection.reduce(
+                                                                (
+                                                                    sum,
+                                                                    event
+                                                                ) =>
+                                                                    sum +
+                                                                    (events.find(
+                                                                        (
+                                                                            e
+                                                                        ) =>
+                                                                            e.id ===
+                                                                            event.id
+                                                                    )
+                                                                        ?.fee ||
+                                                                        0),
+                                                                0
+                                                            );
+                                                        setTotalAmount(
+                                                            amount
+                                                        );
+                                                    }}
+                                                    className="ml-2 text-pink-700 cursor-pointer hover:text-pink-900"
+                                                >
+                                                    ×
+                                                </button>
                                             </div>
-                                        ))}
-                                    </div>
+                                        );
+                                    })}
+                                </div>
+                                <div className="mt-3">
+                                    <p className="font-bold">
+                                        Additional Total: ₹{totalAmount}
+                                    </p>
                                 </div>
                             </div>
                         )}
 
-                        {/* Event Selection */}
-                        <div className="flex flex-col gap-4 mt-4">
-                            <h3 className="font-semibold">
-                                Additional Event Selection
-                            </h3>
+                        {/* Dropdown to Add More Events */}
+                        <div className="flex flex-col gap-2">
+                            <label
+                                htmlFor="add-event"
+                                className="text-gray-700"
+                            >
+                                Add Events
+                            </label>
+                            <Select
+                                id="events"
+                                instanceId="events-select"
+                                options={eventOptions}
+                                isMulti
+                                value={selectedEvents}
+                                onChange={handleEventSelection}
+                                placeholder="Select additional event(s)..."
+                                className={`${
+                                    formErrors.events
+                                        ? "border-red-500"
+                                        : ""
+                                } w-full`}
+                                classNamePrefix="select"
+                            />
+                            {formErrors.events && (
+                                <p className="text-red-500 text-xs mt-1">
+                                    {formErrors.events}
+                                </p>
+                            )}
+                        </div>
+                    </div>
 
-                            {/* Display Already Selected Events */}
-                            {selectedEvents.length > 0 && (
-                                <div className="mb-4">
-                                    <h4 className="text-sm font-medium mb-2">
-                                        Selected Additional Events:
-                                    </h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {selectedEvents.map((selectedEvent) => {
-                                            return (
-                                                <div
-                                                    key={selectedEvent.id}
-                                                    className="bg-pink-100 px-3 py-1 rounded-full flex items-center"
+                    {/* Group Events Team Members */}
+                    {selectedEvents.length > 0 && (
+                        <div className="mt-4">
+                            {selectedEvents
+                                .filter((event) => event.type === "Team")
+                                .map((event) => {
+                                    const groupData = groupEventData?.[
+                                        event.id
+                                    ] || {
+                                        participantCount: 1,
+                                        members: [
+                                            {
+                                                name: "",
+                                                usn: "",
+                                                email: "",
+                                            },
+                                        ],
+                                    };
+
+                                    return (
+                                        <div
+                                            key={event.id}
+                                            className="mb-6 p-4 border rounded-lg bg-gray-50"
+                                        >
+                                            <h4 className="font-medium mb-3">
+                                                {event.label} - Team Details
+                                            </h4>
+
+                                            <div className="mb-4">
+                                                <label
+                                                    htmlFor={`participant-count-${event.id}`}
+                                                    className="text-gray-700 text-sm block mb-1"
                                                 >
-                                                    <span>
-                                                        {selectedEvent.label}
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            // Remove event handler
-                                                            const updatedSelection =
-                                                                selectedEvents.filter(
-                                                                    (event) =>
-                                                                        event.id !==
-                                                                        selectedEvent.id
-                                                                );
-                                                            setSelectedEvents(
-                                                                updatedSelection
-                                                            );
+                                                    Number of Team Members
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`participant-count-${event.id}`}
+                                                    min="1"
+                                                    max="10"
+                                                    value={
+                                                        groupData.participantCount
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleParticipantCountChange(
+                                                            event.id,
+                                                            Number.parseInt(
+                                                                e.target
+                                                                    .value
+                                                            ) || 1
+                                                        )
+                                                    }
+                                                    className="border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                                />
+                                            </div>
 
-                                                            // Remove group data if it's a group event
-                                                            if (
-                                                                groupEventData?.[
-                                                                    selectedEvent
-                                                                        .id
-                                                                ]
-                                                            ) {
-                                                                setGroupEventData(
-                                                                    (prev) => {
-                                                                        const updated =
-                                                                            {
-                                                                                ...prev,
-                                                                            };
-                                                                        delete updated[
-                                                                            selectedEvent
-                                                                                .id
-                                                                        ];
-                                                                        return updated;
-                                                                    }
-                                                                );
-                                                            }
-
-                                                            // Update total amount
-                                                            const amount =
-                                                                updatedSelection.reduce(
-                                                                    (
-                                                                        sum,
-                                                                        event
-                                                                    ) =>
-                                                                        sum +
-                                                                        (events.find(
-                                                                            (
-                                                                                e
-                                                                            ) =>
-                                                                                e.id ===
-                                                                                event.id
-                                                                        )
-                                                                            ?.fee ||
-                                                                            0),
-                                                                    0
-                                                                );
-                                                            setTotalAmount(
-                                                                amount
-                                                            );
-                                                        }}
-                                                        className="ml-2 text-pink-700 cursor-pointer hover:text-pink-900"
+                                            {groupData.members.map(
+                                                (member, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="mb-4 p-3 border rounded-md bg-white"
                                                     >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                    <div className="mt-3">
-                                        <p className="font-bold">
-                                            Additional Total: ₹{totalAmount}
-                                        </p>
-                                    </div>
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <p className="font-medium text-sm">
+                                                                Team Member{" "}
+                                                                {index + 1}
+                                                            </p>
+                                                            {index > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        const updatedMembers =
+                                                                            [
+                                                                                ...(groupData?.members ||
+                                                                                    []),
+                                                                            ];
+                                                                        updatedMembers.splice(
+                                                                            index,
+                                                                            1
+                                                                        );
+                                                                        setGroupEventData(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                [event.id]:
+                                                                                    {
+                                                                                        ...prev?.[
+                                                                                            event
+                                                                                                .id
+                                                                                        ],
+                                                                                        participantCount:
+                                                                                            prev![
+                                                                                                event
+                                                                                                    .id
+                                                                                            ]
+                                                                                                .participantCount -
+                                                                                            1,
+                                                                                        members:
+                                                                                            updatedMembers,
+                                                                                    },
+                                                                            })
+                                                                        );
+                                                                    }}
+                                                                    className="text-red-500 cursor-pointer text-sm hover:text-red-700"
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                            <div>
+                                                                <label className="text-xs text-gray-500">
+                                                                    Full
+                                                                    Name
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={
+                                                                        member.name ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        handleGroupMemberChange(
+                                                                            event.id,
+                                                                            index,
+                                                                            "name",
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    placeholder="Member Name"
+                                                                    required
+                                                                    className={`border ${
+                                                                        formErrors[
+                                                                            `group_${event.id}_member_${index}_name`
+                                                                        ]
+                                                                            ? "border-red-500"
+                                                                            : "border-gray-300"
+                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                />
+                                                                {formErrors[
+                                                                    `group_${event.id}_member_${index}_name`
+                                                                ] && (
+                                                                    <p className="text-red-500 text-xs mt-1">
+                                                                        {
+                                                                            formErrors[
+                                                                                `group_${event.id}_member_${index}_name`
+                                                                            ]
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="text-xs text-gray-500">
+                                                                    USN
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={
+                                                                        member.usn ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        handleGroupMemberChange(
+                                                                            event.id,
+                                                                            index,
+                                                                            "usn",
+                                                                            e.target.value.toUpperCase()
+                                                                        )
+                                                                    }
+                                                                    placeholder="Member USN"
+                                                                    required
+                                                                    className={`border ${
+                                                                        formErrors[
+                                                                            `group_${event.id}_member_${index}_usn`
+                                                                        ]
+                                                                            ? "border-red-500"
+                                                                            : "border-gray-300"
+                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                />
+                                                                {formErrors[
+                                                                    `group_${event.id}_member_${index}_usn`
+                                                                ] && (
+                                                                    <p className="text-red-500 text-xs mt-1">
+                                                                        {
+                                                                            formErrors[
+                                                                                `group_${event.id}_member_${index}_usn`
+                                                                            ]
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="text-xs text-gray-500">
+                                                                    Email
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={
+                                                                        member.email ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        handleGroupMemberChange(
+                                                                            event.id,
+                                                                            index,
+                                                                            "email",
+                                                                            e.target.value.toLowerCase()
+                                                                        )
+                                                                    }
+                                                                    placeholder="Member Email"
+                                                                    required
+                                                                    className={`border ${
+                                                                        formErrors[
+                                                                            `group_${event.id}_member_${index}_email`
+                                                                        ]
+                                                                            ? "border-red-500"
+                                                                            : "border-gray-300"
+                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                />
+                                                                {formErrors[
+                                                                    `group_${event.id}_member_${index}_email`
+                                                                ] && (
+                                                                    <p className="text-red-500 text-xs mt-1">
+                                                                        {
+                                                                            formErrors[
+                                                                                `group_${event.id}_member_${index}_email`
+                                                                            ]
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                        </div>
+                    )}
+
+                    <div className="flex flex-col gap-4 mt-4">
+                        <div className="text-center mb-4">
+                            <p className="font-bold text-lg">
+                                Total Amount: ₹{totalAmount}
+                            </p>
+                            <p className="text-gray-600">
+                                Please scan the QR code to make payment
+                            </p>
+                        </div>
+
+                        <div className="flex justify-center mb-4">
+                            {showQRCode ? (
+                                <img
+                                    src={qrImageUrl || "/placeholder.svg"}
+                                    alt="Payment QR Code"
+                                    className="w-64 h-64 border"
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center gap-3">
+                                    <p className="text-gray-700">
+                                        Click the button below to generate
+                                        payment QR code
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={generateQRCode}
+                                        className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700"
+                                    >
+                                        Generate QR Code
+                                    </button>
                                 </div>
                             )}
+                        </div>
 
-                            {/* Dropdown to Add More Events */}
-                            <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-3">
+                            <p className="text-sm text-gray-700 font-medium">
+                                After payment, please enter your transaction
+                                details:
+                            </p>
+
+                            <div>
                                 <label
-                                    htmlFor="add-event"
-                                    className="text-gray-700"
+                                    htmlFor="transactionId"
+                                    className="text-gray-700 text-sm"
                                 >
-                                    Add Events
+                                    Transaction ID / Reference Number
                                 </label>
-                                <Select
-                                    id="events"
-                                    instanceId="events-select"
-                                    options={eventOptions}
-                                    isMulti
-                                    value={selectedEvents}
-                                    onChange={handleEventSelection}
-                                    placeholder="Select additional event(s)..."
-                                    className={`${
-                                        formErrors.events
+                                <input
+                                    type="text"
+                                    id="transactionId"
+                                    value={transactionId}
+                                    onChange={(e) =>
+                                        setTransactionId(e.target.value)
+                                    }
+                                    placeholder="Enter transaction ID"
+                                    className={`border ${
+                                        formErrors.transactionId
                                             ? "border-red-500"
-                                            : ""
-                                    } w-full`}
-                                    classNamePrefix="select"
+                                            : "border-gray-300"
+                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                 />
-                                {formErrors.events && (
+                                {formErrors.transactionId && (
                                     <p className="text-red-500 text-xs mt-1">
-                                        {formErrors.events}
+                                        {formErrors.transactionId}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="paymentScreenshot"
+                                    className="text-gray-700 text-sm"
+                                >
+                                    Upload Payment Screenshot
+                                </label>
+                                <input
+                                    type="file"
+                                    id="paymentScreenshot"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setPaymentScreenshot(
+                                            e.target.files![0]
+                                        )
+                                    }
+                                    className={`border ${
+                                        formErrors.paymentScreenshot
+                                            ? "border-red-500"
+                                            : "border-gray-300"
+                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                />
+                                {formErrors.paymentScreenshot && (
+                                    <p className="text-red-500 text-xs mt-1">
+                                        {formErrors.paymentScreenshot}
                                     </p>
                                 )}
                             </div>
                         </div>
+                    </div>
 
-                        {/* Group Events Team Members */}
-                        {selectedEvents.length > 0 && (
-                            <div className="mt-4">
-                                {selectedEvents
-                                    .filter((event) => event.type === "Team")
-                                    .map((event) => {
-                                        const groupData = groupEventData?.[
-                                            event.id
-                                        ] || {
-                                            participantCount: 1,
-                                            members: [
-                                                {
-                                                    name: "",
-                                                    usn: "",
-                                                    email: "",
-                                                },
-                                            ],
-                                        };
+                    {/* Form Submission */}
+                    <div className="mt-8 flex justify-between items-center">
+                        <Link
+                            href={`/users/${userId}/dashboard`}
+                            className="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                        >
+                            Cancel
+                        </Link>
 
-                                        return (
-                                            <div
-                                                key={event.id}
-                                                className="mb-6 p-4 border rounded-lg bg-gray-50"
-                                            >
-                                                <h4 className="font-medium mb-3">
-                                                    {event.label} - Team Details
-                                                </h4>
-
-                                                <div className="mb-4">
-                                                    <label
-                                                        htmlFor={`participant-count-${event.id}`}
-                                                        className="text-gray-700 text-sm block mb-1"
-                                                    >
-                                                        Number of Team Members
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        id={`participant-count-${event.id}`}
-                                                        min="1"
-                                                        max="10"
-                                                        value={
-                                                            groupData.participantCount
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleParticipantCountChange(
-                                                                event.id,
-                                                                Number.parseInt(
-                                                                    e.target
-                                                                        .value
-                                                                ) || 1
-                                                            )
-                                                        }
-                                                        className="border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                                    />
-                                                </div>
-
-                                                {groupData.members.map(
-                                                    (member, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="mb-4 p-3 border rounded-md bg-white"
-                                                        >
-                                                            <div className="flex justify-between items-center mb-2">
-                                                                <p className="font-medium text-sm">
-                                                                    Team Member{" "}
-                                                                    {index + 1}
-                                                                </p>
-                                                                {index > 0 && (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const updatedMembers =
-                                                                                [
-                                                                                    ...(groupData?.members ||
-                                                                                        []),
-                                                                                ];
-                                                                            updatedMembers.splice(
-                                                                                index,
-                                                                                1
-                                                                            );
-                                                                            setGroupEventData(
-                                                                                (
-                                                                                    prev
-                                                                                ) => ({
-                                                                                    ...prev,
-                                                                                    [event.id]:
-                                                                                        {
-                                                                                            ...prev?.[
-                                                                                                event
-                                                                                                    .id
-                                                                                            ],
-                                                                                            participantCount:
-                                                                                                prev![
-                                                                                                    event
-                                                                                                        .id
-                                                                                                ]
-                                                                                                    .participantCount -
-                                                                                                1,
-                                                                                            members:
-                                                                                                updatedMembers,
-                                                                                        },
-                                                                                })
-                                                                            );
-                                                                        }}
-                                                                        className="text-red-500 cursor-pointer text-sm hover:text-red-700"
-                                                                    >
-                                                                        Remove
-                                                                    </button>
-                                                                )}
-                                                            </div>
-
-                                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                                <div>
-                                                                    <label className="text-xs text-gray-500">
-                                                                        Full
-                                                                        Name
-                                                                    </label>
-                                                                    <input
-                                                                        type="text"
-                                                                        value={
-                                                                            member.name ||
-                                                                            ""
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) =>
-                                                                            handleGroupMemberChange(
-                                                                                event.id,
-                                                                                index,
-                                                                                "name",
-                                                                                e
-                                                                                    .target
-                                                                                    .value
-                                                                            )
-                                                                        }
-                                                                        placeholder="Member Name"
-                                                                        required
-                                                                        className={`border ${
-                                                                            formErrors[
-                                                                                `group_${event.id}_member_${index}_name`
-                                                                            ]
-                                                                                ? "border-red-500"
-                                                                                : "border-gray-300"
-                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                                                    />
-                                                                    {formErrors[
-                                                                        `group_${event.id}_member_${index}_name`
-                                                                    ] && (
-                                                                        <p className="text-red-500 text-xs mt-1">
-                                                                            {
-                                                                                formErrors[
-                                                                                    `group_${event.id}_member_${index}_name`
-                                                                                ]
-                                                                            }
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-
-                                                                <div>
-                                                                    <label className="text-xs text-gray-500">
-                                                                        USN
-                                                                    </label>
-                                                                    <input
-                                                                        type="text"
-                                                                        value={
-                                                                            member.usn ||
-                                                                            ""
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) =>
-                                                                            handleGroupMemberChange(
-                                                                                event.id,
-                                                                                index,
-                                                                                "usn",
-                                                                                e.target.value.toUpperCase()
-                                                                            )
-                                                                        }
-                                                                        placeholder="Member USN"
-                                                                        required
-                                                                        className={`border ${
-                                                                            formErrors[
-                                                                                `group_${event.id}_member_${index}_usn`
-                                                                            ]
-                                                                                ? "border-red-500"
-                                                                                : "border-gray-300"
-                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                                                    />
-                                                                    {formErrors[
-                                                                        `group_${event.id}_member_${index}_usn`
-                                                                    ] && (
-                                                                        <p className="text-red-500 text-xs mt-1">
-                                                                            {
-                                                                                formErrors[
-                                                                                    `group_${event.id}_member_${index}_usn`
-                                                                                ]
-                                                                            }
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-
-                                                                <div>
-                                                                    <label className="text-xs text-gray-500">
-                                                                        Email
-                                                                    </label>
-                                                                    <input
-                                                                        type="text"
-                                                                        value={
-                                                                            member.email ||
-                                                                            ""
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) =>
-                                                                            handleGroupMemberChange(
-                                                                                event.id,
-                                                                                index,
-                                                                                "email",
-                                                                                e.target.value.toLowerCase()
-                                                                            )
-                                                                        }
-                                                                        placeholder="Member Email"
-                                                                        required
-                                                                        className={`border ${
-                                                                            formErrors[
-                                                                                `group_${event.id}_member_${index}_email`
-                                                                            ]
-                                                                                ? "border-red-500"
-                                                                                : "border-gray-300"
-                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
-                                                                    />
-                                                                    {formErrors[
-                                                                        `group_${event.id}_member_${index}_email`
-                                                                    ] && (
-                                                                        <p className="text-red-500 text-xs mt-1">
-                                                                            {
-                                                                                formErrors[
-                                                                                    `group_${event.id}_member_${index}_email`
-                                                                                ]
-                                                                            }
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                            </div>
-                        )}
-
-                        <div className="flex flex-col gap-4 mt-4">
-                            <div className="text-center mb-4">
-                                <p className="font-bold text-lg">
-                                    Total Amount: ₹{totalAmount}
-                                </p>
-                                <p className="text-gray-600">
-                                    Please scan the QR code to make payment
-                                </p>
-                            </div>
-
-                            <div className="flex justify-center mb-4">
-                                {showQRCode ? (
-                                    <img
-                                        src={qrImageUrl || "/placeholder.svg"}
-                                        alt="Payment QR Code"
-                                        className="w-64 h-64 border"
-                                    />
-                                ) : (
-                                    <div className="flex flex-col items-center gap-3">
-                                        <p className="text-gray-700">
-                                            Click the button below to generate
-                                            payment QR code
-                                        </p>
-                                        <button
-                                            type="button"
-                                            onClick={generateQRCode}
-                                            className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700"
-                                        >
-                                            Generate QR Code
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="flex flex-col gap-3">
-                                <p className="text-sm text-gray-700 font-medium">
-                                    After payment, please enter your transaction
-                                    details:
-                                </p>
-
-                                <div>
-                                    <label
-                                        htmlFor="transactionId"
-                                        className="text-gray-700 text-sm"
+                        <button
+                            type="submit"
+                            disabled={
+                                isSubmitting || selectedEvents.length === 0
+                            }
+                            className={`px-5 py-2 bg-pink-600 cursor-pointer text-white rounded-md ${
+                                isSubmitting || selectedEvents.length === 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "hover:bg-pink-700"
+                            }`}
+                        >
+                            {isSubmitting ? (
+                                <span className="flex items-center">
+                                    <svg
+                                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
                                     >
-                                        Transaction ID / Reference Number
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="transactionId"
-                                        value={transactionId}
-                                        onChange={(e) =>
-                                            setTransactionId(e.target.value)
-                                        }
-                                        placeholder="Enter transaction ID"
-                                        className={`border ${
-                                            formErrors.transactionId
-                                                ? "border-red-500"
-                                                : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
-                                    />
-                                    {formErrors.transactionId && (
-                                        <p className="text-red-500 text-xs mt-1">
-                                            {formErrors.transactionId}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="paymentScreenshot"
-                                        className="text-gray-700 text-sm"
-                                    >
-                                        Upload Payment Screenshot
-                                    </label>
-                                    <input
-                                        type="file"
-                                        id="paymentScreenshot"
-                                        accept="image/*"
-                                        onChange={(e) =>
-                                            setPaymentScreenshot(
-                                                e.target.files![0]
-                                            )
-                                        }
-                                        className={`border ${
-                                            formErrors.paymentScreenshot
-                                                ? "border-red-500"
-                                                : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
-                                    />
-                                    {formErrors.paymentScreenshot && (
-                                        <p className="text-red-500 text-xs mt-1">
-                                            {formErrors.paymentScreenshot}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        ></path>
+                                    </svg>
+                                    Processing...
+                                </span>
+                            ) : (
+                                "Register"
+                            )}
+                        </button>
+                    </div>
+                    {formErrors.submit && (
+                        <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+                            {formErrors.submit}
                         </div>
-
-                        {/* Form Submission */}
-                        <div className="mt-8 flex justify-between items-center">
-                            <Link
-                                href={`/users/${userId}/dashboard`}
-                                className="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                            >
-                                Cancel
-                            </Link>
-
-                            <button
-                                type="submit"
-                                disabled={
-                                    isSubmitting || selectedEvents.length === 0
-                                }
-                                className={`px-5 py-2 bg-pink-600 cursor-pointer text-white rounded-md ${
-                                    isSubmitting || selectedEvents.length === 0
-                                        ? "opacity-50 cursor-not-allowed"
-                                        : "hover:bg-pink-700"
-                                }`}
-                            >
-                                {isSubmitting ? (
-                                    <span className="flex items-center">
-                                        <svg
-                                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                className="opacity-25"
-                                                cx="12"
-                                                cy="12"
-                                                r="10"
-                                                stroke="currentColor"
-                                                strokeWidth="4"
-                                            ></circle>
-                                            <path
-                                                className="opacity-75"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            ></path>
-                                        </svg>
-                                        Processing...
-                                    </span>
-                                ) : (
-                                    "Register"
-                                )}
-                            </button>
-                        </div>
-                        {formErrors.submit && (
-                            <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
-                                {formErrors.submit}
-                            </div>
-                        )}
-                    </form>
-                )}
+                    )}
+                </form>
+            </div>
+            <div className="h-80 w-80 bg-transparent absolute bottom-0 left-0 hidden md:block">
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                        backgroundImage: "url('/cutie.png')",
+                        backgroundSize: "contain",
+                        backgroundRepeat: "no-repeat",
+                    }}
+                ></div>
             </div>
         </div>
     );

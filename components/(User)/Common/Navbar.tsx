@@ -147,11 +147,6 @@ export default function Navbar() {
                     } ${montserrat.className}`}
             >
                 <div className="flex flex-col h-full">
-                    <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-                        <Link href="/" onClick={closeSidebar}>
-                            <Image src="/logo1.png" alt="Logo" width={40} height={40} />
-                        </Link>
-                    </div>
 
                     <div className="flex-grow overflow-y-auto">
                         <ul className="p-6 space-y-6 text-lg font-semibold">

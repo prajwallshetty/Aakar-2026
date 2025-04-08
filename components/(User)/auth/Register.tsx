@@ -38,7 +38,7 @@ const Register = () => {
         email: "",
         phone: "",
         college: "",
-        year: 1,
+        year: 0,
         department: "",
         usn: "",
         transactionId: "",
