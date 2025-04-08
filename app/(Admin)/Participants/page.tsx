@@ -43,7 +43,6 @@ import { Badge } from "@/components/ui/badge";
 import { EventStats } from "@/components/(Admin)/Participants/event-stats";
 import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Participant } from "@prisma/client";
 import { downloadParticipantData } from "./utils";
 import { ExtendedParticipant } from "@/types";
 

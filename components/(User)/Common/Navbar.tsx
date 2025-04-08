@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaUserCircle, FaBars, FaTimes, FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { FaBars, FaTimes, FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Montserrat } from "next/font/google";
 import { Button } from "@/components/ui/button";
 
