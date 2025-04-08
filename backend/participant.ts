@@ -166,7 +166,7 @@ export async function updateParticipant(id: number, data: Prisma.ParticipantUpda
 
         const updatedParticipant = await db.participant.update({
             where: { id },
-            data
+            data: { ...data, email: (data.email as string)?.toLowerCase() || undefined, usn: (data.usn as string)?.toUpperCase() || undefined }
         }) as ExtendedParticipant;
 
         return { data: updatedParticipant, error: null };
