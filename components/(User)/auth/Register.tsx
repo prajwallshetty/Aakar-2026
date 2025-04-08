@@ -627,7 +627,7 @@ const Register = () => {
                                     </label>
                                     <input
                                         id="year"
-                                        value={formData.year}
+                                        value={formData.year||""}
                                         placeholder="Enter your year"
                                         onChange={handleChange}
                                         required
