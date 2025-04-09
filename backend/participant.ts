@@ -31,6 +31,10 @@ export async function validateParticipantData(data: ExtendedParticipantCreateInp
         errors.college = "College name is required";
     }
 
+    if(!data.year || data.year>10 || data.year<=0){
+        errors.year = "Invalid year. Year should be between 1 and 10";
+    }
+
     if (await db.participant.findFirst({ where: { email: data.email.toLowerCase() } })) {
         errors.email = "Email already registered";
     }
