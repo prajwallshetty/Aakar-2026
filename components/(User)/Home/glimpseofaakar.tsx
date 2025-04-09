@@ -17,7 +17,7 @@ const GlimpseOfAakar = () => {
           loop
           muted
         >
-          <source src="\glimpse.mp4" type="video/mp4" />
+          <source src="\glimpse.mp4" type="video/mp4" className='-rotate-90' />
         </video>
 
       </div>
