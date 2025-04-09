@@ -12,7 +12,7 @@ const GlimpseOfAakar = () => {
         </h2>
 
         <video
-          className="max-h-[50vh] rounded-[3rem]"
+          className="max-h-[50vh] rounded-[3rem] -rotate-90"
           autoPlay
           loop
           muted
