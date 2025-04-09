@@ -44,7 +44,8 @@ import { EventStats } from "@/components/(Admin)/Participants/event-stats";
 import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData } from "./utils";
-import { ExtendedParticipant } from "@/types";
+import { ExtendedEvent, ExtendedParticipant } from "@/types";
+import { getAllEvents } from "@/backend/events";
 
 export default function ParticipantsPage() {
     const [participants, setParticipants] = useState<ExtendedParticipant[]>([]);
@@ -59,6 +60,7 @@ export default function ParticipantsPage() {
     const [expandedParticipant, setExpandedParticipant] = useState<
         string | null
     >(null);
+    const [events, setEvents] = useState<ExtendedEvent[]>([]);
 
     useEffect(() => {
         const fetchParticipants = async () => {
@@ -100,6 +102,9 @@ export default function ParticipantsPage() {
                             };
                         }
                     );
+
+                    let events = await getAllEvents();
+                    setEvents(events);
 
                     setParticipants(processedParticipants);
                     setFilteredParticipants(processedParticipants);
@@ -517,50 +522,69 @@ export default function ParticipantsPage() {
                                                                                     Group
                                                                                     Members
                                                                                 </h4>
-                                                                                <Table>
-                                                                                    <TableHeader>
-                                                                                        <TableRow>
-                                                                                            <TableHead className="w-1/4">
-                                                                                                Name
-                                                                                            </TableHead>
-                                                                                            <TableHead className="w-1/4">
-                                                                                                USN
-                                                                                            </TableHead>
-                                                                                        </TableRow>
-                                                                                    </TableHeader>
-                                                                                    <TableBody>
-                                                                                        {Object.values(
-                                                                                            participant.groupMembersData
-                                                                                        ).flatMap(
-                                                                                            (
-                                                                                                group
-                                                                                            ) =>
-                                                                                                group.members.map(
-                                                                                                    (
-                                                                                                        member,
-                                                                                                        idx
-                                                                                                    ) => (
-                                                                                                        <TableRow
-                                                                                                            key={
-                                                                                                                idx
-                                                                                                            }
-                                                                                                        >
-                                                                                                            <TableCell>
-                                                                                                                {
-                                                                                                                    member.name
-                                                                                                                }
-                                                                                                            </TableCell>
-                                                                                                            <TableCell>
-                                                                                                                {
-                                                                                                                    member.usn
-                                                                                                                }
-                                                                                                            </TableCell>
-                                                                                                        </TableRow>
+                                                                                {Object.keys(
+                                                                                    participant.groupMembersData
+                                                                                ).map(
+                                                                                    (
+                                                                                        group
+                                                                                    ) => (
+                                                                                        <>
+                                                                                            <h4>
+                                                                                                {
+                                                                                                    events.find(
+                                                                                                        (
+                                                                                                            e
+                                                                                                        ) =>
+                                                                                                            e.id ===
+                                                                                                            parseInt(
+                                                                                                                group
+                                                                                                            )
                                                                                                     )
-                                                                                                )
-                                                                                        )}
-                                                                                    </TableBody>
-                                                                                </Table>
+                                                                                                        ?.eventName
+                                                                                                }
+                                                                                            </h4>
+                                                                                            <Table>
+                                                                                                <TableHeader>
+                                                                                                    <TableRow>
+                                                                                                        <TableHead className="w-1/4">
+                                                                                                            Name
+                                                                                                        </TableHead>
+                                                                                                        <TableHead className="w-1/4">
+                                                                                                            USN
+                                                                                                        </TableHead>
+                                                                                                    </TableRow>
+                                                                                                </TableHeader>
+                                                                                                <TableBody>
+                                                                                                    {participant.groupMembersData![
+                                                                                                        group
+                                                                                                    ].members.map(
+                                                                                                        (
+                                                                                                            member,
+                                                                                                            idx
+                                                                                                        ) => (
+                                                                                                            <TableRow
+                                                                                                                key={
+                                                                                                                    idx
+                                                                                                                }
+                                                                                                            >
+                                                                                                                <TableCell>
+                                                                                                                    {
+                                                                                                                        member.name
+                                                                                                                    }
+                                                                                                                </TableCell>
+                                                                                                                <TableCell>
+                                                                                                                    {
+                                                                                                                        member.usn
+                                                                                                                    }
+                                                                                                                </TableCell>
+                                                                                                            </TableRow>
+                                                                                                        )
+                                                                                                    )}
+                                                                                                </TableBody>
+                                                                                            </Table>
+                                                                                        </>
+                                                                                    )
+                                                                                )}
                                                                             </div>
                                                                         </TableCell>
                                                                     </TableRow>

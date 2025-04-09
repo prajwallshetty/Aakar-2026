@@ -20,6 +20,8 @@ import {
     Users,
     Tag,
     CreditCard,
+    ChevronUp,
+    ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -40,6 +42,9 @@ export default function ParticipantDetailPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [groupMembers, setGroupMembers] = useState<any[]>([]);
+    const [expandedEvents, setExpandedEvents] = useState<{
+        [key: string]: boolean;
+    }>({});
 
     useEffect(() => {
         const fetchParticipantDetails = async () => {
@@ -337,6 +342,99 @@ export default function ParticipantDetailPage() {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {/* Group members section - only show if this is a group event */}
+                                            {participant.groupMembersData &&
+                                                participant.groupMembersData[
+                                                    event.id
+                                                ] && (
+                                                    <div
+                                                        className="mt-3 pt-2 border-t"
+                                                        key={
+                                                            event.id +
+                                                            "expanded"
+                                                        }
+                                                    >
+                                                        <button
+                                                            onClick={() =>
+                                                                setExpandedEvents(
+                                                                    (prev) => ({
+                                                                        ...prev,
+                                                                        [event.id]:
+                                                                            !prev[
+                                                                                event
+                                                                                    .id
+                                                                            ],
+                                                                    })
+                                                                )
+                                                            }
+                                                            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+                                                        >
+                                                            <Users size={16} />
+                                                            <span>
+                                                                Group Members (
+                                                                {
+                                                                    participant
+                                                                        .groupMembersData[
+                                                                        event.id
+                                                                    ]
+                                                                        .participantCount
+                                                                }
+                                                                )
+                                                            </span>
+                                                            {expandedEvents[
+                                                                event.id
+                                                            ] ? (
+                                                                <ChevronUp
+                                                                    size={16}
+                                                                />
+                                                            ) : (
+                                                                <ChevronDown
+                                                                    size={16}
+                                                                />
+                                                            )}
+                                                        </button>
+
+                                                        {expandedEvents[
+                                                            event.id
+                                                        ] && (
+                                                            <div className="mt-2 space-y-2 pl-6">
+                                                                {participant.groupMembersData[
+                                                                    event.id
+                                                                ].members.map(
+                                                                    (
+                                                                        member,
+                                                                        index
+                                                                    ) => (
+                                                                        <div
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            className="text-sm bg-muted p-2 rounded-md"
+                                                                        >
+                                                                            <div className="font-medium">
+                                                                                {
+                                                                                    member.name
+                                                                                }
+                                                                            </div>
+                                                                            <div className="text-xs text-muted-foreground">
+                                                                                USN:{" "}
+                                                                                {
+                                                                                    member.usn
+                                                                                }{" "}
+                                                                                |
+                                                                                Email:{" "}
+                                                                                {
+                                                                                    member.email
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                         </CardContent>
                                     </Card>
                                 ))}
@@ -347,50 +445,6 @@ export default function ParticipantDetailPage() {
                             </div>
                         )}
                     </div>
-
-                    {groupMembers.length > 0 && (
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <h3 className="text-lg font-medium">
-                                    Group Members
-                                </h3>
-                                <Separator />
-                            </div>
-
-                            <div className="rounded-md border">
-                                <table className="min-w-full divide-y divide-border">
-                                    <thead>
-                                        <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                                Name
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                                USN
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                                Event
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-border">
-                                        {groupMembers.map((member, index) => (
-                                            <tr key={index}>
-                                                <td className="px-4 py-3 whitespace-nowrap">
-                                                    {member.name}
-                                                </td>
-                                                <td className="px-4 py-3 whitespace-nowrap">
-                                                    {member.usn}
-                                                </td>
-                                                <td className="px-4 py-3 whitespace-nowrap">
-                                                    {member.event}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
                 </CardContent>
             </Card>
         </div>
