@@ -277,7 +277,7 @@ export default function ParticipantDetailPage() {
                                 {participant.paymentScreenshotUrls &&
                                     participant.paymentScreenshotUrls.map(
                                         (pS) => (
-                                            <div>
+                                            <div key={pS}>
                                                 <div className="font-medium mb-2">
                                                     Payment Screenshot
                                                 </div>
