@@ -120,22 +120,30 @@ const EventDescription = ({
                             {eventData.eventName}
                         </h1>
                         <p className="text-gray-300 text-lg leading-relaxed">
-                            {eventData.description}
+                            {/* {eventData.description} */}
+                            Revealing Soon!
                         </p>
                         <div className="space-y-4 text-xl">
                             <div className="flex items-center gap-4">
                                 <Calendar className="h-7 w-7 text-red-500" />
                                 <span>
-                                    {new Date(eventData.date).toDateString()}
+                                    {/* {new Date(eventData.date).toDateString()} */}
+                                    Revealing Soon!
                                 </span>
                             </div>
                             <div className="flex items-center gap-4">
                                 <Clock className="h-7 w-7 text-blue-500" />
-                                <span>{eventData.time}</span>
+                                <span>
+                                    {/* {eventData.time} */}
+                                    Revealing Soon!
+                                </span>
                             </div>
                             <div className="flex items-center gap-4">
                                 <Wallet className="h-7 w-7 text-green-500" />
-                                <span>{eventData.fee}</span>
+                                <span>
+                                    {/* {eventData.fee} */}
+                                    Revealing Soon!
+                                </span>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-4 pt-4">
@@ -178,7 +186,7 @@ const EventDescription = ({
                             ))
                         ) : (
                             <p className="text-gray-400 italic">
-                                No rules specified for this event.
+                                Revealing Soon!
                             </p>
                         )}
                     </div>
