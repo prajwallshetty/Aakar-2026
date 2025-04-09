@@ -22,7 +22,7 @@ export async function isAdmin(email?: string) {
         });
         return !!user;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return false;
     }
 }
@@ -84,7 +84,7 @@ export async function verifyAdmin(email: string, password: string) {
         if (password === pass) return rest;
         else return null;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
     }
 }

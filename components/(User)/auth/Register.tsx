@@ -150,7 +150,6 @@ const Register = () => {
         });
 
         setGroupEventData(newGroupData);
-        console.log(selectedEvents);
 
         const amount = selectedOptions.reduce((sum: number, event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
@@ -312,7 +311,6 @@ const Register = () => {
 
         try {
             const fileUrl = await uploadFile(formData.paymentScreenshot!);
-            console.log(fileUrl);
             if (!fileUrl) return setGeneralError("File not found!");
 
             const participantData: ExtendedParticipantCreateInput = {
@@ -326,14 +324,13 @@ const Register = () => {
                 transaction_ids: [formData.transactionId],
                 paymentScreenshotUrls: [fileUrl],
                 groupMembersData: groupEventData,
-                amount: totalAmount
+                amount: totalAmount,
             };
 
             const { data, error } = await registerParticipant(
                 participantData,
                 selectedEvents.map((e) => e.id)
             );
-            console.log(data, error);
 
             if (error) {
                 setIsRegistering(false);
@@ -624,11 +621,11 @@ const Register = () => {
                                         htmlFor="year"
                                         className="text-gray-700"
                                     >
-                                        Year (1,2,3 or 4)
+                                        Academic Year (1,2,3 or 4)
                                     </label>
                                     <input
                                         id="year"
-                                        value={formData.year||""}
+                                        value={formData.year || ""}
                                         min={1}
                                         max={8}
                                         step={1}
