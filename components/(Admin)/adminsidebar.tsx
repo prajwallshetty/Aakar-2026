@@ -11,6 +11,7 @@ import {
     User,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { signOut } from "next-auth/react";
 
 const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +85,7 @@ const AdminSidebar = () => {
                             </div>
                         )}
 
-                        <Button className="flex items-center bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer">
+                        <Button className="flex items-center bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer" onClick={async()=>await signOut()}>
                             <LogOut size={18} />
                             {isOpen && <span className="ml-2">Logout</span>}
                         </Button>
