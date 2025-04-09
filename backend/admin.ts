@@ -6,21 +6,23 @@ import { auth } from "../auth";
 
 export async function isAdmin(email?: string) {
     try {
-        if (email) {
-            return !!(await db.admin.findUnique({
-                where: {
-                    email: email.toLowerCase()
-                }
-            }))
-        }
+        // if (email) {
+        //     return !!(await db.admin.findUnique({
+        //         where: {
+        //             email: email.toLowerCase()
+        //         }
+        //     }))
+        // }
+        // let session = await auth();
+        // if (!session || !session.user || !session.user.email) return false;
+        // let user = await db.admin.findUnique({
+        //     where: {
+        //         email: session.user.email
+        //     }
+        // });
+        // return !!user;
         let session = await auth();
-        if (!session || !session.user || !session.user.email) return false;
-        let user = await db.admin.findUnique({
-            where: {
-                email: session.user.email
-            }
-        });
-        return !!user;
+        return !!session?.user?.email;
     } catch (e) {
         console.error(e);
         return false;
