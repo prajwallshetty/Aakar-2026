@@ -15,11 +15,11 @@ export default auth(async (req, ctx) => {
             if (adminData.isAdmin) {
                 return NextResponse.redirect(req.nextUrl.origin + '/AdminPortal');
             } else {
-                return NextResponse.redirect(req.nextUrl.origin);
+                return NextResponse.redirect(req.nextUrl.origin + '/Participants');
             }
         }
 
-        const adminProtected = ["/adminportal", "/eventscrud"];
+        const adminProtected = ["/adminportal", "/eventscrud", "/participants"];
         if (adminProtected.includes(req.nextUrl.pathname.toLowerCase())) {
             const adminCheckResponse = await fetch(req.nextUrl.origin + "/api/isAdmin", {
                 body: JSON.stringify({ email: req.auth.user.email||"" }),
@@ -34,7 +34,7 @@ export default auth(async (req, ctx) => {
 
         return NextResponse.next();
     } else if (!publicPages.includes(req.nextUrl.pathname.toLowerCase())) {
-        return NextResponse.redirect(req.nextUrl.origin);
+        return NextResponse.redirect(req.nextUrl.origin + '/AdminLogin');
     }
 });
 
@@ -42,6 +42,8 @@ export const config = {
     matcher: [
         '/AdminLogin',
         '/AdminPortal',
-        '/EventCRUD'
+        '/EventCRUD',
+        '/Participants',
+        '/Participants/:id'
     ]
 }

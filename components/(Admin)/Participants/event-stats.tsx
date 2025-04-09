@@ -6,9 +6,9 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { downloadEventData } from "@/app/(Admin)/Participants/utils"
-import { getParticipantEvents } from "@/backend/new"
 import { Participant } from "@prisma/client"
 import { Skeleton } from "@/components/ui/skeleton"
+import { getEventsOfUser } from "@/backend/events"
 
 interface EventStatsProps {
   participants: Participant[]
@@ -46,7 +46,7 @@ export function EventStats({ participants }: EventStatsProps) {
         const eventCounts: Record<string, { count: number; category: string }> = {}
 
         for (const participant of participants) {
-          const events = await getParticipantEvents(participant.id)
+          const events = await getEventsOfUser(participant.id)
 
           if (events && Array.isArray(events)) {
             for (const event of events) {

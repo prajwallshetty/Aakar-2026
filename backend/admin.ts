@@ -1,17 +1,15 @@
 "use server"
 import { Prisma } from "@prisma/client";
 import { db } from ".";
-import bcrypt from "bcryptjs";
 import { auth } from "../auth";
 
-//Todo: need to improve error handling for the frontend with proper format. Maybe {data,error}?
 
 export async function isAdmin(email?: string) {
-    try{
+    try {
         if (email) {
             return !!(await db.admin.findUnique({
                 where: {
-                    email: email
+                    email: email.toLowerCase()
                 }
             }))
         }
@@ -23,8 +21,8 @@ export async function isAdmin(email?: string) {
             }
         });
         return !!user;
-    }catch (e) {
-        console.log(e);
+    } catch (e) {
+        console.error(e);
         return false;
     }
 }
@@ -49,7 +47,7 @@ export async function getAdmin(id: number) {
 export async function createAdmin(admin: Prisma.AdminCreateInput) {
     if (!await isAdmin()) return null;
     return await db.admin.create({
-        data: admin
+        data: { ...admin, email: admin.email.toLowerCase() }
     })
 }
 
@@ -68,16 +66,16 @@ export async function updateAdmin(id: number, admin: Prisma.AdminUpdateInput) {
         where: {
             id: id
         },
-        data: admin
+        data: { ...admin, email: (admin.email as string)?.toLowerCase() || undefined }
     })
 }
 
 export async function verifyAdmin(email: string, password: string) {
-    try{
+    try {
 
         const ad = await db.admin.findUnique({
             where: {
-                email: email,
+                email: email.toLowerCase(),
                 password: password
             },
         })
@@ -85,8 +83,8 @@ export async function verifyAdmin(email: string, password: string) {
         let { password: pass, ...rest } = ad;
         if (password === pass) return rest;
         else return null;
-    }catch (e) {
-        console.log(e);
+    } catch (e) {
+        console.error(e);
         return null;
     }
 }

@@ -69,7 +69,7 @@ const LandingPage = () => {
                 <div className="w-1/4 flex items-center justify-center">
                     <div className="relative right-[-20vw] top-[-50px] z-30 overflow-hidden">
                         <Image
-                            src="/Aakarlogo.svg"
+                            src="/logo.png"
                             alt="AAKAR Logo"
                             width={300}
                             height={150}
@@ -105,10 +105,10 @@ const LandingPage = () => {
                         <div className="absolute inset-0 bg-black/50 rounded-[3rem] z-0 pointer-events-none"></div>
 
                         <div className="relative z-10 flex flex-row space-x-4 py-14 px-8">
-                            <div className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative" onClick={() => openModal('/glimpse.mp4')}>
+                            <div className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative" onClick={() => openModal('/dj.mp4')}>
                                 <video
                                     className="w-full h-full object-cover cursor-pointer"
-                                    src="/glimpse.mp4"
+                                    src="/dj.mp4"
                                     muted
                                     loop
                                     autoPlay
@@ -126,10 +126,10 @@ const LandingPage = () => {
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
 
-                            <div className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative" onClick={() => openModal('/glimpse.mp4')}>
+                            <div className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative" onClick={() => openModal('/concert.mp4')}>
                                 <video
                                     className="w-full h-full object-cover cursor-pointer"
-                                    src="/glimpse.mp4"
+                                    src="/concert.mp4"
                                     muted
                                     loop
                                     autoPlay
@@ -171,7 +171,7 @@ const LandingPage = () => {
                 <div className="flex flex-col h-[90vh] items-center justify-center space-y-16">
                     <div className="text-white text-6xl font-bold tracking-wider relative top-[30px] text-centeroverflow-hidden">
                         <Image
-                            src="/Aakarlogo.svg"
+                            src="/logo.png"
                             alt="AAKAR Logo"
                             width={200}
                             height={100}

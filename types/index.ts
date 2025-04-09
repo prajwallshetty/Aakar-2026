@@ -5,6 +5,11 @@ export interface ExtendedEvent extends Event {
     facultyCoordinators: { name: string, phone: string }[]
 }
 
+export interface ExtendedEventCreateInput extends Prisma.EventCreateInput {
+    studentCoordinators?: { name: string, phone: string }[]
+    facultyCoordinators?: { name: string, phone: string }[]
+}
+
 export interface ExtendedParticipant extends Participant {
     groupMembersData: {
         [groupId: string]: {

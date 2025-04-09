@@ -2,7 +2,10 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { registerParticipant } from "@/backend/participant";
+import {
+    registerParticipant,
+    validateParticipantData,
+} from "@/backend/participant";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
@@ -12,7 +15,7 @@ import {
     ExtendedEvent,
     ExtendedParticipantCreateInput,
 } from "@/types";
-import { eventType, Prisma } from "@prisma/client";
+import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 
 const Register = () => {
@@ -35,7 +38,7 @@ const Register = () => {
         email: "",
         phone: "",
         college: "",
-        year: "",
+        year: 0,
         department: "",
         usn: "",
         transactionId: "",
@@ -105,22 +108,7 @@ const Register = () => {
         const { id, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [id]: value,
-        }));
-
-        if (formErrors[id]) {
-            setFormErrors((prev) => ({
-                ...prev,
-                [id]: undefined,
-            }));
-        }
-    };
-
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: value,
+            [id]: id === "year" ? parseInt(value) : value,
         }));
 
         if (formErrors[id]) {
@@ -162,7 +150,6 @@ const Register = () => {
         });
 
         setGroupEventData(newGroupData);
-        console.log(selectedEvents);
 
         const amount = selectedOptions.reduce((sum: number, event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
@@ -259,18 +246,10 @@ const Register = () => {
         setShowQRCode(true);
     };
 
-    const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
+    const proceedToPayment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const errors: { [key: string]: string } = {};
-
-        if (!formData.name) errors.name = "Name is required";
-        if (!formData.email) errors.email = "Email is required";
-        if (!formData.phone) errors.phone = "Phone number is required";
-        if (!formData.college) errors.college = "College name is required";
-        if (!formData.year) errors.year = "Year is required";
-        if (!formData.department) errors.department = "Department is required";
-        if (!formData.usn) errors.usn = "USN is required";
+        const errors = (await validateParticipantData(formData)) || {};
 
         if (selectedEvents.length === 0) {
             errors.events = "Please select at least one event";
@@ -332,7 +311,6 @@ const Register = () => {
 
         try {
             const fileUrl = await uploadFile(formData.paymentScreenshot!);
-            console.log(fileUrl);
             if (!fileUrl) return setGeneralError("File not found!");
 
             const participantData: ExtendedParticipantCreateInput = {
@@ -340,19 +318,19 @@ const Register = () => {
                 email: formData.email,
                 phone: formData.phone,
                 college: formData.college,
-                year: parseInt(formData.year),
+                year: formData.year,
                 department: formData.department,
                 usn: formData.usn.toUpperCase(),
                 transaction_ids: [formData.transactionId],
                 paymentScreenshotUrls: [fileUrl],
                 groupMembersData: groupEventData,
+                amount: totalAmount,
             };
 
             const { data, error } = await registerParticipant(
                 participantData,
                 selectedEvents.map((e) => e.id)
             );
-            console.log(data, error);
 
             if (error) {
                 setIsRegistering(false);
@@ -364,7 +342,7 @@ const Register = () => {
                 }
                 return;
             }
-            
+
             router.push("/registration-success");
             router.refresh();
         } catch (error) {
@@ -643,11 +621,14 @@ const Register = () => {
                                         htmlFor="year"
                                         className="text-gray-700"
                                     >
-                                        Year
+                                        Academic Year (1,2,3 or 4)
                                     </label>
                                     <input
                                         id="year"
-                                        value={formData.year}
+                                        value={formData.year || ""}
+                                        min={1}
+                                        max={8}
+                                        step={1}
                                         placeholder="Enter your year"
                                         onChange={handleChange}
                                         required
@@ -777,7 +758,7 @@ const Register = () => {
                                                                 amount
                                                             );
                                                         }}
-                                                        className="ml-2 text-pink-700 hover:text-pink-900"
+                                                        className="ml-2 text-pink-700 cursor-pointer hover:text-pink-900"
                                                     >
                                                         ×
                                                     </button>
@@ -921,7 +902,7 @@ const Register = () => {
                                                                             })
                                                                         );
                                                                     }}
-                                                                    className="text-red-500 text-sm hover:text-red-700"
+                                                                    className="text-red-500 cursor-pointer text-sm hover:text-red-700"
                                                                 >
                                                                     Remove
                                                                 </button>
@@ -1111,7 +1092,7 @@ const Register = () => {
                                             <button
                                                 type="button"
                                                 onClick={generateQRCode}
-                                                className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                                className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700"
                                             >
                                                 Generate QR Code
                                             </button>
@@ -1183,14 +1164,14 @@ const Register = () => {
                                         onClick={() =>
                                             setPaymentStep("details")
                                         }
-                                        className="bg-gray-300 text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
+                                        className="bg-gray-300 cursor-pointer text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
                                     >
                                         Back
                                     </button>
                                     <button
                                         type="button"
                                         onClick={proceedToVerification}
-                                        className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700"
+                                        className="bg-pink-800 cursor-pointer text-white py-2 px-4 rounded-full hover:bg-pink-700"
                                     >
                                         Verify Payment
                                     </button>
@@ -1347,14 +1328,14 @@ const Register = () => {
                                             onClick={() =>
                                                 setPaymentStep("payment")
                                             }
-                                            className="bg-gray-300 text-gray-700 py-2 px-4 rounded-full hover:bg-gray-400"
+                                            className="bg-gray-300 text-gray-700 cursor-pointer py-2 px-4 rounded-full hover:bg-gray-400"
                                         >
                                             Back
                                         </button>
                                         <button
                                             type="submit"
                                             disabled={isRegistering}
-                                            className="bg-pink-800 text-white py-2 px-4 rounded-full hover:bg-pink-700 disabled:opacity-70 flex items-center gap-2"
+                                            className="bg-pink-800 text-white cursor-pointer py-2 px-4 rounded-full hover:bg-pink-700 disabled:opacity-70 flex items-center gap-2"
                                         >
                                             {isRegistering ? (
                                                 <>

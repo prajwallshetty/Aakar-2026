@@ -145,6 +145,7 @@ const EventsCRUD = () => {
         { value: "Technical", label: "Technical" },
         { value: "Cultural", label: "Cultural" },
         { value: "Gaming", label: "Gaming" },
+        { value: "Special", label: "Special" }
     ];
 
     const dateOptions = [
@@ -204,7 +205,7 @@ const EventsCRUD = () => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]: name === "fee" ? parseInt(value) || 0 : value,
+            [name]: name === "fee" ? parseInt(value) || "" : value,
         }));
     };
 
@@ -337,12 +338,8 @@ const EventsCRUD = () => {
                 ...formData,
                 imageUrl,
                 fee: formData.fee,
-                studentCoordinators: JSON.stringify(
-                    formData.studentCoordinators
-                ),
-                facultyCoordinators: JSON.stringify(
-                    formData.facultyCoordinators
-                ),
+                studentCoordinators: formData.studentCoordinators,
+                facultyCoordinators: formData.facultyCoordinators,
             };
 
             if (isEditing && currentId) {

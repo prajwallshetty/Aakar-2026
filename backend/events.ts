@@ -1,52 +1,93 @@
 "use server"
-import { eventCategory, eventType, Prisma } from "@prisma/client";
+import { eventCategory } from "@prisma/client";
 import { db } from ".";
-import { isAdmin } from "./admin";
-import { ExtendedEvent } from "@/types";
+import { ExtendedEvent, ExtendedEventCreateInput } from "@/types";
 
-// Create a new event
-export async function createEvent(event: Prisma.EventCreateInput) {
+const eventsCache = {
+    date: null as Date | null,
+    events: [] as ExtendedEvent[],
+    categoryEvents: {} as Record<eventCategory, { date: Date, events: ExtendedEvent[] }>,
+    eventById: {} as Record<number, { date: Date, event: ExtendedEvent }>
+}
+
+function isCacheValid(cacheDate: Date | null) {
+    if (!cacheDate) return false;
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - 5);
+    return cacheDate > now;
+}
+
+export async function createEvent(event: ExtendedEventCreateInput) {
     try {
-        if (!await isAdmin()) throw new Error("Not authorized");
-        return await db.event.create({
+        const newEvent = await db.event.create({
             data: event
         }) as ExtendedEvent | null;
+
+        eventsCache.date = null;
+        eventsCache.events = [];
+        eventsCache.categoryEvents = {} as any;
+        eventsCache.eventById = {};
+
+        return newEvent;
     } catch (e) {
         console.error("Create Event Error:", e);
         return null;
     }
 }
 
-// Get a single event by ID
 export async function getEventById(id: number) {
     try {
-        return await db.event.findUnique({
+        if (eventsCache.eventById[id] && isCacheValid(eventsCache.eventById[id].date)) {
+            return eventsCache.eventById[id].event;
+        }
+
+        const event = await db.event.findUnique({
             where: { id }
         }) as ExtendedEvent | null;
+
+        if (event) {
+            eventsCache.eventById[id] = {
+                date: new Date(),
+                event
+            };
+        }
+
+        return event;
     } catch (e) {
         console.error("Get Event By ID Error:", e);
         return null;
     }
 }
 
-// Get all events
 export async function getAllEvents() {
     try {
-        return await db.event.findMany({
+        if (isCacheValid(eventsCache.date)) {
+            return eventsCache.events;
+        }
+
+        const events = await db.event.findMany({
             orderBy: {
                 date: "asc"
             }
         }) as ExtendedEvent[];
+
+        eventsCache.date = new Date();
+        eventsCache.events = events;
+        return events;
     } catch (e) {
         console.error("Get All Events Error:", e);
         return [];
     }
 }
 
-// Get events by type
 export async function getEventsByCategory(eventCategory: eventCategory) {
     try {
-        return await db.event.findMany({
+        if (eventsCache.categoryEvents[eventCategory] &&
+            isCacheValid(eventsCache.categoryEvents[eventCategory].date)) {
+            return eventsCache.categoryEvents[eventCategory].events;
+        }
+
+        const events = await db.event.findMany({
             where: {
                 eventCategory
             },
@@ -54,6 +95,13 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
                 date: "asc"
             }
         }) as ExtendedEvent[];
+
+        eventsCache.categoryEvents[eventCategory] = {
+            date: new Date(),
+            events
+        };
+
+        return events;
     } catch (e) {
         console.error("Get Category Events Error:", e);
         return [];
@@ -76,29 +124,46 @@ export async function getEventsOfUser(userId: number) {
     }
 }
 
+export async function getEventsOfAllUsers() {
+    try {
+        return await db.participant.findMany({
+            select: {
+                id: true,
+                events: true
+            }
+        }).then((participants) => {
+            let a = {} as Record<number, ExtendedEvent[]>;
+            participants.forEach((participant) => {
+                a[participant.id] = participant.events as ExtendedEvent[];
+            })
+            return a;
+        })
+    } catch (e) {
+        console.error("Get Events Of All Users Error:", e);
+        return [];
+    }
+}
+
 export async function getEventOptions() {
     try {
-        const eventCategorys = await db.event.findMany({
-            select: {
-                eventCategory: true,
-            },
-            distinct: ["eventCategory"],
-        });
-        const events = await getAllEvents(); 
-        const mappedOptions = eventCategorys.map((e) => {
-            let sevents = events.filter(ev=>ev.eventCategory === e.eventCategory);
-            let ne = sevents?.map((event) => {
+        const events = await getAllEvents();
+        const eventCategories = [...new Set(events.map(e => e.eventCategory))];
+
+        const mappedOptions = eventCategories.map((category) => {
+            let categoryEvents = events.filter(ev => ev.eventCategory === category);
+            let eventOptions = categoryEvents.map((event) => {
                 return {
                     value: event.id.toString(),
                     label: event.eventName,
                     type: event.eventType,
                     id: event.id,
-                }
-            })
+                };
+            });
+
             return {
-                label: e.eventCategory,
-                options: ne
-            }
+                label: category,
+                options: eventOptions
+            };
         });
 
         return mappedOptions;
@@ -110,6 +175,13 @@ export async function getEventOptions() {
 
 export async function getEventsTotalFee(eventIds: number[]) {
     try {
+        if (isCacheValid(eventsCache.date) && eventsCache.events.length > 0) {
+            const cachedEvents = eventsCache.events.filter(event => eventIds.includes(event.id));
+            if (cachedEvents.length === eventIds.length) {
+                return cachedEvents.reduce((acc, event) => acc + event.fee, 0);
+            }
+        }
+
         return await db.event.findMany({
             where: {
                 id: {
@@ -128,27 +200,46 @@ export async function getEventsTotalFee(eventIds: number[]) {
     }
 }
 
-// Update an event by ID
-export async function updateEvent(id: number, data: Prisma.EventUpdateInput) {
+export async function getTotalEvents() {
     try {
-        if (!await isAdmin()) throw new Error("Not authorized");
-        return await db.event.update({
+        return await db.event.count();
+    } catch (e) {
+        console.error("Get Total Events Error:", e);
+        return 0;
+    }
+}
+
+export async function updateEvent(id: number, data: ExtendedEventCreateInput) {
+    try {
+        const updatedEvent = await db.event.update({
             where: { id },
             data
         }) as ExtendedEvent | null;
+
+        eventsCache.date = null;
+        eventsCache.events = [];
+        eventsCache.categoryEvents = {} as any;
+        eventsCache.eventById = {};
+
+        return updatedEvent;
     } catch (e) {
         console.error("Update Event Error:", e);
         return null;
     }
 }
 
-// Delete an event by ID
 export async function deleteEvent(id: number) {
     try {
-        if (!await isAdmin()) throw new Error("Not authorized");
-        return await db.event.delete({
+        const deletedEvent = await db.event.delete({
             where: { id }
         }) as ExtendedEvent | null;
+
+        eventsCache.date = null;
+        eventsCache.events = [];
+        eventsCache.categoryEvents = {} as any;
+        eventsCache.eventById = {};
+
+        return deletedEvent;
     } catch (e) {
         console.error("Delete Event Error:", e);
         return null;

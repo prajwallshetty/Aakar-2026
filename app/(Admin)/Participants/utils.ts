@@ -1,9 +1,6 @@
-import type { Participant, Event } from "@prisma/client"
+import { getEventsOfAllUsers, getEventsOfUser } from "@/backend/events"
+import { ExtendedParticipant } from "@/types"
 import JSZip from "jszip"
-
-type ExtendedParticipant1 = Participant & {
-  events?: Event[]
-}
 
 function objectsToCsv(data: any) {
   if (data.length === 0) return ""
@@ -33,9 +30,11 @@ function objectsToCsv(data: any) {
   return [headerRow, ...rows].join("\n")
 }
 
-export async function downloadParticipantData(participants: ExtendedParticipant1[], groupByCollege = false) {
+export async function downloadParticipantData(participants: ExtendedParticipant[], groupByCollege = false) {
+  const events = await getEventsOfAllUsers()
+
   if (groupByCollege) {
-    const collegeGroups: Record<string, ExtendedParticipant1[]> = {}
+    const collegeGroups: Record<string, ExtendedParticipant[]> = {}
 
     participants.forEach((participant) => {
       if (!collegeGroups[participant.college]) {
@@ -43,6 +42,7 @@ export async function downloadParticipantData(participants: ExtendedParticipant1
       }
       collegeGroups[participant.college].push(participant)
     })
+
 
     const zip = new JSZip()
 
@@ -58,7 +58,7 @@ export async function downloadParticipantData(participants: ExtendedParticipant1
         "Registered On": new Date(p.createdAt).toLocaleString(),
         "Amount Paid": p.amount,
         "Transaction ID": p.transaction_ids.join(", ") || "N/A",
-        Events: p.events ? p.events.map((e) => e.eventName).join(", ") : "None",
+        Events: events[p.id] ? events[p.id].map((e) => e.eventName).join(", ") : "None",
       }))
 
       const csvContent = objectsToCsv(wsData)
@@ -89,7 +89,7 @@ export async function downloadParticipantData(participants: ExtendedParticipant1
       "Registered On": new Date(p.createdAt).toLocaleString(),
       "Amount Paid": p.amount,
       "Transaction ID": p.transaction_ids.join(", ") || "N/A",
-      Events: p.events ? p.events.map((e) => e.eventName).join(", ") : "None",
+      Events: events[p.id] ? events[p.id].map((e) => e.eventName).join(", ") : "None",
     }))
 
     const csvContent = objectsToCsv(wsData)
@@ -126,8 +126,8 @@ export async function downloadEventData(eventData: { name: string; count: number
   URL.revokeObjectURL(url)
 }
 
-export async function downloadCollegeData(participants: ExtendedParticipant1[]) {
-  const collegeGroups: Record<string, ExtendedParticipant1[]> = {}
+export async function downloadCollegeData(participants: ExtendedParticipant[]) {
+  const collegeGroups: Record<string, ExtendedParticipant[]> = {}
 
   participants.forEach((participant) => {
     if (!collegeGroups[participant.college]) {
@@ -157,8 +157,9 @@ export async function downloadCollegeData(participants: ExtendedParticipant1[]) 
   URL.revokeObjectURL(url)
 }
 
-export async function downloadParticipantDetail(participant: ExtendedParticipant1) {
-  if ((participant.events && participant.events.length > 0) || participant.groupMembersData) {
+export async function downloadParticipantDetail(participant: ExtendedParticipant) {
+  let events = await getEventsOfUser(participant.id);
+  if ((events && events.length > 0) || participant.groupMembersData) {
     const zip = new JSZip()
 
     const participantData = [
@@ -179,8 +180,8 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
 
     zip.file("participant_details.csv", objectsToCsv(participantData))
 
-    if (participant.events && participant.events.length > 0) {
-      const eventsData = participant.events.map((event) => ({
+    if (events && events.length > 0) {
+      const eventsData = events.map((event) => ({
         "Event Name": event.eventName,
         Category: event.eventCategory,
         Type: event.eventType,

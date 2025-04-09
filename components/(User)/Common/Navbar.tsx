@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaUserCircle, FaBars, FaTimes, FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { FaBars, FaTimes, FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Montserrat } from "next/font/google";
 import { Button } from "@/components/ui/button";
 
@@ -66,7 +66,7 @@ export default function Navbar() {
             <nav className={`fixed top-0 left-0 w-full bg-transparent backdrop-blur-sm z-40 ${montserrat.className}`}>
                 <div className="container mx-auto flex items-center justify-between max-w-7xl px-6 py-8">
                     <Link href="/" className="flex items-center max-h-[20px]">
-                        <Image src="/logo1.png" alt="Logo" width={480} height={120} className="max-w-[80%]"/>
+                        <Image src="/aj.png" alt="Logo" width={480} height={120} className="max-w-[80%]"/>
                     </Link>
 
                     <ul className="hidden md:flex space-x-8 lg:space-x-16 text-white text-lg font-semibold">
@@ -87,7 +87,7 @@ export default function Navbar() {
                         </li>
                         <li ref={dropdownRef} className="relative">
                             <Button
-                                className="flex items-center bg-transparent hover:text-pink-400 transition cursor-pointer focus:outline-none"
+                                className={`flex items-center bg-transparent text-lg hover:text-pink-400 hover:bg-transparent transition cursor-pointer focus:outline-none ${montserrat.className}`}
                                 onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
                                 onMouseEnter={() => setEventsDropdownOpen(true)}
                             >
@@ -127,7 +127,7 @@ export default function Navbar() {
                     </div>
 
                     <Button
-                        className="md:hidden text-white bg-transparent text-2xl cursor-pointer focus:outline-none z-50"
+                        className="md:hidden text-white bg-transparent hover:bg-transparent text-2xl cursor-pointer focus:outline-none z-50"
                         onClick={toggleSidebar}
                         aria-label="Toggle menu"
                     >
@@ -147,11 +147,6 @@ export default function Navbar() {
                     } ${montserrat.className}`}
             >
                 <div className="flex flex-col h-full">
-                    <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-                        <Link href="/" onClick={closeSidebar}>
-                            <Image src="/logo1.png" alt="Logo" width={40} height={40} />
-                        </Link>
-                    </div>
 
                     <div className="flex-grow overflow-y-auto">
                         <ul className="p-6 space-y-6 text-lg font-semibold">
@@ -184,7 +179,7 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Button
-                                    className="flex items-center justify-between w-full py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
+                                    className={`flex items-center justify-between w-full text-lg bg-transparent hover:bg-transparent py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200 ${montserrat.className}`}
                                     onClick={toggleMobileEvents}
                                 >
                                     Events
