@@ -13,7 +13,7 @@ const PaymentSuccessPage = () => {
         <span className="inline-block align-middle ml-2">
           <Image
             className="w-[80px] h-auto inline-block"
-            src="/Aakarlogo.svg"
+            src="/logo.png"
             width={100}
             height={100}
             alt="Aakar Logo"
