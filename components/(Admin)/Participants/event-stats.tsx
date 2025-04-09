@@ -6,18 +6,19 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { downloadEventData } from "@/app/(Admin)/Participants/utils"
-import { Participant } from "@prisma/client"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getEventsOfUser } from "@/backend/events"
+import { ExtendedParticipant } from "@/types"
 
 interface EventStatsProps {
-  participants: Participant[]
+  participants: ExtendedParticipant[]
 }
 
 type EventData = {
   name: string
   count: number
   category: string
+  participantCount: number
 }
 
 export function EventStats({ participants }: EventStatsProps) {
@@ -41,48 +42,72 @@ export function EventStats({ participants }: EventStatsProps) {
   useEffect(() => {
     const processEventData = async () => {
       try {
-        setIsLoading(true)
-
-        const eventCounts: Record<string, { count: number; category: string }> = {}
+        setIsLoading(true);
+  
+        const eventCounts: Record<string, { count: number; category: string; participantCount: number }> = {};
+        const processedUSNs: Record<string, Set<string>> = {};
 
         for (const participant of participants) {
-          const events = await getEventsOfUser(participant.id)
-
+          const events = await getEventsOfUser(participant.id);
+  
           if (events && Array.isArray(events)) {
             for (const event of events) {
-              const eventName = event.eventName
+              const eventName = event.eventName;
+              
               if (!eventCounts[eventName]) {
                 eventCounts[eventName] = {
                   count: 0,
                   category: event.eventCategory,
+                  participantCount: 0
+                };
+                processedUSNs[eventName] = new Set<string>();
+              }
+              
+              eventCounts[eventName].count++;
+              
+              if (!processedUSNs[eventName].has(participant.usn)) {
+                processedUSNs[eventName].add(participant.usn);
+                eventCounts[eventName].participantCount++;
+              }
+              
+              if (participant.groupMembersData && participant.groupMembersData[event.id]) {
+                const groupData = participant.groupMembersData[event.id];
+                
+                if (groupData.members && Array.isArray(groupData.members)) {
+                  groupData.members.forEach(member => {
+                    if (!processedUSNs[eventName].has(member.usn)) {
+                      processedUSNs[eventName].add(member.usn);
+                      eventCounts[eventName].participantCount++;
+                    }
+                  });
                 }
               }
-              eventCounts[eventName].count++
             }
           }
         }
-
+  
         const formattedData = Object.entries(eventCounts).map(([name, data]) => ({
           name,
-          count: data.count,
+          count: data.count,             
+          participantCount: data.participantCount,
           category: data.category,
-        }))
-
-        formattedData.sort((a, b) => b.count - a.count)
-
-        setEventData(formattedData)
+        }));
+  
+        formattedData.sort((a, b) => b.count - a.count);
+  
+        setEventData(formattedData);
       } catch (err) {
-        console.error("Error processing event data:", err)
-        setError("Failed to process event statistics")
+        console.error("Error processing event data:", err);
+        setError("Failed to process event statistics");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-
+    };
+  
     if (participants.length > 0) {
-      processEventData()
+      processEventData();
     }
-  }, [participants])
+  }, [participants]);
 
   const handleDownloadEventData = async () => {
     try {

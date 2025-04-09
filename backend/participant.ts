@@ -85,7 +85,7 @@ Here are your registration details:
 Name: ${participant.name}
 
 Events: 
-${eventN}
+${eventN || 'No events found!'}
 
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 

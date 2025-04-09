@@ -31,86 +31,135 @@ function objectsToCsv(data: any) {
 }
 
 export async function downloadParticipantData(participants: ExtendedParticipant[], groupByCollege = false) {
-  const events = await getEventsOfAllUsers()
+  const events = await getEventsOfAllUsers();
+
+  // Create a map to track processed USNs to avoid duplicates
+  const processedUSNs = new Set<string>();
+
+  // Function to process participants data (without group members)
+  function processMainParticipants(allParticipants: any[], participant: ExtendedParticipant) {
+    // Add the main participant if not already processed
+    if (!processedUSNs.has(participant.usn)) {
+      processedUSNs.add(participant.usn);
+      allParticipants.push({
+        ID: participant.id,
+        Name: participant.name,
+        USN: participant.usn,
+        Email: participant.email,
+        Phone: participant.phone,
+        College: participant.college,
+        Department: participant.department || "N/A",
+        Year: participant.year,
+        "Registered On": new Date(participant.createdAt).toLocaleString(),
+        "Amount Paid": participant.amount,
+        "Transaction ID": participant.transaction_ids.join(", ") || "N/A",
+        Events: events[participant.id] ? events[participant.id].map((e) => e.eventName).join(", ") : "None",
+        "Member Type": "Registered Participant"
+      });
+    }
+  }
+
+  // Function to process group members data
+  function processGroupMembers(allParticipants: any[], participant: ExtendedParticipant) {
+    // Process group members if they exist
+    if (participant.groupMembersData) {
+      // Iterate through each event's group members
+      Object.values(participant.groupMembersData).forEach(group => {
+        if (group && group.members && group.members.length > 0) {
+          group.members.forEach((member, idx) => {
+            // Only add if this USN hasn't been processed yet
+            if (!processedUSNs.has(member.usn)) {
+              processedUSNs.add(member.usn);
+              allParticipants.push({
+                ID: participant.id + "-" + idx,
+                Name: member.name,
+                USN: member.usn,
+                Email: member.email,
+                Phone: "N/A", // Group members might not have phone numbers
+                College: participant.college, // Assume same college as team leader
+                Department: "N/A",
+                Year: 0,
+                "Registered On": new Date(participant.createdAt).toLocaleString(),
+                "Amount Paid": 0, // Group members don't pay separately
+                "Transaction ID": "N/A",
+                Events: events[participant.id] ? events[participant.id].map((e) => e.eventName).join(", ") : "None",
+                "Member Type": "Team Member"
+              });
+            }
+          });
+        }
+      });
+    }
+  }
 
   if (groupByCollege) {
-    const collegeGroups: Record<string, ExtendedParticipant[]> = {}
+    const collegeGroups: Record<string, any[]> = {};
 
+    // First process all primary participants by college
     participants.forEach((participant) => {
       if (!collegeGroups[participant.college]) {
-        collegeGroups[participant.college] = []
+        collegeGroups[participant.college] = [];
       }
-      collegeGroups[participant.college].push(participant)
-    })
 
+      processMainParticipants(collegeGroups[participant.college], participant);
+    });
 
-    const zip = new JSZip()
+    // Then process all group members by college
+    participants.forEach((participant) => {
+      if (collegeGroups[participant.college]) {
+        processGroupMembers(collegeGroups[participant.college], participant);
+      }
+    });
 
+    const zip = new JSZip();
     for (const [college, collegeParticipants] of Object.entries(collegeGroups)) {
-      const wsData = collegeParticipants.map((p) => ({
-        ID: p.id,
-        Name: p.name,
-        USN: p.usn,
-        Email: p.email,
-        Phone: p.phone,
-        Department: p.department || "N/A",
-        Year: p.year,
-        "Registered On": new Date(p.createdAt).toLocaleString(),
-        "Amount Paid": p.amount,
-        "Transaction ID": p.transaction_ids.join(", ") || "N/A",
-        Events: events[p.id] ? events[p.id].map((e) => e.eventName).join(", ") : "None",
-      }))
-
-      const csvContent = objectsToCsv(wsData)
-      const filename = `${college.replace(/[^a-zA-Z0-9]/g, "_")}.csv`
-      zip.file(filename, csvContent)
+      const csvContent = objectsToCsv(collegeParticipants);
+      const filename = `${college.replace(/[^a-zA-Z0-9]/g, "_")}.csv`;
+      zip.file(filename, csvContent);
     }
 
     zip.generateAsync({ type: "blob" }).then((content) => {
-      const url = URL.createObjectURL(content)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = "participants_by_college.zip"
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    })
+      const url = URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "participants_by_college.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
   } else {
-    const wsData = participants.map((p) => ({
-      ID: p.id,
-      Name: p.name,
-      USN: p.usn,
-      Email: p.email,
-      Phone: p.phone,
-      College: p.college,
-      Department: p.department || "N/A",
-      Year: p.year,
-      "Registered On": new Date(p.createdAt).toLocaleString(),
-      "Amount Paid": p.amount,
-      "Transaction ID": p.transaction_ids.join(", ") || "N/A",
-      Events: events[p.id] ? events[p.id].map((e) => e.eventName).join(", ") : "None",
-    }))
+    // First process all primary participants
+    const allParticipantsData: any[] = [];
+    participants.forEach(participant => {
+      processMainParticipants(allParticipantsData, participant);
+    });
 
-    const csvContent = objectsToCsv(wsData)
+    // Then process all group members
+    participants.forEach(participant => {
+      processGroupMembers(allParticipantsData, participant);
+    });
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "all_participants.csv"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    const csvContent = objectsToCsv(allParticipantsData);
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "all_participants.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 }
 
-export async function downloadEventData(eventData: { name: string; count: number; category: string }[]) {
+
+export async function downloadEventData(eventData: { name: string; count: number; category: string, participantCount: number }[]) {
   const wsData = eventData.map((event) => ({
     "Event Name": event.name,
     Category: event.category,
     Registrations: event.count,
+    "Participant Count": event.participantCount
   }))
 
   const csvContent = objectsToCsv(wsData)
@@ -127,34 +176,57 @@ export async function downloadEventData(eventData: { name: string; count: number
 }
 
 export async function downloadCollegeData(participants: ExtendedParticipant[]) {
-  const collegeGroups: Record<string, ExtendedParticipant[]> = {}
+  const collegeGroups: Record<string, ExtendedParticipant[]> = {};
+  const collegeUniqueUSNs: Record<string, Set<string>> = {};
 
+  // First, group participants by college
   participants.forEach((participant) => {
     if (!collegeGroups[participant.college]) {
-      collegeGroups[participant.college] = []
+      collegeGroups[participant.college] = [];
+      collegeUniqueUSNs[participant.college] = new Set<string>();
     }
-    collegeGroups[participant.college].push(participant)
-  })
+    collegeGroups[participant.college].push(participant);
+    collegeUniqueUSNs[participant.college].add(participant.usn);
+  });
 
-  const collegeStats = Object.entries(collegeGroups).map(([college, participants]) => ({
+  // Then, process all group members and add them to the appropriate college
+  participants.forEach((participant) => {
+    if (participant.groupMembersData) {
+      Object.values(participant.groupMembersData).forEach(groupData => {
+        if (groupData && groupData.members && Array.isArray(groupData.members)) {
+          groupData.members.forEach(member => {
+            // Add each group member to their college's unique USN set
+            // Assuming group members are from the same college as team leader
+            if (!collegeUniqueUSNs[participant.college].has(member.usn)) {
+              collegeUniqueUSNs[participant.college].add(member.usn);
+            }
+          });
+        }
+      });
+    }
+  });
+
+  const collegeStats = Object.entries(collegeGroups).map(([college, collegeParticipants]) => ({
     "College Name": college,
-    Participants: participants.length,
-    "Total Amount": participants.reduce((sum, p) => sum + p.amount, 0),
-  }))
+    "Registered Participants": collegeParticipants.length,
+    "Total Participants": collegeUniqueUSNs[college].size,
+    "Total Amount": collegeParticipants.reduce((sum, p) => sum + p.amount, 0),
+  }));
 
-  collegeStats.sort((a, b) => b.Participants - a.Participants)
+  // Sort by total participants (including group members)
+  collegeStats.sort((a, b) => b["Total Participants"] - a["Total Participants"]);
 
-  const csvContent = objectsToCsv(collegeStats)
+  const csvContent = objectsToCsv(collegeStats);
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "college_statistics.csv"
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "college_statistics.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 export async function downloadParticipantDetail(participant: ExtendedParticipant) {
