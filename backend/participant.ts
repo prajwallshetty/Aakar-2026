@@ -3,7 +3,7 @@
 import { Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
-import { ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
+import { ExtendedEvent, ExtendedParticipant, ExtendedParticipantCreateInput } from "@/types";
 import { sendEmail } from "./nodemailer";
 import { getEventById, getEventsOfUser } from "./events";
 
@@ -31,7 +31,7 @@ export async function validateParticipantData(data: ExtendedParticipantCreateInp
         errors.college = "College name is required";
     }
 
-    if(!data.year || data.year>10 || data.year<=0){
+    if (!data.year || data.year > 10 || data.year <= 0) {
         errors.year = "Invalid year. Year should be between 1 and 10";
     }
 
@@ -113,8 +113,8 @@ export async function getParticipantsCount() {
     participants.forEach(p => {
         usns.add(p.usn);
         if (p.groupMembersData) {
-            Object.keys(p.groupMembersData).forEach(groupEvent=>{
-                p.groupMembersData![groupEvent].members.forEach(member=>{
+            Object.keys(p.groupMembersData).forEach(groupEvent => {
+                p.groupMembersData![groupEvent].members.forEach(member => {
                     usns.add(member.usn);
                 })
             });
@@ -134,8 +134,8 @@ export async function getParticipantsCountForEvent(eventId: number) {
     participants.forEach(p => {
         usns.add(p.usn);
         if (p.groupMembersData) {
-            Object.keys(p.groupMembersData).forEach(groupEvent=>{
-                p.groupMembersData![groupEvent].members.forEach(member=>{
+            Object.keys(p.groupMembersData).forEach(groupEvent => {
+                p.groupMembersData![groupEvent].members.forEach(member => {
                     usns.add(member.usn);
                 })
             });
@@ -151,8 +151,8 @@ export async function getParticipantsCountForCollege(collegeName: string) {
     participants.forEach(p => {
         usns.add(p.usn);
         if (p.groupMembersData) {
-            Object.keys(p.groupMembersData).forEach(groupEvent=>{
-                p.groupMembersData![groupEvent].members.forEach(member=>{
+            Object.keys(p.groupMembersData).forEach(groupEvent => {
+                p.groupMembersData![groupEvent].members.forEach(member => {
                     usns.add(member.usn);
                 })
             });
@@ -162,7 +162,7 @@ export async function getParticipantsCountForCollege(collegeName: string) {
     return usns.size;
 }
 
-export async function getCollegeNames(){
+export async function getCollegeNames() {
 
 }
 
@@ -181,6 +181,28 @@ export async function getParticipant(id: number): Promise<ServiceResponse<Extend
         }
 
         return { data: participant as ExtendedParticipant, error: null };
+    } catch (error) {
+        console.error("Error fetching participant:", error);
+        return { data: null, error: "Failed to fetch participant" };
+    }
+}
+
+export async function getParticipantWithEvents(id: number): Promise<ServiceResponse<ExtendedParticipant & { events: ExtendedEvent[] }>> {
+    try {
+        if (!id) {
+            return { data: null, error: { id: "Participant ID is required" } };
+        }
+
+        const participant = await db.participant.findUnique({
+            where: { id },
+            include: { events: true }
+        });
+
+        if (!participant) {
+            return { data: null, error: "Participant not found" };
+        }
+
+        return { data: participant as ExtendedParticipant & { events: ExtendedEvent[] }, error: null };
     } catch (error) {
         console.error("Error fetching participant:", error);
         return { data: null, error: "Failed to fetch participant" };
