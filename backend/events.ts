@@ -1,7 +1,6 @@
 "use server"
 import { eventCategory } from "@prisma/client";
 import { db } from ".";
-import { isAdmin } from "./admin";
 import { ExtendedEvent, ExtendedEventCreateInput } from "@/types";
 
 const eventsCache = {
@@ -20,7 +19,6 @@ function isCacheValid(cacheDate: Date | null) {
 
 export async function createEvent(event: ExtendedEventCreateInput) {
     try {
-        if (!await isAdmin()) throw new Error("Not authorized");
         const newEvent = await db.event.create({
             data: event
         }) as ExtendedEvent | null;
@@ -213,7 +211,6 @@ export async function getTotalEvents() {
 
 export async function updateEvent(id: number, data: ExtendedEventCreateInput) {
     try {
-        if (!await isAdmin()) throw new Error("Not authorized");
         const updatedEvent = await db.event.update({
             where: { id },
             data
@@ -233,7 +230,6 @@ export async function updateEvent(id: number, data: ExtendedEventCreateInput) {
 
 export async function deleteEvent(id: number) {
     try {
-        if (!await isAdmin()) throw new Error("Not authorized");
         const deletedEvent = await db.event.delete({
             where: { id }
         }) as ExtendedEvent | null;
