@@ -12,12 +12,12 @@ const GlimpseOfAakar = () => {
         </h2>
 
         <video
-          className="max-h-[50vh] rounded-[3rem]"
+          className="max-h-[50vh] rounded-[3rem] -rotate-90"
           autoPlay
           loop
           muted
         >
-          <source src="\glimpse.mp4" type="video/mp4" />
+          <source src="\glimpse.mp4" type="video/mp4" className='-rotate-90' />
         </video>
 
       </div>
