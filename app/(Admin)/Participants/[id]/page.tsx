@@ -368,7 +368,7 @@ export default function ParticipantDetailPage() {
                                                                     })
                                                                 )
                                                             }
-                                                            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+                                                            className="flex items-center gap-1 text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors w-full"
                                                         >
                                                             <Users size={16} />
                                                             <span>

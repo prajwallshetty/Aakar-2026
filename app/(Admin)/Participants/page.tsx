@@ -526,9 +526,10 @@ export default function ParticipantsPage() {
                                                                                     participant.groupMembersData
                                                                                 ).map(
                                                                                     (
-                                                                                        group
+                                                                                        group,
+                                                                                        im
                                                                                     ) => (
-                                                                                        <>
+                                                                                        <div key={im}>
                                                                                             <h4>
                                                                                                 {
                                                                                                     events.find(
@@ -564,7 +565,7 @@ export default function ParticipantsPage() {
                                                                                                         ) => (
                                                                                                             <TableRow
                                                                                                                 key={
-                                                                                                                    idx
+                                                                                                                    idx+1
                                                                                                                 }
                                                                                                             >
                                                                                                                 <TableCell>
@@ -582,7 +583,7 @@ export default function ParticipantsPage() {
                                                                                                     )}
                                                                                                 </TableBody>
                                                                                             </Table>
-                                                                                        </>
+                                                                                        </div>
                                                                                     )
                                                                                 )}
                                                                             </div>

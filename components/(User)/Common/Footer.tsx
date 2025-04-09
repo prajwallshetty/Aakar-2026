@@ -27,7 +27,7 @@ const Footer = () => {
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
               <FaInstagram />
               <Link href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer">
-                @aakar_25
+                @aakar__25
               </Link>
             </li>
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
