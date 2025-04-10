@@ -145,19 +145,23 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
 export async function downloadParticipantDataByEvents(participants: ExtendedParticipant[]) {
   const events = await getEventsOfAllUsers();
 
-  // Create a mapping of eventId -> array of participants
   const eventGroups: Record<string, any[]> = {};
   const processedUSNsByEvent: Record<string, Set<string>> = {};
 
-  // Helper function to process main participants
-  function processMainParticipant(eventId: string, eventName: string, participant: ExtendedParticipant) {
-    // Initialize event group and processed USNs set if they don't exist
+  const eventNameMap: Record<string, string> = {};
+
+  Object.values(events).forEach(userEvents => {
+    userEvents.forEach(event => {
+      eventNameMap[event.id.toString()] = event.eventName;
+    });
+  });
+
+  function processMainParticipant(eventId: string, participant: ExtendedParticipant) {
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
     }
 
-    // Only add if this USN hasn't been processed for this event
     if (!processedUSNsByEvent[eventId].has(participant.usn)) {
       processedUSNsByEvent[eventId].add(participant.usn);
       eventGroups[eventId].push({
@@ -172,15 +176,13 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
         "Registered On": new Date(participant.createdAt).toLocaleString(),
         "Amount Paid": participant.amount,
         "Transaction ID": participant.transaction_ids.join(", ") || "N/A",
-        Event: eventName,
+        Event: eventNameMap[eventId] || `Event ${eventId}`,
         "Member Type": "Registered Participant"
       });
     }
   }
 
-  // Helper function to process group members
-  function processGroupMembers(eventId: string, eventName: string, participant: ExtendedParticipant) {
-    // Initialize event group and processed USNs set if they don't exist
+  function processGroupMembers(eventId: string, participant: ExtendedParticipant) {
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
@@ -204,7 +206,7 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
               "Registered On": new Date(participant.createdAt).toLocaleString(),
               "Amount Paid": 0,
               "Transaction ID": "N/A",
-              Event: eventName,
+              Event: eventNameMap[eventId] || `Event ${eventId}`,
               "Member Type": "Team Member"
             });
           }
@@ -213,31 +215,32 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
     }
   }
 
-  // Process all participants and their events
   participants.forEach(participant => {
     if (events[participant.id]) {
       events[participant.id].forEach(event => {
         const eventId = event.id.toString();
-        const eventName = event.eventName;
 
-        // Add the main participant
-        processMainParticipant(eventId, eventName, participant);
+        processMainParticipant(eventId, participant);
 
-        // Process team members if any
-        processGroupMembers(eventId, eventName, participant);
+        processGroupMembers(eventId, participant);
       });
     }
   });
 
-  // Generate ZIP file with a CSV for each event
+  participants.forEach(participant => {
+    if (participant.groupMembersData) {
+      Object.keys(participant.groupMembersData).forEach(eventId => {
+        processGroupMembers(eventId, participant);
+      });
+    }
+  });
+
   const zip = new JSZip();
 
-  // Add event overview file with counts
   const eventSummary = Object.entries(eventGroups).map(([eventId, participants]) => {
-    const eventName = events[parseInt(Object.keys(events)[0])]?.find(e => e.id.toString() === eventId)?.eventName || `Event ${eventId}`;
     return {
       "Event ID": eventId,
-      "Event Name": eventName,
+      "Event Name": eventNameMap[eventId] || `Event ${eventId}`,
       "Total Participants": participants.length,
       "Registered Participants": participants.filter(p => p["Member Type"] === "Registered Participant").length,
       "Team Members": participants.filter(p => p["Member Type"] === "Team Member").length
@@ -248,17 +251,15 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
     zip.file("_event_summary.csv", objectsToCsv(eventSummary));
   }
 
-  // Add individual event files
   for (const [eventId, eventParticipants] of Object.entries(eventGroups)) {
     if (eventParticipants.length > 0) {
-      const eventName = events[parseInt(Object.keys(events)[0])]?.find(e => e.id.toString() === eventId)?.eventName || `Event ${eventId}`;
+      const eventName = eventNameMap[eventId] || `Event ${eventId}`;
       const safeEventName = eventName.replace(/[^a-zA-Z0-9]/g, "_");
-      const filename = `${safeEventName}_event_${eventId}.csv`;
+      const filename = `${safeEventName}.csv`;
       zip.file(filename, objectsToCsv(eventParticipants));
     }
   }
 
-  // Generate and download the ZIP file
   zip.generateAsync({ type: "blob" }).then((content) => {
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
