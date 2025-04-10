@@ -48,35 +48,16 @@ npm install
 ### 3️⃣ Set Up Environment Variables  
 Create a `.env.local` file with the following:
 ```env
-# 🛠️ Database Configuration (Supabase/PostgreSQL)
-DATABASE_URL="postgresql://<DB_USER>:<DB_PASS>@<SUPABASE_HOST>:5432/<DB_NAME>"
-
-# 🔐 Supabase Credentials
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
-SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key> # optional if needed server-side
-
-# 🔐 App Secrets
-AUTH_SECRET="<your-auth-secret>"
-
-# ⚙️ Runtime
-NODE_ENV=development
-PORT=3000
-
-# 💸 Razorpay Configuration
-RAZORPAY_KEY_ID=<your-razorpay-key-id>
-RAZORPAY_KEY_SECRET=<your-razorpay-secret>
-RAZORPAY_WEBHOOK_SECRET=<your-webhook-secret>
-
-# 🖋️ Fonts (optional)
-FONTCONFIG_PATH="/helpers/fonts"
-
-# ☁️ AWS (if you're uploading files)
-AWS_REGION_=ap-south-1
-AWS_ACCESS_KEY_ID_=<your-aws-access-key>
-AWS_SECRET_ACCESS_KEY_=<your-aws-secret-key>
-AWS_BUCKET_NAME=aakar2025
-
+NEXT_PUBLIC_SUPABASE_URL=https://abcde12345.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...FAKE_KEY...eXAiOiJKV1Q
+AUTH_SECRET="randomlyGeneratedSecretKey=="
+MAIL_USER=test@example.com
+MAIL_CLIENT_ID=1234567890-fakeclientid.apps.googleusercontent.com
+MAIL_CLIENT_SECRET=FAKE_CLIENT_SECRET_123456
+MAIL_ACCESS_TOKEN=ya29.fakeAccessToken123456789
+MAIL_REFRESH_TOKEN=1//fakeRefreshToken123456789
+NODE_ENV="development"
+DATABASE_URL="postgresql://user:password@db.example.com/dbname?sslmode=require"
 ```
 
 ### 4️⃣ Run the Development Server  
