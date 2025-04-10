@@ -3,7 +3,7 @@ import { auth } from "./auth";
 
 export default auth(async (req, ctx) => {
     if(!req.auth?.user?.email && !req.nextUrl.pathname.toLowerCase().startsWith("/adminlogin")) {
-        return NextResponse.redirect("/adminlogin");
+        return NextResponse.redirect(req.nextUrl.origin + "/AdminLogin");
     }
     return NextResponse.next();
 });

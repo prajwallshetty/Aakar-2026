@@ -73,7 +73,6 @@ export default function ParticipantDetailPage() {
                 if (response.data) {
                     setParticipant(response.data);
 
-                    // Parse group members data if available
                     if (response.data.groupMembersData) {
                         try {
                             const parsedData =
@@ -343,7 +342,6 @@ export default function ParticipantDetailPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Group members section - only show if this is a group event */}
                                             {participant.groupMembersData &&
                                                 participant.groupMembersData[
                                                     event.id

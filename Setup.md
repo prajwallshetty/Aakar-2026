@@ -39,7 +39,7 @@ Ensure the following tools are installed:
 3. **Setup Environment File**
    Copy the example env file and update it:
    ```bash
-   cp .env.example .env.local
+   cp example.env .env.local
    ```
 
 4. **Configure Your Supabase & Auth Details**  
