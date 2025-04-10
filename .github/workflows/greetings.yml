@@ -1,0 +1,29 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 Hello @${{ github.actor }}! 
+
+            Thank you for opening an issue 🎯 in the **AAKAR2025** repository – the official technoCultural-fest of AJIET 🎉. We appreciate your initiative to improve the project! A maintainer will review your issue soon.
+
+            Kindly ensure you've checked for duplicate issues and added the appropriate labels like `AAKAR2025`. We’re excited to have you here – happy contributing! 🚀
+
+          pr-message: |
+            🙌 Welcome @${{ github.actor }}!
+
+            Thanks for your pull request to **AAKAR2025**! 🥳 We’re thrilled to see your contribution. The team will review it shortly.
+
+            Make sure your PR adheres to our guidelines and is labeled accordingly (e.g., `AAKAR2025`). 
+
+            Let's create something amazing for the fest together! 🌟

@@ -1,0 +1,91 @@
+---
+name: AAKAR2025 Feature Request 🌟
+description: Suggest a feature for AAKAR2025.
+title: "[Feat]: "
+labels: ["enhancement", "Hacktoberfest", "AAKAR2025"]
+assignees: ["AAKAR2025-Team"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <h1 align="center">AAKAR 2025 - Techno-Cultural Fest of AJIET</h1>
+        
+        <p align="center">
+          <img alt="GitHub pull-requests" src="https://img.shields.io/github/issues-pr/gaureshpai/aakar2025">
+          <img alt="GitHub forks" src="https://img.shields.io/github/forks/gaureshpai/aakar2025">
+          <img alt="contributors" src="https://img.shields.io/github/contributors/gaureshpai/aakar2025">
+          <img alt="GitHub stars" src="https://img.shields.io/github/stars/gaureshpai/aakar2025">
+        </p>
+
+        ## 🎉 Welcome to the AAKAR2025 Feature Request Form!
+        Thank you for contributing to AAKAR2025! Please ensure you've checked for existing issues before suggesting a new feature.
+
+  - type: checkboxes
+    id: existing-issue
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search the existing issues to see if a similar feature has already been requested.
+      options:
+        - label: I have searched the existing issues
+          required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: Please provide a detailed description of the feature you are requesting.
+      placeholder: Describe the new feature or enhancement you'd like to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: How would this feature enhance your use of the project?
+      placeholder: Describe a specific use case or scenario where this feature would be beneficial.
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What benefits would this feature bring to the project or community?
+      placeholder: Explain the advantages of implementing this feature.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - High
+        - Medium
+        - Low
+      default: Medium
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: roles
+    attributes:
+      label: Your Role in AAKAR2025
+      options:
+        - label: "I'm a AAKAR2025 Community Member"
+        - label: "I want to work on this feature"
+        - label: "I'm willing to provide further clarification or assistance if needed."
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: "I agree to follow this project's Code of Conduct"
+          required: true
+
+footer: |
+  ### Need help?
+  - Refer to [AAKAR 2025 Docs](https://github.com/gaureshpai/aakar2025)
+  - Join the [AAKAR Community on Github](https://github.com/Ajiet-Devnation)
