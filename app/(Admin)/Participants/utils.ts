@@ -33,12 +33,9 @@ function objectsToCsv(data: any) {
 export async function downloadParticipantData(participants: ExtendedParticipant[], groupByCollege = false) {
   const events = await getEventsOfAllUsers();
 
-  // Create a map to track processed USNs to avoid duplicates
   const processedUSNs = new Set<string>();
 
-  // Function to process participants data (without group members)
   function processMainParticipants(allParticipants: any[], participant: ExtendedParticipant) {
-    // Add the main participant if not already processed
     if (!processedUSNs.has(participant.usn)) {
       processedUSNs.add(participant.usn);
       allParticipants.push({
@@ -59,15 +56,11 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
     }
   }
 
-  // Function to process group members data
   function processGroupMembers(allParticipants: any[], participant: ExtendedParticipant) {
-    // Process group members if they exist
     if (participant.groupMembersData) {
-      // Iterate through each event's group members
       Object.values(participant.groupMembersData).forEach(group => {
         if (group && group.members && group.members.length > 0) {
           group.members.forEach((member, idx) => {
-            // Only add if this USN hasn't been processed yet
             if (!processedUSNs.has(member.usn)) {
               processedUSNs.add(member.usn);
               allParticipants.push({
@@ -75,12 +68,12 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
                 Name: member.name,
                 USN: member.usn,
                 Email: member.email,
-                Phone: "N/A", // Group members might not have phone numbers
-                College: participant.college, // Assume same college as team leader
+                Phone: "N/A",
+                College: participant.college,
                 Department: "N/A",
                 Year: 0,
                 "Registered On": new Date(participant.createdAt).toLocaleString(),
-                "Amount Paid": 0, // Group members don't pay separately
+                "Amount Paid": 0,
                 "Transaction ID": "N/A",
                 Events: events[participant.id] ? events[participant.id].map((e) => e.eventName).join(", ") : "None",
                 "Member Type": "Team Member"
@@ -95,7 +88,6 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
   if (groupByCollege) {
     const collegeGroups: Record<string, any[]> = {};
 
-    // First process all primary participants by college
     participants.forEach((participant) => {
       if (!collegeGroups[participant.college]) {
         collegeGroups[participant.college] = [];
@@ -104,7 +96,6 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
       processMainParticipants(collegeGroups[participant.college], participant);
     });
 
-    // Then process all group members by college
     participants.forEach((participant) => {
       if (collegeGroups[participant.college]) {
         processGroupMembers(collegeGroups[participant.college], participant);
@@ -129,13 +120,11 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
       URL.revokeObjectURL(url);
     });
   } else {
-    // First process all primary participants
     const allParticipantsData: any[] = [];
     participants.forEach(participant => {
       processMainParticipants(allParticipantsData, participant);
     });
 
-    // Then process all group members
     participants.forEach(participant => {
       processGroupMembers(allParticipantsData, participant);
     });
@@ -179,7 +168,6 @@ export async function downloadCollegeData(participants: ExtendedParticipant[]) {
   const collegeGroups: Record<string, ExtendedParticipant[]> = {};
   const collegeUniqueUSNs: Record<string, Set<string>> = {};
 
-  // First, group participants by college
   participants.forEach((participant) => {
     if (!collegeGroups[participant.college]) {
       collegeGroups[participant.college] = [];
@@ -189,14 +177,11 @@ export async function downloadCollegeData(participants: ExtendedParticipant[]) {
     collegeUniqueUSNs[participant.college].add(participant.usn);
   });
 
-  // Then, process all group members and add them to the appropriate college
   participants.forEach((participant) => {
     if (participant.groupMembersData) {
       Object.values(participant.groupMembersData).forEach(groupData => {
         if (groupData && groupData.members && Array.isArray(groupData.members)) {
           groupData.members.forEach(member => {
-            // Add each group member to their college's unique USN set
-            // Assuming group members are from the same college as team leader
             if (!collegeUniqueUSNs[participant.college].has(member.usn)) {
               collegeUniqueUSNs[participant.college].add(member.usn);
             }
@@ -213,7 +198,6 @@ export async function downloadCollegeData(participants: ExtendedParticipant[]) {
     "Total Amount": collegeParticipants.reduce((sum, p) => sum + p.amount, 0),
   }));
 
-  // Sort by total participants (including group members)
   collegeStats.sort((a, b) => b["Total Participants"] - a["Total Participants"]);
 
   const csvContent = objectsToCsv(collegeStats);

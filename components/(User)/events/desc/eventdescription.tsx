@@ -39,14 +39,12 @@ const EventDescriptionSkeleton = () => (
                     </div>
                 </div>
 
-                {/* Right column - image */}
                 <div className="lg:w-1/3 flex justify-center relative">
                     <Skeleton className="w-full aspect-[4/5] rounded-2xl" />
                     <Skeleton className="absolute -bottom-4 -right-4 w-24 h-20 rounded-lg" />
                 </div>
             </div>
 
-            {/* Rules section */}
             <div className="mt-16 space-y-6">
                 <Skeleton className="h-8 w-48 mx-auto rounded-lg" />
                 <div className="bg-gray-800/50 rounded-xl p-6 space-y-4">
@@ -61,7 +59,6 @@ const EventDescriptionSkeleton = () => (
                 </div>
             </div>
 
-            {/* Coordinators section */}
             <div className="mt-16 space-y-6">
                 <Skeleton className="h-8 w-64 mx-auto rounded-lg" />
                 <div className="flex flex-col md:flex-row justify-center gap-6">
