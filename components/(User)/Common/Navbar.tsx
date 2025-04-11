@@ -66,7 +66,7 @@ export default function Navbar() {
             <nav className={`fixed top-0 left-0 w-full bg-transparent backdrop-blur-sm z-40 ${montserrat.className}`}>
                 <div className="container mx-auto flex items-center justify-between max-w-7xl px-6 py-8">
                     <Link href="/" className="flex items-center max-h-[20px]">
-                        <Image src="/aj.png" alt="Logo" width={480} height={120} className="max-w-[80%]"/>
+                        <Image src="https://github-production-user-asset-6210df.s3.amazonaws.com/107191770/432678775-a8ab2a92-4ad1-4f17-893b-e1c9d46f1726.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250411%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250411T085302Z&X-Amz-Expires=300&X-Amz-Signature=71c97fa8f46a98c44dcb68cf12914aef7e8385adfe47520f8be7f2ebd6ba477e&X-Amz-SignedHeaders=host" alt="Logo" width={480} height={120} className="max-w-[80%]"/>
                     </Link>
 
                     <ul className="hidden md:flex space-x-8 lg:space-x-16 text-white text-lg font-semibold">
