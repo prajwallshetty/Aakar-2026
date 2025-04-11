@@ -3,6 +3,8 @@ import "./globals.css";
 import { GameOfSquids } from "@/lib/font";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
     title: "AAKAR 2025 | Brains, Guts and Glory",
@@ -180,6 +182,8 @@ export default async function RootLayout({
         <html lang="en">
             <body className={`${GameOfSquids.className} antialiased`}>
                 <SessionProvider session={session}>{children}</SessionProvider>
+                <Analytics />
+                <SpeedInsights />
             </body>
         </html>
     );

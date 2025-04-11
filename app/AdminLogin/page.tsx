@@ -93,13 +93,6 @@ const AdminLogin = () => {
           </Link>
         </div>
       </div>
-
-      <div className="absolute bottom-0 right-0 hidden lg:block h-96 w-64">
-        <div
-          className="absolute inset-0 bg-contain bg-no-repeat bg-center"
-          style={{ backgroundImage: "url('/admin-illustration.png')" }}
-        />
-      </div>
     </div>
   );
 };

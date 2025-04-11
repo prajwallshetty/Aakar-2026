@@ -101,6 +101,8 @@ interface FormData {
     facultyCoordinators: Coordinator[];
     rules: string[];
     imageUrl: string;
+    minMembers: number;
+    maxMembers: number;
 }
 
 const EventsCRUD = () => {
@@ -136,6 +138,8 @@ const EventsCRUD = () => {
         facultyCoordinators: [],
         rules: [],
         imageUrl: "",
+        minMembers: 1,
+        maxMembers: 1,
     });
     const [previewUrl, setPreviewUrl] = useState<string>("");
     const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
@@ -210,7 +214,9 @@ const EventsCRUD = () => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]: name === "fee" ? parseInt(value) || "" : value,
+            [name]: ["fee", "minMembers", "maxMembers"].includes(name)
+                ? parseInt(value) || ""
+                : value,
         }));
     };
 
@@ -310,6 +316,8 @@ const EventsCRUD = () => {
             facultyCoordinators: [],
             rules: [],
             imageUrl: "",
+            minMembers: 1,
+            maxMembers: 1,
         });
         setIsEditing(false);
         setCurrentId(null);
@@ -378,6 +386,8 @@ const EventsCRUD = () => {
             facultyCoordinators: event.facultyCoordinators || [],
             rules: event.rules || [],
             imageUrl: event.imageUrl,
+            minMembers: event.minMembers,
+            maxMembers: event.maxMembers,
         });
         setCurrentId(event.id);
         setIsEditing(true);
@@ -513,19 +523,28 @@ const EventsCRUD = () => {
                                         <TableHead>Poster</TableHead>
                                         <TableHead className="text-right flex gap-8 items-center justify-end">
                                             <Input
-                                                        type="checkbox"
-                                                        className="w-4 h-4"
-                                                        checked={
-                                                                events.length === selectedEvents.length
-                                                        }
-                                                        onClick={(e) => {
-                                                            if(e.currentTarget.checked){
-                                                                setSelectedEvents(events.map((event) => event.id))
-                                                            } else {
-                                                                setSelectedEvents([])
-                                                            }
-                                                        }}
-                                                    />Actions
+                                                type="checkbox"
+                                                className="w-4 h-4"
+                                                checked={
+                                                    events.length ===
+                                                    selectedEvents.length
+                                                }
+                                                onChange={(e) => {
+                                                    if (
+                                                        e.currentTarget.checked
+                                                    ) {
+                                                        setSelectedEvents(
+                                                            events.map(
+                                                                (event) =>
+                                                                    event.id
+                                                            )
+                                                        );
+                                                    } else {
+                                                        setSelectedEvents([]);
+                                                    }
+                                                }}
+                                            />
+                                            Actions
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -592,7 +611,7 @@ const EventsCRUD = () => {
                                                             (e) => e == event.id
                                                         )
                                                     }
-                                                    onClick={() => {
+                                                    onChange={() => {
                                                         setSelectedEvents(
                                                             (prev) => {
                                                                 if (
@@ -763,6 +782,48 @@ const EventsCRUD = () => {
                                             </SelectContent>
                                         </Select>
                                     </div>
+
+                                    {formData.eventType === "Team" && (
+                                        <>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="minMembers">
+                                                    Minimum Team Members
+                                                </Label>
+                                                <Input
+                                                    id="minMembers"
+                                                    name="minMembers"
+                                                    type="number"
+                                                    min="1"
+                                                    value={
+                                                        formData.minMembers ||
+                                                        "1"
+                                                    }
+                                                    onChange={handleInputChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="maxMembers">
+                                                    Maximum Team Members
+                                                </Label>
+                                                <Input
+                                                    id="maxMembers"
+                                                    name="maxMembers"
+                                                    type="number"
+                                                    min={
+                                                        formData.minMembers ||
+                                                        "1"
+                                                    }
+                                                    value={
+                                                        formData.maxMembers ||
+                                                        "1"
+                                                    }
+                                                    onChange={handleInputChange}
+                                                    required
+                                                />
+                                            </div>
+                                        </>
+                                    )}
 
                                     <div className="space-y-2">
                                         <Label htmlFor="fee">Fee (₹)</Label>

@@ -88,7 +88,7 @@ export default function AboutPage() {
               </div>
               <div className="w-full md:w-1/2">
                 <Image
-                  src="/2024.png"
+                  src="https://github-production-user-asset-6210df.s3.amazonaws.com/107191770/432650731-e8eb267c-297a-48df-aa8f-1bedbda91072.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250411%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250411T074310Z&X-Amz-Expires=300&X-Amz-Signature=953754ea2e8744b3cb1253d4051258e57f29f0c89a02028e1730e2b22be41a6c&X-Amz-SignedHeaders=host"
                   width={600}
                   height={400}
                   alt="AAKAR Event Venue"
