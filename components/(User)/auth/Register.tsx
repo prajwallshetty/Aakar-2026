@@ -137,8 +137,15 @@ const Register = () => {
                 !newGroupData[event.id]
             ) {
                 newGroupData[event.id] = {
-                    participantCount: 1,
-                    members: [{ name: "", usn: "", email: "" }],
+                    participantCount: eventObj.minMembers,
+                    members: Array.from(
+                        { length: eventObj.minMembers },
+                        () => ({
+                            name: "",
+                            usn: "",
+                            email: "",
+                        })
+                    ),
                 };
             }
         });
@@ -408,6 +415,34 @@ const Register = () => {
         "S NM Polytechnic, Moodbidri",
         "Udupi Group of Institutions",
         "Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi",
+        "Yenapoya Institute of Arts Science and Commerce",
+        "Muniyal Ayurveda College",
+        "Vaikunta Baliga College of Law, Kunjibettu",
+        "Gandhinagar First Grade College",
+        "Tejaswini Group of Institutions",
+        "Mangala Group of Institutions",
+        "PACE Mangalore",
+        "Baery's Institute of Technology",
+        "Kanachur Institute of Medical Science",
+        "NITTE Architecture",
+        "NITTE Nursing",
+        "NITTE Institute of Communication",
+        "Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore",
+        "Trisha College of Commerce and Management, Alake Road, Kodailbail",
+        "Narayana Guru School And College, Barke Road, Kudroli",
+        "Athene Institute of Health Science",
+        "Athena Institute of Nursing Science",
+        "Indira Institute of Nursing Science",
+        "Laxmi Memorial College of Nursing",
+        "St. Agnes",
+        "St. Aloysius",
+        "Ramakrishna Degree College",
+        "MAPS College",
+        "NITTE MBA",
+        "Moti Mahal",
+        "Govt. JJJ College",
+        "Dr. Dayananda Pai - P Sathisha Pai Govt. First Grade College, Car Street, Mangalore",
+        "AJIM",
     ];
 
     if (isLoading) {
@@ -435,8 +470,9 @@ const Register = () => {
                     <div
                         className="absolute inset-0 bg-cover bg-center"
                         style={{
-                            backgroundImage: "url('/register-ch.png')",
-                            backgroundSize: "contain",
+                            backgroundImage:
+                                "url('/image-removebg-preview (11).png')",
+                            backgroundSize: "cover",
                             backgroundRepeat: "no-repeat",
                         }}
                     ></div>
@@ -812,10 +848,23 @@ const Register = () => {
                                     const groupData = groupEventData[
                                         event.id
                                     ] || {
-                                        participantCount: 1,
-                                        members: [
-                                            { name: "", usn: "", email: "" },
-                                        ],
+                                        participantCount:
+                                            events.find(
+                                                (e) => e.id === event.id
+                                            )?.minMembers || 1,
+                                        members: Array.from(
+                                            {
+                                                length:
+                                                    events.find(
+                                                        (e) => e.id === event.id
+                                                    )?.minMembers || 1,
+                                            },
+                                            () => ({
+                                                name: "",
+                                                email: "",
+                                                usn: "",
+                                            })
+                                        ),
                                     };
 
                                     return (
@@ -837,8 +886,21 @@ const Register = () => {
                                                 <input
                                                     type="number"
                                                     id={`participant-count-${event.id}`}
-                                                    min="1"
-                                                    max="10"
+                                                    min={
+                                                        events.find(
+                                                            (e) =>
+                                                                e.id ===
+                                                                event.id
+                                                        )?.minMembers || 1
+                                                    }
+                                                    max={
+                                                        events.find(
+                                                            (e) =>
+                                                                e.id ===
+                                                                event.id
+                                                        )?.maxMembers || 10
+                                                    }
+                                                    step={1}
                                                     value={
                                                         groupData.participantCount
                                                     }
@@ -865,7 +927,13 @@ const Register = () => {
                                                                 Team Member{" "}
                                                                 {index + 1}
                                                             </p>
-                                                            {index > 0 && (
+                                                            {index >=
+                                                                (events.find(
+                                                                    (e) =>
+                                                                        e.id ===
+                                                                        event.id
+                                                                )?.minMembers ||
+                                                                    0) && (
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => {
@@ -1374,8 +1442,9 @@ const Register = () => {
                         <div
                             className="absolute inset-0 bg-cover bg-center"
                             style={{
-                                backgroundImage: "url('/register-ch.png')",
-                                backgroundSize: "contain",
+                                backgroundImage:
+                                    "url('/register-ch1.png')",
+                                backgroundSize: "cover",
                                 backgroundRepeat: "no-repeat",
                             }}
                         ></div>
@@ -1386,8 +1455,8 @@ const Register = () => {
                 <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
-                        backgroundImage: "url('/register-ch.png')",
-                        backgroundSize: "contain",
+                        backgroundImage: "url('/register-ch1.png')",
+                        backgroundSize: "cover",
                         backgroundRepeat: "no-repeat",
                     }}
                 ></div>

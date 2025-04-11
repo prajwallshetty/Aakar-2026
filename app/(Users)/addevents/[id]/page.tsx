@@ -29,7 +29,6 @@ export default function AddAdditionalEvents({
     const router = useRouter();
     const userId = parseInt(use(params).id);
 
-    // States for data management
     const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [eventOptions, setEventOptions] =
         useState<Awaited<ReturnType<typeof getEventOptions>>>();
@@ -63,7 +62,6 @@ export default function AddAdditionalEvents({
     const [qrImageUrl, setQrImageUrl] = useState<string>("");
     const [showQRCode, setShowQRCode] = useState<boolean>(false);
 
-    // Fetch user data and available events
     useEffect(() => {
         const fetchData = async () => {
             if (!userId) return;
@@ -72,7 +70,6 @@ export default function AddAdditionalEvents({
             try {
                 setEvents(await getAllEvents());
 
-                // Fetch user's existing registrations
                 const { data: userData, error } = await getParticipant(userId);
                 setUserInfo(userData);
 
@@ -85,7 +82,6 @@ export default function AddAdditionalEvents({
                     })
                 );
 
-                // Set existing events as read-only items
                 if (userEvents) {
                     setExistingEvents(userEvents);
                 }
@@ -123,12 +119,10 @@ export default function AddAdditionalEvents({
         });
     }
 
-    // Handle event selection
     const handleEventSelection = (selected: any) => {
         const selectedOptions: typeof selectedEvents = selected || [];
         setSelectedEvents([...selectedOptions]);
 
-        // Calculate total amount
         const amount = selectedOptions.reduce(
             (sum: number, event) =>
                 sum + (events.find((e) => e.id === event.id)?.fee || 0),
@@ -136,7 +130,6 @@ export default function AddAdditionalEvents({
         );
         setTotalAmount(amount);
 
-        // Initialize group event data for team events
         selectedOptions.forEach((event) => {
             if (event.type === "Team" && !groupEventData?.[event.id]) {
                 setGroupEventData((prev) => ({
@@ -180,25 +173,20 @@ export default function AddAdditionalEvents({
         setShowQRCode(true);
     };
 
-    // Handle participant count change for team events
     const handleParticipantCountChange = (eventId: number, count: number) => {
         const currentData = groupEventData?.[eventId] || {
             participantCount: 1,
             members: [{ name: "", usn: "", email: "" }],
         };
 
-        // Limit count between 1 and 10
         count = Math.max(1, Math.min(10, count));
 
-        // Adjust members array based on count
         let members = [...currentData.members];
         if (count > members.length) {
-            // Add new members
             for (let i = members.length; i < count; i++) {
                 members.push({ name: "", usn: "", email: "" });
             }
         } else if (count < members.length) {
-            // Remove extra members
             members = members.slice(0, count);
         }
 
@@ -211,7 +199,6 @@ export default function AddAdditionalEvents({
         }));
     };
 
-    // Handle changing group member details
     const handleGroupMemberChange = (
         eventId: number,
         index: number,
@@ -236,7 +223,6 @@ export default function AddAdditionalEvents({
         }));
     };
 
-    // Form validation
     const validateForm = (): boolean => {
         const errors: FormErrors = {};
 
@@ -244,20 +230,17 @@ export default function AddAdditionalEvents({
             errors.events = "Please select at least one event";
         }
 
-        // Validate team members for group events
         selectedEvents.forEach((event) => {
             if (event.type === "Team") {
                 const teamData = groupEventData?.[event.id];
 
                 if (teamData) {
                     teamData.members.forEach((member, index) => {
-                        // Validate name
                         if (!member.name || member.name.trim() === "") {
                             errors[`group_${event.id}_member_${index}_name`] =
                                 "Name is required";
                         }
 
-                        // Validate USN
                         if (!member.usn || member.usn.trim() === "") {
                             errors[`group_${event.id}_member_${index}_usn`] =
                                 "USN is required";
@@ -266,7 +249,6 @@ export default function AddAdditionalEvents({
                                 "Enter a valid USN";
                         }
 
-                        // Validate email
                         if (!member.email || member.email.trim() === "") {
                             errors[`group_${event.id}_member_${index}_email`] =
                                 "Email is required";
@@ -285,7 +267,6 @@ export default function AddAdditionalEvents({
         return Object.keys(errors).length === 0;
     };
 
-    // Submit form
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -299,7 +280,6 @@ export default function AddAdditionalEvents({
             await addUserEvents(selectedEvents, groupEventData);
             setSubmitSuccess(true);
 
-            // Redirect after success
             setTimeout(() => {
                 router.push(`/`);
             }, 2000);
@@ -338,7 +318,6 @@ export default function AddAdditionalEvents({
                     </p>
                 </div>
                 <form onSubmit={handleSubmit}>
-                    {/* Display existing registrations (read-only) */}
                     {existingEvents.length > 0 && (
                         <div className="mb-6">
                             <h2 className="text-lg font-semibold mb-3">
@@ -359,13 +338,11 @@ export default function AddAdditionalEvents({
                         </div>
                     )}
 
-                    {/* Event Selection */}
                     <div className="flex flex-col gap-4 mt-4">
                         <h3 className="font-semibold">
                             Additional Event Selection
                         </h3>
 
-                        {/* Display Already Selected Events */}
                         {selectedEvents.length > 0 && (
                             <div className="mb-4">
                                 <h4 className="text-sm font-medium mb-2">
@@ -384,7 +361,6 @@ export default function AddAdditionalEvents({
                                                 <button
                                                     type="button"
                                                     onClick={() => {
-                                                        // Remove event handler
                                                         const updatedSelection =
                                                             selectedEvents.filter(
                                                                 (event) =>
@@ -395,7 +371,6 @@ export default function AddAdditionalEvents({
                                                             updatedSelection
                                                         );
 
-                                                        // Remove group data if it's a group event
                                                         if (
                                                             groupEventData?.[
                                                                 selectedEvent
@@ -417,7 +392,6 @@ export default function AddAdditionalEvents({
                                                             );
                                                         }
 
-                                                        // Update total amount
                                                         const amount =
                                                             updatedSelection.reduce(
                                                                 (
@@ -456,7 +430,6 @@ export default function AddAdditionalEvents({
                             </div>
                         )}
 
-                        {/* Dropdown to Add More Events */}
                         <div className="flex flex-col gap-2">
                             <label
                                 htmlFor="add-event"
@@ -487,7 +460,6 @@ export default function AddAdditionalEvents({
                         </div>
                     </div>
 
-                    {/* Group Events Team Members */}
                     {selectedEvents.length > 0 && (
                         <div className="mt-4">
                             {selectedEvents
@@ -839,7 +811,6 @@ export default function AddAdditionalEvents({
                         </div>
                     </div>
 
-                    {/* Form Submission */}
                     <div className="mt-8 flex justify-between items-center">
                         <Link
                             href={`/users/${userId}/dashboard`}

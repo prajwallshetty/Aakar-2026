@@ -43,6 +43,7 @@ const DJ = () => {
                 loop
                 autoPlay
                 playsInline
+                preload='none'
               />
             </div>
             <div className="text-right p-2">

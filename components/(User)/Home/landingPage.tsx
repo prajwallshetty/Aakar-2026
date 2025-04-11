@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
-import Image from 'next/image';
-import { FiChevronDown } from 'react-icons/fi';
+import Image from "next/image";
+import { FiChevronDown } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 const montserrat = Montserrat({
     weight: "600",
@@ -15,7 +15,7 @@ const montserrat = Montserrat({
 const LandingPage = () => {
     const [glowIntensity, setGlowIntensity] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [activeVideo, setActiveVideo] = useState('');
+    const [activeVideo, setActiveVideo] = useState("");
 
     const openModal = (videoSrc: string) => {
         setActiveVideo(videoSrc);
@@ -24,12 +24,12 @@ const LandingPage = () => {
 
     const closeModal = () => {
         setShowModal(false);
-        setActiveVideo('');
+        setActiveVideo("");
     };
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setGlowIntensity(prev => (prev + 0.02) % 1);
+            setGlowIntensity((prev) => (prev + 0.02) % 1);
         }, 50);
 
         return () => clearInterval(interval);
@@ -80,11 +80,25 @@ const LandingPage = () => {
 
                 <div className="w-2/4 flex flex-col h-full items-center justify-center relative overflow-hidden">
                     <div className="h-[90vh] flex items-center justify-center">
-                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center z-20"
-                            style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
-                        </div>
-                        <div className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}>
-                            <Button className="flex items-center px-6 py-3 text-white bg-transparent hover:bg-transparent cursor-pointer transition duration-300 group" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
+                        <div
+                            className="h-5/6 w-auto bg-contain bg-no-repeat bg-center z-20"
+                            style={{
+                                backgroundImage: "url('/character.png')",
+                                minWidth: "250px",
+                            }}
+                        ></div>
+                        <div
+                            className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}
+                        >
+                            <Button
+                                className="flex items-center px-6 py-3 text-white bg-transparent hover:bg-transparent cursor-pointer transition duration-300 group"
+                                onClick={() => {
+                                    window.open(
+                                        "https://www.instagram.com/p/DH0aB6pSonD/",
+                                        "_blank"
+                                    );
+                                }}
+                            >
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
                                     <FaPlay className="text-sm" />
                                 </div>
@@ -105,7 +119,10 @@ const LandingPage = () => {
                         <div className="absolute inset-0 bg-black/50 rounded-[3rem] z-0 pointer-events-none"></div>
 
                         <div className="relative z-10 flex flex-row space-x-4 py-14 px-8">
-                            <div className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative" onClick={() => openModal('/dj.mp4')}>
+                            <div
+                                className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative"
+                                onClick={() => openModal("/dj.mp4")}
+                            >
                                 <video
                                     className="w-full h-full object-cover cursor-pointer"
                                     src="/dj.mp4"
@@ -113,11 +130,11 @@ const LandingPage = () => {
                                     loop
                                     autoPlay
                                     playsInline
+                                    preload="none"
+                                    poster="dj.png"
                                 />
 
-                                <div
-                                    className="absolute bottom-3 right-3 z-10 cursor-pointer"
-                                >
+                                <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
                                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition">
                                         <FaPlay className="text-sm" />
                                     </div>
@@ -126,7 +143,10 @@ const LandingPage = () => {
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
 
-                            <div className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative" onClick={() => openModal('/concert.mp4')}>
+                            <div
+                                className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative"
+                                onClick={() => openModal("/concert.mp4")}
+                            >
                                 <video
                                     className="w-full h-full object-cover cursor-pointer"
                                     src="/concert.mp4"
@@ -134,11 +154,11 @@ const LandingPage = () => {
                                     loop
                                     autoPlay
                                     playsInline
+                                    preload="none"
+                                    poster="concert.jpeg"
                                 />
 
-                                <div
-                                    className="absolute bottom-3 right-3 z-10 cursor-pointer"
-                                >
+                                <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
                                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition">
                                         <div className="w-0 h-0 border-t-4 border-t-transparent border-l-6 md:border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
                                     </div>
@@ -153,7 +173,13 @@ const LandingPage = () => {
                 {showModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
                         <div className="bg-black rounded-2xl overflow-hidden max-w-3xl w-full">
-                            <video src={activeVideo} controls autoPlay className="w-full h-auto" />
+                            <video
+                                src={activeVideo}
+                                controls
+                                autoPlay
+                                className="w-full h-auto"
+                                preload="none"
+                            />
                             <div className="text-right p-2">
                                 <Button
                                     onClick={closeModal}
@@ -180,11 +206,25 @@ const LandingPage = () => {
                     </div>
 
                     <div className="h-full flex items-center justify-center mt relative">
-                        <div className="h-5/6 w-auto bg-contain bg-no-repeat bg-center"
-                            style={{ backgroundImage: "url('/character.png')", minWidth: "250px" }}>
-                        </div>
-                        <div className={`mt-8 absolute bottom-12 ${montserrat.className}`}>
-                            <Button className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300" onClick={() => { window.open('https://www.instagram.com/p/DH0aB6pSonD/', '_blank'); }}>
+                        <div
+                            className="h-5/6 w-auto bg-contain bg-no-repeat bg-center"
+                            style={{
+                                backgroundImage: "url('/character.png')",
+                                minWidth: "250px",
+                            }}
+                        ></div>
+                        <div
+                            className={`mt-8 absolute bottom-12 ${montserrat.className}`}
+                        >
+                            <Button
+                                className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300"
+                                onClick={() => {
+                                    window.open(
+                                        "https://www.instagram.com/p/DH0aB6pSonD/",
+                                        "_blank"
+                                    );
+                                }}
+                            >
                                 <div className="mr-3 w-10 h-10 rounded-full border-2 b-white flex items-center justify-center">
                                     <FaPlay className="text-sm" />
                                 </div>

@@ -1,7 +1,15 @@
-import type { NextConfig } from "next";
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
+    images: {
+      domains: [
+        'github.com',
+        'githubusercontent.com',
+        'raw.githubusercontent.com',
+        'github-production-user-asset-6210df.s3.amazonaws.com'
+      ],
+    },
+}
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+module.exports = nextConfig
