@@ -43,7 +43,7 @@ import { Badge } from "@/components/ui/badge";
 import { EventStats } from "@/components/(Admin)/Participants/event-stats";
 import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
 import { Skeleton } from "@/components/ui/skeleton";
-import { downloadParticipantData } from "./utils";
+import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
 import { getAllEvents } from "@/backend/events";
 
@@ -167,6 +167,15 @@ export default function ParticipantsPage() {
     const handleDownloadByCollege = async () => {
         try {
             await downloadParticipantData(filteredParticipants, true);
+        } catch (error) {
+            console.error("Error downloading data by college:", error);
+            setError("Failed to download participant data by college");
+        }
+    };
+
+    const handleDownloadByEvent = async () => {
+        try {
+            await downloadParticipantDataByEvents(filteredParticipants);
         } catch (error) {
             console.error("Error downloading data by college:", error);
             setError("Failed to download participant data by college");
@@ -349,6 +358,16 @@ export default function ParticipantsPage() {
                                                 Download by College
                                             </span>
                                         </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={handleDownloadByEvent}
+                                            className="cursor-pointer"
+                                        >
+                                            <FileSpreadsheet className="mr-2 h-4 w-4" />
+                                            <span className="whitespace-nowrap">
+                                                Download by Events
+                                            </span>
+                                        </Button>
                                     </div>
                                 </div>
 
@@ -363,18 +382,9 @@ export default function ParticipantsPage() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>Name</TableHead>
-                                                <TableHead>Email</TableHead>
-                                                <TableHead>Phone</TableHead>
                                                 <TableHead>College</TableHead>
-                                                <TableHead>
-                                                    Department
-                                                </TableHead>
-                                                <TableHead>Year</TableHead>
-                                                <TableHead>USN</TableHead>
-                                                <TableHead>Amount</TableHead>
-                                                <TableHead>
-                                                    Registered On
-                                                </TableHead>
+                                                <TableHead>Events</TableHead>
+                                                <TableHead>Phone</TableHead>
                                                 <TableHead>Actions</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -385,7 +395,7 @@ export default function ParticipantsPage() {
                                               0 ? (
                                                 <TableRow>
                                                     <TableCell
-                                                        colSpan={10}
+                                                        colSpan={5}
                                                         className="text-center py-10"
                                                     >
                                                         No participants found
@@ -412,43 +422,55 @@ export default function ParticipantsPage() {
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
-                                                                        participant.email
+                                                                        participant.college
                                                                     }
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    {participant.groupMembersData &&
+                                                                        Object.keys(
+                                                                            participant.groupMembersData
+                                                                        ).map(
+                                                                            (
+                                                                                groupId,
+                                                                                i
+                                                                            ) => {
+                                                                                const event =
+                                                                                    events.find(
+                                                                                        (
+                                                                                            e
+                                                                                        ) =>
+                                                                                            e.id ===
+                                                                                            parseInt(
+                                                                                                groupId
+                                                                                            )
+                                                                                    );
+                                                                                return (
+                                                                                    <span
+                                                                                        key={
+                                                                                            i
+                                                                                        }
+                                                                                        className="mr-1"
+                                                                                    >
+                                                                                        {
+                                                                                            event?.eventName
+                                                                                        }
+                                                                                        {i <
+                                                                                        Object.keys(
+                                                                                            participant.groupMembersData!
+                                                                                        )
+                                                                                            .length -
+                                                                                            1
+                                                                                            ? ", "
+                                                                                            : ""}
+                                                                                    </span>
+                                                                                );
+                                                                            }
+                                                                        )}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
                                                                         participant.phone
                                                                     }
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {
-                                                                        participant.college
-                                                                    }
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {participant.department ||
-                                                                        "N/A"}
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {
-                                                                        participant.year
-                                                                    }
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {
-                                                                        participant.usn
-                                                                    }
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    ₹
-                                                                    {
-                                                                        participant.amount
-                                                                    }
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {new Date(
-                                                                        participant.createdAt
-                                                                    ).toLocaleDateString()}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     <div className="flex items-center gap-2">
@@ -513,7 +535,7 @@ export default function ParticipantsPage() {
                                                                     <TableRow className="bg-muted/50">
                                                                         <TableCell
                                                                             colSpan={
-                                                                                10
+                                                                                5
                                                                             }
                                                                             className="py-2"
                                                                         >
@@ -529,7 +551,11 @@ export default function ParticipantsPage() {
                                                                                         group,
                                                                                         im
                                                                                     ) => (
-                                                                                        <div key={im}>
+                                                                                        <div
+                                                                                            key={
+                                                                                                im
+                                                                                            }
+                                                                                        >
                                                                                             <h4>
                                                                                                 {
                                                                                                     events.find(
@@ -547,10 +573,10 @@ export default function ParticipantsPage() {
                                                                                             <Table>
                                                                                                 <TableHeader>
                                                                                                     <TableRow>
-                                                                                                        <TableHead className="w-1/4">
+                                                                                                        <TableHead className="w-1/2">
                                                                                                             Name
                                                                                                         </TableHead>
-                                                                                                        <TableHead className="w-1/4">
+                                                                                                        <TableHead className="w-1/2">
                                                                                                             USN
                                                                                                         </TableHead>
                                                                                                     </TableRow>
@@ -565,7 +591,8 @@ export default function ParticipantsPage() {
                                                                                                         ) => (
                                                                                                             <TableRow
                                                                                                                 key={
-                                                                                                                    idx+1
+                                                                                                                    idx +
+                                                                                                                    1
                                                                                                                 }
                                                                                                             >
                                                                                                                 <TableCell>

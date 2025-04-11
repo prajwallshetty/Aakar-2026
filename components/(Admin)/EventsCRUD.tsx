@@ -57,6 +57,7 @@ import {
     Image,
     Upload,
     X,
+    Download,
 } from "lucide-react";
 import {
     getAllEvents,
@@ -69,6 +70,8 @@ import { eventCategory, eventType } from "@prisma/client";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { ExtendedEvent } from "@/types";
+import { downloadParticipantDataByEvents } from "@/app/(Admin)/Participants/utils";
+import { getParticipants } from "@/backend/participant";
 
 interface Coordinator {
     name: string;
@@ -135,6 +138,8 @@ const EventsCRUD = () => {
         imageUrl: "",
     });
     const [previewUrl, setPreviewUrl] = useState<string>("");
+    const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
+    const [downloading, setDownloading] = useState(false);
 
     const eventTypes: EventTypeOption[] = [
         { value: "Solo", label: "Solo" },
@@ -145,7 +150,7 @@ const EventsCRUD = () => {
         { value: "Technical", label: "Technical" },
         { value: "Cultural", label: "Cultural" },
         { value: "Gaming", label: "Gaming" },
-        { value: "Special", label: "Special" }
+        { value: "Special", label: "Special" },
     ];
 
     const dateOptions = [
@@ -432,13 +437,32 @@ const EventsCRUD = () => {
                                 </CardDescription>
                             </div>
                             <Button
-                                className="cursor-pointer"
+                                className="cursor-pointer ml-auto mr-3"
                                 onClick={() => {
                                     resetForm();
                                     setOpenDialog(true);
                                 }}
                             >
                                 <Plus className="mr-2 h-4 w-4" /> Add Event
+                            </Button>
+                            <Button
+                                className="cursor-pointer"
+                                variant={"secondary"}
+                                hidden={selectedEvents.length === 0}
+                                onClick={async () => {
+                                    setDownloading(true);
+                                    await downloadParticipantDataByEvents(
+                                        (await getParticipants()).data || [],
+                                        selectedEvents
+                                    );
+                                    setDownloading(false);
+                                }}
+                                disabled={downloading}
+                            >
+                                <Download className="mr-2 h-4 w-4" />{" "}
+                                {downloading
+                                    ? "downloading"
+                                    : "Download Selected Events Data"}
                             </Button>
                         </div>
                     </CardHeader>
@@ -487,8 +511,21 @@ const EventsCRUD = () => {
                                         <TableHead>Venue</TableHead>
                                         <TableHead>Fee</TableHead>
                                         <TableHead>Poster</TableHead>
-                                        <TableHead className="text-right">
-                                            Actions
+                                        <TableHead className="text-right flex gap-8 items-center justify-end">
+                                            <Input
+                                                        type="checkbox"
+                                                        className="w-4 h-4"
+                                                        checked={
+                                                                events.length === selectedEvents.length
+                                                        }
+                                                        onClick={(e) => {
+                                                            if(e.currentTarget.checked){
+                                                                setSelectedEvents(events.map((event) => event.id))
+                                                            } else {
+                                                                setSelectedEvents([])
+                                                            }
+                                                        }}
+                                                    />Actions
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -546,7 +583,39 @@ const EventsCRUD = () => {
                                                     </div>
                                                 )}
                                             </TableCell>
-                                            <TableCell className="flex justify-end space-x-2">
+                                            <TableCell className="flex justify-end space-x-2 items-center">
+                                                <Input
+                                                    type="checkbox"
+                                                    className="w-4 h-4"
+                                                    checked={
+                                                        !!selectedEvents.find(
+                                                            (e) => e == event.id
+                                                        )
+                                                    }
+                                                    onClick={() => {
+                                                        setSelectedEvents(
+                                                            (prev) => {
+                                                                if (
+                                                                    prev.find(
+                                                                        (e) =>
+                                                                            e ==
+                                                                            event.id
+                                                                    )
+                                                                ) {
+                                                                    return prev.filter(
+                                                                        (e) =>
+                                                                            e !=
+                                                                            event.id
+                                                                    );
+                                                                }
+                                                                return [
+                                                                    ...prev,
+                                                                    event.id,
+                                                                ];
+                                                            }
+                                                        );
+                                                    }}
+                                                />
                                                 <Button
                                                     variant="outline"
                                                     className="cursor-pointer"
@@ -670,7 +739,9 @@ const EventsCRUD = () => {
                                         </Label>
                                         <Select
                                             value={formData.eventCategory}
-                                            onValueChange={(value: eventCategory) =>
+                                            onValueChange={(
+                                                value: eventCategory
+                                            ) =>
                                                 handleSelectChange(
                                                     "eventCategory",
                                                     value
