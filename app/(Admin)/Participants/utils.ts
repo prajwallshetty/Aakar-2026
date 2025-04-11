@@ -142,26 +142,45 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
   }
 }
 
-export async function downloadParticipantDataByEvents(participants: ExtendedParticipant[]) {
+export async function downloadParticipantDataByEvents(
+  participants: ExtendedParticipant[], 
+  eventIds?: number[]
+) {
   const events = await getEventsOfAllUsers();
-
+  
+  // Create a mapping of eventId -> array of participants
   const eventGroups: Record<string, any[]> = {};
   const processedUSNsByEvent: Record<string, Set<string>> = {};
-
+  
+  // Create a mapping of eventId -> eventName
   const eventNameMap: Record<string, string> = {};
-
+  
+  // Extract all event names from the events data structure
   Object.values(events).forEach(userEvents => {
     userEvents.forEach(event => {
       eventNameMap[event.id.toString()] = event.eventName;
     });
   });
-
+  
+  // If eventIds is provided, filter to only include those events
+  const filteredEventIds = eventIds 
+    ? eventIds.map(id => id.toString()) 
+    : Object.keys(eventNameMap);
+  
+  // Helper function to process main participants
   function processMainParticipant(eventId: string, participant: ExtendedParticipant) {
+    // Skip if this event is not in our filtered list
+    if (!filteredEventIds.includes(eventId)) {
+      return;
+    }
+    
+    // Initialize event group and processed USNs set if they don't exist
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
     }
-
+    
+    // Only add if this USN hasn't been processed for this event
     if (!processedUSNsByEvent[eventId].has(participant.usn)) {
       processedUSNsByEvent[eventId].add(participant.usn);
       eventGroups[eventId].push({
@@ -181,13 +200,20 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
       });
     }
   }
-
+  
+  // Helper function to process group members
   function processGroupMembers(eventId: string, participant: ExtendedParticipant) {
+    // Skip if this event is not in our filtered list
+    if (!filteredEventIds.includes(eventId)) {
+      return;
+    }
+    
+    // Initialize event group and processed USNs set if they don't exist
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
     }
-
+    
     if (participant.groupMembersData && participant.groupMembersData[eventId]) {
       const group = participant.groupMembersData[eventId];
       if (group && group.members && group.members.length > 0) {
@@ -214,29 +240,42 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
       }
     }
   }
-
+  
+  // Process all participants and their events
   participants.forEach(participant => {
     if (events[participant.id]) {
       events[participant.id].forEach(event => {
         const eventId = event.id.toString();
-
+        
+        // Add the main participant
         processMainParticipant(eventId, participant);
-
+        
+        // Process team members if any
         processGroupMembers(eventId, participant);
       });
     }
   });
-
+  
+  // Handle group members from groupMembersData for events that might not be in events[participant.id]
   participants.forEach(participant => {
     if (participant.groupMembersData) {
       Object.keys(participant.groupMembersData).forEach(eventId => {
+        // Process team members if not already processed
         processGroupMembers(eventId, participant);
       });
     }
   });
-
+  
+  // If no data was collected for any of the filtered events, show a message and return
+  if (Object.keys(eventGroups).length === 0) {
+    alert("No participant data found for the selected events.");
+    return;
+  }
+  
+  // Generate ZIP file with a CSV for each event
   const zip = new JSZip();
-
+  
+  // Add event overview file with counts
   const eventSummary = Object.entries(eventGroups).map(([eventId, participants]) => {
     return {
       "Event ID": eventId,
@@ -246,11 +285,12 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
       "Team Members": participants.filter(p => p["Member Type"] === "Team Member").length
     };
   });
-
+  
   if (eventSummary.length > 0) {
     zip.file("_event_summary.csv", objectsToCsv(eventSummary));
   }
-
+  
+  // Add individual event files
   for (const [eventId, eventParticipants] of Object.entries(eventGroups)) {
     if (eventParticipants.length > 0) {
       const eventName = eventNameMap[eventId] || `Event ${eventId}`;
@@ -259,12 +299,18 @@ export async function downloadParticipantDataByEvents(participants: ExtendedPart
       zip.file(filename, objectsToCsv(eventParticipants));
     }
   }
-
+  
+  // Generate appropriate filename based on selection
+  const zipFilename = eventIds && eventIds.length > 0
+    ? "selected_events_participants.zip"
+    : "all_events_participants.zip";
+  
+  // Generate and download the ZIP file
   zip.generateAsync({ type: "blob" }).then((content) => {
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "participants_by_events.zip";
+    a.download = zipFilename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
