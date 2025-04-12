@@ -489,7 +489,7 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
           Object.entries(participant.groupMembersData).forEach(([eventId, groupData]) => {
             if (groupData?.members?.length > 0) {
               const membersData = groupData.members.map((member, idx) => ({
-                "Member ID": idx + 1,
+                "Member ID": participant.id + "-"+idx + 1,
                 "Event ID": eventId,
                 "Event Name": events?.find(e => e.id.toString() === eventId)?.eventName || `Event ${eventId}`,
                 "Member Name": member.name,
@@ -509,7 +509,7 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
 
               groupData.members.forEach((member, idx) => {
                 allMembersData.push({
-                  "Member ID": `${eventId}-${idx + 1}`,
+                  "Member ID": `${participant.id}-${idx + 1}`,
                   "Event": eventName,
                   "Name": member.name,
                   "USN": member.usn,
