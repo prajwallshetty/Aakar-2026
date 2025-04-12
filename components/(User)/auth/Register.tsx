@@ -1463,7 +1463,7 @@ const Register = () => {
                             className="absolute inset-0 bg-cover bg-center"
                             style={{
                                 backgroundImage:
-                                    "url('/image-removebg-preview (11).png')",
+                                    "url('/register-ch1.png')",
                                 backgroundSize: "cover",
                                 backgroundRepeat: "no-repeat",
                             }}
@@ -1475,7 +1475,7 @@ const Register = () => {
                 <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
-                        backgroundImage: "url('/image1.png')",
+                        backgroundImage: "url('/register-ch1.png')",
                         backgroundSize: "cover",
                         backgroundRepeat: "no-repeat",
                     }}

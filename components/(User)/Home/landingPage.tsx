@@ -131,6 +131,7 @@ const LandingPage = () => {
                                     autoPlay
                                     playsInline
                                     preload="none"
+                                    poster="dj.png"
                                 />
 
                                 <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
@@ -154,6 +155,7 @@ const LandingPage = () => {
                                     autoPlay
                                     playsInline
                                     preload="none"
+                                    poster="concert.jpeg"
                                 />
 
                                 <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
