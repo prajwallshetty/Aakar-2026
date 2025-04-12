@@ -148,39 +148,34 @@ export async function downloadParticipantDataByEvents(
 ) {
   const events = await getEventsOfAllUsers();
   
-  // Create a mapping of eventId -> array of participants
   const eventGroups: Record<string, any[]> = {};
   const processedUSNsByEvent: Record<string, Set<string>> = {};
   
-  // Create a mapping of eventId -> eventName
   const eventNameMap: Record<string, string> = {};
   
-  // Extract all event names from the events data structure
   Object.values(events).forEach(userEvents => {
     userEvents.forEach(event => {
       eventNameMap[event.id.toString()] = event.eventName;
     });
   });
   
-  // If eventIds is provided, filter to only include those events
   const filteredEventIds = eventIds 
     ? eventIds.map(id => id.toString()) 
     : Object.keys(eventNameMap);
   
-  // Helper function to process main participants
   function processMainParticipant(eventId: string, participant: ExtendedParticipant) {
-    // Skip if this event is not in our filtered list
     if (!filteredEventIds.includes(eventId)) {
       return;
     }
     
-    // Initialize event group and processed USNs set if they don't exist
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
     }
+  
+    const isTeamEvent = participant.groupMembersData && participant.groupMembersData[eventId];
+    const teamId = isTeamEvent ? `TEAM-${participant.id}-${eventId}` : "N/A";
     
-    // Only add if this USN hasn't been processed for this event
     if (!processedUSNsByEvent[eventId].has(participant.usn)) {
       processedUSNsByEvent[eventId].add(participant.usn);
       eventGroups[eventId].push({
@@ -196,19 +191,17 @@ export async function downloadParticipantDataByEvents(
         "Amount Paid": participant.amount,
         "Transaction ID": participant.transaction_ids.join(", ") || "N/A",
         Event: eventNameMap[eventId] || `Event ${eventId}`,
-        "Member Type": "Registered Participant"
+        "Member Type": isTeamEvent ? "Team Leader" : "Individual Participant",
+        "Team ID": teamId
       });
     }
   }
   
-  // Helper function to process group members
   function processGroupMembers(eventId: string, participant: ExtendedParticipant) {
-    // Skip if this event is not in our filtered list
     if (!filteredEventIds.includes(eventId)) {
       return;
     }
     
-    // Initialize event group and processed USNs set if they don't exist
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
@@ -216,6 +209,9 @@ export async function downloadParticipantDataByEvents(
     
     if (participant.groupMembersData && participant.groupMembersData[eventId]) {
       const group = participant.groupMembersData[eventId];
+      const teamName = `Team of ${participant.name}`;
+      const teamId = `TEAM-${participant.id}-${eventId}`;
+      
       if (group && group.members && group.members.length > 0) {
         group.members.forEach((member, idx) => {
           if (!processedUSNsByEvent[eventId].has(member.usn)) {
@@ -228,12 +224,15 @@ export async function downloadParticipantDataByEvents(
               Phone: "N/A",
               College: participant.college,
               Department: "N/A",
-              Year: 0,
+              Year: "N/A",
               "Registered On": new Date(participant.createdAt).toLocaleString(),
               "Amount Paid": 0,
               "Transaction ID": "N/A",
               Event: eventNameMap[eventId] || `Event ${eventId}`,
-              "Member Type": "Team Member"
+              "Member Type": "Team Member",
+              "Team Leader": participant.name,
+              "Team Name": teamName,
+              "Team ID": teamId
             });
           }
         });
@@ -241,47 +240,48 @@ export async function downloadParticipantDataByEvents(
     }
   }
   
-  // Process all participants and their events
   participants.forEach(participant => {
     if (events[participant.id]) {
       events[participant.id].forEach(event => {
         const eventId = event.id.toString();
         
-        // Add the main participant
         processMainParticipant(eventId, participant);
         
-        // Process team members if any
         processGroupMembers(eventId, participant);
       });
     }
   });
   
-  // Handle group members from groupMembersData for events that might not be in events[participant.id]
   participants.forEach(participant => {
     if (participant.groupMembersData) {
       Object.keys(participant.groupMembersData).forEach(eventId => {
-        // Process team members if not already processed
         processGroupMembers(eventId, participant);
       });
     }
   });
   
-  // If no data was collected for any of the filtered events, show a message and return
   if (Object.keys(eventGroups).length === 0) {
     alert("No participant data found for the selected events.");
     return;
   }
   
-  // Generate ZIP file with a CSV for each event
   const zip = new JSZip();
   
-  // Add event overview file with counts
   const eventSummary = Object.entries(eventGroups).map(([eventId, participants]) => {
+    const uniqueTeams = new Set();
+    participants.forEach(p => {
+      if (p["Team ID"] !== "N/A") {
+        uniqueTeams.add(p["Team ID"]);
+      }
+    });
+    
     return {
       "Event ID": eventId,
       "Event Name": eventNameMap[eventId] || `Event ${eventId}`,
       "Total Participants": participants.length,
-      "Registered Participants": participants.filter(p => p["Member Type"] === "Registered Participant").length,
+      "Individual Participants": participants.filter(p => p["Member Type"] === "Individual Participant").length,
+      "Teams": uniqueTeams.size,
+      "Team Leaders": participants.filter(p => p["Member Type"] === "Team Leader").length,
       "Team Members": participants.filter(p => p["Member Type"] === "Team Member").length
     };
   });
@@ -290,22 +290,82 @@ export async function downloadParticipantDataByEvents(
     zip.file("_event_summary.csv", objectsToCsv(eventSummary));
   }
   
-  // Add individual event files
   for (const [eventId, eventParticipants] of Object.entries(eventGroups)) {
     if (eventParticipants.length > 0) {
       const eventName = eventNameMap[eventId] || `Event ${eventId}`;
       const safeEventName = eventName.replace(/[^a-zA-Z0-9]/g, "_");
-      const filename = `${safeEventName}.csv`;
-      zip.file(filename, objectsToCsv(eventParticipants));
+      
+      zip.file(`${safeEventName}.csv`, objectsToCsv(eventParticipants));
+      
+      const hasTeams = eventParticipants.some(p => p["Member Type"] === "Team Leader" || p["Member Type"] === "Team Member");
+      
+      if (hasTeams) {
+        const teamMap = new Map<string,any>();
+        
+        eventParticipants.forEach(p => {
+          if (p["Member Type"] === "Team Leader" && p["Team ID"] !== "N/A") {
+            teamMap.set(p["Team ID"], {
+              "Team ID": p["Team ID"],
+              "Team Name": p["Team Name"],
+              "Team Leader": p.Name,
+              "Leader USN": p.USN,
+              "Leader Email": p.Email,
+              "Leader Phone": p.Phone,
+              "Leader College": p.College,
+              "Registration Date": p["Registered On"],
+              "Amount Paid": p["Amount Paid"],
+              "Transaction ID": p["Transaction ID"],
+              "Members": []
+            });
+          }
+        });
+        
+        eventParticipants.forEach(p => {
+          if (p["Member Type"] === "Team Member" && p["Team ID"] !== "N/A") {
+            const team = teamMap.get(p["Team ID"]);
+            if (team) {
+              team.Members.push({
+                "Name": p.Name,
+                "USN": p.USN,
+                "Email": p.Email,
+                "Phone": p.Phone,
+                "College": p.College
+              });
+            }
+          }
+        });
+        
+        const teamSummaries = Array.from(teamMap.values()).map(team => {
+          const membersList = team.Members.map((m:any, i:number) => 
+            `Member ${i+1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})`
+          ).join("; ");
+          
+          return {
+            "Team ID": team["Team ID"],
+            "Team Name": team["Team Name"],
+            "Team Leader": team["Team Leader"],
+            "Leader USN": team["Leader USN"],
+            "Leader Contact": `${team["Leader Email"]} / ${team["Leader Phone"]}`,
+            "College": team["Leader College"],
+            "Registration Date": team["Registration Date"],
+            "Amount Paid": team["Amount Paid"],
+            "Transaction ID": team["Transaction ID"],
+            "Team Size": team.Members.length + 1, // +1 for the leader
+            "Team Members": membersList
+          };
+        });
+        
+        if (teamSummaries.length > 0) {
+          zip.file(`${safeEventName}_Teams.csv`, objectsToCsv(teamSummaries));
+        }
+      }
     }
   }
   
-  // Generate appropriate filename based on selection
   const zipFilename = eventIds && eventIds.length > 0
     ? "selected_events_participants.zip"
     : "all_events_participants.zip";
   
-  // Generate and download the ZIP file
   zip.generateAsync({ type: "blob" }).then((content) => {
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
