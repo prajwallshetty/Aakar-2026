@@ -143,39 +143,39 @@ export async function downloadParticipantData(participants: ExtendedParticipant[
 }
 
 export async function downloadParticipantDataByEvents(
-  participants: ExtendedParticipant[], 
+  participants: ExtendedParticipant[],
   eventIds?: number[]
 ) {
   const events = await getEventsOfAllUsers();
-  
+
   const eventGroups: Record<string, any[]> = {};
   const processedUSNsByEvent: Record<string, Set<string>> = {};
-  
+
   const eventNameMap: Record<string, string> = {};
-  
+
   Object.values(events).forEach(userEvents => {
     userEvents.forEach(event => {
       eventNameMap[event.id.toString()] = event.eventName;
     });
   });
-  
-  const filteredEventIds = eventIds 
-    ? eventIds.map(id => id.toString()) 
+
+  const filteredEventIds = eventIds
+    ? eventIds.map(id => id.toString())
     : Object.keys(eventNameMap);
-  
+
   function processMainParticipant(eventId: string, participant: ExtendedParticipant) {
     if (!filteredEventIds.includes(eventId)) {
       return;
     }
-    
+
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
     }
-  
+
     const isTeamEvent = participant.groupMembersData && participant.groupMembersData[eventId];
     const teamId = isTeamEvent ? `TEAM-${participant.id}-${eventId}` : "N/A";
-    
+
     if (!processedUSNsByEvent[eventId].has(participant.usn)) {
       processedUSNsByEvent[eventId].add(participant.usn);
       eventGroups[eventId].push({
@@ -196,22 +196,22 @@ export async function downloadParticipantDataByEvents(
       });
     }
   }
-  
+
   function processGroupMembers(eventId: string, participant: ExtendedParticipant) {
     if (!filteredEventIds.includes(eventId)) {
       return;
     }
-    
+
     if (!eventGroups[eventId]) {
       eventGroups[eventId] = [];
       processedUSNsByEvent[eventId] = new Set<string>();
     }
-    
+
     if (participant.groupMembersData && participant.groupMembersData[eventId]) {
       const group = participant.groupMembersData[eventId];
       const teamName = `Team of ${participant.name}`;
       const teamId = `TEAM-${participant.id}-${eventId}`;
-      
+
       if (group && group.members && group.members.length > 0) {
         group.members.forEach((member, idx) => {
           if (!processedUSNsByEvent[eventId].has(member.usn)) {
@@ -239,19 +239,19 @@ export async function downloadParticipantDataByEvents(
       }
     }
   }
-  
+
   participants.forEach(participant => {
     if (events[participant.id]) {
       events[participant.id].forEach(event => {
         const eventId = event.id.toString();
-        
+
         processMainParticipant(eventId, participant);
-        
+
         processGroupMembers(eventId, participant);
       });
     }
   });
-  
+
   participants.forEach(participant => {
     if (participant.groupMembersData) {
       Object.keys(participant.groupMembersData).forEach(eventId => {
@@ -259,14 +259,14 @@ export async function downloadParticipantDataByEvents(
       });
     }
   });
-  
+
   if (Object.keys(eventGroups).length === 0) {
     alert("No participant data found for the selected events.");
     return;
   }
-  
+
   const zip = new JSZip();
-  
+
   const eventSummary = Object.entries(eventGroups).map(([eventId, participants]) => {
     const uniqueTeams = new Set();
     participants.forEach(p => {
@@ -274,7 +274,7 @@ export async function downloadParticipantDataByEvents(
         uniqueTeams.add(p["Team ID"]);
       }
     });
-    
+
     return {
       "Event ID": eventId,
       "Event Name": eventNameMap[eventId] || `Event ${eventId}`,
@@ -285,23 +285,23 @@ export async function downloadParticipantDataByEvents(
       "Team Members": participants.filter(p => p["Member Type"] === "Team Member").length
     };
   });
-  
+
   if (eventSummary.length > 0) {
     zip.file("_event_summary.csv", objectsToCsv(eventSummary));
   }
-  
+
   for (const [eventId, eventParticipants] of Object.entries(eventGroups)) {
     if (eventParticipants.length > 0) {
       const eventName = eventNameMap[eventId] || `Event ${eventId}`;
       const safeEventName = eventName.replace(/[^a-zA-Z0-9]/g, "_");
-      
+
       zip.file(`${safeEventName}.csv`, objectsToCsv(eventParticipants));
-      
+
       const hasTeams = eventParticipants.some(p => p["Member Type"] === "Team Leader" || p["Member Type"] === "Team Member");
-      
+
       if (hasTeams) {
-        const teamMap = new Map<string,any>();
-        
+        const teamMap = new Map<string, any>();
+
         eventParticipants.forEach(p => {
           if (p["Member Type"] === "Team Leader" && p["Team ID"] !== "N/A") {
             teamMap.set(p["Team ID"], {
@@ -319,7 +319,7 @@ export async function downloadParticipantDataByEvents(
             });
           }
         });
-        
+
         eventParticipants.forEach(p => {
           if (p["Member Type"] === "Team Member" && p["Team ID"] !== "N/A") {
             const team = teamMap.get(p["Team ID"]);
@@ -334,12 +334,12 @@ export async function downloadParticipantDataByEvents(
             }
           }
         });
-        
+
         const teamSummaries = Array.from(teamMap.values()).map(team => {
-          const membersList = team.Members.map((m:any, i:number) => 
-            `Member ${i+1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})`
+          const membersList = team.Members.map((m: any, i: number) =>
+            `Member ${i + 1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})`
           ).join("; ");
-          
+
           return {
             "Team ID": team["Team ID"],
             "Team Name": team["Team Name"],
@@ -354,18 +354,18 @@ export async function downloadParticipantDataByEvents(
             "Team Members": membersList
           };
         });
-        
+
         if (teamSummaries.length > 0) {
           zip.file(`${safeEventName}_Teams.csv`, objectsToCsv(teamSummaries));
         }
       }
     }
   }
-  
+
   const zipFilename = eventIds && eventIds.length > 0
     ? "selected_events_participants.zip"
     : "all_events_participants.zip";
-  
+
   zip.generateAsync({ type: "blob" }).then((content) => {
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
