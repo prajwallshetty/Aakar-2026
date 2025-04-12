@@ -168,10 +168,20 @@ const Register = () => {
 
     const handleParticipantCountChange = (
         groupId: string | number,
-        count: number
+        count: number | ""
     ) => {
         const currentMembers = groupEventData[groupId]?.members || [];
-        const newCount = Math.max(1, count);
+        const newCount = !count ? "" : Math.max(1, count);
+
+        if (!newCount) {
+            return setGroupEventData((prev) => ({
+                ...prev,
+                [groupId]: {
+                    participantCount: 0,
+                    members: [],
+                },
+            }));
+        }
 
         let newMembers = [...currentMembers];
 
@@ -844,20 +854,19 @@ const Register = () => {
                             <div className="mt-4">
                                 {selectedEvents.map((event) => {
                                     if (event?.type !== "Team") return null;
-
+                                    const eventDetail = events.find(
+                                        (e) => e.id === event.id
+                                    );
                                     const groupData = groupEventData[
                                         event.id
                                     ] || {
                                         participantCount:
-                                            events.find(
-                                                (e) => e.id === event.id
-                                            )?.minMembers || 1,
+                                            eventDetail?.minMembers || 1,
                                         members: Array.from(
                                             {
                                                 length:
-                                                    events.find(
-                                                        (e) => e.id === event.id
-                                                    )?.minMembers || 1,
+                                                    eventDetail?.minMembers ||
+                                                    1,
                                             },
                                             () => ({
                                                 name: "",
@@ -887,33 +896,44 @@ const Register = () => {
                                                     type="number"
                                                     id={`participant-count-${event.id}`}
                                                     min={
-                                                        events.find(
-                                                            (e) =>
-                                                                e.id ===
-                                                                event.id
-                                                        )?.minMembers || 1
+                                                        eventDetail?.minMembers ||
+                                                        1
                                                     }
                                                     max={
-                                                        events.find(
-                                                            (e) =>
-                                                                e.id ===
-                                                                event.id
-                                                        )?.maxMembers || 10
+                                                        eventDetail?.maxMembers ||
+                                                        10
                                                     }
                                                     step={1}
                                                     value={
-                                                        groupData.participantCount
+                                                        groupData.participantCount ||
+                                                        ""
                                                     }
                                                     onChange={(e) =>
                                                         handleParticipantCountChange(
                                                             event.id,
                                                             Number.parseInt(
                                                                 e.target.value
-                                                            ) || 1
+                                                            ) || ""
                                                         )
                                                     }
-                                                    className="border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                                    className={
+                                                        "border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-green-500 " +
+                                                        (eventDetail &&
+                                                        (groupData.participantCount <
+                                                            eventDetail?.minMembers ||
+                                                            groupData.participantCount >
+                                                                eventDetail?.maxMembers)
+                                                            ? "border-red-500 border-2"
+                                                            : "")
+                                                    }
                                                 />
+                                                <div className="text-xs mt-1 text-red">
+                                                    {eventDetail &&
+                                                            (groupData.participantCount <
+                                                                eventDetail?.minMembers ||
+                                                                groupData.participantCount >
+                                                                    eventDetail?.maxMembers) && "Invalid Value!"}
+                                                </div>
                                             </div>
 
                                             {groupData.members.map(
