@@ -209,6 +209,25 @@ export async function getParticipantWithEvents(id: number): Promise<ServiceRespo
     }
 }
 
+export async function getParticipantsWithEvents(): Promise<ServiceResponse<(ExtendedParticipant & { events: ExtendedEvent[] })[]>> {
+    try {
+        const isUserAdmin = await isAdmin();
+
+        if (!isUserAdmin) {
+            return { data: null, error: "Not authorized" };
+        }
+
+        const participants = await db.participant.findMany({
+            include: { events: true }
+        });
+
+        return { data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[], error: null };
+    } catch (error) {
+        console.error("Error fetching participants:", error);
+        return { data: null, error: "Failed to fetch participant" };
+    }
+}
+
 export async function getParticipants(): Promise<ServiceResponse<ExtendedParticipant[]>> {
     try {
         const isUserAdmin = await isAdmin();

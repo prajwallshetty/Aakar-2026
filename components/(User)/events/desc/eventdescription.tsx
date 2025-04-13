@@ -191,13 +191,13 @@ const EventDescription = ({
 
                 <div className="mt-16 space-y-6">
                     <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
-                        Event Coordinators
+                        Event Co-ordinators
                     </h2>
                     <div className="flex flex-col md:flex-row justify-center gap-6">
                         {studentCoordinators.length > 0 ? (
                             <>
                                 <h3 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
-                                    Student Coordinators
+                                    Student Co-ordinators
                                 </h3>
                                 {studentCoordinators.map(
                                     (coordinator, index) => (
@@ -221,7 +221,7 @@ const EventDescription = ({
                                     )
                                 )}
                                 <h3 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
-                                    Faculty Coordinators
+                                    Faculty Co-ordinators
                                 </h3>
                                 {facultyCoordinators.map(
                                     (coordinator, index) => (
@@ -248,7 +248,7 @@ const EventDescription = ({
                         ) : (
                             <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 text-center">
                                 <p className="text-gray-400 italic">
-                                    Coordinator information will be available
+                                    Co-ordinator information will be available
                                     soon
                                 </p>
                             </div>
