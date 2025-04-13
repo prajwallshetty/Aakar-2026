@@ -131,7 +131,7 @@ const EventsCRUD = () => {
         eventCategory: "Cultural",
         description: "",
         fee: 0,
-        date: new Date("2024-05-09"),
+        date: new Date("2025-05-09"),
         time: "",
         venue: "",
         studentCoordinators: [],
@@ -158,8 +158,9 @@ const EventsCRUD = () => {
     ];
 
     const dateOptions = [
-        { value: new Date("2024-05-09"), label: "May 9, 2024" },
-        { value: new Date("2024-05-10"), label: "May 10, 2024" },
+        { value: new Date("2025-05-08"), label: "May 8, 2025" },
+        { value: new Date("2025-05-09"), label: "May 9, 2025" },
+        { value: new Date("2025-05-10"), label: "May 10, 2025" },
     ];
 
     useEffect(() => {
@@ -309,7 +310,7 @@ const EventsCRUD = () => {
             eventCategory: "Cultural",
             description: "",
             fee: 0,
-            date: new Date("2024-05-09"),
+            date: new Date("2025-05-09"),
             time: "",
             venue: "",
             studentCoordinators: [],
@@ -716,6 +717,7 @@ const EventsCRUD = () => {
                                     <Input
                                         id="eventName"
                                         name="eventName"
+                                        placeholder="Enter event name"
                                         value={formData.eventName}
                                         onChange={handleInputChange}
                                         required
@@ -792,6 +794,7 @@ const EventsCRUD = () => {
                                                 <Input
                                                     id="minMembers"
                                                     name="minMembers"
+                                                    placeholder="Enter min members"
                                                     type="number"
                                                     min="1"
                                                     value={
@@ -809,6 +812,7 @@ const EventsCRUD = () => {
                                                 <Input
                                                     id="maxMembers"
                                                     name="maxMembers"
+                                                    placeholder="Enter max members"
                                                     type="number"
                                                     min={
                                                         formData.minMembers ||
@@ -831,6 +835,7 @@ const EventsCRUD = () => {
                                             id="fee"
                                             name="fee"
                                             type="number"
+                                            placeholder="Enter fee"
                                             min="0"
                                             value={formData.fee}
                                             onChange={handleInputChange}
@@ -846,6 +851,7 @@ const EventsCRUD = () => {
                                     <Textarea
                                         id="description"
                                         name="description"
+                                        placeholder="Describe the event..."
                                         value={formData.description}
                                         onChange={handleInputChange}
                                         rows={3}

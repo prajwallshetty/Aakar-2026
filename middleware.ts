@@ -51,7 +51,7 @@ export const config = {
     matcher: [
         '/AdminLogin',
         '/AdminPortal',
-        '/EventCRUD',
+        '/EventsCRUD',
         '/Participants',
         '/Participants/:id'
     ]

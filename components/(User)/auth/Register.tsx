@@ -268,6 +268,12 @@ const Register = () => {
 
         const errors = (await validateParticipantData(formData)) || {};
 
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            alert("Check for the errors in the form.");
+            return;
+        }
+
         if (selectedEvents.length === 0) {
             errors.events = "Please select at least one event";
         }
@@ -1306,6 +1312,18 @@ const Register = () => {
                                                     College:
                                                 </span>{" "}
                                                 {formData.college}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">
+                                                    Department:
+                                                </span>{" "}
+                                                {formData.department}
+                                            </li>
+                                            <li>
+                                                <span className="font-medium">
+                                                    Academic Year:
+                                                </span>{" "}
+                                                {formData.year}
                                             </li>
                                             <li>
                                                 <span className="font-medium">

@@ -37,7 +37,7 @@ import {
     Calendar,
 } from "lucide-react";
 import React from "react";
-import { getParticipants } from "@/backend/participant";
+import { getParticipantsWithEvents } from "@/backend/participant";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { EventStats } from "@/components/(Admin)/Participants/event-stats";
@@ -45,12 +45,11 @@ import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
-import { getAllEvents } from "@/backend/events";
 
 export default function ParticipantsPage() {
-    const [participants, setParticipants] = useState<ExtendedParticipant[]>([]);
+    const [participants, setParticipants] = useState<(ExtendedParticipant & {events: ExtendedEvent[]})[]>([]);
     const [filteredParticipants, setFilteredParticipants] = useState<
-        ExtendedParticipant[]
+        (ExtendedParticipant & {events: ExtendedEvent[]})[]
     >([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -60,13 +59,12 @@ export default function ParticipantsPage() {
     const [expandedParticipant, setExpandedParticipant] = useState<
         string | null
     >(null);
-    const [events, setEvents] = useState<ExtendedEvent[]>([]);
 
     useEffect(() => {
         const fetchParticipants = async () => {
             try {
                 setIsLoading(true);
-                const response = await getParticipants();
+                const response = await getParticipantsWithEvents();
 
                 if (response.error) {
                     setError(
@@ -78,39 +76,11 @@ export default function ParticipantsPage() {
                 }
 
                 if (response.data) {
-                    const processedParticipants = response.data.map(
-                        (p: ExtendedParticipant) => {
-                            let groupMembers = [];
-
-                            if (p.groupMembersData) {
-                                try {
-                                    groupMembers =
-                                        typeof p.groupMembersData === "string"
-                                            ? JSON.parse(p.groupMembersData)
-                                            : p.groupMembersData;
-                                } catch (e) {
-                                    console.error(
-                                        "Error parsing group members data",
-                                        e
-                                    );
-                                }
-                            }
-
-                            return {
-                                ...p,
-                                groupMembers,
-                            };
-                        }
-                    );
-
-                    let events = await getAllEvents();
-                    setEvents(events);
-
-                    setParticipants(processedParticipants);
-                    setFilteredParticipants(processedParticipants);
+                    setParticipants(response.data);
+                    setFilteredParticipants(response.data);
 
                     const uniqueColleges = Array.from(
-                        new Set(processedParticipants.map((p) => p.college))
+                        new Set(response.data.map((p) => p.college))
                     ) as string[];
                     setColleges(uniqueColleges);
                 }
@@ -426,46 +396,7 @@ export default function ParticipantsPage() {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    {participant.groupMembersData &&
-                                                                        Object.keys(
-                                                                            participant.groupMembersData
-                                                                        ).map(
-                                                                            (
-                                                                                groupId,
-                                                                                i
-                                                                            ) => {
-                                                                                const event =
-                                                                                    events.find(
-                                                                                        (
-                                                                                            e
-                                                                                        ) =>
-                                                                                            e.id ===
-                                                                                            parseInt(
-                                                                                                groupId
-                                                                                            )
-                                                                                    );
-                                                                                return (
-                                                                                    <span
-                                                                                        key={
-                                                                                            i
-                                                                                        }
-                                                                                        className="mr-1"
-                                                                                    >
-                                                                                        {
-                                                                                            event?.eventName
-                                                                                        }
-                                                                                        {i <
-                                                                                        Object.keys(
-                                                                                            participant.groupMembersData!
-                                                                                        )
-                                                                                            .length -
-                                                                                            1
-                                                                                            ? ", "
-                                                                                            : ""}
-                                                                                    </span>
-                                                                                );
-                                                                            }
-                                                                        )}
+                                                                    {participant.events.map(e=>e.eventName).join(", ")}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
@@ -558,7 +489,7 @@ export default function ParticipantsPage() {
                                                                                         >
                                                                                             <h4>
                                                                                                 {
-                                                                                                    events.find(
+                                                                                                    participant.events.find(
                                                                                                         (
                                                                                                             e
                                                                                                         ) =>
