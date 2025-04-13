@@ -158,6 +158,7 @@ const EventsCRUD = () => {
     ];
 
     const dateOptions = [
+        { value: new Date("2025-05-08"), label: "May 8, 2025" },
         { value: new Date("2025-05-09"), label: "May 9, 2025" },
         { value: new Date("2025-05-10"), label: "May 10, 2025" },
     ];
