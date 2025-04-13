@@ -131,7 +131,7 @@ const EventsCRUD = () => {
         eventCategory: "Cultural",
         description: "",
         fee: 0,
-        date: new Date("2024-05-09"),
+        date: new Date("2025-05-09"),
         time: "",
         venue: "",
         studentCoordinators: [],
@@ -158,8 +158,8 @@ const EventsCRUD = () => {
     ];
 
     const dateOptions = [
-        { value: new Date("2024-05-09"), label: "May 9, 2024" },
-        { value: new Date("2024-05-10"), label: "May 10, 2024" },
+        { value: new Date("2025-05-09"), label: "May 9, 2025" },
+        { value: new Date("2025-05-10"), label: "May 10, 2025" },
     ];
 
     useEffect(() => {
@@ -309,7 +309,7 @@ const EventsCRUD = () => {
             eventCategory: "Cultural",
             description: "",
             fee: 0,
-            date: new Date("2024-05-09"),
+            date: new Date("2025-05-09"),
             time: "",
             venue: "",
             studentCoordinators: [],
