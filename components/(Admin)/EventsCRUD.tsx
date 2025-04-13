@@ -717,6 +717,7 @@ const EventsCRUD = () => {
                                     <Input
                                         id="eventName"
                                         name="eventName"
+                                        placeholder="Enter event name"
                                         value={formData.eventName}
                                         onChange={handleInputChange}
                                         required
@@ -793,6 +794,7 @@ const EventsCRUD = () => {
                                                 <Input
                                                     id="minMembers"
                                                     name="minMembers"
+                                                    placeholder="Enter min members"
                                                     type="number"
                                                     min="1"
                                                     value={
@@ -810,6 +812,7 @@ const EventsCRUD = () => {
                                                 <Input
                                                     id="maxMembers"
                                                     name="maxMembers"
+                                                    placeholder="Enter max members"
                                                     type="number"
                                                     min={
                                                         formData.minMembers ||
@@ -832,6 +835,7 @@ const EventsCRUD = () => {
                                             id="fee"
                                             name="fee"
                                             type="number"
+                                            placeholder="Enter fee"
                                             min="0"
                                             value={formData.fee}
                                             onChange={handleInputChange}
@@ -847,6 +851,7 @@ const EventsCRUD = () => {
                                     <Textarea
                                         id="description"
                                         name="description"
+                                        placeholder="Describe the event..."
                                         value={formData.description}
                                         onChange={handleInputChange}
                                         rows={3}
