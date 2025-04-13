@@ -108,10 +108,90 @@ export default function ParticipantDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="container mx-auto py-6 flex justify-center items-center min-h-[50vh]">
-                <div className="text-center">
-                    <div className="text-lg">
-                        Loading participant details...
+            <div className="container mx-auto py-6 space-y-6">
+                <div className="flex items-center justify-between">
+                    <div className="h-9 w-36 bg-gray-200 animate-pulse rounded-md"></div>
+                </div>
+
+                <div className="border rounded-lg shadow-sm">
+                    <div className="p-6 space-y-3">
+                        <div className="h-7 w-48 bg-gray-200 animate-pulse rounded-md"></div>
+                        <div className="h-5 w-72 bg-gray-100 animate-pulse rounded-md"></div>
+                    </div>
+                    <div className="p-6 space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Personal Information Skeleton */}
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <div className="h-6 w-40 bg-gray-200 animate-pulse rounded-md"></div>
+                                    <div className="h-px w-full bg-gray-200"></div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                                        <div key={i} className="flex items-start">
+                                            <div className="h-5 w-5 mr-2 bg-gray-200 animate-pulse rounded-md"></div>
+                                            <div className="space-y-2 flex-1">
+                                                <div className="h-5 w-20 bg-gray-200 animate-pulse rounded-md"></div>
+                                                <div className="h-5 w-32 bg-gray-100 animate-pulse rounded-md"></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Payment Information Skeleton */}
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <div className="h-6 w-44 bg-gray-200 animate-pulse rounded-md"></div>
+                                    <div className="h-px w-full bg-gray-200"></div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {[1, 2].map((i) => (
+                                        <div key={i} className="flex items-start">
+                                            <div className="h-5 w-5 mr-2 bg-gray-200 animate-pulse rounded-md"></div>
+                                            <div className="space-y-2 flex-1">
+                                                <div className="h-5 w-28 bg-gray-200 animate-pulse rounded-md"></div>
+                                                <div className="h-5 w-24 bg-gray-100 animate-pulse rounded-md"></div>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <div>
+                                        <div className="h-5 w-36 bg-gray-200 animate-pulse rounded-md mb-2"></div>
+                                        <div className="h-48 w-64 bg-gray-100 animate-pulse rounded-md"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Events Skeleton */}
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <div className="h-6 w-36 bg-gray-200 animate-pulse rounded-md"></div>
+                                <div className="h-px w-full bg-gray-200"></div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="border rounded-lg p-4 shadow-sm">
+                                        <div className="flex justify-between">
+                                            <div className="space-y-2">
+                                                <div className="h-5 w-32 bg-gray-200 animate-pulse rounded-md"></div>
+                                                <div className="h-4 w-28 bg-gray-100 animate-pulse rounded-md"></div>
+                                                <div className="h-4 w-24 bg-gray-100 animate-pulse rounded-md"></div>
+                                                <div className="flex gap-2 mt-2">
+                                                    <div className="h-5 w-16 bg-gray-200 animate-pulse rounded-full"></div>
+                                                    <div className="h-5 w-16 bg-gray-100 animate-pulse rounded-full"></div>
+                                                </div>
+                                            </div>
+                                            <div className="h-5 w-12 bg-gray-200 animate-pulse rounded-md"></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
