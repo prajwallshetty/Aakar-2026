@@ -1,13 +1,12 @@
-/**
- * @type {import('next').NextConfig}
- */
-const nextConfig = {
+import { NextConfig } from "next"
+
+const nextConfig:NextConfig = {
     images: {
-      domains: [
-        'github.com',
-        'githubusercontent.com',
-        'raw.githubusercontent.com',
-        'github-production-user-asset-6210df.s3.amazonaws.com'
+      remotePatterns: [
+        new URL("https://github.com/**"),
+        new URL('https://githubusercontent.com/**'),
+        new URL('https://raw.githubusercontent.com/**'),
+        new URL('https:github-production-user-asset-6210df.s3.amazonaws.com/**')
       ],
     },
 }
