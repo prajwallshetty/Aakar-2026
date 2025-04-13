@@ -356,7 +356,7 @@ export async function downloadParticipantDataByEvents(
               "Registration Date": team["Registration Date"],
               "Amount Paid": team["Amount Paid"],
               "Transaction ID": team["Transaction ID"],
-              "Team Size": team.Members.length + 1, // +1 for the leader
+              "Team Size": team.Members.length + 1,
               "Team Members": membersList
             }
           })

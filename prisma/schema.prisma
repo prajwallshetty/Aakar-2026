@@ -49,8 +49,8 @@ model Event {
   date                DateTime
   time                String
   venue               String
-  studentCoordinators Json          @default("[]") //[{name,phone},..]
-  facultyCoordinators Json          @default("[]") //[{name,phone},..]
+  studentCoordinators Json          @default("[]")
+  facultyCoordinators Json          @default("[]")
   rules               String[]
   imageUrl            String
   Participants        Participant?  @relation(fields: [participantId], references: [id])
