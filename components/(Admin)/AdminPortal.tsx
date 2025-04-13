@@ -320,6 +320,7 @@ const AdminPortal = () => {
                         <Input
                           id="name"
                           name="name"
+                          placeholder='Enter admin name'
                           value={formData.name}
                           onChange={handleInputChange}
                           className="col-span-3"
@@ -333,6 +334,7 @@ const AdminPortal = () => {
                         <Input
                           id="email"
                           name="email"
+                          placeholder='Enter admin email'
                           type="email"
                           value={formData.email}
                           onChange={handleInputChange}
@@ -347,6 +349,7 @@ const AdminPortal = () => {
                         <Input
                           id="phone"
                           name="phone"
+                          placeholder='Enter admin phone'
                           value={formData.phone}
                           onChange={handleInputChange}
                           className="col-span-3"

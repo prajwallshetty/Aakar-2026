@@ -120,7 +120,6 @@ export default function ParticipantDetailPage() {
                     </div>
                     <div className="p-6 space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Personal Information Skeleton */}
                             <div className="space-y-4">
                                 <div className="space-y-2">
                                     <div className="h-6 w-40 bg-gray-200 animate-pulse rounded-md"></div>
@@ -140,7 +139,6 @@ export default function ParticipantDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Payment Information Skeleton */}
                             <div className="space-y-4">
                                 <div className="space-y-2">
                                     <div className="h-6 w-44 bg-gray-200 animate-pulse rounded-md"></div>
@@ -166,7 +164,6 @@ export default function ParticipantDetailPage() {
                             </div>
                         </div>
 
-                        {/* Events Skeleton */}
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <div className="h-6 w-36 bg-gray-200 animate-pulse rounded-md"></div>
