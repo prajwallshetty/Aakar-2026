@@ -27,7 +27,7 @@ export default function AddAdditionalEvents({
     params: Promise<{ id: string }>;
 }) {
     const router = useRouter();
-    const userId = parseInt(use(params).id);
+    const userId = use(params).id;
 
     const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [eventOptions, setEventOptions] =
@@ -56,7 +56,6 @@ export default function AddAdditionalEvents({
     const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
     const [transactionId, setTransactionId] = useState<string>("");
     const [paymentScreenshot, setPaymentScreenshot] = useState<File>();
     const [qrImageUrl, setQrImageUrl] = useState<string>("");
@@ -70,7 +69,7 @@ export default function AddAdditionalEvents({
             try {
                 setEvents(await getAllEvents());
 
-                const { data: userData, error } = await getParticipant(userId);
+                const { data: userData } = await getParticipant(userId);
                 setUserInfo(userData);
 
                 let userEvents = (await getEventsOfUser(userId))?.map(
@@ -114,6 +113,7 @@ export default function AddAdditionalEvents({
         await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
             paymentScreenshotUrls: { push: fileUrl },
+            transaction_ids: {push: transactionId},
             groupMembersData: groupData || [],
             amount: (userInfo?.amount || 0) + totalAmount,
         });
@@ -278,7 +278,6 @@ export default function AddAdditionalEvents({
 
         try {
             await addUserEvents(selectedEvents, groupEventData);
-            setSubmitSuccess(true);
 
             setTimeout(() => {
                 router.push(`/`);

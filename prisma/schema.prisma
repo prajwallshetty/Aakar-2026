@@ -21,6 +21,7 @@ enum eventType {
 
 model Participant {
   id                    Int      @id @default(autoincrement())
+  uuid                  String   @unique @default(uuid())
   name                  String
   usn                   String   @unique
   phone                 String
