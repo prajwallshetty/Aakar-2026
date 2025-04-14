@@ -84,7 +84,6 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
     try {
         if (eventsCache.categoryEvents[eventCategory] &&
             isCacheValid(eventsCache.categoryEvents[eventCategory].date)) {
-            console.log("Used cache events..")
             return eventsCache.categoryEvents[eventCategory].events;
         }
 
