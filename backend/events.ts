@@ -84,6 +84,7 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
     try {
         if (eventsCache.categoryEvents[eventCategory] &&
             isCacheValid(eventsCache.categoryEvents[eventCategory].date)) {
+            console.log("Used cache events..")
             return eventsCache.categoryEvents[eventCategory].events;
         }
 
@@ -108,7 +109,7 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
     }
 }
 
-export async function getEventsOfUser(userId: number|string) {
+export async function getEventsOfUser(userId: number | string) {
     try {
         const isUuid = typeof userId === "string";
         return (await db.participant.findUnique({
