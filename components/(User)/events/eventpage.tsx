@@ -34,7 +34,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
             </h1>
 
             {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-7xl px-4" >
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full md:max-w-5xl  px-4" >
                     {
                         Array.from({ length: 8 }).map((_, i) => (
                             <div key={i} className="relative aspect-[1/1.414] w-full bg-gray-300 rounded-4xl overflow-hidden">
