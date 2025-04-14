@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { downloadCollegeData } from "@/app/(Admin)/Participants/utils"
 import { ExtendedParticipant } from "@/types"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface CollegeStatsProps {
   participants: ExtendedParticipant[]
@@ -82,7 +83,56 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center p-8">Loading college statistics...</div>
+    return (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-7 w-64" />
+            <Skeleton className="h-10 w-48" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array(4).fill(null).map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2">
+                  <CardTitle>
+                    <Skeleton className="h-4 w-32" />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-16" />
+                  {i === 3 && <Skeleton className="h-3 w-24 mt-1" />}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Skeleton className="h-6 w-48" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center">
+                <div className="w-full max-w-md flex flex-col items-center">
+                  <div className="w-72 h-72 rounded-full relative">
+                    <Skeleton className="w-full h-full rounded-full" />
+                    <div className="absolute inset-0 rounded-full border-8 border-background" style={{ borderRadius: '50%' }} />
+                  </div>
+                  <div className="mt-6 grid grid-cols-2 gap-4 w-full">
+                    {Array(6).fill(null).map((_, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4 rounded-full" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+    )
   }
 
   if (error) {
