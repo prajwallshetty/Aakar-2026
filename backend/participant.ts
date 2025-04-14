@@ -89,7 +89,7 @@ ${eventN || 'No events found!'}
 
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 
-If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
+If you'd like to register for additional events, feel free to visit:
 👉 https://aakar2025.in/addevents/${participant.id}
 
 We look forward to your participation!
@@ -287,7 +287,7 @@ ${eventN}
 
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 
-If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
+If you'd like to register for additional events, feel free to visit:
 👉 https://aakar2025.in/addevents/${participant.id}
 
 We look forward to your participation!
