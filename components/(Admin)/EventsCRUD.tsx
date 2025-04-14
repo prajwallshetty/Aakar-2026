@@ -337,7 +337,7 @@ const EventsCRUD = () => {
         try {
             let imageUrl = formData.imageUrl;
             if (selectedFile) {
-                const uploadedUrl = await uploadFile(selectedFile);
+                const uploadedUrl = await uploadFile(selectedFile, "eventimages");
                 if (uploadedUrl) {
                     if (isEditing && formData.imageUrl) {
                         await deleteFiles([formData.imageUrl]);
