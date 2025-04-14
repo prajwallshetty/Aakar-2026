@@ -27,7 +27,7 @@ export default function AddAdditionalEvents({
     params: Promise<{ id: string }>;
 }) {
     const router = useRouter();
-    const userId = parseInt(use(params).id);
+    const userId = use(params).id;
 
     const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [eventOptions, setEventOptions] =
@@ -56,7 +56,6 @@ export default function AddAdditionalEvents({
     const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
     const [transactionId, setTransactionId] = useState<string>("");
     const [paymentScreenshot, setPaymentScreenshot] = useState<File>();
     const [qrImageUrl, setQrImageUrl] = useState<string>("");
@@ -70,7 +69,7 @@ export default function AddAdditionalEvents({
             try {
                 setEvents(await getAllEvents());
 
-                const { data: userData, error } = await getParticipant(userId);
+                const { data: userData } = await getParticipant(userId);
                 setUserInfo(userData);
 
                 let userEvents = (await getEventsOfUser(userId))?.map(
@@ -114,7 +113,10 @@ export default function AddAdditionalEvents({
         await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
             paymentScreenshotUrls: { push: fileUrl },
-            groupMembersData: groupData || [],
+            transaction_ids: { push: transactionId },
+            groupMembersData: groupData
+                ? { ...(userInfo!.groupMembersData || {}), ...groupData }
+                : userInfo!.groupMembersData || {},
             amount: (userInfo?.amount || 0) + totalAmount,
         });
     }
@@ -122,6 +124,8 @@ export default function AddAdditionalEvents({
     const handleEventSelection = (selected: any) => {
         const selectedOptions: typeof selectedEvents = selected || [];
         setSelectedEvents([...selectedOptions]);
+        setShowQRCode(false);
+        setQrImageUrl("");
 
         const amount = selectedOptions.reduce(
             (sum: number, event) =>
@@ -278,7 +282,6 @@ export default function AddAdditionalEvents({
 
         try {
             await addUserEvents(selectedEvents, groupEventData);
-            setSubmitSuccess(true);
 
             setTimeout(() => {
                 router.push(`/`);
@@ -373,8 +376,7 @@ export default function AddAdditionalEvents({
 
                                                         if (
                                                             groupEventData?.[
-                                                                selectedEvent
-                                                                    .id
+                                                                selectedEvent.id
                                                             ]
                                                         ) {
                                                             setGroupEventData(
@@ -394,25 +396,17 @@ export default function AddAdditionalEvents({
 
                                                         const amount =
                                                             updatedSelection.reduce(
-                                                                (
-                                                                    sum,
-                                                                    event
-                                                                ) =>
+                                                                (sum, event) =>
                                                                     sum +
                                                                     (events.find(
-                                                                        (
-                                                                            e
-                                                                        ) =>
+                                                                        (e) =>
                                                                             e.id ===
                                                                             event.id
-                                                                    )
-                                                                        ?.fee ||
+                                                                    )?.fee ||
                                                                         0),
                                                                 0
                                                             );
-                                                        setTotalAmount(
-                                                            amount
-                                                        );
+                                                        setTotalAmount(amount);
                                                     }}
                                                     className="ml-2 text-pink-700 cursor-pointer hover:text-pink-900"
                                                 >
@@ -446,9 +440,7 @@ export default function AddAdditionalEvents({
                                 onChange={handleEventSelection}
                                 placeholder="Select additional event(s)..."
                                 className={`${
-                                    formErrors.events
-                                        ? "border-red-500"
-                                        : ""
+                                    formErrors.events ? "border-red-500" : ""
                                 } w-full`}
                                 classNamePrefix="select"
                             />
@@ -506,8 +498,7 @@ export default function AddAdditionalEvents({
                                                         handleParticipantCountChange(
                                                             event.id,
                                                             Number.parseInt(
-                                                                e.target
-                                                                    .value
+                                                                e.target.value
                                                             ) || 1
                                                         )
                                                     }
@@ -573,8 +564,7 @@ export default function AddAdditionalEvents({
                                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                             <div>
                                                                 <label className="text-xs text-gray-500">
-                                                                    Full
-                                                                    Name
+                                                                    Full Name
                                                                 </label>
                                                                 <input
                                                                     type="text"
@@ -792,9 +782,7 @@ export default function AddAdditionalEvents({
                                     id="paymentScreenshot"
                                     accept="image/*"
                                     onChange={(e) =>
-                                        setPaymentScreenshot(
-                                            e.target.files![0]
-                                        )
+                                        setPaymentScreenshot(e.target.files![0])
                                     }
                                     className={`border ${
                                         formErrors.paymentScreenshot

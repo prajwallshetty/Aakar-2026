@@ -17,6 +17,40 @@ const LandingPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [activeVideo, setActiveVideo] = useState("");
 
+    useEffect(() => {
+        const scrollContainer = document.getElementById("videoScrollContainer");
+        const dot1 = document.getElementById("scrollDot1");
+        const dot2 = document.getElementById("scrollDot2");
+
+        if (scrollContainer && dot1 && dot2) {
+            const handleScroll = () => {
+                const scrollPosition = scrollContainer.scrollLeft;
+                const maxScroll =
+                    scrollContainer.scrollWidth - scrollContainer.clientWidth;
+                const scrollRatio = scrollPosition / maxScroll;
+
+                // Update dot sizes based on scroll position
+                if (scrollRatio < 0.5) {
+                    // First video is more visible
+                    dot1.classList.remove("w-1", "h-1", "bg-white/30");
+                    dot1.classList.add("w-2", "h-2", "bg-white/60");
+                    dot2.classList.remove("w-2", "h-2", "bg-white/60");
+                    dot2.classList.add("w-1", "h-1", "bg-white/30");
+                } else {
+                    // Second video is more visible
+                    dot2.classList.remove("w-1", "h-1", "bg-white/30");
+                    dot2.classList.add("w-2", "h-2", "bg-white/60");
+                    dot1.classList.remove("w-2", "h-2", "bg-white/60");
+                    dot1.classList.add("w-1", "h-1", "bg-white/30");
+                }
+            };
+
+            scrollContainer.addEventListener("scroll", handleScroll);
+            return () =>
+                scrollContainer.removeEventListener("scroll", handleScroll);
+        }
+    }, []);
+
     const openModal = (videoSrc: string) => {
         setActiveVideo(videoSrc);
         setShowModal(true);
@@ -114,13 +148,20 @@ const LandingPage = () => {
                     </div>
                 </div>
 
-                <div className="w-1/4 flex items-center justify-start relative overflow-visible">
-                    <div className="relative rounded-[3rem] overflow-visible -ml-30 w-fit">
-                        <div className="absolute inset-0 bg-black/50 rounded-[3rem] z-0 pointer-events-none"></div>
+                <div className="w-1/4 flex items-center justify-start relative">
+                    <div className="relative rounded-l-[3rem] w-full">
+                        <div className="absolute inset-0 bg-black/50 rounded-l-[3rem] z-0 pointer-events-none"></div>
 
-                        <div className="relative z-10 flex flex-row space-x-4 py-14 px-8">
+                        <div
+                            className="relative z-10 flex flex-row space-x-4 py-14 px-8 overflow-x-auto scrollbar-hide w-full"
+                            style={{
+                                scrollbarWidth: "none",
+                                msOverflowStyle: "none",
+                            }}
+                            id="videoScrollContainer"
+                        >
                             <div
-                                className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative"
+                                className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
                                 onClick={() => openModal("/dj.mp4")}
                             >
                                 <video
@@ -131,7 +172,7 @@ const LandingPage = () => {
                                     autoPlay
                                     playsInline
                                     preload="none"
-                                    poster="dj.png"
+                                    poster="/dj.png"
                                 />
 
                                 <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
@@ -144,7 +185,7 @@ const LandingPage = () => {
                             </div>
 
                             <div
-                                className="w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative"
+                                className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
                                 onClick={() => openModal("/concert.mp4")}
                             >
                                 <video
@@ -155,7 +196,7 @@ const LandingPage = () => {
                                     autoPlay
                                     playsInline
                                     preload="none"
-                                    poster="concert.jpeg"
+                                    poster="/concert.jpeg"
                                 />
 
                                 <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
@@ -166,6 +207,18 @@ const LandingPage = () => {
 
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
+                        </div>
+
+                        {/* Horizontal scroll hint */}
+                        <div className="absolute bottom-4 left-1/2 flex items-center gap-3">
+                            <div
+                                className="w-2 h-2 bg-white/60 rounded-full transition-all duration-300"
+                                id="scrollDot1"
+                            ></div>
+                            <div
+                                className="w-1 h-1 bg-white/30 rounded-full transition-all duration-300"
+                                id="scrollDot2"
+                            ></div>
                         </div>
                     </div>
                 </div>

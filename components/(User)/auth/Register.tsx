@@ -108,7 +108,12 @@ const Register = () => {
         const { id, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [id]: id === "year" ? parseInt(value) : value,
+            [id]:
+                id === "year"
+                    ? parseInt(value)
+                    : id === "usn"
+                    ? value.toUpperCase()
+                    : value,
         }));
 
         if (formErrors[id]) {
@@ -128,7 +133,7 @@ const Register = () => {
 
         const newGroupData = { ...groupEventData };
 
-        selectedEvents.forEach((event) => {
+        selectedOptions.forEach((event:typeof selectedEvents[number]) => {
             const eventObj = events.find((e) => e.id === event.id);
 
             if (

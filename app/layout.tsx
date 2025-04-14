@@ -3,8 +3,9 @@ import "./globals.css";
 import { GameOfSquids } from "@/lib/font";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import Loading from "@/components/loading";
 
 export const metadata: Metadata = {
     title: "AAKAR 2025 | Brains, Guts and Glory",
@@ -138,7 +139,7 @@ export const metadata: Metadata = {
         "AAKAR AI/ML workshop",
         "AAKAR Python programming contest",
         "AAKAR web development battle",
-        "AAKAR app development challenge"
+        "AAKAR app development challenge",
     ],
     authors: [{ name: "AAKAR Team", url: "https://aakar2025.in" }],
     creator: "AAKAR Team",
@@ -181,6 +182,7 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body className={`${GameOfSquids.className} antialiased`}>
+                <Loading />
                 <SessionProvider session={session}>{children}</SessionProvider>
                 <Analytics />
                 <SpeedInsights />

@@ -89,8 +89,8 @@ ${eventN || 'No events found!'}
 
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 
-If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
-👉 https://aakar2025.in/addevents/${participant.id}
+If you'd like to register for additional events, feel free to visit:
+👉 https://aakar2025.in/addevents/${participant.uuid}
 
 We look forward to your participation!
 
@@ -166,14 +166,14 @@ export async function getCollegeNames() {
 
 }
 
-export async function getParticipant(id: number): Promise<ServiceResponse<ExtendedParticipant>> {
+export async function getParticipant(id: number | string): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
         }
 
         const participant = await db.participant.findUnique({
-            where: { id }
+            where: typeof id === "string" ? { uuid: id } : { id }
         });
 
         if (!participant) {
@@ -262,7 +262,7 @@ export async function getParticipantsWithFilter(where: Prisma.ParticipantWhereIn
     }
 }
 
-export async function updateParticipantWithNotify(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
+export async function updateParticipantWithNotify(id: number | string, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         let res = await updateParticipant(id, data);
         if (!res.data || res.error) {
@@ -287,8 +287,8 @@ ${eventN}
 
 Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
 
-If you know someone who may be interested, or if you'd like to register for additional sessions, feel free to visit:
-👉 https://aakar2025.in/addevents/${participant.id}
+If you'd like to register for additional events, feel free to visit:
+👉 https://aakar2025.in/addevents/${participant.uuid}
 
 We look forward to your participation!
 
@@ -308,14 +308,14 @@ Aakar 2025 Team`);
     }
 }
 
-export async function updateParticipant(id: number, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
+export async function updateParticipant(id: number | string, data: Prisma.ParticipantUpdateInput): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
             return { data: null, error: { id: "Participant ID is required" } };
         }
 
         const updatedParticipant = await db.participant.update({
-            where: { id },
+            where: typeof id === "string" ? { uuid: id } : { id },
             data: { ...data, email: (data.email as string)?.toLowerCase() || undefined, usn: (data.usn as string)?.toUpperCase() || undefined }
         }) as ExtendedParticipant;
 
