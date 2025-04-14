@@ -447,6 +447,7 @@ const Register = () => {
         "Kanachur Institute of Medical Science",
         "NITTE Architecture",
         "NITTE Nursing",
+        "St Mary's College, Shirva",
         "NITTE Institute of Communication",
         "Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore",
         "Trisha College of Commerce and Management, Alake Road, Kodailbail",
