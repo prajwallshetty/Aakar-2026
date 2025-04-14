@@ -181,6 +181,16 @@ export default async function RootLayout({
     const session = await auth();
     return (
         <html lang="en">
+            <head>
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM"></script>
+            <script>
+            {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-EXY2XKHRKM');`}
+            </script>
+            </head>
             <body className={`${GameOfSquids.className} antialiased`}>
                 <Loading />
                 <SessionProvider session={session}>{children}</SessionProvider>

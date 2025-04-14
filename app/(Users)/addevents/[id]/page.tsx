@@ -109,7 +109,10 @@ export default function AddAdditionalEvents({
         data: typeof selectedEvents,
         groupData: typeof groupEventData
     ): Promise<void> {
-        let fileUrl = await uploadFile(paymentScreenshot!);
+        let fileUrl = await uploadFile(
+            paymentScreenshot!,
+            "paymentscreenshots"
+        );
         if (!fileUrl) return;
         await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },

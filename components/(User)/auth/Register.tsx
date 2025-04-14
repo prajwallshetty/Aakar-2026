@@ -133,7 +133,7 @@ const Register = () => {
 
         const newGroupData = { ...groupEventData };
 
-        selectedOptions.forEach((event:typeof selectedEvents[number]) => {
+        selectedOptions.forEach((event: (typeof selectedEvents)[number]) => {
             const eventObj = events.find((e) => e.id === event.id);
 
             if (
@@ -338,7 +338,10 @@ const Register = () => {
         setGeneralError("");
 
         try {
-            const fileUrl = await uploadFile(formData.paymentScreenshot!);
+            const fileUrl = await uploadFile(
+                formData.paymentScreenshot!,
+                "paymentscreenshots"
+            );
             if (!fileUrl) return setGeneralError("File not found!");
 
             const participantData: ExtendedParticipantCreateInput = {
