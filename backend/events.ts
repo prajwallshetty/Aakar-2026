@@ -108,7 +108,7 @@ export async function getEventsByCategory(eventCategory: eventCategory) {
     }
 }
 
-export async function getEventsOfUser(userId: number|string) {
+export async function getEventsOfUser(userId: number | string) {
     try {
         const isUuid = typeof userId === "string";
         return (await db.participant.findUnique({

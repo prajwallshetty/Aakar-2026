@@ -62,7 +62,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
                     }
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full md:max-w-7xl md:px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full md:max-w-5xl md:px-4">
                     {events.map((event, index) => (
                         <Link href={"/events/" + event.id} key={event.id} className="w-full">
                             <div
