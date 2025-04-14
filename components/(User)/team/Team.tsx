@@ -17,7 +17,7 @@ const teamData: TeamCategory[] = [
         name: 'Mentorship Panel',
         members: [
             { name: 'Mr. Vinod T Dsouza', role: 'Chief Co-ordinator', image: '/Team/lecturer/vinod.png' },
-            { name: 'Dr. Suhan Das', role: 'Faculty Co-ordinator', image: '/Team/lecturer/suhan.png' },
+            { name: 'Dr. Suhandas', role: 'Faculty Co-ordinator', image: '/Team/lecturer/suhan.png' },
             { name: 'Ms. Disha C Shetty', role: 'Faculty Co-ordinator', image: '/Team/lecturer/disha.jpg' },
             { name: 'Mrs. Sharanya P S', role: 'Faculty Co-ordinator', image: '/Team/lecturer/sharanya.png' },
         ],
