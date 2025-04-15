@@ -72,7 +72,15 @@ export default function ParticipantsPage() {
     const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
         try {
             setIsLoading(true);
-            const index = (page - 1) * pageSize;
+            const index = page - 1;
+            if(allParticipants.length){
+                const data = allParticipants.slice(page*pageSize - pageSize, page*pageSize);
+                setParticipants(data);
+                setFilteredParticipants(data);
+                setIsLoading(false);
+                return;
+            }
+
             const response = await getParticipantsWithEvents(index, pageSize);
 
             if (response.error) {
