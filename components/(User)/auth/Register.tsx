@@ -342,7 +342,11 @@ const Register = () => {
                 formData.paymentScreenshot!,
                 "paymentscreenshots"
             );
-            if (!fileUrl) return setGeneralError("File not found!");
+            if (!fileUrl) {
+                setIsRegistering(false);
+                setGeneralError("File could not be uploaded!");
+                return;
+            }
 
             const participantData: ExtendedParticipantCreateInput = {
                 name: formData.name,
