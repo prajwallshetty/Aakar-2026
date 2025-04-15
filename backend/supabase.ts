@@ -2,8 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
-export async function uploadFile(file: File) {
-    const bucketName = "eventimages";
+export async function uploadFile(file: File, bucketName: "eventimages" | "paymentscreenshots" = "eventimages") {
     const fileName = `${Date.now()}-${file.name}`;
 
     try {
@@ -22,8 +21,7 @@ export async function uploadFile(file: File) {
     }
 }
 
-export async function uploadFiles(files: File[]) {
-    const bucketName = "eventimages";
+export async function uploadFiles(files: File[], bucketName: "eventimages" | "paymentscreenshots" = "eventimages") {
     const uploadedUrls = [];
 
     for (let i = 0; i < files.length; i++) {
@@ -47,9 +45,7 @@ export async function uploadFiles(files: File[]) {
     return uploadedUrls;
 }
 
-export async function deleteFiles(fileUrls: string[]) {
-    const bucketName = "eventimages";
-
+export async function deleteFiles(fileUrls: string[], bucketName: "eventimages" | "paymentscreenshots" = "eventimages") {
     for (let i = 0; i < fileUrls.length; i++) {
         const fileUrl = fileUrls[i];
         const fileName = fileUrl.split("/").pop()?.split("?")[0];

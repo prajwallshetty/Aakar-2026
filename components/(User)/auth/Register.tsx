@@ -133,7 +133,7 @@ const Register = () => {
 
         const newGroupData = { ...groupEventData };
 
-        selectedOptions.forEach((event:typeof selectedEvents[number]) => {
+        selectedOptions.forEach((event: (typeof selectedEvents)[number]) => {
             const eventObj = events.find((e) => e.id === event.id);
 
             if (
@@ -142,9 +142,9 @@ const Register = () => {
                 !newGroupData[event.id]
             ) {
                 newGroupData[event.id] = {
-                    participantCount: eventObj.minMembers,
+                    participantCount: eventObj.minMembers-1,
                     members: Array.from(
-                        { length: eventObj.minMembers },
+                        { length: eventObj.minMembers-1 },
                         () => ({
                             name: "",
                             usn: "",
@@ -251,8 +251,8 @@ const Register = () => {
         setTotalAmount(amount);
 
         const upiId = "ajiet@cnrb";
-        const payeeName = "Aakar 2025 Regitsration";
-        const transactionNote = "Aakar 2025 Regitsration";
+        const payeeName = "Aakar 2025 Registration";
+        const transactionNote = "Aakar 2025 Registration";
 
         const upiUrl = `upi://pay?pa=${encodeURIComponent(
             upiId
@@ -338,8 +338,15 @@ const Register = () => {
         setGeneralError("");
 
         try {
-            const fileUrl = await uploadFile(formData.paymentScreenshot!);
-            if (!fileUrl) return setGeneralError("File not found!");
+            const fileUrl = await uploadFile(
+                formData.paymentScreenshot!,
+                "paymentscreenshots"
+            );
+            if (!fileUrl) {
+                setIsRegistering(false);
+                setGeneralError("File could not be uploaded!");
+                return;
+            }
 
             const participantData: ExtendedParticipantCreateInput = {
                 name: formData.name,
@@ -447,6 +454,7 @@ const Register = () => {
         "Kanachur Institute of Medical Science",
         "NITTE Architecture",
         "NITTE Nursing",
+        "St Mary's College, Shirva",
         "NITTE Institute of Communication",
         "Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore",
         "Trisha College of Commerce and Management, Alake Road, Kodailbail",
@@ -677,7 +685,7 @@ const Register = () => {
                                         htmlFor="year"
                                         className="text-gray-700"
                                     >
-                                        Academic Year (1,2,3 or 4)
+                                        Year of Study (1,2,3 or 4)
                                     </label>
                                     <input
                                         id="year"
@@ -871,12 +879,13 @@ const Register = () => {
                                         event.id
                                     ] || {
                                         participantCount:
-                                            eventDetail?.minMembers || 1,
+                                        eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
+                                        1,
                                         members: Array.from(
                                             {
                                                 length:
-                                                    eventDetail?.minMembers ||
-                                                    1,
+                                                eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
+                                                1,
                                             },
                                             () => ({
                                                 name: "",
@@ -892,7 +901,7 @@ const Register = () => {
                                             className="mb-6 p-4 border rounded-lg bg-gray-50"
                                         >
                                             <h4 className="font-medium mb-3">
-                                                {event.label} - Team Details
+                                                {event.label} - Team Details (Excluding leader)
                                             </h4>
 
                                             <div className="mb-4">
@@ -900,17 +909,17 @@ const Register = () => {
                                                     htmlFor={`participant-count-${event.id}`}
                                                     className="text-gray-700 text-sm block mb-1"
                                                 >
-                                                    Number of Team Members
+                                                    Number of Team Members (Excluding leader)
                                                 </label>
                                                 <input
                                                     type="number"
                                                     id={`participant-count-${event.id}`}
                                                     min={
-                                                        eventDetail?.minMembers ||
+                                                        eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
                                                         1
                                                     }
                                                     max={
-                                                        eventDetail?.maxMembers ||
+                                                        eventDetail?.maxMembers ? eventDetail.maxMembers-1 :
                                                         10
                                                     }
                                                     step={1}
@@ -930,9 +939,9 @@ const Register = () => {
                                                         "border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-green-500 " +
                                                         (eventDetail &&
                                                         (groupData.participantCount <
-                                                            eventDetail?.minMembers ||
+                                                            (eventDetail?.minMembers-1) ||
                                                             groupData.participantCount >
-                                                                eventDetail?.maxMembers)
+                                                                (eventDetail?.maxMembers-1))
                                                             ? "border-red-500 border-2"
                                                             : "")
                                                     }
@@ -940,9 +949,9 @@ const Register = () => {
                                                 <div className="text-xs mt-1 text-red">
                                                     {eventDetail &&
                                                         (groupData.participantCount <
-                                                            eventDetail?.minMembers ||
+                                                            (eventDetail?.minMembers-1) ||
                                                             groupData.participantCount >
-                                                                eventDetail?.maxMembers) &&
+                                                                (eventDetail?.maxMembers-1)) &&
                                                         "Invalid Value!"}
                                                 </div>
                                             </div>
@@ -958,13 +967,9 @@ const Register = () => {
                                                                 Team Member{" "}
                                                                 {index + 1}
                                                             </p>
-                                                            {index >=
-                                                                (events.find(
-                                                                    (e) =>
-                                                                        e.id ===
-                                                                        event.id
-                                                                )?.minMembers ||
-                                                                    0) && (
+                                                            {eventDetail && index >=
+                                                                 eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
+                                                                0 && (
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => {

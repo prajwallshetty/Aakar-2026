@@ -109,7 +109,10 @@ export default function AddAdditionalEvents({
         data: typeof selectedEvents,
         groupData: typeof groupEventData
     ): Promise<void> {
-        let fileUrl = await uploadFile(paymentScreenshot!);
+        let fileUrl = await uploadFile(
+            paymentScreenshot!,
+            "paymentscreenshots"
+        );
         if (!fileUrl) return;
         await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
@@ -161,8 +164,8 @@ export default function AddAdditionalEvents({
         setTotalAmount(amount);
 
         const upiId = "8861621934@upi";
-        const payeeName = "Aakar 2025 Regitsration";
-        const transactionNote = "Aakar 2025 Regitsration";
+        const payeeName = "Aakar 2025 Registration";
+        const transactionNote = "Aakar 2025 Registration";
 
         const upiUrl = `upi://pay?pa=${encodeURIComponent(
             upiId
