@@ -10,6 +10,7 @@ import { getEventById, getEventsOfUser } from "./events";
 type ServiceResponse<T> = {
     data: T | null;
     error: { [key: string]: string } | string | null;
+    hasNext?: boolean;
 }
 
 export async function validateParticipantData(data: ExtendedParticipantCreateInput): Promise<{ [key: string]: string } | null> {
@@ -162,10 +163,6 @@ export async function getParticipantsCountForCollege(collegeName: string) {
     return usns.size;
 }
 
-export async function getCollegeNames() {
-
-}
-
 export async function getParticipant(id: number | string): Promise<ServiceResponse<ExtendedParticipant>> {
     try {
         if (!id) {
@@ -209,7 +206,7 @@ export async function getParticipantWithEvents(id: number): Promise<ServiceRespo
     }
 }
 
-export async function getParticipantsWithEvents(): Promise<ServiceResponse<(ExtendedParticipant & { events: ExtendedEvent[] })[]>> {
+export async function getParticipantsWithEvents(index?: number, limit?: number): Promise<ServiceResponse<(ExtendedParticipant & { events: ExtendedEvent[] })[]>> {
     try {
         const isUserAdmin = await isAdmin();
 
@@ -217,11 +214,22 @@ export async function getParticipantsWithEvents(): Promise<ServiceResponse<(Exte
             return { data: null, error: "Not authorized" };
         }
 
-        const participants = await db.participant.findMany({
-            include: { events: true }
-        });
+        const count = await db.participant.count();
 
-        return { data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[], error: null };
+        if (index !== undefined && limit !== undefined) {
+            const participants = await db.participant.findMany({
+                include: { events: true },
+                skip: index * limit,
+                take: limit
+            });
+            return { data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[], error: null, hasNext: count > (index + 1) * limit };
+        } else {
+            const participants = await db.participant.findMany({
+                include: { events: true },
+            });
+
+            return { data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[], error: null, hasNext: false };
+        }
     } catch (error) {
         console.error("Error fetching participants:", error);
         return { data: null, error: "Failed to fetch participant" };

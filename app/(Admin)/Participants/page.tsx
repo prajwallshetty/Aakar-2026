@@ -35,6 +35,9 @@ import {
     ChevronDown,
     ChevronRight,
     Calendar,
+    ChevronLeft,
+    ChevronFirst,
+    ChevronLast,
 } from "lucide-react";
 import React from "react";
 import { getParticipantsWithEvents } from "@/backend/participant";
@@ -51,6 +54,7 @@ export default function ParticipantsPage() {
     const [filteredParticipants, setFilteredParticipants] = useState<
         (ExtendedParticipant & {events: ExtendedEvent[]})[]
     >([]);
+    const [allParticipants, setAllParticipants] = useState<(ExtendedParticipant & {events: ExtendedEvent[]})[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCollege, setSelectedCollege] = useState<string>("");
@@ -59,41 +63,61 @@ export default function ParticipantsPage() {
     const [expandedParticipant, setExpandedParticipant] = useState<
         string | null
     >(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
+    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+    const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
+        try {
+            setIsLoading(true);
+            const index = (page - 1) * pageSize;
+            const response = await getParticipantsWithEvents(index, pageSize);
+
+            if (response.error) {
+                setError(
+                    typeof response.error === "string"
+                        ? response.error
+                        : "Failed to fetch participants"
+                );
+                return;
+            }
+
+            if (response.data) {
+                setParticipants(response.data);
+                setFilteredParticipants(response.data);
+                
+                if (isInitialLoad) {
+                    try {
+                        const allResponse = await getParticipantsWithEvents();
+                        if (allResponse.data) {
+                            setAllParticipants(allResponse.data);
+                            setTotalItems(allResponse.data.length);
+                            setTotalPages(Math.ceil(allResponse.data.length / pageSize));
+
+                            const uniqueColleges = Array.from(
+                                new Set(allResponse.data.map((p) => p.college))
+                            ) as string[];
+                            setColleges(uniqueColleges);
+                        }
+                    } catch (err) {
+                        console.error("Error fetching all participants for stats:", err);
+                    }
+                    setIsInitialLoad(false);
+                }
+            }
+        } catch (err) {
+            setError("An error occurred while fetching participants");
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchParticipants = async () => {
-            try {
-                setIsLoading(true);
-                const response = await getParticipantsWithEvents();
-
-                if (response.error) {
-                    setError(
-                        typeof response.error === "string"
-                            ? response.error
-                            : "Failed to fetch participants"
-                    );
-                    return;
-                }
-
-                if (response.data) {
-                    setParticipants(response.data);
-                    setFilteredParticipants(response.data);
-
-                    const uniqueColleges = Array.from(
-                        new Set(response.data.map((p) => p.college))
-                    ) as string[];
-                    setColleges(uniqueColleges);
-                }
-            } catch (err) {
-                setError("An error occurred while fetching participants");
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchParticipants();
-    }, []);
+        fetchParticipants(currentPage);
+    }, [currentPage, itemsPerPage]);
 
     useEffect(() => {
         let result = [...participants];
@@ -125,9 +149,22 @@ export default function ParticipantsPage() {
         setFilteredParticipants(result);
     }, [searchQuery, selectedCollege, participants]);
 
+    useEffect(() => {
+        if (selectedCollege && selectedCollege !== "all") {
+            const filteredTotal = allParticipants.filter(p => p.college === selectedCollege).length;
+            setTotalItems(filteredTotal);
+            setTotalPages(Math.ceil(filteredTotal / itemsPerPage));
+            setCurrentPage(1);
+        } else if (selectedCollege === "all" || selectedCollege === "") {
+            setTotalItems(allParticipants.length);
+            setTotalPages(Math.ceil(allParticipants.length / itemsPerPage));
+            setCurrentPage(1);
+        }
+    }, [selectedCollege, itemsPerPage, allParticipants]);
+
     const handleDownloadAll = async () => {
         try {
-            await downloadParticipantData(filteredParticipants);
+            await downloadParticipantData(allParticipants);
         } catch (error) {
             console.error("Error downloading data:", error);
             setError("Failed to download participant data");
@@ -136,7 +173,7 @@ export default function ParticipantsPage() {
 
     const handleDownloadByCollege = async () => {
         try {
-            await downloadParticipantData(filteredParticipants, true);
+            await downloadParticipantData(allParticipants, true);
         } catch (error) {
             console.error("Error downloading data by college:", error);
             setError("Failed to download participant data by college");
@@ -145,10 +182,10 @@ export default function ParticipantsPage() {
 
     const handleDownloadByEvent = async () => {
         try {
-            await downloadParticipantDataByEvents(filteredParticipants);
+            await downloadParticipantDataByEvents(allParticipants);
         } catch (error) {
-            console.error("Error downloading data by college:", error);
-            setError("Failed to download participant data by college");
+            console.error("Error downloading data by events:", error);
+            setError("Failed to download participant data by events");
         }
     };
 
@@ -156,12 +193,24 @@ export default function ParticipantsPage() {
         setSearchQuery("");
         setSelectedCollege("");
         setFilteredParticipants(participants);
+        setCurrentPage(1);
     };
 
     const toggleParticipantExpanded = (id: number) => {
         setExpandedParticipant(
             expandedParticipant === id.toString() ? null : id.toString()
         );
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        const newItemsPerPage = parseInt(value);
+        setItemsPerPage(newItemsPerPage);
+        setTotalPages(Math.ceil(totalItems / newItemsPerPage));
+        setCurrentPage(1);
     };
 
     const TableSkeleton = () => (
@@ -185,18 +234,81 @@ export default function ParticipantsPage() {
                         <TableCell>
                             <Skeleton className="h-5 w-20" />
                         </TableCell>
-                        <TableCell>
-                            <Skeleton className="h-5 w-8" />
-                        </TableCell>
-                        <TableCell>
-                            <Skeleton className="h-5 w-24" />
-                        </TableCell>
-                        <TableCell>
-                            <Skeleton className="h-8 w-24" />
-                        </TableCell>
                     </TableRow>
                 ))}
         </>
+    );
+
+    const PaginationControls = () => (
+        <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground">
+                    Items per page:
+                </span>
+                <Select 
+                    value={itemsPerPage.toString()} 
+                    onValueChange={handleItemsPerPageChange}
+                >
+                    <SelectTrigger className="h-8 w-[70px] cursor-pointer">
+                        <SelectValue placeholder="10" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="5" className="cursor-pointer">5</SelectItem>
+                        <SelectItem value="10" className="cursor-pointer">10</SelectItem>
+                        <SelectItem value="20" className="cursor-pointer">20</SelectItem>
+                        <SelectItem value="50" className="cursor-pointer">50</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1 || isLoading}
+                    className="cursor-pointer h-8 w-8"
+                >
+                    <ChevronFirst className="h-4 w-4" />
+                </Button>
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1 || isLoading}
+                    className="cursor-pointer h-8 w-8"
+                >
+                    <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <span className="text-sm">
+                    Page {currentPage} of {totalPages}
+                </span>
+                
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages || isLoading}
+                    className="cursor-pointer h-8 w-8"
+                >
+                    <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages || isLoading}
+                    className="cursor-pointer h-8 w-8"
+                >
+                    <ChevronLast className="h-4 w-4" />
+                </Button>
+            </div>
+            
+            <div className="text-sm text-muted-foreground">
+                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
+            </div>
+        </div>
     );
 
     return (
@@ -296,8 +408,7 @@ export default function ParticipantsPage() {
                                 <div className="flex flex-wrap gap-2 justify-between items-center">
                                     <div className="flex items-center gap-2">
                                         <Badge variant="outline">
-                                            {filteredParticipants.length}{" "}
-                                            participants
+                                            {totalItems} participants
                                         </Badge>
                                         {selectedCollege &&
                                             selectedCollege !== "all" && (
@@ -555,6 +666,8 @@ export default function ParticipantsPage() {
                                         </TableBody>
                                     </Table>
                                 </div>
+                                
+                                {!isLoading && <PaginationControls />}
                             </div>
                         </TabsContent>
 
@@ -570,7 +683,7 @@ export default function ParticipantsPage() {
                                     <Skeleton className="h-64 w-full" />
                                 </div>
                             ) : (
-                                <EventStats participants={participants} />
+                                <EventStats participants={allParticipants} />
                             )}
                         </TabsContent>
 
@@ -584,7 +697,7 @@ export default function ParticipantsPage() {
                                     </div>
                                 </div>
                             ) : (
-                                <CollegeStats participants={participants} />
+                                <CollegeStats participants={allParticipants} />
                             )}
                         </TabsContent>
                     </Tabs>
