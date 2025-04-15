@@ -251,8 +251,8 @@ const Register = () => {
         setTotalAmount(amount);
 
         const upiId = "ajiet@cnrb";
-        const payeeName = "Aakar 2025 Regitsration";
-        const transactionNote = "Aakar 2025 Regitsration";
+        const payeeName = "Aakar 2025 Registration";
+        const transactionNote = "Aakar 2025 Registration";
 
         const upiUrl = `upi://pay?pa=${encodeURIComponent(
             upiId
@@ -681,7 +681,7 @@ const Register = () => {
                                         htmlFor="year"
                                         className="text-gray-700"
                                     >
-                                        Academic Year (1,2,3 or 4)
+                                        Year of Study (1,2,3 or 4)
                                     </label>
                                     <input
                                         id="year"
