@@ -164,8 +164,8 @@ export default function AddAdditionalEvents({
         setTotalAmount(amount);
 
         const upiId = "8861621934@upi";
-        const payeeName = "Aakar 2025 Regitsration";
-        const transactionNote = "Aakar 2025 Regitsration";
+        const payeeName = "Aakar 2025 Registration";
+        const transactionNote = "Aakar 2025 Registration";
 
         const upiUrl = `upi://pay?pa=${encodeURIComponent(
             upiId
