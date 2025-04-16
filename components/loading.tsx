@@ -66,7 +66,7 @@ export default function Loading() {
 
     if (!readyToHide) {
         return (
-            <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
+            <div className="fixed inset-0 flex items-center justify-center bg-black z-[80]">
                 <video
                     ref={videoRef}
                     className="max-w-xl w-full h-auto object-cover"
