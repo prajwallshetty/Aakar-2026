@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Navbar from "@/components/(User)/Common/Navbar";
 import Footer from "@/components/(User)/Common/Footer";
 import { GameOfSquids } from "@/lib/font";
-import Loading from "@/components/loading";
 
 export const metadata: Metadata = {
   title: "AAKAR 2025 | Brains, Guts and Glory",
@@ -20,7 +19,6 @@ export default function RootLayout({
     <div className={`${GameOfSquids.className} antialiased`}>
       <Navbar />
       <div className="relative z-10 font-GameOfSquids min-h-screen">
-        <Loading />
         {children}
       </div>
       <Footer />

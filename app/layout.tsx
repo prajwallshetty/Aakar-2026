@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Loading from "@/components/loading";
 
 export const metadata: Metadata = {
     title: "AAKAR 2025 | Brains, Guts and Glory",
@@ -191,6 +192,7 @@ export default async function RootLayout({
             </script>
             </head>
             <body className={`${GameOfSquids.className} antialiased`}>
+                <Loading />
                 <SessionProvider session={session}>{children}</SessionProvider>
                 <Analytics />
                 <SpeedInsights />
