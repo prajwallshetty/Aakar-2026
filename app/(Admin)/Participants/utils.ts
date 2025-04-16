@@ -343,7 +343,7 @@ export async function downloadParticipantDataByEvents(
 
           const teamSummaries = Array.from(teamMap.values()).map(team => {
             const membersList = team.Members.map((m: any, i: number) =>
-              `Member ${i + 1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})`
+              `Member ${i + 1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})- ${m.Email}`
             ).join("; ")
 
             return {
