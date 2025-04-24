@@ -200,7 +200,7 @@ const LandingPage = () => {
 
                                 <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
                                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition">
-                                        <div className="w-0 h-0 border-t-4 border-t-transparent border-l-6 md:border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
+                                        <FaPlay className="text-sm" />
                                     </div>
                                 </div>
 

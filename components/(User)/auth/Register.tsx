@@ -17,6 +17,12 @@ import {
 } from "@/types";
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({  
+    subsets: ["latin"],
+    variable: "--font-montserrat",
+});
 
 const Register = () => {
     const router = useRouter();
@@ -459,7 +465,6 @@ const Register = () => {
         "Besant Women's College",
         "Trisha College of Commerce and Management",
         "Shree Gokarnanatheshwara College",
-        "St Mary's College, Shirva",
         "Mahatma Gandhi Memorial College, Udupi",
         "Yenepoya Allied Science",
         "NITTE Institute of Communication",
@@ -479,6 +484,35 @@ const Register = () => {
         "Govt. JJJ College",
         "Dr. Dayananda Pai - P Sathisha Pai Govt. First Grade College, Car Street, Mangalore",
         "AJIM",
+        "M. V. Shetty College of Physiotherapy, Mangalore",
+        "Trisha College of Nursing, Mangalore",
+        "Shree Devi Institute of Technology, Mangalore",
+        "Manel Srinivas Nayak Institute of Management, Mangalore",
+        "Yenepoya Institute of Technology (YIT), Moodbidri",
+        "Sahyadri College of Nursing, Mangalore",
+        "A.J. Institute of Management, Mangalore",
+        "A.J. Institute of Dental Sciences, Mangalore",
+        "A.J. Institute of Allied Health Sciences, Mangalore",
+        "A.J. Institute of Medical Sciences, Mangalore",
+        "Padua College of Commerce and Management, Mangalore",
+        "A.J. Institute of Nursing, Mangalore",
+        "A.J. Institute of Physiotherapy, Mangalore",
+        "Yenepoya Degree College, Mangalore",
+        "Shridevi Institute of Computer Sciences (BCA), Mangalore",
+        "Shridevi College of Nursing, Mangalore",
+        "Shridevi College of Commerce (B.Com), Mangalore",
+        "SDM College of Business Management (MBA), Mangalore",
+        "SDM Law College, Mangalore",
+        "Canara College (MCA Program), Mangalore",
+        "Minerva College, Mangalore",
+        "Srinivas Institute of Nursing Sciences, Mangalore",
+        "Srinivas College of Pharmacy, Mangalore",
+        "P.A. College of Engineering, Mangalore",
+        "P.A. Polytechnic, Mangalore",
+        "P.A. First Grade College, Mangalore",
+        "Alva's College, Moodbidri",
+        "Alva's College of Law, Moodbidri",
+        "Alva's College of Naturopathy and Yogic Sciences, Moodbidri"
     ];
 
     if (isLoading) {
@@ -860,7 +894,7 @@ const Register = () => {
                                     value={selectedEvents}
                                     onChange={handleEventSelection}
                                     placeholder="Select event(s)..."
-                                    className={`${
+                                    className={`${montserrat.className} ${
                                         formErrors.events
                                             ? "border-red-500"
                                             : ""
