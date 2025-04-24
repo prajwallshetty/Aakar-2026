@@ -17,6 +17,12 @@ import {
 } from "@/types";
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({  
+    subsets: ["latin"],
+    variable: "--font-montserrat",
+});
 
 const Register = () => {
     const router = useRouter();
@@ -459,7 +465,6 @@ const Register = () => {
         "Besant Women's College",
         "Trisha College of Commerce and Management",
         "Shree Gokarnanatheshwara College",
-        "St Mary's College, Shirva",
         "Mahatma Gandhi Memorial College, Udupi",
         "Yenepoya Allied Science",
         "NITTE Institute of Communication",
@@ -860,7 +865,7 @@ const Register = () => {
                                     value={selectedEvents}
                                     onChange={handleEventSelection}
                                     placeholder="Select event(s)..."
-                                    className={`${
+                                    className={`${montserrat.className} ${
                                         formErrors.events
                                             ? "border-red-500"
                                             : ""
