@@ -512,7 +512,24 @@ const Register = () => {
         "P.A. First Grade College, Mangalore",
         "Alva's College, Moodbidri",
         "Alva's College of Law, Moodbidri",
-        "Alva's College of Naturopathy and Yogic Sciences, Moodbidri"
+        "Alva's College of Naturopathy and Yogic Sciences, Moodbidri",
+        "Canara Engineering College (CEC), Benjanapadavu",
+        "Anugraha Women's College, Kalladka",
+        "Sri Rama First Grade College, Kalladka",
+        "Vivekananda Degree College, Puttur",
+        "Vivekananda College of Engineering & Technology, Puttur",
+        "St Philomena College, Puttur",
+        "St Philomena PG and Research Centre, Puttur",
+        "Akshaya College, Puttur",
+        "Ambika First Grade College, Puttur",
+        "KVG Ayurveda College, Sulya",
+        "KVG College of Engineering, Sulya",
+        "KVG Dental College, Sulya",
+        "BGS Institute of Technology, Bangalore",
+        "Shri Shirdi Sai Mandira College, Karkala",
+        "Vijaya College, Mulki",
+        "Srinivas Institute of Allied Health Sciences, Mangalore",
+        "BGS Institute of Technology, Mangalore",
     ];
 
     if (isLoading) {
