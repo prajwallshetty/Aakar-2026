@@ -77,7 +77,7 @@ export default function ParticipantDetailPage() {
                         try {
                             const parsedData =
                                 typeof response.data.groupMembersData ===
-                                "string"
+                                    "string"
                                     ? JSON.parse(response.data.groupMembersData)
                                     : response.data.groupMembersData;
 
@@ -421,7 +421,7 @@ export default function ParticipantDetailPage() {
 
                                             {participant.groupMembersData &&
                                                 participant.groupMembersData[
-                                                    event.id
+                                                event.id
                                                 ] && (
                                                     <div
                                                         className="mt-3 pt-2 border-t"
@@ -437,8 +437,8 @@ export default function ParticipantDetailPage() {
                                                                         ...prev,
                                                                         [event.id]:
                                                                             !prev[
-                                                                                event
-                                                                                    .id
+                                                                            event
+                                                                                .id
                                                                             ],
                                                                     })
                                                                 )
@@ -473,41 +473,41 @@ export default function ParticipantDetailPage() {
                                                         {expandedEvents[
                                                             event.id
                                                         ] && (
-                                                            <div className="mt-2 space-y-2 pl-6">
-                                                                {participant.groupMembersData[
-                                                                    event.id
-                                                                ].members.map(
-                                                                    (
-                                                                        member,
-                                                                        index
-                                                                    ) => (
-                                                                        <div
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                            className="text-sm bg-muted p-2 rounded-md"
-                                                                        >
-                                                                            <div className="font-medium">
-                                                                                {
-                                                                                    member.name
+                                                                <div className="mt-2 space-y-2 pl-6">
+                                                                    {participant.groupMembersData[
+                                                                        event.id
+                                                                    ].members.map(
+                                                                        (
+                                                                            member,
+                                                                            index
+                                                                        ) => (
+                                                                            <div
+                                                                                key={
+                                                                                    index
                                                                                 }
+                                                                                className="text-sm bg-muted p-2 rounded-md"
+                                                                            >
+                                                                                <div className="font-medium">
+                                                                                    {
+                                                                                        member.name
+                                                                                    }
+                                                                                </div>
+                                                                                <div className="text-xs text-muted-foreground">
+                                                                                    USN:{" "}
+                                                                                    {
+                                                                                        member.usn
+                                                                                    }{" "}
+                                                                                    |
+                                                                                    Email:{" "}
+                                                                                    {
+                                                                                        member.email
+                                                                                    }
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="text-xs text-muted-foreground">
-                                                                                USN:{" "}
-                                                                                {
-                                                                                    member.usn
-                                                                                }{" "}
-                                                                                |
-                                                                                Email:{" "}
-                                                                                {
-                                                                                    member.email
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    )
-                                                                )}
-                                                            </div>
-                                                        )}
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            )}
                                                     </div>
                                                 )}
                                         </CardContent>

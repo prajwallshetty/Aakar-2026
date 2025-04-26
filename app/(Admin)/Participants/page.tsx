@@ -50,11 +50,11 @@ import { downloadParticipantData, downloadParticipantDataByEvents } from "./util
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
 
 export default function ParticipantsPage() {
-    const [participants, setParticipants] = useState<(ExtendedParticipant & {events: ExtendedEvent[]})[]>([]);
+    const [participants, setParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
     const [filteredParticipants, setFilteredParticipants] = useState<
-        (ExtendedParticipant & {events: ExtendedEvent[]})[]
+        (ExtendedParticipant & { events: ExtendedEvent[] })[]
     >([]);
-    const [allParticipants, setAllParticipants] = useState<(ExtendedParticipant & {events: ExtendedEvent[]})[]>([]);
+    const [allParticipants, setAllParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCollege, setSelectedCollege] = useState<string>("");
@@ -73,8 +73,8 @@ export default function ParticipantsPage() {
         try {
             setIsLoading(true);
             const index = page - 1;
-            if(allParticipants.length){
-                const data = allParticipants.slice(page*pageSize - pageSize, page*pageSize);
+            if (allParticipants.length) {
+                const data = allParticipants.slice(page * pageSize - pageSize, page * pageSize);
                 setParticipants(data);
                 setFilteredParticipants(data);
                 setIsLoading(false);
@@ -95,7 +95,7 @@ export default function ParticipantsPage() {
             if (response.data) {
                 setParticipants(response.data);
                 setFilteredParticipants(response.data);
-                
+
                 if (isInitialLoad) {
                     try {
                         const allResponse = await getParticipantsWithEvents();
@@ -253,8 +253,8 @@ export default function ParticipantsPage() {
                 <span className="text-sm text-muted-foreground">
                     Items per page:
                 </span>
-                <Select 
-                    value={itemsPerPage.toString()} 
+                <Select
+                    value={itemsPerPage.toString()}
                     onValueChange={handleItemsPerPageChange}
                 >
                     <SelectTrigger className="h-8 w-[70px] cursor-pointer">
@@ -268,7 +268,7 @@ export default function ParticipantsPage() {
                     </SelectContent>
                 </Select>
             </div>
-            
+
             <div className="flex items-center space-x-2">
                 <Button
                     variant="outline"
@@ -288,11 +288,11 @@ export default function ParticipantsPage() {
                 >
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
-                
+
                 <span className="text-sm">
                     Page {currentPage} of {totalPages}
                 </span>
-                
+
                 <Button
                     variant="outline"
                     size="icon"
@@ -312,7 +312,7 @@ export default function ParticipantsPage() {
                     <ChevronLast className="h-4 w-4" />
                 </Button>
             </div>
-            
+
             <div className="text-sm text-muted-foreground">
                 Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
             </div>
@@ -481,7 +481,7 @@ export default function ParticipantsPage() {
                                             {isLoading ? (
                                                 <TableSkeleton />
                                             ) : filteredParticipants.length ===
-                                              0 ? (
+                                                0 ? (
                                                 <TableRow>
                                                     <TableCell
                                                         colSpan={5}
@@ -499,7 +499,7 @@ export default function ParticipantsPage() {
                                                             <TableRow
                                                                 className={
                                                                     expandedParticipant ===
-                                                                    participant.id.toString()
+                                                                        participant.id.toString()
                                                                         ? "border-b-0"
                                                                         : ""
                                                                 }
@@ -515,7 +515,7 @@ export default function ParticipantsPage() {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    {participant.events.map(e=>e.eventName).join(", ")}
+                                                                    {participant.events.map(e => e.eventName).join(", ")}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
@@ -558,7 +558,7 @@ export default function ParticipantsPage() {
                                                                                     className="cursor-pointer"
                                                                                 >
                                                                                     {expandedParticipant ===
-                                                                                    participant.id.toString() ? (
+                                                                                        participant.id.toString() ? (
                                                                                         <ChevronDown className="h-4 w-4" />
                                                                                     ) : (
                                                                                         <ChevronRight className="h-4 w-4" />
@@ -581,7 +581,7 @@ export default function ParticipantsPage() {
                                                                         0
                                                                 ) &&
                                                                 expandedParticipant ===
-                                                                    participant.id.toString() && (
+                                                                participant.id.toString() && (
                                                                     <TableRow className="bg-muted/50">
                                                                         <TableCell
                                                                             colSpan={
@@ -674,7 +674,7 @@ export default function ParticipantsPage() {
                                         </TableBody>
                                     </Table>
                                 </div>
-                                
+
                                 {!isLoading && <PaginationControls />}
                             </div>
                         </TabsContent>
