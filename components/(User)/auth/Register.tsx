@@ -398,6 +398,7 @@ const Register = () => {
     const colleges: string[] = [
         "A J Institute of Engineering and Technology, Mangalore",
         "Alva's Ayurveda Medical College, Moodbidri",
+        "Srinivas institute of technology, valachill",
         "Alva's Homoeopathic Medical College, Moodbidri",
         "Alva's Institute of Engineering Technology, Moodbidri",
         "Alvas College of Nursing, Moodbidri",
