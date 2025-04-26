@@ -162,8 +162,7 @@ const EventDescription = ({
 
     const hasCoordinators = studentCoordinators.length > 0 || facultyCoordinators.length > 0;
     const hasRules = Array.isArray(eventData.rules) && eventData.rules.length > 0;
-
-    // Rupees Symbol Unicode : 
+ 
     return (
         <div className="min-h-screen p-4 md:p-8 text-white">
             <div className="md:max-w-6xl max-w-7xl mx-auto mt-8 md:mt-12">

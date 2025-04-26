@@ -31,15 +31,12 @@ const LandingPage = () => {
                     scrollContainer.scrollWidth - scrollContainer.clientWidth;
                 const scrollRatio = scrollPosition / maxScroll;
 
-                // Update dot sizes based on scroll position
                 if (scrollRatio < 0.5) {
-                    // First video is more visible
                     dot1.classList.remove("w-1", "h-1", "bg-white/30");
                     dot1.classList.add("w-2", "h-2", "bg-white/60");
                     dot2.classList.remove("w-2", "h-2", "bg-white/60");
                     dot2.classList.add("w-1", "h-1", "bg-white/30");
                 } else {
-                    // Second video is more visible
                     dot2.classList.remove("w-1", "h-1", "bg-white/30");
                     dot2.classList.add("w-2", "h-2", "bg-white/60");
                     dot1.classList.remove("w-2", "h-2", "bg-white/60");
@@ -207,8 +204,7 @@ const LandingPage = () => {
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
                         </div>
-
-                        {/* Horizontal scroll hint */}
+                        
                         <div className="absolute bottom-4 left-1/2 flex items-center gap-3">
                             <div
                                 className="w-2 h-2 bg-white/60 rounded-full transition-all duration-300"
