@@ -83,7 +83,7 @@ export default function AboutPage() {
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="w-full md:w-1/2">
                 <p className={`text-base md:text-lg mb-6 ${montserrat.className}`}>
-                  Aakar 2024 is a state-level techno-cultural fest that brings together innovation, creativity, and entertainment under one roof. The event aims to push the boundaries of technology and culture, providing a platform for students, professionals, and enthusiasts to showcase their skills and talent. With an exciting mix of technical competitions, cultural performances and interactive sessions.
+                  Aakar is a state-level techno-cultural fest that brings together innovation, creativity, and entertainment under one roof. The event aims to push the boundaries of technology and culture, providing a platform for students, professionals, and enthusiasts to showcase their skills and talent. With an exciting mix of technical competitions, cultural performances and interactive sessions.
                 </p>
               </div>
               <div className="w-full md:w-1/2">
