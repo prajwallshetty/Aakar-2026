@@ -4,8 +4,8 @@ import { Montserrat } from 'next/font/google';
 import Link from 'next/link';
 
 const montserrat = Montserrat({
-  weight: '600',
-  subsets: ['latin'],
+    weight: '600',
+    subsets: ['latin'],
 });
 
 const ContactPage = () => {

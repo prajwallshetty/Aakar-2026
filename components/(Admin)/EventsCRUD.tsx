@@ -975,45 +975,45 @@ const EventsCRUD = () => {
                                     <div className="space-y-3">
                                         {formData.studentCoordinators.length >
                                             0 && (
-                                            <div className="space-y-2">
-                                                {formData.studentCoordinators.map(
-                                                    (coordinator, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <div className="flex-1 rounded-md border p-3 text-sm">
-                                                                <span className="font-medium">
-                                                                    {
-                                                                        coordinator.name
-                                                                    }
-                                                                </span>
-                                                                <span className="text-muted-foreground ml-2">
-                                                                    (
-                                                                    {
-                                                                        coordinator.phone
-                                                                    }
-                                                                    )
-                                                                </span>
-                                                            </div>
-                                                            <Button
-                                                                type="button"
-                                                                variant="destructive"
-                                                                className="cursor-pointer"
-                                                                size="sm"
-                                                                onClick={() =>
-                                                                    handleRemoveStudentCoordinator(
-                                                                        index
-                                                                    )
-                                                                }
+                                                <div className="space-y-2">
+                                                    {formData.studentCoordinators.map(
+                                                        (coordinator, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="flex items-center gap-2"
                                                             >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
+                                                                <div className="flex-1 rounded-md border p-3 text-sm">
+                                                                    <span className="font-medium">
+                                                                        {
+                                                                            coordinator.name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="text-muted-foreground ml-2">
+                                                                        (
+                                                                        {
+                                                                            coordinator.phone
+                                                                        }
+                                                                        )
+                                                                    </span>
+                                                                </div>
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="destructive"
+                                                                    className="cursor-pointer"
+                                                                    size="sm"
+                                                                    onClick={() =>
+                                                                        handleRemoveStudentCoordinator(
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            )}
                                         <div className="flex gap-2">
                                             <Input
                                                 placeholder="Name"
@@ -1058,45 +1058,45 @@ const EventsCRUD = () => {
                                     <div className="space-y-3">
                                         {formData.facultyCoordinators.length >
                                             0 && (
-                                            <div className="space-y-2">
-                                                {formData.facultyCoordinators.map(
-                                                    (coordinator, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <div className="flex-1 rounded-md border p-3 text-sm">
-                                                                <span className="font-medium">
-                                                                    {
-                                                                        coordinator.name
-                                                                    }
-                                                                </span>
-                                                                <span className="text-muted-foreground ml-2">
-                                                                    (
-                                                                    {
-                                                                        coordinator.phone
-                                                                    }
-                                                                    )
-                                                                </span>
-                                                            </div>
-                                                            <Button
-                                                                type="button"
-                                                                variant="destructive"
-                                                                className="cursor-pointer"
-                                                                size="sm"
-                                                                onClick={() =>
-                                                                    handleRemoveFacultyCoordinator(
-                                                                        index
-                                                                    )
-                                                                }
+                                                <div className="space-y-2">
+                                                    {formData.facultyCoordinators.map(
+                                                        (coordinator, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="flex items-center gap-2"
                                                             >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
+                                                                <div className="flex-1 rounded-md border p-3 text-sm">
+                                                                    <span className="font-medium">
+                                                                        {
+                                                                            coordinator.name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="text-muted-foreground ml-2">
+                                                                        (
+                                                                        {
+                                                                            coordinator.phone
+                                                                        }
+                                                                        )
+                                                                    </span>
+                                                                </div>
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="destructive"
+                                                                    className="cursor-pointer"
+                                                                    size="sm"
+                                                                    onClick={() =>
+                                                                        handleRemoveFacultyCoordinator(
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            )}
                                         <div className="flex gap-2">
                                             <Input
                                                 placeholder="Name"

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import { FiChevronDown } from "react-icons/fi";
-import { HiDownload  } from "react-icons/hi";
+import { HiDownload } from "react-icons/hi";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FaPlay } from "react-icons/fa";
@@ -131,7 +131,7 @@ const LandingPage = () => {
                                 className="flex items-center px-6 py-3 text-white bg-transparent hover:bg-transparent cursor-pointer transition duration-300 group"
                             >
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
-                                    <HiDownload  className="text-lg" />
+                                    <HiDownload className="text-lg" />
                                 </div>
                                 <span className="text-white bg-transparent font-semibold transition-colors duration-300 group-hover:text-white/80">
                                     Download Brochure
@@ -204,7 +204,7 @@ const LandingPage = () => {
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
                         </div>
-                        
+
                         <div className="absolute bottom-4 left-1/2 flex items-center gap-3">
                             <div
                                 className="w-2 h-2 bg-white/60 rounded-full transition-all duration-300"
@@ -272,7 +272,7 @@ const LandingPage = () => {
                                 className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-4 py-2 text-white hover:text-black transition duration-300"
                             >
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
-                                    <HiDownload  className="text-sm" />
+                                    <HiDownload className="text-sm" />
                                 </div>
                                 <span className="text-white text-sm font-semibold transition-colors duration-300 group-hover:text-white/80">
                                     Download Brochure

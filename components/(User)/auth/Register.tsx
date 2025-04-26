@@ -19,7 +19,7 @@ import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 import { Montserrat } from "next/font/google";
 
-const montserrat = Montserrat({  
+const montserrat = Montserrat({
     subsets: ["latin"],
     variable: "--font-montserrat",
 });
@@ -118,8 +118,8 @@ const Register = () => {
                 id === "year"
                     ? parseInt(value)
                     : id === "usn"
-                    ? value.toUpperCase()
-                    : value,
+                        ? value.toUpperCase()
+                        : value,
         }));
 
         if (formErrors[id]) {
@@ -148,9 +148,9 @@ const Register = () => {
                 !newGroupData[event.id]
             ) {
                 newGroupData[event.id] = {
-                    participantCount: eventObj.minMembers-1,
+                    participantCount: eventObj.minMembers - 1,
                     members: Array.from(
-                        { length: eventObj.minMembers-1 },
+                        { length: eventObj.minMembers - 1 },
                         () => ({
                             name: "",
                             usn: "",
@@ -248,10 +248,10 @@ const Register = () => {
         const amount =
             selectedEvents.length > 0
                 ? events
-                      .filter((event) =>
-                          selectedEvents.find((e) => e.id === event.id)
-                      )
-                      .reduce((sum, event) => sum + (event.fee || 0), 0)
+                    .filter((event) =>
+                        selectedEvents.find((e) => e.id === event.id)
+                    )
+                    .reduce((sum, event) => sum + (event.fee || 0), 0)
                 : 0;
 
         setTotalAmount(amount);
@@ -694,11 +694,10 @@ const Register = () => {
                                         onChange={handleChange}
                                         placeholder="Enter your name"
                                         required
-                                        className={`border ${
-                                            formErrors.name
+                                        className={`border ${formErrors.name
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.name && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -721,11 +720,10 @@ const Register = () => {
                                         onChange={handleChange}
                                         placeholder="Enter your email"
                                         required
-                                        className={`border ${
-                                            formErrors.email
+                                        className={`border ${formErrors.email
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.email && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -748,11 +746,10 @@ const Register = () => {
                                         onChange={handleChange}
                                         placeholder="Enter your phone number"
                                         required
-                                        className={`border ${
-                                            formErrors.phone
+                                        className={`border ${formErrors.phone
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.phone && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -775,11 +772,10 @@ const Register = () => {
                                         onChange={handleChange}
                                         placeholder="Enter your USN"
                                         required
-                                        className={`border ${
-                                            formErrors.usn
+                                        className={`border ${formErrors.usn
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.usn && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -803,11 +799,10 @@ const Register = () => {
                                         onChange={handleChange}
                                         placeholder="Search or enter your college"
                                         required
-                                        className={`border ${
-                                            formErrors.college
+                                        className={`border ${formErrors.college
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.college && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -843,11 +838,10 @@ const Register = () => {
                                         placeholder="Enter your year"
                                         onChange={handleChange}
                                         required
-                                        className={`border ${
-                                            formErrors.year
+                                        className={`border ${formErrors.year
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.year && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -870,11 +864,10 @@ const Register = () => {
                                         onChange={handleChange}
                                         placeholder="Enter your department"
                                         required
-                                        className={`border ${
-                                            formErrors.department
+                                        className={`border ${formErrors.department
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.department && (
                                         <p className="text-red-500 text-xs mt-1">
@@ -925,15 +918,15 @@ const Register = () => {
 
                                                             if (
                                                                 groupEventData[
-                                                                    event.id
+                                                                event.id
                                                                 ]
                                                             ) {
                                                                 setGroupEventData(
                                                                     (prev) => {
                                                                         const updated =
-                                                                            {
-                                                                                ...prev,
-                                                                            };
+                                                                        {
+                                                                            ...prev,
+                                                                        };
                                                                         delete updated[
                                                                             event
                                                                                 .id
@@ -1000,11 +993,10 @@ const Register = () => {
                                     value={selectedEvents}
                                     onChange={handleEventSelection}
                                     placeholder="Select event(s)..."
-                                    className={`${montserrat.className} ${
-                                        formErrors.events
+                                    className={`${montserrat.className} ${formErrors.events
                                             ? "border-red-500"
                                             : ""
-                                    } w-full`}
+                                        } w-full`}
                                     classNamePrefix="select"
                                 />
                                 {formErrors.events && (
@@ -1026,13 +1018,13 @@ const Register = () => {
                                         event.id
                                     ] || {
                                         participantCount:
-                                        eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
-                                        1,
+                                            eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 :
+                                                1,
                                         members: Array.from(
                                             {
                                                 length:
-                                                eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
-                                                1,
+                                                    eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 :
+                                                        1,
                                             },
                                             () => ({
                                                 name: "",
@@ -1062,12 +1054,12 @@ const Register = () => {
                                                     type="number"
                                                     id={`participant-count-${event.id}`}
                                                     min={
-                                                        eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
-                                                        1
+                                                        eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 :
+                                                            1
                                                     }
                                                     max={
-                                                        eventDetail?.maxMembers ? eventDetail.maxMembers-1 :
-                                                        10
+                                                        eventDetail?.maxMembers ? eventDetail.maxMembers - 1 :
+                                                            10
                                                     }
                                                     step={1}
                                                     value={
@@ -1085,10 +1077,10 @@ const Register = () => {
                                                     className={
                                                         "border border-gray-300 rounded p-2 w-24 focus:outline-none focus:ring-2 focus:ring-green-500 " +
                                                         (eventDetail &&
-                                                        (groupData.participantCount <
-                                                            (eventDetail?.minMembers-1) ||
-                                                            groupData.participantCount >
-                                                                (eventDetail?.maxMembers-1))
+                                                            (groupData.participantCount <
+                                                                (eventDetail?.minMembers - 1) ||
+                                                                groupData.participantCount >
+                                                                (eventDetail?.maxMembers - 1))
                                                             ? "border-red-500 border-2"
                                                             : "")
                                                     }
@@ -1096,9 +1088,9 @@ const Register = () => {
                                                 <div className="text-xs mt-1 text-red">
                                                     {eventDetail &&
                                                         (groupData.participantCount <
-                                                            (eventDetail?.minMembers-1) ||
+                                                            (eventDetail?.minMembers - 1) ||
                                                             groupData.participantCount >
-                                                                (eventDetail?.maxMembers-1)) &&
+                                                            (eventDetail?.maxMembers - 1)) &&
                                                         "Invalid Value!"}
                                                 </div>
                                             </div>
@@ -1115,30 +1107,30 @@ const Register = () => {
                                                                 {index + 1}
                                                             </p>
                                                             {eventDetail && index >=
-                                                                 eventDetail?.minMembers!==undefined ? eventDetail.minMembers-1 :
+                                                                eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 :
                                                                 0 && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        const updatedMembers =
-                                                                            [
-                                                                                ...(groupData?.members ||
-                                                                                    []),
-                                                                            ];
-                                                                        updatedMembers.splice(
-                                                                            index,
-                                                                            1
-                                                                        );
-                                                                        setGroupEventData(
-                                                                            (
-                                                                                prev
-                                                                            ) => ({
-                                                                                ...prev,
-                                                                                [event.id]:
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const updatedMembers =
+                                                                                [
+                                                                                    ...(groupData?.members ||
+                                                                                        []),
+                                                                                ];
+                                                                            updatedMembers.splice(
+                                                                                index,
+                                                                                1
+                                                                            );
+                                                                            setGroupEventData(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    [event.id]:
                                                                                     {
                                                                                         ...prev[
-                                                                                            event
-                                                                                                .id
+                                                                                        event
+                                                                                            .id
                                                                                         ],
                                                                                         participantCount:
                                                                                             prev[
@@ -1150,14 +1142,14 @@ const Register = () => {
                                                                                         members:
                                                                                             updatedMembers,
                                                                                     },
-                                                                            })
-                                                                        );
-                                                                    }}
-                                                                    className="text-red-500 cursor-pointer text-sm hover:text-red-700"
-                                                                >
-                                                                    Remove
-                                                                </button>
-                                                            )}
+                                                                                })
+                                                                            );
+                                                                        }}
+                                                                        className="text-red-500 cursor-pointer text-sm hover:text-red-700"
+                                                                    >
+                                                                        Remove
+                                                                    </button>
+                                                                )}
                                                         </div>
 
                                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1185,25 +1177,24 @@ const Register = () => {
                                                                     }
                                                                     placeholder="Member Name"
                                                                     required
-                                                                    className={`border ${
-                                                                        formErrors[
+                                                                    className={`border ${formErrors[
                                                                             `group_${event.id}_member_${index}_name`
                                                                         ]
                                                                             ? "border-red-500"
                                                                             : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
                                                                     `group_${event.id}_member_${index}_name`
                                                                 ] && (
-                                                                    <p className="text-red-500 text-xs mt-1">
-                                                                        {
-                                                                            formErrors[
+                                                                        <p className="text-red-500 text-xs mt-1">
+                                                                            {
+                                                                                formErrors[
                                                                                 `group_${event.id}_member_${index}_name`
-                                                                            ]
-                                                                        }
-                                                                    </p>
-                                                                )}
+                                                                                ]
+                                                                            }
+                                                                        </p>
+                                                                    )}
                                                             </div>
 
                                                             <div>
@@ -1228,25 +1219,24 @@ const Register = () => {
                                                                     }
                                                                     placeholder="Member USN"
                                                                     required
-                                                                    className={`border ${
-                                                                        formErrors[
+                                                                    className={`border ${formErrors[
                                                                             `group_${event.id}_member_${index}_usn`
                                                                         ]
                                                                             ? "border-red-500"
                                                                             : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
                                                                     `group_${event.id}_member_${index}_usn`
                                                                 ] && (
-                                                                    <p className="text-red-500 text-xs mt-1">
-                                                                        {
-                                                                            formErrors[
+                                                                        <p className="text-red-500 text-xs mt-1">
+                                                                            {
+                                                                                formErrors[
                                                                                 `group_${event.id}_member_${index}_usn`
-                                                                            ]
-                                                                        }
-                                                                    </p>
-                                                                )}
+                                                                                ]
+                                                                            }
+                                                                        </p>
+                                                                    )}
                                                             </div>
 
                                                             <div>
@@ -1271,25 +1261,24 @@ const Register = () => {
                                                                     }
                                                                     placeholder="Member Email"
                                                                     required
-                                                                    className={`border ${
-                                                                        formErrors[
+                                                                    className={`border ${formErrors[
                                                                             `group_${event.id}_member_${index}_email`
                                                                         ]
                                                                             ? "border-red-500"
                                                                             : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
                                                                     `group_${event.id}_member_${index}_email`
                                                                 ] && (
-                                                                    <p className="text-red-500 text-xs mt-1">
-                                                                        {
-                                                                            formErrors[
+                                                                        <p className="text-red-500 text-xs mt-1">
+                                                                            {
+                                                                                formErrors[
                                                                                 `group_${event.id}_member_${index}_email`
-                                                                            ]
-                                                                        }
-                                                                    </p>
-                                                                )}
+                                                                                ]
+                                                                            }
+                                                                        </p>
+                                                                    )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1370,11 +1359,10 @@ const Register = () => {
                                             value={formData.transactionId}
                                             onChange={handleChange}
                                             placeholder="Enter transaction ID"
-                                            className={`border ${
-                                                formErrors.transactionId
+                                            className={`border ${formErrors.transactionId
                                                     ? "border-red-500"
                                                     : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                         />
                                         {formErrors.transactionId && (
                                             <p className="text-red-500 text-xs mt-1">
@@ -1395,11 +1383,10 @@ const Register = () => {
                                             id="paymentScreenshot"
                                             accept="image/*"
                                             onChange={handleFileUpload}
-                                            className={`border ${
-                                                formErrors.paymentScreenshot
+                                            className={`border ${formErrors.paymentScreenshot
                                                     ? "border-red-500"
                                                     : "border-gray-300"
-                                            } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                                } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                         />
                                         {formErrors.paymentScreenshot && (
                                             <p className="text-red-500 text-xs mt-1">
@@ -1514,7 +1501,7 @@ const Register = () => {
                                                             {event.eventType ===
                                                                 "Team" &&
                                                                 groupEventData[
-                                                                    event.id
+                                                                event.id
                                                                 ] && (
                                                                     <ul className="ml-4 mt-1 text-xs text-gray-600">
                                                                         {groupEventData[

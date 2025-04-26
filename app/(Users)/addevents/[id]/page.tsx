@@ -156,10 +156,10 @@ export default function AddAdditionalEvents({
         const amount =
             selectedEvents.length > 0
                 ? events
-                      .filter((event) =>
-                          selectedEvents.find((e) => e.id === event.id)
-                      )
-                      .reduce((sum, event) => sum + (event.fee || 0), 0)
+                    .filter((event) =>
+                        selectedEvents.find((e) => e.id === event.id)
+                    )
+                    .reduce((sum, event) => sum + (event.fee || 0), 0)
                 : 0;
 
         setTotalAmount(amount);
@@ -407,15 +407,15 @@ export default function AddAdditionalEvents({
 
                                                         if (
                                                             groupEventData?.[
-                                                                selectedEvent.id
+                                                            selectedEvent.id
                                                             ]
                                                         ) {
                                                             setGroupEventData(
                                                                 (prev) => {
                                                                     const updated =
-                                                                        {
-                                                                            ...prev,
-                                                                        };
+                                                                    {
+                                                                        ...prev,
+                                                                    };
                                                                     delete updated[
                                                                         selectedEvent
                                                                             .id
@@ -470,9 +470,8 @@ export default function AddAdditionalEvents({
                                 value={selectedEvents}
                                 onChange={handleEventSelection}
                                 placeholder="Select additional event(s)..."
-                                className={`${
-                                    formErrors.events ? "border-red-500" : ""
-                                } w-full`}
+                                className={`${formErrors.events ? "border-red-500" : ""
+                                    } w-full`}
                                 classNamePrefix="select"
                             />
                             {formErrors.events && (
@@ -567,21 +566,21 @@ export default function AddAdditionalEvents({
                                                                             ) => ({
                                                                                 ...prev,
                                                                                 [event.id]:
-                                                                                    {
-                                                                                        ...prev?.[
+                                                                                {
+                                                                                    ...prev?.[
+                                                                                    event
+                                                                                        .id
+                                                                                    ],
+                                                                                    participantCount:
+                                                                                        prev![
                                                                                             event
                                                                                                 .id
-                                                                                        ],
-                                                                                        participantCount:
-                                                                                            prev![
-                                                                                                event
-                                                                                                    .id
-                                                                                            ]
-                                                                                                .participantCount -
-                                                                                            1,
-                                                                                        members:
-                                                                                            updatedMembers,
-                                                                                    },
+                                                                                        ]
+                                                                                            .participantCount -
+                                                                                        1,
+                                                                                    members:
+                                                                                        updatedMembers,
+                                                                                },
                                                                             })
                                                                         );
                                                                     }}
@@ -617,25 +616,24 @@ export default function AddAdditionalEvents({
                                                                     }
                                                                     placeholder="Member Name"
                                                                     required
-                                                                    className={`border ${
-                                                                        formErrors[
+                                                                    className={`border ${formErrors[
                                                                             `group_${event.id}_member_${index}_name`
                                                                         ]
                                                                             ? "border-red-500"
                                                                             : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
                                                                     `group_${event.id}_member_${index}_name`
                                                                 ] && (
-                                                                    <p className="text-red-500 text-xs mt-1">
-                                                                        {
-                                                                            formErrors[
+                                                                        <p className="text-red-500 text-xs mt-1">
+                                                                            {
+                                                                                formErrors[
                                                                                 `group_${event.id}_member_${index}_name`
-                                                                            ]
-                                                                        }
-                                                                    </p>
-                                                                )}
+                                                                                ]
+                                                                            }
+                                                                        </p>
+                                                                    )}
                                                             </div>
 
                                                             <div>
@@ -660,25 +658,24 @@ export default function AddAdditionalEvents({
                                                                     }
                                                                     placeholder="Member USN"
                                                                     required
-                                                                    className={`border ${
-                                                                        formErrors[
+                                                                    className={`border ${formErrors[
                                                                             `group_${event.id}_member_${index}_usn`
                                                                         ]
                                                                             ? "border-red-500"
                                                                             : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
                                                                     `group_${event.id}_member_${index}_usn`
                                                                 ] && (
-                                                                    <p className="text-red-500 text-xs mt-1">
-                                                                        {
-                                                                            formErrors[
+                                                                        <p className="text-red-500 text-xs mt-1">
+                                                                            {
+                                                                                formErrors[
                                                                                 `group_${event.id}_member_${index}_usn`
-                                                                            ]
-                                                                        }
-                                                                    </p>
-                                                                )}
+                                                                                ]
+                                                                            }
+                                                                        </p>
+                                                                    )}
                                                             </div>
 
                                                             <div>
@@ -703,25 +700,24 @@ export default function AddAdditionalEvents({
                                                                     }
                                                                     placeholder="Member Email"
                                                                     required
-                                                                    className={`border ${
-                                                                        formErrors[
+                                                                    className={`border ${formErrors[
                                                                             `group_${event.id}_member_${index}_email`
                                                                         ]
                                                                             ? "border-red-500"
                                                                             : "border-gray-300"
-                                                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                                                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
                                                                     `group_${event.id}_member_${index}_email`
                                                                 ] && (
-                                                                    <p className="text-red-500 text-xs mt-1">
-                                                                        {
-                                                                            formErrors[
+                                                                        <p className="text-red-500 text-xs mt-1">
+                                                                            {
+                                                                                formErrors[
                                                                                 `group_${event.id}_member_${index}_email`
-                                                                            ]
-                                                                        }
-                                                                    </p>
-                                                                )}
+                                                                                ]
+                                                                            }
+                                                                        </p>
+                                                                    )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -788,11 +784,10 @@ export default function AddAdditionalEvents({
                                         setTransactionId(e.target.value)
                                     }
                                     placeholder="Enter transaction ID"
-                                    className={`border ${
-                                        formErrors.transactionId
+                                    className={`border ${formErrors.transactionId
                                             ? "border-red-500"
                                             : "border-gray-300"
-                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                 />
                                 {formErrors.transactionId && (
                                     <p className="text-red-500 text-xs mt-1">
@@ -815,11 +810,10 @@ export default function AddAdditionalEvents({
                                     onChange={(e) =>
                                         setPaymentScreenshot(e.target.files![0])
                                     }
-                                    className={`border ${
-                                        formErrors.paymentScreenshot
+                                    className={`border ${formErrors.paymentScreenshot
                                             ? "border-red-500"
                                             : "border-gray-300"
-                                    } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
+                                        } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                 />
                                 {formErrors.paymentScreenshot && (
                                     <p className="text-red-500 text-xs mt-1">
@@ -843,11 +837,10 @@ export default function AddAdditionalEvents({
                             disabled={
                                 isSubmitting || selectedEvents.length === 0
                             }
-                            className={`px-5 py-2 bg-pink-600 cursor-pointer text-white rounded-md ${
-                                isSubmitting || selectedEvents.length === 0
+                            className={`px-5 py-2 bg-pink-600 cursor-pointer text-white rounded-md ${isSubmitting || selectedEvents.length === 0
                                     ? "opacity-50 cursor-not-allowed"
                                     : "hover:bg-pink-700"
-                            }`}
+                                }`}
                         >
                             {isSubmitting ? (
                                 <span className="flex items-center">

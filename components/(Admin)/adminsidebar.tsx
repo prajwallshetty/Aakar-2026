@@ -85,7 +85,7 @@ const AdminSidebar = () => {
                             </div>
                         )}
 
-                        <Button className="flex items-center bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer" onClick={async()=>await signOut()}>
+                        <Button className="flex items-center bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer" onClick={async () => await signOut()}>
                             <LogOut size={18} />
                             {isOpen && <span className="ml-2">Logout</span>}
                         </Button>
