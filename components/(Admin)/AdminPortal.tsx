@@ -287,7 +287,7 @@ const AdminPortal = () => {
       <Tabs defaultValue="admins" className="w-full">
         <TabsContent value="admins" className="mt-6">
           <Card>
-            <CardHeader className="flex flex-row justify-between items-center">
+            <CardHeader className="flex flex-col md:flex-row md:justify-between items-center">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <User size={18} />

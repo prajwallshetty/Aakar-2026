@@ -162,7 +162,7 @@ export function EventStats({ participants }: EventStatsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-center">
         <h3 className="text-lg font-medium">Event Registration Statistics</h3>
         <Button onClick={handleDownloadEventData} className="cursor-pointer">
           <Download className="mr-2 h-4 w-4" />
