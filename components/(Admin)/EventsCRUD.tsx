@@ -436,7 +436,7 @@ const EventsCRUD = () => {
 
                 <Card className="shadow-sm">
                     <CardHeader className="border-b">
-                        <div className="flex items-center justify-between">
+                        <div className="flex md:flex-row flex-col items-center justify-between">
                             <div>
                                 <CardTitle className="text-2xl">
                                     All Events

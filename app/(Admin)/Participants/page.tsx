@@ -248,7 +248,7 @@ export default function ParticipantsPage() {
     );
 
     const PaginationControls = () => (
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex  flex-col md:flex-row items-center justify-between mt-4">
             <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
                     Items per page:
@@ -331,7 +331,7 @@ export default function ParticipantsPage() {
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="participants">
-                        <TabsList className="mb-4">
+                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4 flex gap-4">
                             <TabsTrigger
                                 value="participants"
                                 className="cursor-pointer"

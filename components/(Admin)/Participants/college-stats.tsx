@@ -152,7 +152,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-center">
         <h3 className="text-lg font-medium">College Registration Statistics</h3>
         <Button onClick={handleDownloadCollegeData} className="cursor-pointer">
           <Download className="mr-2 h-4 w-4" />
