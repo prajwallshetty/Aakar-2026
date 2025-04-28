@@ -69,12 +69,17 @@ export default function ParticipantsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+    const sortParticipantsByNewest = (participants:any) => {
+        return [...participants].sort((a, b) => b.id - a.id);
+    };
+
     const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
         try {
             setIsLoading(true);
             const index = page - 1;
-            if (allParticipants.length) {
-                const data = allParticipants.slice(page * pageSize - pageSize, page * pageSize);
+            const sortedParticipants = sortParticipantsByNewest(allParticipants);
+            if (sortedParticipants.length) {
+                const data = sortedParticipants.slice(page * pageSize - pageSize, page * pageSize);
                 setParticipants(data);
                 setFilteredParticipants(data);
                 setIsLoading(false);
