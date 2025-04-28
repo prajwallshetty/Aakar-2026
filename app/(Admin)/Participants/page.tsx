@@ -69,65 +69,60 @@ export default function ParticipantsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const sortParticipantsByNewest = (participants:any) => {
-        return [...participants].sort((a, b) => b.id - a.id);
-    };
+    const sortParticipantsByNewest = (participants: any) => {
+        return [...participants].sort((a, b) => b.id - a.id)
+    }
 
     const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
         try {
-            setIsLoading(true);
-            const index = page - 1;
-            const sortedParticipants = sortParticipantsByNewest(allParticipants);
+            setIsLoading(true)
+            const index = page - 1
+            const sortedParticipants = sortParticipantsByNewest(allParticipants)
             if (sortedParticipants.length) {
-                const data = sortedParticipants.slice(page * pageSize - pageSize, page * pageSize);
-                setParticipants(data);
-                setFilteredParticipants(data);
-                setIsLoading(false);
-                return;
+                const data = sortedParticipants.slice(page * pageSize - pageSize, page * pageSize)
+                setParticipants(data)
+                setFilteredParticipants(data)
+                setIsLoading(false)
+                return
             }
 
-            const response = await getParticipantsWithEvents(index, pageSize);
+            const response = await getParticipantsWithEvents(index, pageSize)
 
             if (response.error) {
-                setError(
-                    typeof response.error === "string"
-                        ? response.error
-                        : "Failed to fetch participants"
-                );
-                return;
+                setError(typeof response.error === "string" ? response.error : "Failed to fetch participants")
+                return
             }
 
             if (response.data) {
-                setParticipants(response.data);
-                setFilteredParticipants(response.data);
+                const sortedData = sortParticipantsByNewest(response.data)
+                setParticipants(sortedData)
+                setFilteredParticipants(sortedData)
 
                 if (isInitialLoad) {
                     try {
-                        const allResponse = await getParticipantsWithEvents();
-                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
+                        const allResponse = await getParticipantsWithEvents()
+                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data)
                         if (allResponse.data) {
-                            setAllParticipants(allSortedParticipants);
-                            setTotalItems(allSortedParticipants.length);
-                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
+                            setAllParticipants(allSortedParticipants)
+                            setTotalItems(allSortedParticipants.length)
+                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize))
 
-                            const uniqueColleges = Array.from(
-                                new Set(allSortedParticipants.map((p) => p.college))
-                            ) as string[];
-                            setColleges(uniqueColleges);
+                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[]
+                            setColleges(uniqueColleges)
                         }
                     } catch (err) {
-                        console.error("Error fetching all participants for stats:", err);
+                        console.error("Error fetching all participants for stats:", err)
                     }
-                    setIsInitialLoad(false);
+                    setIsInitialLoad(false)
                 }
             }
         } catch (err) {
-            setError("An error occurred while fetching participants");
-            console.error(err);
+            setError("An error occurred while fetching participants")
+            console.error(err)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     useEffect(() => {
         fetchParticipants(currentPage);
