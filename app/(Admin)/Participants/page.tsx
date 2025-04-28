@@ -104,13 +104,14 @@ export default function ParticipantsPage() {
                 if (isInitialLoad) {
                     try {
                         const allResponse = await getParticipantsWithEvents();
+                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
                         if (allResponse.data) {
-                            setAllParticipants(allResponse.data);
-                            setTotalItems(allResponse.data.length);
-                            setTotalPages(Math.ceil(allResponse.data.length / pageSize));
+                            setAllParticipants(allSortedParticipants);
+                            setTotalItems(allSortedParticipants.length);
+                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
 
                             const uniqueColleges = Array.from(
-                                new Set(allResponse.data.map((p) => p.college))
+                                new Set(allSortedParticipants.map((p) => p.college))
                             ) as string[];
                             setColleges(uniqueColleges);
                         }
