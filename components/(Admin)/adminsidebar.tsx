@@ -49,7 +49,7 @@ const AdminSidebar = () => {
                             {isOpen && <h1 className="text-xl font-bold">Admin Panel</h1>}
                             <Button
                                 onClick={toggleSidebar}
-                                className="text-gray-300 bg-transparenthover:text-white cursor-pointer"
+                                className="text-gray-300 bg-transparent hover:bg-transparent hover:text-white cursor-pointer"
                             >
                                 {isOpen ? <ChevronLeft size={24} /> : <Menu size={24} />}
                             </Button>
@@ -85,7 +85,7 @@ const AdminSidebar = () => {
                             </div>
                         )}
 
-                        <Button className="flex items-center bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer" onClick={async () => await signOut()}>
+                        <Button className="flex items-center bg-transparent hover:bg-transparent text-red-500 hover:text-red-400 transition-colors text-sm cursor-pointer" onClick={async () => await signOut()}>
                             <LogOut size={18} />
                             {isOpen && <span className="ml-2">Logout</span>}
                         </Button>
