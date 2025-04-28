@@ -54,7 +54,8 @@ model Event {
   facultyCoordinators Json          @default("[]")
   rules               String[]
   imageUrl            String
-  Participants        Participant[]
+  Participants        Participant?  @relation(fields: [participantId], references: [id])
+  participantId       Int?
 }
 
 model Admin {
