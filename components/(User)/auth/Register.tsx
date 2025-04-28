@@ -457,6 +457,7 @@ const Register = () => {
         "Tejaswini Group of Institutions",
         "Mangala Group of Institutions",
         "PACE Mangalore",
+        "Yenepoya School Of Engineering & Technology",
         "Bearys Institute of Technology",
         "Kanachur Institute of Medical Science",
         "NITTE Architecture",
