@@ -405,6 +405,16 @@ const Register = () => {
         "Aloysius MBA, Mangalore",
         "Canara Engineering College, Mangalore",
         "Carmel Degree College, Modankap, BC Road",
+        "Trisha Vidya College, Katapadi",
+        "St. Mary's College, Shirva",
+        "Shri Madhwa Vadiraja Institute of Technology and Management, Udupi",
+        "Poornaprajna College, Udupi",
+        "Mahathma Gandhi Memorial (MGM) College, Udupi",
+        "Vaikunta Baliga College of Law, Udupi",
+        "Upendra Pai Memorial College, Udupi",
+        "Udupi Group of Institutions, Manipal",
+        "Kasturba Medical College (KMC), Manipal",
+        "Manipal Institute of Technology, Manipal",
         "College of Fisheries, Mangalore",
         "Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi",
         "Govt. First Grade College, Kaup",
@@ -698,8 +708,8 @@ const Register = () => {
                                         placeholder="Enter your name"
                                         required
                                         className={`border ${formErrors.name
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.name && (
@@ -724,8 +734,8 @@ const Register = () => {
                                         placeholder="Enter your email"
                                         required
                                         className={`border ${formErrors.email
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.email && (
@@ -750,8 +760,8 @@ const Register = () => {
                                         placeholder="Enter your phone number"
                                         required
                                         className={`border ${formErrors.phone
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.phone && (
@@ -776,8 +786,8 @@ const Register = () => {
                                         placeholder="Enter your USN"
                                         required
                                         className={`border ${formErrors.usn
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.usn && (
@@ -803,8 +813,8 @@ const Register = () => {
                                         placeholder="Search or enter your college"
                                         required
                                         className={`border ${formErrors.college
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.college && (
@@ -842,8 +852,8 @@ const Register = () => {
                                         onChange={handleChange}
                                         required
                                         className={`border ${formErrors.year
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.year && (
@@ -868,8 +878,8 @@ const Register = () => {
                                         placeholder="Enter your department"
                                         required
                                         className={`border ${formErrors.department
-                                                ? "border-red-500"
-                                                : "border-gray-300"
+                                            ? "border-red-500"
+                                            : "border-gray-300"
                                             } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                     />
                                     {formErrors.department && (
@@ -997,8 +1007,8 @@ const Register = () => {
                                     onChange={handleEventSelection}
                                     placeholder="Select event(s)..."
                                     className={`${montserrat.className} ${formErrors.events
-                                            ? "border-red-500"
-                                            : ""
+                                        ? "border-red-500"
+                                        : ""
                                         } w-full`}
                                     classNamePrefix="select"
                                 />
@@ -1181,10 +1191,10 @@ const Register = () => {
                                                                     placeholder="Member Name"
                                                                     required
                                                                     className={`border ${formErrors[
-                                                                            `group_${event.id}_member_${index}_name`
-                                                                        ]
-                                                                            ? "border-red-500"
-                                                                            : "border-gray-300"
+                                                                        `group_${event.id}_member_${index}_name`
+                                                                    ]
+                                                                        ? "border-red-500"
+                                                                        : "border-gray-300"
                                                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
@@ -1223,10 +1233,10 @@ const Register = () => {
                                                                     placeholder="Member USN"
                                                                     required
                                                                     className={`border ${formErrors[
-                                                                            `group_${event.id}_member_${index}_usn`
-                                                                        ]
-                                                                            ? "border-red-500"
-                                                                            : "border-gray-300"
+                                                                        `group_${event.id}_member_${index}_usn`
+                                                                    ]
+                                                                        ? "border-red-500"
+                                                                        : "border-gray-300"
                                                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
@@ -1265,10 +1275,10 @@ const Register = () => {
                                                                     placeholder="Member Email"
                                                                     required
                                                                     className={`border ${formErrors[
-                                                                            `group_${event.id}_member_${index}_email`
-                                                                        ]
-                                                                            ? "border-red-500"
-                                                                            : "border-gray-300"
+                                                                        `group_${event.id}_member_${index}_email`
+                                                                    ]
+                                                                        ? "border-red-500"
+                                                                        : "border-gray-300"
                                                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
@@ -1363,8 +1373,8 @@ const Register = () => {
                                             onChange={handleChange}
                                             placeholder="Enter transaction ID"
                                             className={`border ${formErrors.transactionId
-                                                    ? "border-red-500"
-                                                    : "border-gray-300"
+                                                ? "border-red-500"
+                                                : "border-gray-300"
                                                 } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                         />
                                         {formErrors.transactionId && (
@@ -1387,8 +1397,8 @@ const Register = () => {
                                             accept="image/*"
                                             onChange={handleFileUpload}
                                             className={`border ${formErrors.paymentScreenshot
-                                                    ? "border-red-500"
-                                                    : "border-gray-300"
+                                                ? "border-red-500"
+                                                : "border-gray-300"
                                                 } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                         />
                                         {formErrors.paymentScreenshot && (
