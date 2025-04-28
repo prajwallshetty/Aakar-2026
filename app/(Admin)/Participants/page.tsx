@@ -48,6 +48,9 @@ import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export default function ParticipantsPage() {
     const [participants, setParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
@@ -395,7 +398,7 @@ export default function ParticipantsPage() {
                                                     <SelectItem
                                                         key={college}
                                                         value={college}
-                                                        className="cursor-pointer"
+                                                        className={`cursor-pointer ${montserrat.className}`}
                                                     >
                                                         {college}
                                                     </SelectItem>
