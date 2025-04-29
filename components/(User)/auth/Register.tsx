@@ -406,6 +406,7 @@ const Register = () => {
         "Alva's Homoeopathic Medical College, Moodbidri",
         "Alva's Institute of Engineering Technology, Moodbidri",
         "Alvas College of Nursing, Moodbidri",
+        "The Oxford college of engineering",
         "Aloysius MBA, Mangalore",
         "Canara Engineering College, Mangalore",
         "Carmel Degree College, Modankap, BC Road",

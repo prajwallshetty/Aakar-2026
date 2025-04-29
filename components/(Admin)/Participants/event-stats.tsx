@@ -205,7 +205,7 @@ export function EventStats({ participants }: EventStatsProps) {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {["Technical", "Cultural", "Gaming", "Special"].map((category) => {
+        {["Technical", "Cultural", "Gaming", "Special","ComboPass"].map((category) => {
           const categoryEvents = eventData.filter((event) => event.category.toLowerCase() === category.toLowerCase())
           const totalRegistrations = categoryEvents.reduce((sum, event) => sum + event.count, 0)
 
