@@ -395,7 +395,11 @@ const Register = () => {
         }
     };
 
-    const colleges: string[] = [
+    const sortColleges = (colleges: any) => {
+        return [...colleges].sort((a, b) => a.localeCompare(b));
+    }
+
+    const unsortedcolleges: string[] = [
         "A J Institute of Engineering and Technology, Mangalore",
         "Alva's Ayurveda Medical College, Moodbidri",
         "Srinivas institute of technology, valachill",
@@ -633,6 +637,8 @@ const Register = () => {
         "PSG College of Technology, Coimbatore",
         "Reva University, Bangalore"
     ];
+
+    const colleges = sortColleges(unsortedcolleges);
 
     if (isLoading) {
         return (
