@@ -395,20 +395,24 @@ const Register = () => {
         }
     };
 
-    const colleges: string[] = [
+    const sortColleges = (colleges: any) => {
+        return [...colleges].sort((a, b) => a.localeCompare(b));
+    }
+
+    const unsortedcolleges: string[] = [
         "A J Institute of Engineering and Technology, Mangalore",
         "Alva's Ayurveda Medical College, Moodbidri",
         "Srinivas institute of technology, valachill",
         "Alva's Homoeopathic Medical College, Moodbidri",
         "Alva's Institute of Engineering Technology, Moodbidri",
         "Alvas College of Nursing, Moodbidri",
+        "The Oxford college of engineering",
         "Aloysius MBA, Mangalore",
         "Canara Engineering College, Mangalore",
         "Carmel Degree College, Modankap, BC Road",
         "Trisha Vidya College, Katapadi",
         "St. Mary's College, Shirva",
         "Shri Madhwa Vadiraja Institute of Technology and Management, Udupi",
-        "Poornaprajna College, Udupi",
         "Mahathma Gandhi Memorial (MGM) College, Udupi",
         "Vaikunta Baliga College of Law, Udupi",
         "Upendra Pai Memorial College, Udupi",
@@ -633,6 +637,8 @@ const Register = () => {
         "PSG College of Technology, Coimbatore",
         "Reva University, Bangalore"
     ];
+
+    const colleges = sortColleges(unsortedcolleges);
 
     if (isLoading) {
         return (
@@ -1119,50 +1125,6 @@ const Register = () => {
                                                                 Team Member{" "}
                                                                 {index + 1}
                                                             </p>
-                                                            {eventDetail && index >=
-                                                                eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 :
-                                                                0 && (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const updatedMembers =
-                                                                                [
-                                                                                    ...(groupData?.members ||
-                                                                                        []),
-                                                                                ];
-                                                                            updatedMembers.splice(
-                                                                                index,
-                                                                                1
-                                                                            );
-                                                                            setGroupEventData(
-                                                                                (
-                                                                                    prev
-                                                                                ) => ({
-                                                                                    ...prev,
-                                                                                    [event.id]:
-                                                                                    {
-                                                                                        ...prev[
-                                                                                        event
-                                                                                            .id
-                                                                                        ],
-                                                                                        participantCount:
-                                                                                            prev[
-                                                                                                event
-                                                                                                    .id
-                                                                                            ]
-                                                                                                .participantCount -
-                                                                                            1,
-                                                                                        members:
-                                                                                            updatedMembers,
-                                                                                    },
-                                                                                })
-                                                                            );
-                                                                        }}
-                                                                        className="text-red-500 cursor-pointer text-sm hover:text-red-700"
-                                                                    >
-                                                                        Remove
-                                                                    </button>
-                                                                )}
                                                         </div>
 
                                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
