@@ -43,17 +43,17 @@ export function EventStats({ participants }: EventStatsProps) {
     const processEventData = async () => {
       try {
         setIsLoading(true);
-  
+
         const eventCounts: Record<string, { count: number; category: string; participantCount: number }> = {};
         const processedUSNs: Record<string, Set<string>> = {};
 
         for (const participant of participants) {
           const events = await getEventsOfUser(participant.id);
-  
+
           if (events && Array.isArray(events)) {
             for (const event of events) {
               const eventName = event.eventName;
-              
+
               if (!eventCounts[eventName]) {
                 eventCounts[eventName] = {
                   count: 0,
@@ -62,17 +62,17 @@ export function EventStats({ participants }: EventStatsProps) {
                 };
                 processedUSNs[eventName] = new Set<string>();
               }
-              
+
               eventCounts[eventName].count++;
-              
+
               if (!processedUSNs[eventName].has(participant.usn)) {
                 processedUSNs[eventName].add(participant.usn);
                 eventCounts[eventName].participantCount++;
               }
-              
+
               if (participant.groupMembersData && participant.groupMembersData[event.id]) {
                 const groupData = participant.groupMembersData[event.id];
-                
+
                 if (groupData.members && Array.isArray(groupData.members)) {
                   groupData.members.forEach(member => {
                     if (!processedUSNs[eventName].has(member.usn)) {
@@ -85,16 +85,16 @@ export function EventStats({ participants }: EventStatsProps) {
             }
           }
         }
-  
+
         const formattedData = Object.entries(eventCounts).map(([name, data]) => ({
           name,
-          count: data.count,             
+          count: data.count,
           participantCount: data.participantCount,
           category: data.category,
         }));
-  
+
         formattedData.sort((a, b) => b.count - a.count);
-  
+
         setEventData(formattedData);
       } catch (err) {
         console.error("Error processing event data:", err);
@@ -103,7 +103,7 @@ export function EventStats({ participants }: EventStatsProps) {
         setIsLoading(false);
       }
     };
-  
+
     if (participants.length > 0) {
       processEventData();
     }
@@ -120,39 +120,39 @@ export function EventStats({ participants }: EventStatsProps) {
 
   if (isLoading) {
     return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <Skeleton className="h-9 w-64" />
-        <Skeleton className="h-9 w-36" />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Skeleton className="h-28 w-full rounded-lg" />
-        <Skeleton className="h-28 w-full rounded-lg" />
-        <Skeleton className="h-28 w-full rounded-lg" />
-      </div>
-
-      <div className="rounded-lg border p-4">
-        <Skeleton className="h-8 w-48 mb-6" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-      
-      <div className="rounded-lg border">
-        <div className="p-4 border-b">
-          <Skeleton className="h-6 w-36" />
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-9 w-64" />
+          <Skeleton className="h-9 w-36" />
         </div>
-        <div className="p-4">
-          <div className="space-y-3">
-            {Array(5).fill(0).map((_, i) => (
-              <div key={i} className="flex justify-between">
-                <Skeleton className="h-6 w-48" />
-                <Skeleton className="h-6 w-16" />
-              </div>
-            ))}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton className="h-28 w-full rounded-lg" />
+          <Skeleton className="h-28 w-full rounded-lg" />
+          <Skeleton className="h-28 w-full rounded-lg" />
+        </div>
+
+        <div className="rounded-lg border p-4">
+          <Skeleton className="h-8 w-48 mb-6" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+
+        <div className="rounded-lg border">
+          <div className="p-4 border-b">
+            <Skeleton className="h-6 w-36" />
+          </div>
+          <div className="p-4">
+            <div className="space-y-3">
+              {Array(5).fill(0).map((_, i) => (
+                <div key={i} className="flex justify-between">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
     )
   }
 
@@ -162,7 +162,7 @@ export function EventStats({ participants }: EventStatsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-center">
         <h3 className="text-lg font-medium">Event Registration Statistics</h3>
         <Button onClick={handleDownloadEventData} className="cursor-pointer">
           <Download className="mr-2 h-4 w-4" />

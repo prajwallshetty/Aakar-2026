@@ -48,13 +48,16 @@ import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export default function ParticipantsPage() {
-    const [participants, setParticipants] = useState<(ExtendedParticipant & {events: ExtendedEvent[]})[]>([]);
+    const [participants, setParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
     const [filteredParticipants, setFilteredParticipants] = useState<
-        (ExtendedParticipant & {events: ExtendedEvent[]})[]
+        (ExtendedParticipant & { events: ExtendedEvent[] })[]
     >([]);
-    const [allParticipants, setAllParticipants] = useState<(ExtendedParticipant & {events: ExtendedEvent[]})[]>([]);
+    const [allParticipants, setAllParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCollege, setSelectedCollege] = useState<string>("");
@@ -69,59 +72,60 @@ export default function ParticipantsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+    const sortParticipantsByNewest = (participants: any) => {
+        return [...participants].sort((a, b) => b.id - a.id)
+    }
+
     const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
         try {
-            setIsLoading(true);
-            const index = page - 1;
-            if(allParticipants.length){
-                const data = allParticipants.slice(page*pageSize - pageSize, page*pageSize);
-                setParticipants(data);
-                setFilteredParticipants(data);
-                setIsLoading(false);
-                return;
+            setIsLoading(true)
+            const index = page - 1
+            const sortedParticipants = sortParticipantsByNewest(allParticipants)
+            if (sortedParticipants.length) {
+                const data = sortedParticipants.slice(page * pageSize - pageSize, page * pageSize)
+                setParticipants(data)
+                setFilteredParticipants(data)
+                setIsLoading(false)
+                return
             }
 
-            const response = await getParticipantsWithEvents(index, pageSize);
+            const response = await getParticipantsWithEvents(index, pageSize)
 
             if (response.error) {
-                setError(
-                    typeof response.error === "string"
-                        ? response.error
-                        : "Failed to fetch participants"
-                );
-                return;
+                setError(typeof response.error === "string" ? response.error : "Failed to fetch participants")
+                return
             }
 
             if (response.data) {
-                setParticipants(response.data);
-                setFilteredParticipants(response.data);
-                
+                const sortedData = sortParticipantsByNewest(response.data)
+                setParticipants(sortedData)
+                setFilteredParticipants(sortedData)
+
                 if (isInitialLoad) {
                     try {
-                        const allResponse = await getParticipantsWithEvents();
+                        const allResponse = await getParticipantsWithEvents()
+                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data)
                         if (allResponse.data) {
-                            setAllParticipants(allResponse.data);
-                            setTotalItems(allResponse.data.length);
-                            setTotalPages(Math.ceil(allResponse.data.length / pageSize));
+                            setAllParticipants(allSortedParticipants)
+                            setTotalItems(allSortedParticipants.length)
+                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize))
 
-                            const uniqueColleges = Array.from(
-                                new Set(allResponse.data.map((p) => p.college))
-                            ) as string[];
-                            setColleges(uniqueColleges);
+                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[]
+                            setColleges(uniqueColleges)
                         }
                     } catch (err) {
-                        console.error("Error fetching all participants for stats:", err);
+                        console.error("Error fetching all participants for stats:", err)
                     }
-                    setIsInitialLoad(false);
+                    setIsInitialLoad(false)
                 }
             }
         } catch (err) {
-            setError("An error occurred while fetching participants");
-            console.error(err);
+            setError("An error occurred while fetching participants")
+            console.error(err)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     useEffect(() => {
         fetchParticipants(currentPage);
@@ -248,13 +252,13 @@ export default function ParticipantsPage() {
     );
 
     const PaginationControls = () => (
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex  flex-col md:flex-row items-center justify-between mt-4">
             <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
                     Items per page:
                 </span>
-                <Select 
-                    value={itemsPerPage.toString()} 
+                <Select
+                    value={itemsPerPage.toString()}
                     onValueChange={handleItemsPerPageChange}
                 >
                     <SelectTrigger className="h-8 w-[70px] cursor-pointer">
@@ -268,7 +272,7 @@ export default function ParticipantsPage() {
                     </SelectContent>
                 </Select>
             </div>
-            
+
             <div className="flex items-center space-x-2">
                 <Button
                     variant="outline"
@@ -288,11 +292,11 @@ export default function ParticipantsPage() {
                 >
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
-                
+
                 <span className="text-sm">
                     Page {currentPage} of {totalPages}
                 </span>
-                
+
                 <Button
                     variant="outline"
                     size="icon"
@@ -312,7 +316,7 @@ export default function ParticipantsPage() {
                     <ChevronLast className="h-4 w-4" />
                 </Button>
             </div>
-            
+
             <div className="text-sm text-muted-foreground">
                 Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
             </div>
@@ -331,7 +335,7 @@ export default function ParticipantsPage() {
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="participants">
-                        <TabsList className="mb-4">
+                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4 flex gap-4">
                             <TabsTrigger
                                 value="participants"
                                 className="cursor-pointer"
@@ -394,7 +398,7 @@ export default function ParticipantsPage() {
                                                     <SelectItem
                                                         key={college}
                                                         value={college}
-                                                        className="cursor-pointer"
+                                                        className={`cursor-pointer ${montserrat.className}`}
                                                     >
                                                         {college}
                                                     </SelectItem>
@@ -481,7 +485,7 @@ export default function ParticipantsPage() {
                                             {isLoading ? (
                                                 <TableSkeleton />
                                             ) : filteredParticipants.length ===
-                                              0 ? (
+                                                0 ? (
                                                 <TableRow>
                                                     <TableCell
                                                         colSpan={5}
@@ -499,7 +503,7 @@ export default function ParticipantsPage() {
                                                             <TableRow
                                                                 className={
                                                                     expandedParticipant ===
-                                                                    participant.id.toString()
+                                                                        participant.id.toString()
                                                                         ? "border-b-0"
                                                                         : ""
                                                                 }
@@ -515,7 +519,7 @@ export default function ParticipantsPage() {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    {participant.events.map(e=>e.eventName).join(", ")}
+                                                                    {participant.events.map(e => e.eventName).join(", ")}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
@@ -558,7 +562,7 @@ export default function ParticipantsPage() {
                                                                                     className="cursor-pointer"
                                                                                 >
                                                                                     {expandedParticipant ===
-                                                                                    participant.id.toString() ? (
+                                                                                        participant.id.toString() ? (
                                                                                         <ChevronDown className="h-4 w-4" />
                                                                                     ) : (
                                                                                         <ChevronRight className="h-4 w-4" />
@@ -581,7 +585,7 @@ export default function ParticipantsPage() {
                                                                         0
                                                                 ) &&
                                                                 expandedParticipant ===
-                                                                    participant.id.toString() && (
+                                                                participant.id.toString() && (
                                                                     <TableRow className="bg-muted/50">
                                                                         <TableCell
                                                                             colSpan={
@@ -674,7 +678,7 @@ export default function ParticipantsPage() {
                                         </TableBody>
                                     </Table>
                                 </div>
-                                
+
                                 {!isLoading && <PaginationControls />}
                             </div>
                         </TabsContent>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Calendar, Clock, Wallet, Phone } from "lucide-react";
+import { Calendar, Clock, Wallet, Phone, Building } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedEvent } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -163,7 +163,6 @@ const EventDescription = ({
     const hasCoordinators = studentCoordinators.length > 0 || facultyCoordinators.length > 0;
     const hasRules = Array.isArray(eventData.rules) && eventData.rules.length > 0;
 
-    // Rupees Symbol Unicode : 
     return (
         <div className="min-h-screen p-4 md:p-8 text-white">
             <div className="md:max-w-6xl max-w-7xl mx-auto mt-8 md:mt-12">
@@ -188,6 +187,10 @@ const EventDescription = ({
                                 <Clock className="h-7 w-7 text-blue-500" />
                                 <span>{eventData.time || "Revealing Soon!"}</span>
                             </div>
+                            {/* <div className="flex items-center gap-4">
+                                <Building className="h-7 w-7 text-blue-500" />
+                                <span>{eventData.venue || "Revealing Soon!"}</span>
+                            </div> */}
                             <div className="flex items-center gap-4">
                                 <Wallet className="h-7 w-7 text-green-500" />
                                 <span>₹{eventData.fee || "Revealing Soon!"}</span>

@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import { FiChevronDown } from "react-icons/fi";
-import { FaPlay } from "react-icons/fa";
+import { HiDownload } from "react-icons/hi";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { FaPlay } from "react-icons/fa";
 
 const montserrat = Montserrat({
     weight: "600",
@@ -29,15 +31,12 @@ const LandingPage = () => {
                     scrollContainer.scrollWidth - scrollContainer.clientWidth;
                 const scrollRatio = scrollPosition / maxScroll;
 
-                // Update dot sizes based on scroll position
                 if (scrollRatio < 0.5) {
-                    // First video is more visible
                     dot1.classList.remove("w-1", "h-1", "bg-white/30");
                     dot1.classList.add("w-2", "h-2", "bg-white/60");
                     dot2.classList.remove("w-2", "h-2", "bg-white/60");
                     dot2.classList.add("w-1", "h-1", "bg-white/30");
                 } else {
-                    // Second video is more visible
                     dot2.classList.remove("w-1", "h-1", "bg-white/30");
                     dot2.classList.add("w-2", "h-2", "bg-white/60");
                     dot1.classList.remove("w-2", "h-2", "bg-white/60");
@@ -107,7 +106,7 @@ const LandingPage = () => {
                             alt="AAKAR Logo"
                             width={300}
                             height={150}
-                            className="mx-auto"
+                            className="mx-auto h-auto"
                         />
                     </div>
                 </div>
@@ -122,25 +121,22 @@ const LandingPage = () => {
                             }}
                         ></div>
                         <div
-                            className={`absolute bottom-40 z-20 ${montserrat.className} cursor-pointer`}
+                            className={`absolute bottom-36 z-20 ${montserrat.className} cursor-pointer`}
                         >
-                            <Button
+                            <Link
+                                href="/Aakar_2025_brochure.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
                                 className="flex items-center px-6 py-3 text-white bg-transparent hover:bg-transparent cursor-pointer transition duration-300 group"
-                                onClick={() => {
-                                    window.open(
-                                        "https://www.instagram.com/p/DH0aB6pSonD/",
-                                        "_blank"
-                                    );
-                                }}
                             >
                                 <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
-                                    <FaPlay className="text-sm" />
+                                    <HiDownload className="text-lg" />
                                 </div>
-
-                                <span className="text-white bg-transparents font-semibold transition-colors duration-300 group-hover:text-white/80">
-                                    Play Trailer
+                                <span className="text-white bg-transparent font-semibold transition-colors duration-300 group-hover:text-white/80">
+                                    Download Brochure
                                 </span>
-                            </Button>
+                            </Link>
                         </div>
                     </div>
                     <div className="flex justify-center h-[10vh] mt-4 animate-blink text-red-400">
@@ -196,12 +192,12 @@ const LandingPage = () => {
                                     autoPlay
                                     playsInline
                                     preload="none"
-                                    poster="/concert.jpeg"
+                                    poster="/Concert.png"
                                 />
 
                                 <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
                                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition">
-                                        <div className="w-0 h-0 border-t-4 border-t-transparent border-l-6 md:border-l-8 border-l-black border-b-4 border-b-transparent ml-1"></div>
+                                        <FaPlay className="text-sm" />
                                     </div>
                                 </div>
 
@@ -209,7 +205,6 @@ const LandingPage = () => {
                             </div>
                         </div>
 
-                        {/* Horizontal scroll hint */}
                         <div className="absolute bottom-4 left-1/2 flex items-center gap-3">
                             <div
                                 className="w-2 h-2 bg-white/60 rounded-full transition-all duration-300"
@@ -254,7 +249,7 @@ const LandingPage = () => {
                             alt="AAKAR Logo"
                             width={200}
                             height={100}
-                            className="mx-auto"
+                            className="mx-auto h-auto"
                         />
                     </div>
 
@@ -267,22 +262,22 @@ const LandingPage = () => {
                             }}
                         ></div>
                         <div
-                            className={`mt-8 absolute bottom-12 ${montserrat.className}`}
+                            className={`mt-8 absolute bottom-10 ${montserrat.className}`}
                         >
-                            <Button
-                                className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-6 py-3 text-white hover:text-black transition duration-300"
-                                onClick={() => {
-                                    window.open(
-                                        "https://www.instagram.com/p/DH0aB6pSonD/",
-                                        "_blank"
-                                    );
-                                }}
+                            <Link
+                                href="/Aakar_2025_brochure.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                                className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-4 py-2 text-white hover:text-black transition duration-300"
                             >
-                                <div className="mr-3 w-10 h-10 rounded-full border-2 b-white flex items-center justify-center">
-                                    <FaPlay className="text-sm" />
+                                <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
+                                    <HiDownload className="text-sm" />
                                 </div>
-                                Play Trailer
-                            </Button>
+                                <span className="text-white text-sm font-semibold transition-colors duration-300 group-hover:text-white/80">
+                                    Download Brochure
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>

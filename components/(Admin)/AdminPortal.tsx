@@ -38,7 +38,7 @@ const AdminPortal = () => {
     password: '',
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);  
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentId, setCurrentId] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState('');
@@ -87,14 +87,14 @@ const AdminPortal = () => {
   const fetchStats = async () => {
     setLoading(prev => ({ ...prev, stats: true }));
     try {
-        (async()=>{
-          setStats({
-            totalUsers: await getParticipantsCount(),
-            totalEvents: await getTotalEvents()
-          });
-          setLoading(prev => ({ ...prev, stats: false }));
-        })()
-      } catch (error) {
+      (async () => {
+        setStats({
+          totalUsers: await getParticipantsCount(),
+          totalEvents: await getTotalEvents()
+        });
+        setLoading(prev => ({ ...prev, stats: false }));
+      })()
+    } catch (error) {
       console.error("Error fetching stats:", error);
       setLoading(prev => ({ ...prev, stats: false }));
     }
@@ -124,7 +124,7 @@ const AdminPortal = () => {
     try {
       if (isEditing && currentId) {
         const adminData = { ...formData };
-        
+
         if (!adminData.password) {
           const { password, ...rest } = adminData;
           setIsSubmitting(true);
@@ -287,7 +287,7 @@ const AdminPortal = () => {
       <Tabs defaultValue="admins" className="w-full">
         <TabsContent value="admins" className="mt-6">
           <Card>
-            <CardHeader className="flex flex-row justify-between items-center">
+            <CardHeader className="flex flex-col md:flex-row md:justify-between items-center">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <User size={18} />
@@ -388,7 +388,7 @@ const AdminPortal = () => {
                         Cancel
                       </Button>
                       <Button type="submit" className='cursor-pointer'>
-                        {isEditing ?( isSubmitting ? 'Updating...' : 'Save Changes') : isSubmitting ? 'Creating...' : 'Create Admin'}
+                        {isEditing ? (isSubmitting ? 'Updating...' : 'Save Changes') : isSubmitting ? 'Creating...' : 'Create Admin'}
                       </Button>
                     </DialogFooter>
                   </form>
@@ -455,7 +455,7 @@ const AdminPortal = () => {
           </Card>
         </TabsContent>
       </Tabs>
-      
+
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

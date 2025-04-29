@@ -9,7 +9,7 @@ const PaymentSuccessPage = () => {
         🎉 Registration Successful!
       </h1>
       <p className="text-lg md:text-xl text-white mb-6 max-w-xl">
-        You're officially registered for 
+        You're officially registered for
         <span className="inline-block align-middle ml-2">
           <Image
             className="w-[80px] h-auto inline-block"

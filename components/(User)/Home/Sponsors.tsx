@@ -68,7 +68,7 @@ const Sponsors = () => {
                                 <div className="flex flex-col items-center">
                                     <div className="flex items-center justify-center">
                                         <Image
-                                            src={`${sponsor.logo}`||"/ajlogo.png"}
+                                            src={`${sponsor.logo}` || "/ajlogo.png"}
                                             alt={`${sponsor.name} logo`}
                                             width={200}
                                             height={200}

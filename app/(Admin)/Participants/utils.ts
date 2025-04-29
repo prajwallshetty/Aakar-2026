@@ -343,7 +343,7 @@ export async function downloadParticipantDataByEvents(
 
           const teamSummaries = Array.from(teamMap.values()).map(team => {
             const membersList = team.Members.map((m: any, i: number) =>
-              `Member ${i + 1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})`
+              `Member ${i + 1}: ${m.Name} (${m.USN}${m.College !== team["Leader College"] ? `, ${m.College}` : ''})- ${m.Email}`
             ).join("; ")
 
             return {
@@ -489,7 +489,7 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
           Object.entries(participant.groupMembersData).forEach(([eventId, groupData]) => {
             if (groupData?.members?.length > 0) {
               const membersData = groupData.members.map((member, idx) => ({
-                "Member ID": participant.id + "-"+idx + 1,
+                "Member ID": participant.id + "-" + idx + 1,
                 "Event ID": eventId,
                 "Event Name": events?.find(e => e.id.toString() === eventId)?.eventName || `Event ${eventId}`,
                 "Member Name": member.name,
