@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <div className={`${GameOfSquids.className} antialiased`}>
       <Navbar />
-      <div className="relative z-10 font-GameOfSquids min-h-screen">
+      <div className="relative font-GameOfSquids min-h-screen">
         {children}
       </div>
       <Footer />
