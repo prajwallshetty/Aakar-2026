@@ -1293,7 +1293,7 @@ const Register = () => {
                                     {showQRCode ? (
                                         <img
                                             src={
-                                                qrImageUrl || "/placeholder.svg"
+                                                qrImageUrl || "/logo.svg"
                                             }
                                             alt="Payment QR Code"
                                             className="w-64 h-64 border"
