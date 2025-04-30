@@ -15,7 +15,9 @@ const RegisterSection = () => {
                 <p className={`text-xl md:text-2xl py-6 ${montserrat.className}`}>
                     Don’t miss out on the ultimate techno-cultural experience!
                     <br />
-                    Register now and be part of the excitement at
+                    Register now and be part of the excitement!
+                    <br />
+                    Participation is open to all UG and PG students.
                     <span className="inline-block align-middle ml-2">
                         <Image
                             className="w-[100px] h-auto inline-block"

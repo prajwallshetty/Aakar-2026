@@ -519,7 +519,12 @@ export default function ParticipantsPage() {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    {participant.events.map(e => e.eventName).join(", ")}
+                                                                    {participant.events.map((e, index) => (
+                                                                        <span key={index}>
+                                                                            {e.eventName}
+                                                                            <br />
+                                                                        </span>
+                                                                    ))}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
