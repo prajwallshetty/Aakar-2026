@@ -79,64 +79,79 @@ export default function ParticipantsPage() {
     const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
         try {
             setIsLoading(true)
-            const index = page - 1
-            const sortedParticipants = sortParticipantsByNewest(allParticipants)
-            if (sortedParticipants.length) {
-                const data = sortedParticipants.slice(page * pageSize - pageSize, page * pageSize)
-                setParticipants(data)
-                setFilteredParticipants(data)
-                setIsLoading(false)
-                return
+
+            if (allParticipants.length > 0) {
+                const sortedParticipants = sortParticipantsByNewest(allParticipants)
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = page * pageSize;
+                const data = sortedParticipants.slice(startIndex, endIndex);
+                setParticipants(data);
+                setFilteredParticipants(data);
+                setIsLoading(false);
+                return;
             }
 
-            const response = await getParticipantsWithEvents(index, pageSize)
+            const index = page - 1;
+            const response = await getParticipantsWithEvents(index, pageSize);
 
             if (response.error) {
-                setError(typeof response.error === "string" ? response.error : "Failed to fetch participants")
-                return
+                setError(typeof response.error === "string" ? response.error : "Failed to fetch participants");
+                return;
             }
 
             if (response.data) {
-                const sortedData = sortParticipantsByNewest(response.data)
-                setParticipants(sortedData)
-                setFilteredParticipants(sortedData)
+                const sortedData = sortParticipantsByNewest(response.data);
+                setParticipants(sortedData);
+                setFilteredParticipants(sortedData);
 
                 if (isInitialLoad) {
                     try {
-                        const allResponse = await getParticipantsWithEvents()
-                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data)
+                        const allResponse = await getParticipantsWithEvents();
+                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
                         if (allResponse.data) {
-                            setAllParticipants(allSortedParticipants)
-                            setTotalItems(allSortedParticipants.length)
-                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize))
+                            setAllParticipants(allSortedParticipants);
+                            setTotalItems(allSortedParticipants.length);
+                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
 
-                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[]
-                            setColleges(uniqueColleges)
+                            const startIndex = (page - 1) * pageSize;
+                            const endIndex = page * pageSize;
+                            const paginatedData = allSortedParticipants.slice(startIndex, endIndex);
+                            setParticipants(paginatedData);
+                            setFilteredParticipants(paginatedData);
+
+                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[];
+                            setColleges(uniqueColleges);
                         }
                     } catch (err) {
-                        console.error("Error fetching all participants for stats:", err)
+                        console.error("Error fetching all participants for stats:", err);
                     }
-                    setIsInitialLoad(false)
+                    setIsInitialLoad(false);
                 }
             }
         } catch (err) {
-            setError("An error occurred while fetching participants")
-            console.error(err)
+            setError("An error occurred while fetching participants");
+            console.error(err);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchParticipants(currentPage);
+        fetchParticipants(currentPage, itemsPerPage);
     }, [currentPage, itemsPerPage]);
 
     useEffect(() => {
-        let result = [...participants];
+        if (allParticipants.length === 0) return;
+
+        let filteredResults = [...allParticipants];
+
+        if (selectedCollege && selectedCollege !== "all") {
+            filteredResults = filteredResults.filter(p => p.college === selectedCollege);
+        }
 
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
-            result = result.filter(
+            filteredResults = filteredResults.filter(
                 (p) =>
                     p.name.toLowerCase().includes(query) ||
                     p.email.toLowerCase().includes(query) ||
@@ -154,25 +169,19 @@ export default function ParticipantsPage() {
             );
         }
 
-        if (selectedCollege && selectedCollege !== "all") {
-            result = result.filter((p) => p.college === selectedCollege);
-        }
+        setTotalItems(filteredResults.length);
+        setTotalPages(Math.ceil(filteredResults.length / itemsPerPage));
 
-        setFilteredParticipants(result);
-    }, [searchQuery, selectedCollege, participants]);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, filteredResults.length);
 
-    useEffect(() => {
-        if (selectedCollege && selectedCollege !== "all") {
-            const filteredTotal = allParticipants.filter(p => p.college === selectedCollege).length;
-            setTotalItems(filteredTotal);
-            setTotalPages(Math.ceil(filteredTotal / itemsPerPage));
+        if (startIndex >= filteredResults.length && filteredResults.length > 0) {
             setCurrentPage(1);
-        } else if (selectedCollege === "all" || selectedCollege === "") {
-            setTotalItems(allParticipants.length);
-            setTotalPages(Math.ceil(allParticipants.length / itemsPerPage));
-            setCurrentPage(1);
+            setFilteredParticipants(filteredResults.slice(0, itemsPerPage));
+        } else {
+            setFilteredParticipants(filteredResults.slice(startIndex, endIndex));
         }
-    }, [selectedCollege, itemsPerPage, allParticipants]);
+    }, [searchQuery, selectedCollege, allParticipants, currentPage, itemsPerPage]);
 
     const handleDownloadAll = async () => {
         try {
@@ -204,7 +213,6 @@ export default function ParticipantsPage() {
     const resetFilters = () => {
         setSearchQuery("");
         setSelectedCollege("");
-        setFilteredParticipants(participants);
         setCurrentPage(1);
     };
 
@@ -221,7 +229,6 @@ export default function ParticipantsPage() {
     const handleItemsPerPageChange = (value: string) => {
         const newItemsPerPage = parseInt(value);
         setItemsPerPage(newItemsPerPage);
-        setTotalPages(Math.ceil(totalItems / newItemsPerPage));
         setCurrentPage(1);
     };
 
@@ -252,7 +259,7 @@ export default function ParticipantsPage() {
     );
 
     const PaginationControls = () => (
-        <div className="flex  flex-col md:flex-row items-center justify-between mt-4">
+        <div className="flex flex-col md:flex-row items-center justify-between mt-4">
             <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
                     Items per page:
@@ -262,7 +269,7 @@ export default function ParticipantsPage() {
                     onValueChange={handleItemsPerPageChange}
                 >
                     <SelectTrigger className="h-8 w-[70px] cursor-pointer">
-                        <SelectValue placeholder="10" />
+                        <SelectValue placeholder={itemsPerPage.toString()} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="5" className="cursor-pointer">5</SelectItem>
@@ -318,7 +325,7 @@ export default function ParticipantsPage() {
             </div>
 
             <div className="text-sm text-muted-foreground">
-                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
+                Showing {totalItems === 0 ? 0 : Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
             </div>
         </div>
     );
