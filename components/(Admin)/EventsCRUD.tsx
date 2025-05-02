@@ -112,6 +112,8 @@ const EventsCRUD = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentId, setCurrentId] = useState<number | null>(null);
     const [error, setError] = useState("");
+    const [sortField, setSortField] = useState("fee");
+    const [sortDirection, setSortDirection] = useState("desc");
     const [newStudentCoordinator, setNewStudentCoordinator] =
         useState<Coordinator>({
             name: "",
@@ -155,7 +157,7 @@ const EventsCRUD = () => {
         { value: "Cultural", label: "Cultural" },
         { value: "Gaming", label: "Gaming" },
         { value: "Special", label: "Special" },
-        { value: "ComboPass", label:"Combo Pass"}
+        { value: "ComboPass", label: "Combo Pass" }
     ];
 
     const dateOptions = [
@@ -187,26 +189,48 @@ const EventsCRUD = () => {
         try {
             const data = await getAllEvents();
             if (data) {
-                setEvents(
-                    data.map((event) => ({
-                        ...event,
-                        date: new Date(event.date),
-                        studentCoordinators:
-                            typeof event.studentCoordinators === "string"
-                                ? JSON.parse(event.studentCoordinators)
-                                : event.studentCoordinators,
-                        facultyCoordinators:
-                            typeof event.facultyCoordinators === "string"
-                                ? JSON.parse(event.facultyCoordinators)
-                                : event.facultyCoordinators,
-                    }))
-                );
+                const formattedEvents = data.map((event) => ({
+                    ...event,
+                    date: new Date(event.date),
+                    studentCoordinators:
+                        typeof event.studentCoordinators === "string"
+                            ? JSON.parse(event.studentCoordinators)
+                            : event.studentCoordinators,
+                    facultyCoordinators:
+                        typeof event.facultyCoordinators === "string"
+                            ? JSON.parse(event.facultyCoordinators)
+                            : event.facultyCoordinators,
+                }));
+
+                const sortedEvents = sortEvents(formattedEvents, sortField, sortDirection);
+                setEvents(sortedEvents);
             }
             setLoading(false);
         } catch (error) {
             console.error("Error fetching events:", error);
             setError("Could not fetch events. Please try again.");
             setLoading(false);
+        }
+    };
+
+    const sortEvents = (eventsToSort:any, field:any, direction:any) => {
+        return [...eventsToSort].sort((a, b) => {
+            if (field === "fee") {
+                return direction === "desc" ? b.fee - a.fee : a.fee - b.fee;
+            }
+            return 0;
+        });
+    };
+
+    const handleSortChange = (field:any) => {
+        if (field === sortField) {
+            const newDirection = sortDirection === "desc" ? "asc" : "desc";
+            setSortDirection(newDirection);
+            setEvents(sortEvents(events, field, newDirection));
+        } else {
+            setSortField(field);
+            setSortDirection("desc");
+            setEvents(sortEvents(events, field, "desc"));
         }
     };
 
@@ -456,6 +480,14 @@ const EventsCRUD = () => {
                                 }}
                             >
                                 <Plus className="mr-2 h-4 w-4" /> Add Event
+                            </Button>
+                            <Button
+                                variant={sortField === "fee" ? "default" : "outline"}
+                                size="sm"
+                                className="cursor-pointer mr-3"
+                                onClick={() => handleSortChange("fee")}
+                            >
+                                Fee {sortField === "fee" && (sortDirection === "desc" ? "↓" : "↑")}
                             </Button>
                             <Button
                                 className="cursor-pointer"
