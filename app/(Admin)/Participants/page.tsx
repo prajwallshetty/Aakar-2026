@@ -38,6 +38,7 @@ import {
     ChevronLeft,
     ChevronFirst,
     ChevronLast,
+    SlidersHorizontal,
 } from "lucide-react";
 import React from "react";
 import { getParticipantsWithEvents } from "@/backend/participant";
@@ -61,6 +62,7 @@ export default function ParticipantsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCollege, setSelectedCollege] = useState<string>("");
+    const [filterType, setFilterType] = useState<"include" | "exclude" | "all">("all");
     const [colleges, setColleges] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [expandedParticipant, setExpandedParticipant] = useState<
@@ -145,8 +147,12 @@ export default function ParticipantsPage() {
 
         let filteredResults = [...allParticipants];
 
-        if (selectedCollege && selectedCollege !== "all") {
-            filteredResults = filteredResults.filter(p => p.college === selectedCollege);
+        if (selectedCollege && filterType !== "all") {
+            if (filterType === "include") {
+                filteredResults = filteredResults.filter(p => p.college === selectedCollege);
+            } else if (filterType === "exclude") {
+                filteredResults = filteredResults.filter(p => p.college !== selectedCollege);
+            }
         }
 
         if (searchQuery) {
@@ -181,7 +187,7 @@ export default function ParticipantsPage() {
         } else {
             setFilteredParticipants(filteredResults.slice(startIndex, endIndex));
         }
-    }, [searchQuery, selectedCollege, allParticipants, currentPage, itemsPerPage]);
+    }, [searchQuery, selectedCollege, filterType, allParticipants, currentPage, itemsPerPage]);
 
     const handleDownloadAll = async () => {
         try {
@@ -213,6 +219,7 @@ export default function ParticipantsPage() {
     const resetFilters = () => {
         setSearchQuery("");
         setSelectedCollege("");
+        setFilterType("all");
         setCurrentPage(1);
     };
 
@@ -387,31 +394,42 @@ export default function ParticipantsPage() {
                                     </div>
 
                                     <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                                        <Select
-                                            value={selectedCollege}
-                                            onValueChange={setSelectedCollege}
-                                        >
-                                            <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
-                                                <SelectValue placeholder="College" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem
-                                                    value="all"
-                                                    className="cursor-pointer"
-                                                >
-                                                    All Colleges
-                                                </SelectItem>
-                                                {colleges.map((college) => (
-                                                    <SelectItem
-                                                        key={college}
-                                                        value={college}
-                                                        className={`cursor-pointer ${montserrat.className}`}
-                                                    >
-                                                        {college}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <div className="flex items-center flex-col md:flex-row gap-2">
+                                            <Select
+                                                value={filterType}
+                                                onValueChange={(value: "include" | "exclude" | "all") => setFilterType(value)}
+                                            >
+                                                <SelectTrigger className="w-[100px] cursor-pointer">
+                                                    <SelectValue placeholder="Filter type" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="all" className="cursor-pointer">All</SelectItem>
+                                                    <SelectItem value="include" className="cursor-pointer">Include</SelectItem>
+                                                    <SelectItem value="exclude" className="cursor-pointer">Exclude</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+
+                                            <Select
+                                                value={selectedCollege}
+                                                onValueChange={setSelectedCollege}
+                                                disabled={filterType === "all"}
+                                            >
+                                                <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
+                                                    <SelectValue placeholder="College" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {colleges.map((college) => (
+                                                        <SelectItem
+                                                            key={college}
+                                                            value={college}
+                                                            className={`cursor-pointer ${montserrat.className}`}
+                                                        >
+                                                            {college}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
 
                                         <Button
                                             variant="outline"
@@ -425,17 +443,16 @@ export default function ParticipantsPage() {
                                 </div>
 
                                 <div className="flex flex-wrap gap-2 justify-between items-center">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center flex-col md:flex-row gap-2 overflow-hidden">
                                         <Badge variant="outline">
                                             {totalItems} participants
                                         </Badge>
-                                        {selectedCollege &&
-                                            selectedCollege !== "all" && (
-                                                <Badge variant="secondary">
-                                                    <School className="mr-1 h-3 w-3" />
-                                                    {selectedCollege}
-                                                </Badge>
-                                            )}
+                                        {selectedCollege && filterType !== "all" && (
+                                            <Badge variant="secondary">
+                                                <School className="mr-1 h-3 w-3" />
+                                                {filterType === "include" ? "Including" : "Excluding"}: {selectedCollege}
+                                            </Badge>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col sm:flex-row gap-2">
