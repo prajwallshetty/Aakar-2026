@@ -58,6 +58,9 @@ import {
     Upload,
     X,
     Download,
+    Calendar,
+    MapPinned,
+    LayoutGrid,
 } from "lucide-react";
 import {
     getAllEvents,
@@ -105,6 +108,8 @@ interface FormData {
     maxMembers: number;
 }
 
+type GroupingOption = "none" | "venue" | "date";
+
 const EventsCRUD = () => {
     const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [loading, setLoading] = useState(true);
@@ -114,6 +119,7 @@ const EventsCRUD = () => {
     const [error, setError] = useState("");
     const [sortField, setSortField] = useState("fee");
     const [sortDirection, setSortDirection] = useState("desc");
+    const [groupingOption, setGroupingOption] = useState<GroupingOption>("none");
     const [newStudentCoordinator, setNewStudentCoordinator] =
         useState<Coordinator>({
             name: "",
@@ -213,7 +219,7 @@ const EventsCRUD = () => {
         }
     };
 
-    const sortEvents = (eventsToSort:any, field:any, direction:any) => {
+    const sortEvents = (eventsToSort: any, field: any, direction: any) => {
         return [...eventsToSort].sort((a, b) => {
             if (field === "fee") {
                 return direction === "desc" ? b.fee - a.fee : a.fee - b.fee;
@@ -222,7 +228,7 @@ const EventsCRUD = () => {
         });
     };
 
-    const handleSortChange = (field:any) => {
+    const handleSortChange = (field: any) => {
         if (field === sortField) {
             const newDirection = sortDirection === "desc" ? "asc" : "desc";
             setSortDirection(newDirection);
@@ -232,6 +238,40 @@ const EventsCRUD = () => {
             setSortDirection("desc");
             setEvents(sortEvents(events, field, "desc"));
         }
+    };
+
+    const handleGroupingChange = (option: GroupingOption) => {
+        setGroupingOption(option);
+    };
+
+    const getGroupedEvents = () => {
+        if (groupingOption === "none") {
+            return { "All Events": events };
+        } else if (groupingOption === "venue") {
+            const grouped: Record<string, ExtendedEvent[]> = {};
+            events.forEach(event => {
+                const venue = event.venue || "No Venue";
+                if (!grouped[venue]) {
+                    grouped[venue] = [];
+                }
+                grouped[venue].push(event);
+            });
+            return grouped;
+        } else if (groupingOption === "date") {
+            const grouped: Record<string, ExtendedEvent[]> = {};
+
+            const sortedByDate = [...events].sort((a, b) => a.date.getTime() - b.date.getTime());
+
+            sortedByDate.forEach(event => {
+                const date = event.date.toDateString();
+                if (!grouped[date]) {
+                    grouped[date] = [];
+                }
+                grouped[date].push(event);
+            });
+            return grouped;
+        }
+        return { "All Events": events };
     };
 
     const handleInputChange = (
@@ -437,6 +477,183 @@ const EventsCRUD = () => {
         }
     };
 
+    const handleSelectAllInGroup = (groupEvents: ExtendedEvent[], isSelected: boolean) => {
+        if (isSelected) {
+            const groupIds = groupEvents.map(event => event.id);
+            setSelectedEvents(prev => {
+                const newSelection = [...prev];
+                groupIds.forEach(id => {
+                    if (!newSelection.includes(id)) {
+                        newSelection.push(id);
+                    }
+                });
+                return newSelection;
+            });
+        } else {
+            const groupIds = groupEvents.map(event => event.id);
+            setSelectedEvents(prev => prev.filter(id => !groupIds.includes(id)));
+        }
+    };
+
+    const areAllEventsInGroupSelected = (groupEvents: ExtendedEvent[]) => {
+        return groupEvents.every(event => selectedEvents.includes(event.id));
+    };
+
+    const groupedEvents = getGroupedEvents();
+
+    const renderEventsTable = (groupTitle: string, groupEvents: ExtendedEvent[]) => {
+        return (
+            <Card key={groupTitle} className="shadow-sm mb-6">
+                <CardHeader className="border-b">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle className="text-xl">{groupTitle}</CardTitle>
+                            <CardDescription>
+                                {groupEvents.length} {groupEvents.length === 1 ? "event" : "events"}
+                            </CardDescription>
+                        </div>
+                        {groupEvents.length > 0 && (
+                            <div className="flex items-center">
+                                <Input
+                                    type="checkbox"
+                                    className="w-4 h-4 mr-2 cursor-pointer"
+                                    checked={areAllEventsInGroupSelected(groupEvents)}
+                                    onChange={(e) => handleSelectAllInGroup(groupEvents, e.target.checked)}
+                                />
+                                <span className="text-sm text-muted-foreground">Select All</span>
+                            </div>
+                        )}
+                    </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <Table>
+                        <TableHeader className="bg-muted/50">
+                            <TableRow>
+                                <TableHead className="w-[200px]">Event</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead>Category</TableHead>
+                                <TableHead>Date & Time</TableHead>
+                                <TableHead>Venue</TableHead>
+                                <TableHead>Fee</TableHead>
+                                <TableHead>Poster</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {groupEvents.map((event) => (
+                                <TableRow key={event.id} className="hover:bg-muted/10">
+                                    <TableCell className="font-medium">
+                                        {event.eventName}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="secondary">
+                                            {event.eventType}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="secondary">
+                                            {event.eventCategory}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <span>
+                                                {event.date.toDateString()}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground flex items-center mt-1">
+                                                <Clock className="h-3 w-3 mr-1" />{" "}
+                                                {event.time}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center">
+                                            <MapPin className="h-3 w-3 mr-1 text-muted-foreground" />
+                                            {event.venue}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>₹{event.fee}</TableCell>
+                                    <TableCell>
+                                        {event.imageUrl ? (
+                                            <div className="w-16 h-16 relative rounded-md overflow-hidden border">
+                                                <img
+                                                    src={event.imageUrl}
+                                                    alt={event.eventName}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
+                                                <Image className="h-5 w-5 text-muted-foreground" />
+                                            </div>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="flex justify-end space-x-2 items-center">
+                                        <Input
+                                            type="checkbox"
+                                            className="w-4 h-4 cursor-pointer"
+                                            checked={selectedEvents.includes(event.id)}
+                                            onChange={() => {
+                                                setSelectedEvents(prev => {
+                                                    if (prev.includes(event.id)) {
+                                                        return prev.filter(id => id !== event.id);
+                                                    }
+                                                    return [...prev, event.id];
+                                                });
+                                            }}
+                                        />
+                                        <Button
+                                            variant="outline"
+                                            className="cursor-pointer"
+                                            size="sm"
+                                            onClick={() => handleEdit(event)}
+                                        >
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button
+                                                    className="cursor-pointer"
+                                                    variant="destructive"
+                                                    size="sm"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>
+                                                        Are you sure?
+                                                    </AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        This action cannot be
+                                                        undone. This will permanently
+                                                        delete the event and all its
+                                                        data.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>
+                                                        Cancel
+                                                    </AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        onClick={() => handleDelete(event.id)}
+                                                    >
+                                                        Delete
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        );
+    };
+
     return (
         <div className="container mx-auto py-8 px-4">
             <div className="flex flex-col space-y-6">
@@ -459,71 +676,92 @@ const EventsCRUD = () => {
                     </div>
                 )}
 
-                <Card className="shadow-sm">
-                    <CardHeader className="border-b">
-                        <div className="flex md:flex-row flex-col items-center justify-between">
-                            <div>
-                                <CardTitle className="text-2xl">
-                                    All Events
-                                </CardTitle>
-                                <CardDescription>
-                                    {events.length}{" "}
-                                    {events.length === 1 ? "event" : "events"}{" "}
-                                    found
-                                </CardDescription>
+                <div className="flex flex-wrap gap-4 mb-4">
+                    <div className="flex items-center gap-2 mr-auto">
+                        <span className="text-sm font-medium">Group by:</span>
+                        <Button
+                            variant={groupingOption === "none" ? "default" : "outline"}
+                            size="sm"
+                            className="cursor-pointer"
+                            onClick={() => handleGroupingChange("none")}
+                        >
+                            <LayoutGrid className="mr-2 h-4 w-4" /> None
+                        </Button>
+                        <Button
+                            variant={groupingOption === "date" ? "default" : "outline"}
+                            size="sm"
+                            className="cursor-pointer"
+                            onClick={() => handleGroupingChange("date")}
+                        >
+                            <Calendar className="mr-2 h-4 w-4" /> Date
+                        </Button>
+                        <Button
+                            variant={groupingOption === "venue" ? "default" : "outline"}
+                            size="sm"
+                            className="cursor-pointer"
+                            onClick={() => handleGroupingChange("venue")}
+                        >
+                            <MapPinned className="mr-2 h-4 w-4" /> Venue
+                        </Button>
+                    </div>
+                    <Button
+                        className="cursor-pointer"
+                        onClick={() => {
+                            resetForm();
+                            setOpenDialog(true);
+                        }}
+                    >
+                        <Plus className="mr-2 h-4 w-4" /> Add Event
+                    </Button>
+
+                    <Button
+                        variant={sortField === "fee" ? "default" : "outline"}
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={() => handleSortChange("fee")}
+                    >
+                        Fee {sortField === "fee" && (sortDirection === "desc" ? "↓" : "↑")}
+                    </Button>
+
+                    {selectedEvents.length > 0 && (
+                        <Button
+                            className="cursor-pointer w-full md:w-auto mt-2 md:mt-0"
+                            variant={"secondary"}
+                            onClick={async () => {
+                                setDownloading(true);
+                                await downloadParticipantDataByEvents(
+                                    (await getParticipants()).data || [],
+                                    selectedEvents
+                                );
+                                setDownloading(false);
+                            }}
+                            disabled={downloading}
+                        >
+                            <Download className="mr-2 h-4 w-4" />{" "}
+                            {downloading
+                                ? "Downloading..."
+                                : `Download Data (${selectedEvents.length} selected)`}
+                        </Button>
+                    )}
+                </div>
+
+                {loading ? (
+                    <Card className="shadow-sm">
+                        <CardHeader className="border-b">
+                            <Skeleton className="h-8 w-64" />
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                            <Skeleton className="h-10 w-full" />
+                            <div className="space-y-2">
+                                {[...Array(5)].map((_, i) => (
+                                    <Skeleton key={i} className="h-12 w-full" />
+                                ))}
                             </div>
-                            <Button
-                                className="cursor-pointer ml-auto mr-3"
-                                onClick={() => {
-                                    resetForm();
-                                    setOpenDialog(true);
-                                }}
-                            >
-                                <Plus className="mr-2 h-4 w-4" /> Add Event
-                            </Button>
-                            <Button
-                                variant={sortField === "fee" ? "default" : "outline"}
-                                size="sm"
-                                className="cursor-pointer mr-3"
-                                onClick={() => handleSortChange("fee")}
-                            >
-                                Fee {sortField === "fee" && (sortDirection === "desc" ? "↓" : "↑")}
-                            </Button>
-                            <Button
-                                className="cursor-pointer"
-                                variant={"secondary"}
-                                hidden={selectedEvents.length === 0}
-                                onClick={async () => {
-                                    setDownloading(true);
-                                    await downloadParticipantDataByEvents(
-                                        (await getParticipants()).data || [],
-                                        selectedEvents
-                                    );
-                                    setDownloading(false);
-                                }}
-                                disabled={downloading}
-                            >
-                                <Download className="mr-2 h-4 w-4" />{" "}
-                                {downloading
-                                    ? "downloading"
-                                    : "Download Selected Events Data"}
-                            </Button>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        {loading ? (
-                            <div className="space-y-4 p-6">
-                                <Skeleton className="h-10 w-full" />
-                                <div className="space-y-2">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Skeleton
-                                            key={i}
-                                            className="h-12 w-full"
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        ) : events.length === 0 ? (
+                        </CardContent>
+                    </Card>
+                ) : events.length === 0 ? (
+                    <Card className="shadow-sm">
+                        <CardContent className="p-0">
                             <div className="flex flex-col items-center justify-center p-12 text-center">
                                 <Image className="h-12 w-12 text-muted-foreground mb-4" />
                                 <h3 className="text-lg font-medium">
@@ -542,192 +780,15 @@ const EventsCRUD = () => {
                                     <Plus className="mr-2 h-4 w-4" /> Add Event
                                 </Button>
                             </div>
-                        ) : (
-                            <Table>
-                                <TableHeader className="bg-muted/50">
-                                    <TableRow>
-                                        <TableHead className="w-[200px]">
-                                            Event
-                                        </TableHead>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead>Category</TableHead>
-                                        <TableHead>Date & Time</TableHead>
-                                        <TableHead>Venue</TableHead>
-                                        <TableHead>Fee</TableHead>
-                                        <TableHead>Poster</TableHead>
-                                        <TableHead className="text-right flex gap-8 items-center justify-end">
-                                            <Input
-                                                type="checkbox"
-                                                className="w-4 h-4"
-                                                checked={
-                                                    events.length ===
-                                                    selectedEvents.length
-                                                }
-                                                onChange={(e) => {
-                                                    if (
-                                                        e.currentTarget.checked
-                                                    ) {
-                                                        setSelectedEvents(
-                                                            events.map(
-                                                                (event) =>
-                                                                    event.id
-                                                            )
-                                                        );
-                                                    } else {
-                                                        setSelectedEvents([]);
-                                                    }
-                                                }}
-                                            />
-                                            Actions
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {events.map((event) => (
-                                        <TableRow
-                                            key={event.id}
-                                            className="hover:bg-muted/10"
-                                        >
-                                            <TableCell className="font-medium">
-                                                {event.eventName}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="secondary">
-                                                    {event.eventType}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="secondary">
-                                                    {event.eventCategory}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span>
-                                                        {event.date.toDateString()}
-                                                    </span>
-                                                    <span className="text-xs text-muted-foreground flex items-center mt-1">
-                                                        <Clock className="h-3 w-3 mr-1" />{" "}
-                                                        {event.time}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center">
-                                                    <MapPin className="h-3 w-3 mr-1 text-muted-foreground" />
-                                                    {event.venue}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>₹{event.fee}</TableCell>
-                                            <TableCell>
-                                                {event.imageUrl ? (
-                                                    <div className="w-16 h-16 relative rounded-md overflow-hidden border">
-                                                        <img
-                                                            src={event.imageUrl}
-                                                            alt={
-                                                                event.eventName
-                                                            }
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
-                                                        <Image className="h-5 w-5 text-muted-foreground" />
-                                                    </div>
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="flex justify-end space-x-2 items-center">
-                                                <Input
-                                                    type="checkbox"
-                                                    className="w-4 h-4"
-                                                    checked={
-                                                        !!selectedEvents.find(
-                                                            (e) => e == event.id
-                                                        )
-                                                    }
-                                                    onChange={() => {
-                                                        setSelectedEvents(
-                                                            (prev) => {
-                                                                if (
-                                                                    prev.find(
-                                                                        (e) =>
-                                                                            e ==
-                                                                            event.id
-                                                                    )
-                                                                ) {
-                                                                    return prev.filter(
-                                                                        (e) =>
-                                                                            e !=
-                                                                            event.id
-                                                                    );
-                                                                }
-                                                                return [
-                                                                    ...prev,
-                                                                    event.id,
-                                                                ];
-                                                            }
-                                                        );
-                                                    }}
-                                                />
-                                                <Button
-                                                    variant="outline"
-                                                    className="cursor-pointer"
-                                                    size="sm"
-                                                    onClick={() =>
-                                                        handleEdit(event)
-                                                    }
-                                                >
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button
-                                                            className="cursor-pointer"
-                                                            variant="destructive"
-                                                            size="sm"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>
-                                                                Are you sure?
-                                                            </AlertDialogTitle>
-                                                            <AlertDialogDescription>
-                                                                This action
-                                                                cannot be
-                                                                undone. This
-                                                                will permanently
-                                                                delete the event
-                                                                and all its
-                                                                data.
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>
-                                                                Cancel
-                                                            </AlertDialogCancel>
-                                                            <AlertDialogAction
-                                                                onClick={() =>
-                                                                    handleDelete(
-                                                                        event.id
-                                                                    )
-                                                                }
-                                                            >
-                                                                Delete
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <>
+                        {Object.entries(groupedEvents).map(([groupTitle, groupEvents]) =>
+                            renderEventsTable(groupTitle, groupEvents)
                         )}
-                    </CardContent>
-                </Card>
+                    </>
+                )}
 
                 <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                     <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">

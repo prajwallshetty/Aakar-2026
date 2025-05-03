@@ -160,7 +160,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total Colleges</CardTitle>
@@ -181,6 +181,14 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
         <Card>
           <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Participants (Except HOST)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalParticipants - collegeData[0].value}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Avg. Participants per College</CardTitle>
           </CardHeader>
           <CardContent>
@@ -192,12 +200,12 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Top College</CardTitle>
+            <CardTitle className="text-sm font-medium">Top College(Except HOST)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold truncate">{collegeData.length > 0 ? collegeData[0].name : "N/A"}</div>
+            <div className="text-xl font-bold truncate">{collegeData.length > 0 ? collegeData[1].name : "N/A"}</div>
             <p className="text-xs text-muted-foreground">
-              {collegeData.length > 0 ? `${collegeData[0].value} participants` : ""}
+              {collegeData.length > 0 ? `${collegeData[1].value} participants` : ""}
             </p>
           </CardContent>
         </Card>
