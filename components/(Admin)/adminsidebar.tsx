@@ -60,6 +60,7 @@ const AdminSidebar = () => {
                                 <li key={index}>
                                     <Link
                                         href={item.href}
+                                        onClick={toggleSidebar}
                                         className="flex items-center p-3 hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
                                     >
                                         <span className="text-gray-300">{item.icon}</span>
