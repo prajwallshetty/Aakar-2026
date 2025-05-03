@@ -283,6 +283,8 @@ export default function ParticipantsPage() {
                         <SelectItem value="10" className="cursor-pointer">10</SelectItem>
                         <SelectItem value="20" className="cursor-pointer">20</SelectItem>
                         <SelectItem value="50" className="cursor-pointer">50</SelectItem>
+                        <SelectItem value="100" className="cursor-pointer">100</SelectItem>
+                        <SelectItem value="250" className="cursor-pointer">250</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
