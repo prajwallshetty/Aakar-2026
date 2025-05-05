@@ -21,7 +21,7 @@ const RegisterSection = () => {
                     <span className="inline-block align-middle ml-2">
                         <Image
                             className="w-[100px] h-auto inline-block"
-                            src="/logo.png"
+                            src="/new_logo.png"
                             width={100}
                             height={100}
                             alt="Aakar Logo"
