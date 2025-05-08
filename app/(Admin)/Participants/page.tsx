@@ -44,8 +44,8 @@ import React from "react";
 import { getParticipantsWithEvents } from "@/backend/participant";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { EventStats } from "@/components/(Admin)/Participants/event-stats";
-import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
+import { EventStats } from "@/components/(Admin)/event-stats"
+import { CollegeStats } from "@/components/(Admin)/college-stats"
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
