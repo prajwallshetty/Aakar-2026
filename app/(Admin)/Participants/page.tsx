@@ -447,7 +447,7 @@ export default function ParticipantsPage() {
                                 <div className="flex flex-wrap gap-2 justify-between items-center">
                                     <div className="flex items-center flex-col md:flex-row gap-2 overflow-hidden">
                                         <Badge variant="outline">
-                                            {totalItems} participants
+                                            {totalItems} registrations
                                         </Badge>
                                         {selectedCollege && filterType !== "all" && (
                                             <Badge variant="secondary">
