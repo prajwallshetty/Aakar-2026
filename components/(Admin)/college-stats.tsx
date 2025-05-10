@@ -29,6 +29,21 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
     "#8dd1e1",
     "#a4de6c",
     "#d0ed57",
+    "#ffc658",
+    "#ff7300",
+    "#BA8b28",
+    "#00C49F",
+    "#00880E",
+    "#FF3042",
+    "#A9B318",
+    "#EAEB28",
+    "#ABCB28",
+    "#B28",
+    "#1A8B28",
+    "#BAC",
+    "#BFC",
+    "#FF8",
+    "#888",
   ]
 
   useEffect(() => {
@@ -49,15 +64,6 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
         let formattedData = Object.entries(collegeCounts)
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value)
-
-        if (formattedData.length > 10) {
-          const topColleges = formattedData.slice(0, 9)
-          const otherColleges = formattedData.slice(9)
-
-          const otherCount = otherColleges.reduce((sum, college) => sum + college.value, 0)
-
-          formattedData = [...topColleges, { name: "Others", value: otherCount }]
-        }
 
         setCollegeData(formattedData)
       } catch (err) {
@@ -216,7 +222,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
           <CardTitle>Participants by College</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[400px]">
+          <div className="h-screen w-full">
             {collegeData.length === 0 ? (
               <div className="flex justify-center items-center h-full text-muted-foreground">
                 No college data available
@@ -225,21 +231,22 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={collegeData}
+                    data={collegeData.slice(1)}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
                     outerRadius={150}
                     fill="#8884d8"
                     dataKey="value"
+                    className="text-sm mb-10"
                     label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   >
-                    {collegeData.map((entry, index) => (
+                    {collegeData.slice(1).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => [`${value} participants`, "Count"]} />
-                  <Legend />
+                  <Legend className="text-xs mt-10 pt-10" />
                 </PieChart>
               </ResponsiveContainer>
             )}
