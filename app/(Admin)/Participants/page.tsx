@@ -351,7 +351,7 @@ export default function ParticipantsPage() {
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="participants">
-                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4 flex gap-4">
+                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4  gap-4 hidden md:flex">
                             <TabsTrigger
                                 value="participants"
                                 className="cursor-pointer"
