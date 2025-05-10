@@ -677,7 +677,7 @@ const EventsCRUD = () => {
                 )}
 
                 <div className="flex flex-wrap gap-4 mb-4">
-                    <div className="flex items-center gap-2 mr-auto">
+                    <div className="flex flex-col md:flex-row items-center gap-2 mr-auto">
                         <span className="text-sm font-medium">Group by:</span>
                         <Button
                             variant={groupingOption === "none" ? "default" : "outline"}
