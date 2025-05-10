@@ -272,8 +272,8 @@ export function EventStats({ participants }: EventStatsProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <h3 className="text-lg font-medium">Event Registration Statistics</h3>
-        <div className="flex items-center gap-4">
+        <h3 className="md:text-lg font-medium">Event Registration Statistics</h3>
+        <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
             <Select value={displayCount.toString()} onValueChange={(value) => setDisplayCount(Number.parseInt(value))}>
@@ -301,7 +301,7 @@ export function EventStats({ participants }: EventStatsProps) {
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             <p className="text-sm">
-              Processing data: {processedCount} of {totalToProcess} participants
+              Processing data: {processedCount} partipants processed
             </p>
           </div>
           <Progress value={(processedCount / totalToProcess) * 100} className="h-2" />
