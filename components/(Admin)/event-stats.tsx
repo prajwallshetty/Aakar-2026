@@ -301,7 +301,7 @@ export function EventStats({ participants }: EventStatsProps) {
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             <p className="text-sm">
-              Processing data: {processedCount} partipants processed
+              Processing data: {processedCount} Registrations processed
             </p>
           </div>
           <Progress value={(processedCount / totalToProcess) * 100} className="h-2" />
@@ -329,7 +329,7 @@ export function EventStats({ participants }: EventStatsProps) {
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all" className="cursor-pointer">All Participants</TabsTrigger>
+          <TabsTrigger value="all" className="cursor-pointer">All Registrations</TabsTrigger>
           <TabsTrigger value="ajiet" className="cursor-pointer">AJIET Students</TabsTrigger>
           <TabsTrigger value="nonAjiet" className="cursor-pointer">Non-AJIET Students</TabsTrigger>
         </TabsList>
@@ -338,7 +338,7 @@ export function EventStats({ participants }: EventStatsProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Top Events - All Participants</CardTitle>
+                <CardTitle>Top Events - All Registrations</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -363,7 +363,7 @@ export function EventStats({ participants }: EventStatsProps) {
                           tickFormatter={(value) => (value.length > 10 ? `${value.substring(0, 10)}...` : value)}
                         />
                         <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="value" name="Participants">
+                        <Bar dataKey="value" name="Registrations">
                           {allParticipantsData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                           ))}
@@ -377,7 +377,7 @@ export function EventStats({ participants }: EventStatsProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Participants by Category - All</CardTitle>
+                <CardTitle>Registrations by Category - All</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -396,7 +396,7 @@ export function EventStats({ participants }: EventStatsProps) {
                         <XAxis type="number" />
                         <YAxis type="category" dataKey="name" width={80} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="value" name="Participants">
+                        <Bar dataKey="value" name="Registrations">
                           {allCategoryData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                           ))}
@@ -439,7 +439,7 @@ export function EventStats({ participants }: EventStatsProps) {
                           tickFormatter={(value) => (value.length > 10 ? `${value.substring(0, 10)}...` : value)}
                         />
                         <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="value" name="Participants">
+                        <Bar dataKey="value" name="Registrations">
                           {ajietParticipantsData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                           ))}
@@ -453,7 +453,7 @@ export function EventStats({ participants }: EventStatsProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Participants by Category - AJIET</CardTitle>
+                <CardTitle>Registrations by Category - AJIET</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -472,7 +472,7 @@ export function EventStats({ participants }: EventStatsProps) {
                         <XAxis type="number" />
                         <YAxis type="category" dataKey="name" width={80} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="value" name="Participants">
+                        <Bar dataKey="value" name="Registrations">
                           {ajietCategoryData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                           ))}
@@ -515,7 +515,7 @@ export function EventStats({ participants }: EventStatsProps) {
                           tickFormatter={(value) => (value.length > 10 ? `${value.substring(0, 10)}...` : value)}
                         />
                         <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="value" name="Participants">
+                        <Bar dataKey="value" name="Registrations">
                           {nonAjietParticipantsData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                           ))}
@@ -529,7 +529,7 @@ export function EventStats({ participants }: EventStatsProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Participants by Category - Non-AJIET</CardTitle>
+                <CardTitle>Registrations by Category - Non-AJIET</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
@@ -548,7 +548,7 @@ export function EventStats({ participants }: EventStatsProps) {
                         <XAxis type="number" />
                         <YAxis type="category" dataKey="name" width={80} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="value" name="Participants">
+                        <Bar dataKey="value" name="Registrations">
                           {nonAjietCategoryData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                           ))}

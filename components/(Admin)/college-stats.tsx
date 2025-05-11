@@ -178,7 +178,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Participants</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalParticipants}</div>
@@ -187,7 +187,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Participants (Except HOST)</CardTitle>
+            <CardTitle className="text-sm font-medium">Registrations (Except HOST)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalParticipants - collegeData[0].value}</div>
@@ -195,7 +195,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Participants per College</CardTitle>
+            <CardTitle className="text-sm font-medium">Avg. Registrations per College</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -219,7 +219,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Participants by College</CardTitle>
+          <CardTitle>Registrations by College</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-screen w-full">
@@ -239,13 +239,13 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
                     fill="#8884d8"
                     dataKey="value"
                     className="text-sm mb-10"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent, value }) => `${name}: ${value} reg(${(percent * 100).toFixed(0)}%)`}
                   >
                     {collegeData.slice(1).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value} participants`, "Count"]} />
+                  <Tooltip formatter={(value) => [`${value} registrations`, "Count"]} />
                   <Legend className="text-xs mt-10 pt-10" />
                 </PieChart>
               </ResponsiveContainer>
