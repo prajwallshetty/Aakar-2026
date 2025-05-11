@@ -239,7 +239,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
                     fill="#8884d8"
                     dataKey="value"
                     className="text-sm mb-10"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent, value }) => `${name}: ${value} reg(${(percent * 100).toFixed(0)}%)`}
                   >
                     {collegeData.slice(1).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
