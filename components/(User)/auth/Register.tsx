@@ -421,6 +421,7 @@ const Register = () => {
         "Upendra Pai Memorial College, Udupi",
         "Udupi Group of Institutions, Manipal",
         "Kasturba Medical College (KMC), Manipal",
+        "Laxmi Memorial College of Nursing & Physiotherapy",
         "Manipal Institute of Technology, Manipal",
         "College of Fisheries, Mangalore",
         "Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi",
