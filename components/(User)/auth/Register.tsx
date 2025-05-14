@@ -605,6 +605,7 @@ const Register = () => {
         "Government Engineering College Kozhikode",
         "Government Engineering College Kunnamkulam",
         "Government Engineering College Malappuram",
+        "Yenepoya Homoeopathic Medical College and hospital",
         "Government Engineering College Mananthavady",
         "Government Engineering College Munnar",
         "Government Engineering College Painavu",
