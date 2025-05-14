@@ -187,6 +187,41 @@ export function EventStats({ participants }: EventStatsProps) {
     }
   }
 
+  const handleDownloadAjietData = async () => {
+    try {
+      const ajietData = eventData.map(event => ({
+        name: event.name,
+        count: event.ajietCount,
+        participantCount: event.ajietCount,
+        ajietCount: event.ajietCount,
+        nonAjietCount: 0,
+        category: event.category,
+      })).filter(event => event.ajietCount > 0)
+
+      await downloadEventData(ajietData)
+    } catch (error) {
+      console.error("Error downloading AJIET event data:", error)
+      setError("Failed to download AJIET event data")
+    }
+  }
+
+  const handleDownloadNonAjietData = async () => {
+    try {
+      const nonAjietData = eventData.map(event => ({
+        name: event.name,
+        count: event.nonAjietCount,
+        participantCount: event.nonAjietCount,
+        ajietCount: 0,
+        nonAjietCount: event.nonAjietCount,
+        category: event.category,
+      })).filter(event => event.nonAjietCount > 0)
+
+      await downloadEventData(nonAjietData)
+    } catch (error) {
+      console.error("Error downloading non-AJIET event data:", error)
+      setError("Failed to download non-AJIET event data")
+    }
+  }
 
   const prepareBarData = (data: EventData[], type: "all" | "A J Institute of Engineering and Technology, Mangalore" | "nonAjiet") => {
     const displayData = data.slice(0, displayCount)
@@ -289,10 +324,20 @@ export function EventStats({ participants }: EventStatsProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={handleDownloadEventData} className="cursor-pointer">
-            <Download className="mr-2 h-4 w-4" />
-            Download Event Data
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button onClick={handleDownloadEventData} className="cursor-pointer">
+              <Download className="mr-2 h-4 w-4" />
+              Download All Data
+            </Button>
+            <Button onClick={handleDownloadAjietData} className="cursor-pointer" variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              AJIET Data Only
+            </Button>
+            <Button onClick={handleDownloadNonAjietData} className="cursor-pointer" variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              Non-AJIET Data
+            </Button>
+          </div>
         </div>
       </div>
 
