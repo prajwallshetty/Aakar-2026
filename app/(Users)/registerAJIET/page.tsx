@@ -269,7 +269,7 @@ const Register = () => {
                 transaction_ids: [formData.transactionId],
                 paymentScreenshotUrls: ["None"],
                 groupMembersData: groupEventData,
-                amount: totalAmount,
+                amount: 0,
             }
 
             const { data, error } = await registerParticipant(
@@ -481,7 +481,7 @@ const Register = () => {
                                             return (
                                                 <div key={event.id} className="bg-pink-100 px-3 py-1 rounded-full flex items-center">
                                                     <span>
-                                                        {event.eventName} - ₹{event.fee || 0}
+                                                        {event.eventName}
                                                     </span>
                                                     <button
                                                         type="button"
@@ -512,9 +512,6 @@ const Register = () => {
                                                 </div>
                                             )
                                         })}
-                                    </div>
-                                    <div className="mt-3">
-                                        <p className="font-bold">Total: ₹{totalAmount}</p>
                                     </div>
                                 </div>
                             )}
@@ -738,7 +735,6 @@ const Register = () => {
                                             ) : null
                                         })}
                                     </ul>
-                                    <p className="font-bold mt-2">Total: ₹{totalAmount}</p>
                                 </div>
 
                                 <div className="flex flex-row justify-center gap-4 mt-4">
