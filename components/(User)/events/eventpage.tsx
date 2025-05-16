@@ -17,15 +17,26 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
                 setLoading(true);
                 const data = await getEventsByCategory(eventCategory);
                 setEvents(data);
+    
+                // Cache all event images
+                const cache = await caches.open('event-image-cache');
+                data.forEach(async (event) => {
+                    const cached = await cache.match(event.imageUrl);
+                    if (!cached) {
+                        const response = await fetch(event.imageUrl, { mode: 'no-cors' });
+                        cache.put(event.imageUrl, response);
+                    }
+                });
             } catch (error) {
                 console.error("Failed to fetch events:", error);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchEvents();
     }, []);
+    
 
     return (
         <div className="min-h-screen text-black p-15 flex flex-col items-center justify-center">
