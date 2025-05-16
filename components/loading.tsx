@@ -7,7 +7,9 @@ export default function Loading() {
     const [minimumDisplayTimePassed, setMinimumDisplayTimePassed] = useState(false)
     const [pageLoaded, setPageLoaded] = useState(false)
     const [readyToHide, setReadyToHide] = useState(false)
+    const [videoLoadingProgress, setVideoLoadingProgress] = useState(0)
     const videoRef = useRef<HTMLVideoElement>(null)
+    const progressCheckTimerRef = useRef<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
         const handleLoad = () => {
@@ -26,6 +28,14 @@ export default function Loading() {
             setMinimumDisplayTimePassed(true)
         }, 5000)
 
+        // Set a timer to check video loading progress after 5 seconds
+        progressCheckTimerRef.current = setTimeout(() => {
+            if (videoLoadingProgress < 0.5) { // Less than 50% loaded
+                setReadyToHide(true)
+                console.log("Video loading too slow, hiding loading screen")
+            }
+        }, 5000)
+
         if ("caches" in window) {
             caches.open("asset-cache").then((cache) => {
                 const assetPath = "/loading2.mp4"
@@ -38,6 +48,9 @@ export default function Loading() {
         return () => {
             window.removeEventListener("load", handleLoad)
             clearTimeout(timer)
+            if (progressCheckTimerRef.current) {
+                clearTimeout(progressCheckTimerRef.current)
+            }
         }
     }, [])
 
@@ -53,11 +66,26 @@ export default function Loading() {
             }
         }
 
+        const handleProgress = () => {
+            if (!videoRef.current) return
+            
+            const video = videoRef.current
+            if (video.buffered.length > 0) {
+                const bufferedEnd = video.buffered.end(video.buffered.length - 1)
+                const duration = video.duration
+                const progress = bufferedEnd / duration
+                setVideoLoadingProgress(progress)
+                console.log(`Video loading progress: ${Math.round(progress * 100)}%`)
+            }
+        }
+
         const video = videoRef.current
         video.addEventListener("ended", handleVideoEnded)
+        video.addEventListener("progress", handleProgress)
 
         return () => {
             video.removeEventListener("ended", handleVideoEnded)
+            video.removeEventListener("progress", handleProgress)
         }
     }, [pageLoaded, minimumDisplayTimePassed])
 
