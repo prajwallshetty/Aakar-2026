@@ -493,18 +493,6 @@ const EventsCRUD = () => {
                             </div>
                         )}
                     </div>
-                    <div className="flex-1">
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search by ID, event name..."
-                                className="pl-8 w-full"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                    </div>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Table>
@@ -698,6 +686,19 @@ const EventsCRUD = () => {
                             {downloading ? "Downloading..." : `Download Data (${selectedEvents.length} selected)`}
                         </Button>
                     )}
+                </div>
+
+                <div className="flex-1">
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by ID, event name..."
+                            className="pl-8 w-full"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 {loading ? (
