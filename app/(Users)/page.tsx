@@ -7,7 +7,6 @@ import Concert from "@/components/(User)/Home/Concert";
 import ArenaBanner from "@/components/(User)/Home/ArenaBanner";
 import Sponsors from "@/components/(User)/Home/Sponsors";
 import Loading from "@/components/loading";
-
 export default function Home() {
   return (
     <>

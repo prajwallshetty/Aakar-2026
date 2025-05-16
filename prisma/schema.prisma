@@ -12,6 +12,7 @@ enum eventCategory {
   Cultural
   Gaming
   Special
+  ComboPass
 }
 
 enum eventType {

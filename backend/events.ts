@@ -1,4 +1,5 @@
 "use server"
+
 import { eventCategory } from "@prisma/client";
 import { db } from ".";
 import { ExtendedEvent, ExtendedEventCreateInput } from "@/types";

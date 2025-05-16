@@ -18,6 +18,12 @@ import { ExtendedEvent, ExtendedParticipant } from "@/types";
 import { uploadFile } from "@/backend/supabase";
 import Error from "next/error";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({
+    subsets: ["latin"],
+    variable: "--font-montserrat",
+});
 
 interface FormErrors {
     [key: string]: string;
@@ -164,7 +170,7 @@ export default function AddAdditionalEvents({
 
         setTotalAmount(amount);
 
-        const upiId = "8861621934@upi";
+        const upiId = "ajiet@cnrb";
         const payeeName = "Aakar 2025 Registration";
         const transactionNote = "Aakar 2025 Registration";
 
@@ -303,36 +309,34 @@ export default function AddAdditionalEvents({
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-6">
-                <div className="w-full max-w-4xl space-y-8">
-                    <div className="space-y-4">
-                        <Skeleton className="h-12 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                    </div>
-
-                    <div className="space-y-4 border rounded-lg p-6">
-                        <div className="flex items-center space-x-4">
-                            <Skeleton className="h-12 w-12 rounded-full" />
-                            <div className="space-y-2">
-                                <Skeleton className="h-4 w-[250px]" />
-                                <Skeleton className="h-4 w-[200px]" />
+            <div className="flex items-center justify-center min-h-screen px-4 md:px-8 py-8 md:py-12 relative">
+                <div className="flex flex-col bg-white w-200 p-6 rounded shadow-md space-y-4">
+                    <Skeleton className="h-6 bg-gray-300 rounded w-1/3 mx-auto"></Skeleton>
+                    <Skeleton className="h-4 bg-gray-200 rounded w-2/3 self-end mb-2"></Skeleton>
+                    {[...Array(9)].map((_, index) => (
+                        <div
+                            key={index}
+                            className="flex flex-col md:flex-row gap-1"
+                        >
+                            <Skeleton className="bg-gray-200 h-5 w-32 rounded"></Skeleton>
+                            <div className="w-full">
+                                <Skeleton className="h-10 bg-gray-200 rounded"></Skeleton>
                             </div>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {Array(6).fill(null).map((_, i) => (
-                                <div key={i} className="space-y-2">
-                                    <Skeleton className="h-4 w-full" />
-                                    <Skeleton className="h-8 w-full" />
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="flex justify-between items-center pt-4">
-                            <Skeleton className="h-10 w-[100px]" />
-                            <Skeleton className="h-10 w-[100px]" />
-                        </div>
+                    ))}
+                    <div className="flex justify-center">
+                        <Skeleton className="h-10 w-32 bg-gray-300 rounded-full"></Skeleton>
                     </div>
+                </div>
+                <div className="h-96 w-64 bg-transparent absolute bottom-0 left-0 hidden md:block">
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                            backgroundImage: "url('/cutie.png')",
+                            backgroundSize: "cover",
+                            backgroundRepeat: "no-repeat",
+                        }}
+                    ></div>
                 </div>
             </div>
         );
@@ -470,7 +474,7 @@ export default function AddAdditionalEvents({
                                 value={selectedEvents}
                                 onChange={handleEventSelection}
                                 placeholder="Select additional event(s)..."
-                                className={`${formErrors.events ? "border-red-500" : ""
+                                className={`${montserrat.className} ${formErrors.events ? "border-red-500" : ""
                                     } w-full`}
                                 classNamePrefix="select"
                             />
@@ -617,10 +621,10 @@ export default function AddAdditionalEvents({
                                                                     placeholder="Member Name"
                                                                     required
                                                                     className={`border ${formErrors[
-                                                                            `group_${event.id}_member_${index}_name`
-                                                                        ]
-                                                                            ? "border-red-500"
-                                                                            : "border-gray-300"
+                                                                        `group_${event.id}_member_${index}_name`
+                                                                    ]
+                                                                        ? "border-red-500"
+                                                                        : "border-gray-300"
                                                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
@@ -659,10 +663,10 @@ export default function AddAdditionalEvents({
                                                                     placeholder="Member USN"
                                                                     required
                                                                     className={`border ${formErrors[
-                                                                            `group_${event.id}_member_${index}_usn`
-                                                                        ]
-                                                                            ? "border-red-500"
-                                                                            : "border-gray-300"
+                                                                        `group_${event.id}_member_${index}_usn`
+                                                                    ]
+                                                                        ? "border-red-500"
+                                                                        : "border-gray-300"
                                                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
@@ -701,10 +705,10 @@ export default function AddAdditionalEvents({
                                                                     placeholder="Member Email"
                                                                     required
                                                                     className={`border ${formErrors[
-                                                                            `group_${event.id}_member_${index}_email`
-                                                                        ]
-                                                                            ? "border-red-500"
-                                                                            : "border-gray-300"
+                                                                        `group_${event.id}_member_${index}_email`
+                                                                    ]
+                                                                        ? "border-red-500"
+                                                                        : "border-gray-300"
                                                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500`}
                                                                 />
                                                                 {formErrors[
@@ -785,8 +789,8 @@ export default function AddAdditionalEvents({
                                     }
                                     placeholder="Enter transaction ID"
                                     className={`border ${formErrors.transactionId
-                                            ? "border-red-500"
-                                            : "border-gray-300"
+                                        ? "border-red-500"
+                                        : "border-gray-300"
                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                 />
                                 {formErrors.transactionId && (
@@ -811,8 +815,8 @@ export default function AddAdditionalEvents({
                                         setPaymentScreenshot(e.target.files![0])
                                     }
                                     className={`border ${formErrors.paymentScreenshot
-                                            ? "border-red-500"
-                                            : "border-gray-300"
+                                        ? "border-red-500"
+                                        : "border-gray-300"
                                         } rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500 mt-1`}
                                 />
                                 {formErrors.paymentScreenshot && (
@@ -826,7 +830,7 @@ export default function AddAdditionalEvents({
 
                     <div className="mt-8 flex justify-between items-center">
                         <Link
-                            href={`/users/${userId}/dashboard`}
+                            href={`/`}
                             className="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
                         >
                             Cancel
@@ -838,8 +842,8 @@ export default function AddAdditionalEvents({
                                 isSubmitting || selectedEvents.length === 0
                             }
                             className={`px-5 py-2 bg-pink-600 cursor-pointer text-white rounded-md ${isSubmitting || selectedEvents.length === 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "hover:bg-pink-700"
+                                ? "opacity-50 cursor-not-allowed"
+                                : "hover:bg-pink-700"
                                 }`}
                         >
                             {isSubmitting ? (

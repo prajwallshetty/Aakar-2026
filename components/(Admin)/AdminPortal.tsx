@@ -368,7 +368,7 @@ const AdminPortal = () => {
                           onChange={handleInputChange}
                           className="col-span-3"
                           required={!isEditing}
-                          placeholder={isEditing ? "Leave blank to keep current password" : ""}
+                          placeholder={isEditing ? "Leave blank to keep current password" : "Enter the password"}
                         />
                       </div>
                     </div>

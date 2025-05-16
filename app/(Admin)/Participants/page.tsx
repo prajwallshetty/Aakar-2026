@@ -38,13 +38,14 @@ import {
     ChevronLeft,
     ChevronFirst,
     ChevronLast,
+    SlidersHorizontal,
 } from "lucide-react";
 import React from "react";
 import { getParticipantsWithEvents } from "@/backend/participant";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { EventStats } from "@/components/(Admin)/Participants/event-stats";
-import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
+import { EventStats } from "@/components/(Admin)/event-stats"
+import { CollegeStats } from "@/components/(Admin)/college-stats"
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
@@ -61,6 +62,7 @@ export default function ParticipantsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCollege, setSelectedCollege] = useState<string>("");
+    const [filterType, setFilterType] = useState<"include" | "exclude" | "all">("all");
     const [colleges, setColleges] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [expandedParticipant, setExpandedParticipant] = useState<
@@ -79,64 +81,83 @@ export default function ParticipantsPage() {
     const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
         try {
             setIsLoading(true)
-            const index = page - 1
-            const sortedParticipants = sortParticipantsByNewest(allParticipants)
-            if (sortedParticipants.length) {
-                const data = sortedParticipants.slice(page * pageSize - pageSize, page * pageSize)
-                setParticipants(data)
-                setFilteredParticipants(data)
-                setIsLoading(false)
-                return
+
+            if (allParticipants.length > 0) {
+                const sortedParticipants = sortParticipantsByNewest(allParticipants)
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = page * pageSize;
+                const data = sortedParticipants.slice(startIndex, endIndex);
+                setParticipants(data);
+                setFilteredParticipants(data);
+                setIsLoading(false);
+                return;
             }
 
-            const response = await getParticipantsWithEvents(index, pageSize)
+            const index = page - 1;
+            const response = await getParticipantsWithEvents(index, pageSize);
 
             if (response.error) {
-                setError(typeof response.error === "string" ? response.error : "Failed to fetch participants")
-                return
+                setError(typeof response.error === "string" ? response.error : "Failed to fetch participants");
+                return;
             }
 
             if (response.data) {
-                const sortedData = sortParticipantsByNewest(response.data)
-                setParticipants(sortedData)
-                setFilteredParticipants(sortedData)
+                const sortedData = sortParticipantsByNewest(response.data);
+                setParticipants(sortedData);
+                setFilteredParticipants(sortedData);
 
                 if (isInitialLoad) {
                     try {
-                        const allResponse = await getParticipantsWithEvents()
-                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data)
+                        const allResponse = await getParticipantsWithEvents();
+                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
                         if (allResponse.data) {
-                            setAllParticipants(allSortedParticipants)
-                            setTotalItems(allSortedParticipants.length)
-                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize))
+                            setAllParticipants(allSortedParticipants);
+                            setTotalItems(allSortedParticipants.length);
+                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
 
-                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[]
-                            setColleges(uniqueColleges)
+                            const startIndex = (page - 1) * pageSize;
+                            const endIndex = page * pageSize;
+                            const paginatedData = allSortedParticipants.slice(startIndex, endIndex);
+                            setParticipants(paginatedData);
+                            setFilteredParticipants(paginatedData);
+
+                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[];
+                            setColleges(uniqueColleges);
                         }
                     } catch (err) {
-                        console.error("Error fetching all participants for stats:", err)
+                        console.error("Error fetching all participants for stats:", err);
                     }
-                    setIsInitialLoad(false)
+                    setIsInitialLoad(false);
                 }
             }
         } catch (err) {
-            setError("An error occurred while fetching participants")
-            console.error(err)
+            setError("An error occurred while fetching participants");
+            console.error(err);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchParticipants(currentPage);
+        fetchParticipants(currentPage, itemsPerPage);
     }, [currentPage, itemsPerPage]);
 
     useEffect(() => {
-        let result = [...participants];
+        if (allParticipants.length === 0) return;
+
+        let filteredResults = [...allParticipants];
+
+        if (selectedCollege && filterType !== "all") {
+            if (filterType === "include") {
+                filteredResults = filteredResults.filter(p => p.college === selectedCollege);
+            } else if (filterType === "exclude") {
+                filteredResults = filteredResults.filter(p => p.college !== selectedCollege);
+            }
+        }
 
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
-            result = result.filter(
+            filteredResults = filteredResults.filter(
                 (p) =>
                     p.name.toLowerCase().includes(query) ||
                     p.email.toLowerCase().includes(query) ||
@@ -154,25 +175,19 @@ export default function ParticipantsPage() {
             );
         }
 
-        if (selectedCollege && selectedCollege !== "all") {
-            result = result.filter((p) => p.college === selectedCollege);
-        }
+        setTotalItems(filteredResults.length);
+        setTotalPages(Math.ceil(filteredResults.length / itemsPerPage));
 
-        setFilteredParticipants(result);
-    }, [searchQuery, selectedCollege, participants]);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, filteredResults.length);
 
-    useEffect(() => {
-        if (selectedCollege && selectedCollege !== "all") {
-            const filteredTotal = allParticipants.filter(p => p.college === selectedCollege).length;
-            setTotalItems(filteredTotal);
-            setTotalPages(Math.ceil(filteredTotal / itemsPerPage));
+        if (startIndex >= filteredResults.length && filteredResults.length > 0) {
             setCurrentPage(1);
-        } else if (selectedCollege === "all" || selectedCollege === "") {
-            setTotalItems(allParticipants.length);
-            setTotalPages(Math.ceil(allParticipants.length / itemsPerPage));
-            setCurrentPage(1);
+            setFilteredParticipants(filteredResults.slice(0, itemsPerPage));
+        } else {
+            setFilteredParticipants(filteredResults.slice(startIndex, endIndex));
         }
-    }, [selectedCollege, itemsPerPage, allParticipants]);
+    }, [searchQuery, selectedCollege, filterType, allParticipants, currentPage, itemsPerPage]);
 
     const handleDownloadAll = async () => {
         try {
@@ -204,7 +219,7 @@ export default function ParticipantsPage() {
     const resetFilters = () => {
         setSearchQuery("");
         setSelectedCollege("");
-        setFilteredParticipants(participants);
+        setFilterType("all");
         setCurrentPage(1);
     };
 
@@ -221,7 +236,6 @@ export default function ParticipantsPage() {
     const handleItemsPerPageChange = (value: string) => {
         const newItemsPerPage = parseInt(value);
         setItemsPerPage(newItemsPerPage);
-        setTotalPages(Math.ceil(totalItems / newItemsPerPage));
         setCurrentPage(1);
     };
 
@@ -252,7 +266,7 @@ export default function ParticipantsPage() {
     );
 
     const PaginationControls = () => (
-        <div className="flex  flex-col md:flex-row items-center justify-between mt-4">
+        <div className="flex flex-col md:flex-row items-center justify-between mt-4">
             <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
                     Items per page:
@@ -262,13 +276,15 @@ export default function ParticipantsPage() {
                     onValueChange={handleItemsPerPageChange}
                 >
                     <SelectTrigger className="h-8 w-[70px] cursor-pointer">
-                        <SelectValue placeholder="10" />
+                        <SelectValue placeholder={itemsPerPage.toString()} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="5" className="cursor-pointer">5</SelectItem>
                         <SelectItem value="10" className="cursor-pointer">10</SelectItem>
                         <SelectItem value="20" className="cursor-pointer">20</SelectItem>
                         <SelectItem value="50" className="cursor-pointer">50</SelectItem>
+                        <SelectItem value="100" className="cursor-pointer">100</SelectItem>
+                        <SelectItem value="250" className="cursor-pointer">250</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -318,7 +334,7 @@ export default function ParticipantsPage() {
             </div>
 
             <div className="text-sm text-muted-foreground">
-                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
+                Showing {totalItems === 0 ? 0 : Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
             </div>
         </div>
     );
@@ -335,7 +351,7 @@ export default function ParticipantsPage() {
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="participants">
-                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4 flex gap-4">
+                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4  gap-4 hidden md:flex">
                             <TabsTrigger
                                 value="participants"
                                 className="cursor-pointer"
@@ -380,31 +396,42 @@ export default function ParticipantsPage() {
                                     </div>
 
                                     <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                                        <Select
-                                            value={selectedCollege}
-                                            onValueChange={setSelectedCollege}
-                                        >
-                                            <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
-                                                <SelectValue placeholder="College" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem
-                                                    value="all"
-                                                    className="cursor-pointer"
-                                                >
-                                                    All Colleges
-                                                </SelectItem>
-                                                {colleges.map((college) => (
-                                                    <SelectItem
-                                                        key={college}
-                                                        value={college}
-                                                        className={`cursor-pointer ${montserrat.className}`}
-                                                    >
-                                                        {college}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <div className="flex items-center flex-col md:flex-row gap-2">
+                                            <Select
+                                                value={filterType}
+                                                onValueChange={(value: "include" | "exclude" | "all") => setFilterType(value)}
+                                            >
+                                                <SelectTrigger className="w-[100px] cursor-pointer">
+                                                    <SelectValue placeholder="Filter type" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="all" className="cursor-pointer">All</SelectItem>
+                                                    <SelectItem value="include" className="cursor-pointer">Include</SelectItem>
+                                                    <SelectItem value="exclude" className="cursor-pointer">Exclude</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+
+                                            <Select
+                                                value={selectedCollege}
+                                                onValueChange={setSelectedCollege}
+                                                disabled={filterType === "all"}
+                                            >
+                                                <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
+                                                    <SelectValue placeholder="College" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {colleges.map((college) => (
+                                                        <SelectItem
+                                                            key={college}
+                                                            value={college}
+                                                            className={`cursor-pointer ${montserrat.className}`}
+                                                        >
+                                                            {college}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
 
                                         <Button
                                             variant="outline"
@@ -418,17 +445,16 @@ export default function ParticipantsPage() {
                                 </div>
 
                                 <div className="flex flex-wrap gap-2 justify-between items-center">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center flex-col md:flex-row gap-2 overflow-hidden">
                                         <Badge variant="outline">
-                                            {totalItems} participants
+                                            {totalItems} registrations
                                         </Badge>
-                                        {selectedCollege &&
-                                            selectedCollege !== "all" && (
-                                                <Badge variant="secondary">
-                                                    <School className="mr-1 h-3 w-3" />
-                                                    {selectedCollege}
-                                                </Badge>
-                                            )}
+                                        {selectedCollege && filterType !== "all" && (
+                                            <Badge variant="secondary">
+                                                <School className="mr-1 h-3 w-3" />
+                                                {filterType === "include" ? "Including" : "Excluding"}: {selectedCollege}
+                                            </Badge>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col sm:flex-row gap-2">
@@ -519,7 +545,12 @@ export default function ParticipantsPage() {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    {participant.events.map(e => e.eventName).join(", ")}
+                                                                    {participant.events.map((e, index) => (
+                                                                        <span key={index}>
+                                                                            {e.eventName}
+                                                                            <br />
+                                                                        </span>
+                                                                    ))}
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {

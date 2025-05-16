@@ -73,7 +73,7 @@ export default function AboutPage() {
 
             <div className="flex flex-col items-center gap-4 mb-6">
               <p className={`text-base md:text-lg font-semibold ${montserrat.className}`}>
-                May 9th - 10th, 2025
+                May 20th, 21st and 22nd, 2025
               </p>
               <p className={`text-base md:text-lg font-semibold text-center ${montserrat.className}`}>
                 A J INSTITUTE OF ENGINEERING AND TECHNOLOGY, Kottarachowki, Mangaluru

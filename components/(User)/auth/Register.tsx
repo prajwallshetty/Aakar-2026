@@ -395,25 +395,33 @@ const Register = () => {
         }
     };
 
-    const colleges: string[] = [
+    const sortColleges = (colleges: any) => {
+        return [...colleges].sort((a, b) => a.localeCompare(b));
+    }
+
+    const unsortedcolleges: string[] = [
         "A J Institute of Engineering and Technology, Mangalore",
         "Alva's Ayurveda Medical College, Moodbidri",
         "Srinivas institute of technology, valachill",
         "Alva's Homoeopathic Medical College, Moodbidri",
         "Alva's Institute of Engineering Technology, Moodbidri",
         "Alvas College of Nursing, Moodbidri",
+        "The Oxford college of engineering",
         "Aloysius MBA, Mangalore",
         "Canara Engineering College, Mangalore",
         "Carmel Degree College, Modankap, BC Road",
-        "Trisha Vidya College, Katapadi",
         "St. Mary's College, Shirva",
+        "adichunchanagiri institute of engineering, coorg",
+        "CIT, chickmagalur",
+        "Rajarajeshwari college Bangalore",
         "Shri Madhwa Vadiraja Institute of Technology and Management, Udupi",
-        "Poornaprajna College, Udupi",
         "Mahathma Gandhi Memorial (MGM) College, Udupi",
         "Vaikunta Baliga College of Law, Udupi",
+        "Trisha Vidya College of Commerce and Management",
         "Upendra Pai Memorial College, Udupi",
         "Udupi Group of Institutions, Manipal",
         "Kasturba Medical College (KMC), Manipal",
+        "Laxmi Memorial College of Nursing & Physiotherapy",
         "Manipal Institute of Technology, Manipal",
         "College of Fisheries, Mangalore",
         "Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi",
@@ -475,8 +483,8 @@ const Register = () => {
         "St Mary's College, Shirva",
         "Ids college, Mangalore",
         "Canara Degree College",
+        "St Agnes College(Autonomous). Bendur, Mangaluru",
         "Besant Women's College",
-        "Trisha College of Commerce and Management",
         "Shree Gokarnanatheshwara College",
         "Mahatma Gandhi Memorial College, Udupi",
         "Yenepoya Allied Science",
@@ -488,7 +496,6 @@ const Register = () => {
         "Athena Institute of Nursing Science",
         "Indira Institute of Nursing Science",
         "Laxmi Memorial College of Nursing",
-        "St. Agnes",
         "St. Aloysius",
         "Ramakrishna Degree College",
         "MAPS College",
@@ -597,6 +604,7 @@ const Register = () => {
         "Government Engineering College Kozhikode",
         "Government Engineering College Kunnamkulam",
         "Government Engineering College Malappuram",
+        "Yenepoya Homoeopathic Medical College and hospital",
         "Government Engineering College Mananthavady",
         "Government Engineering College Munnar",
         "Government Engineering College Painavu",
@@ -633,6 +641,8 @@ const Register = () => {
         "PSG College of Technology, Coimbatore",
         "Reva University, Bangalore"
     ];
+
+    const colleges = sortColleges(unsortedcolleges);
 
     if (isLoading) {
         return (
@@ -1119,50 +1129,6 @@ const Register = () => {
                                                                 Team Member{" "}
                                                                 {index + 1}
                                                             </p>
-                                                            {eventDetail && index >=
-                                                                eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 :
-                                                                0 && (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const updatedMembers =
-                                                                                [
-                                                                                    ...(groupData?.members ||
-                                                                                        []),
-                                                                                ];
-                                                                            updatedMembers.splice(
-                                                                                index,
-                                                                                1
-                                                                            );
-                                                                            setGroupEventData(
-                                                                                (
-                                                                                    prev
-                                                                                ) => ({
-                                                                                    ...prev,
-                                                                                    [event.id]:
-                                                                                    {
-                                                                                        ...prev[
-                                                                                        event
-                                                                                            .id
-                                                                                        ],
-                                                                                        participantCount:
-                                                                                            prev[
-                                                                                                event
-                                                                                                    .id
-                                                                                            ]
-                                                                                                .participantCount -
-                                                                                            1,
-                                                                                        members:
-                                                                                            updatedMembers,
-                                                                                    },
-                                                                                })
-                                                                            );
-                                                                        }}
-                                                                        className="text-red-500 cursor-pointer text-sm hover:text-red-700"
-                                                                    >
-                                                                        Remove
-                                                                    </button>
-                                                                )}
                                                         </div>
 
                                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1331,7 +1297,7 @@ const Register = () => {
                                     {showQRCode ? (
                                         <img
                                             src={
-                                                qrImageUrl || "/placeholder.svg"
+                                                qrImageUrl || "/logo.svg"
                                             }
                                             alt="Payment QR Code"
                                             className="w-64 h-64 border"
