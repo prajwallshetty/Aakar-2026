@@ -75,7 +75,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full md:max-w-5xl md:px-4">
                     {events.map((event, index) => (
-                        <Link href={"/events/" + event.id} key={event.id} className="w-full">
+                        <Link href={"/events/" + event.imageUrl} key={event.id} className="w-full">
                             <div
                                 className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[1/1.414] w-full bg-cover bg-center cursor-pointer transition-all duration-300 hover:scale-105 group overflow-hidden"
                                 style={{

@@ -226,7 +226,7 @@ const EventDescription = ({
                                     <div
                                         className="absolute inset-0 bg-cover bg-center"
                                         style={{
-                                            backgroundImage: `url('${eventData.id}.png')`,
+                                            backgroundImage: `url('${eventData.imageUrl}.png')`,
                                         }}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
