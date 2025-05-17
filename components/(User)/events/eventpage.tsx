@@ -79,7 +79,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
                             <div
                                 className="relative bg-white rounded-4xl p-6 text-center flex flex-col items-center aspect-[1/1.414] w-full bg-cover bg-center cursor-pointer transition-all duration-300 hover:scale-105 group overflow-hidden"
                                 style={{
-                                    backgroundImage: `url('${event.imageUrl}')`,
+                                    backgroundImage: `url('${event.id}.png')`,
                                 }}
                             >
                                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-purple-500/20 to-blue-500/20 transition-opacity duration-300"></div>
