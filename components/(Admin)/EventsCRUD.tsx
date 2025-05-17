@@ -86,7 +86,7 @@ interface FormData {
     maxMembers: number
 }
 
-type GroupingOption = "none" | "venue" | "date"
+type GroupingOption = "none" | "venue" | "date" | "category"
 
 const EventsCRUD = () => {
     const [events, setEvents] = useState<ExtendedEvent[]>([])
@@ -108,7 +108,6 @@ const EventsCRUD = () => {
         phone: "",
     })
     const [newRule, setNewRule] = useState("")
-    const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [uploadProgress, setUploadProgress] = useState(false)
     const [formData, setFormData] = useState<FormData>({
         eventName: "",
@@ -126,7 +125,6 @@ const EventsCRUD = () => {
         minMembers: 1,
         maxMembers: 1,
     })
-    const [previewUrl, setPreviewUrl] = useState<string>("")
     const [selectedEvents, setSelectedEvents] = useState<number[]>([])
     const [downloading, setDownloading] = useState(false)
 
@@ -152,20 +150,6 @@ const EventsCRUD = () => {
     useEffect(() => {
         fetchEvents()
     }, [])
-
-    useEffect(() => {
-        if (selectedFile) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setPreviewUrl(reader.result as string)
-            }
-            reader.readAsDataURL(selectedFile)
-        } else if (formData.imageUrl) {
-            setPreviewUrl(formData.imageUrl)
-        } else {
-            setPreviewUrl("")
-        }
-    }, [selectedFile, formData.imageUrl])
 
     const fetchEvents = async () => {
         setLoading(true)
@@ -248,6 +232,23 @@ const EventsCRUD = () => {
             })
             return grouped
         }
+        else if (groupingOption === "category") {
+            const grouped: Record<string, ExtendedEvent[]> = {}
+
+
+            const sortedByCategory = [...events].sort((a, b) => {
+                return a.date.getTime() - b.date.getTime()
+            })
+
+            sortedByCategory.forEach((event) => {
+                if (!grouped[event.eventCategory]) {
+                    grouped[event.eventCategory] = []
+                }
+                grouped[event.eventCategory].push(event)
+            })
+
+            return grouped
+        }        
         return { "All Events": events }
     }
 
@@ -257,20 +258,6 @@ const EventsCRUD = () => {
             ...prev,
             [name]: ["fee", "minMembers", "maxMembers"].includes(name) ? Number.parseInt(value) || "" : value,
         }))
-    }
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setSelectedFile(e.target.files[0])
-        }
-    }
-
-    const handleRemoveFile = () => {
-        setSelectedFile(null)
-        setPreviewUrl("")
-        if (!isEditing) {
-            setFormData((prev) => ({ ...prev, imageUrl: "" }))
-        }
     }
 
     const handleSelectChange = (name: keyof FormData, value: eventCategory | eventType | Date) => {
@@ -350,8 +337,6 @@ const EventsCRUD = () => {
         setNewStudentCoordinator({ name: "", phone: "" })
         setNewFacultyCoordinator({ name: "", phone: "" })
         setNewRule("")
-        setSelectedFile(null)
-        setPreviewUrl("")
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -360,22 +345,9 @@ const EventsCRUD = () => {
         setUploadProgress(true)
 
         try {
-            let imageUrl = formData.imageUrl
-            if (selectedFile) {
-                const uploadedUrl = await uploadFile(selectedFile, "eventimages")
-                if (uploadedUrl) {
-                    if (isEditing && formData.imageUrl) {
-                        await deleteFiles([formData.imageUrl])
-                    }
-                    imageUrl = uploadedUrl
-                } else {
-                    throw new Error("Failed to upload image")
-                }
-            }
-
             const eventData = {
                 ...formData,
-                imageUrl,
+                imageUrl: formData.imageUrl,
                 fee: formData.fee,
                 studentCoordinators: formData.studentCoordinators,
                 facultyCoordinators: formData.facultyCoordinators,
@@ -418,9 +390,6 @@ const EventsCRUD = () => {
         setCurrentId(event.id)
         setIsEditing(true)
         setOpenDialog(true)
-        if (event.imageUrl) {
-            setPreviewUrl(event.imageUrl)
-        }
     }
 
     const handleDelete = async (id: number) => {
@@ -494,8 +463,8 @@ const EventsCRUD = () => {
                         )}
                     </div>
                 </CardHeader>
-                <CardContent className="p-0">
-                    <Table>
+                <CardContent className="p-2">
+                    <Table className="w-full px-4">
                         <TableHeader className="bg-muted/50">
                             <TableRow>
                                 <TableHead className="w-[200px]">Event</TableHead>
@@ -504,7 +473,6 @@ const EventsCRUD = () => {
                                 <TableHead>Date & Time</TableHead>
                                 <TableHead>Venue</TableHead>
                                 <TableHead>Fee</TableHead>
-                                <TableHead>Poster</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -517,7 +485,7 @@ const EventsCRUD = () => {
                                 </TableRow>
                             ) : (
                                 filteredEvents.map((event) => (
-                                    <TableRow key={event.id} className="hover:bg-muted/10">
+                                    <TableRow key={event.id} className="hover:bg-muted/10 px-2">
                                         <TableCell className="font-medium">
                                             <div className="flex flex-col">
                                                 <span>{event.eventName}</span>
@@ -545,21 +513,6 @@ const EventsCRUD = () => {
                                             </div>
                                         </TableCell>
                                         <TableCell>₹{event.fee}</TableCell>
-                                        <TableCell>
-                                            {event.imageUrl ? (
-                                                <div className="w-16 h-16 relative rounded-md overflow-hidden border">
-                                                    <img
-                                                        src={event.imageUrl || "/placeholder.svg"}
-                                                        alt={event.eventName}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
-                                                    <Image className="h-5 w-5 text-muted-foreground" />
-                                                </div>
-                                            )}
-                                        </TableCell>
                                         <TableCell className="flex justify-end space-x-2 items-center">
                                             <Input
                                                 type="checkbox"
@@ -634,6 +587,14 @@ const EventsCRUD = () => {
                             onClick={() => handleGroupingChange("none")}
                         >
                             <LayoutGrid className="mr-2 h-4 w-4" /> None
+                        </Button>
+                        <Button
+                            variant={groupingOption === "category" ? "default" : "outline"}
+                            size="sm"
+                            className="cursor-pointer"
+                            onClick={() => handleGroupingChange("category")}
+                        >
+                            <LayoutGrid className="mr-2 h-4 w-4" /> Category
                         </Button>
                         <Button
                             variant={groupingOption === "date" ? "default" : "outline"}
@@ -847,6 +808,20 @@ const EventsCRUD = () => {
                                             required
                                         />
                                     </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="fee">Image URL</Label>
+                                        <Input
+                                            id="imageUrl"
+                                            name="imageUrl"
+                                            type="text"
+                                            placeholder="Enter image url number"
+                                            min="0"
+                                            value={formData.imageUrl}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -908,52 +883,6 @@ const EventsCRUD = () => {
                                         placeholder="e.g. Main Auditorium"
                                         required
                                     />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Event Poster</Label>
-                                    {previewUrl ? (
-                                        <div className="relative">
-                                            <div className="border rounded-md overflow-hidden max-w-xs">
-                                                <img
-                                                    src={previewUrl || "/placeholder.svg"}
-                                                    alt="Preview"
-                                                    className="w-full h-auto object-contain"
-                                                />
-                                            </div>
-                                            <Button
-                                                type="button"
-                                                variant="destructive"
-                                                size="sm"
-                                                className="absolute top-2 cursor-pointer right-2"
-                                                onClick={handleRemoveFile}
-                                            >
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center justify-center w-full">
-                                            <label
-                                                htmlFor="imageUpload"
-                                                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/30 transition-colors"
-                                            >
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                                                    <p className="mb-2 text-sm text-muted-foreground">
-                                                        <span className="font-semibold">Click to upload</span>
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">PNG, JPG or WebP (Recommended: 800x600)</p>
-                                                </div>
-                                                <input
-                                                    id="imageUpload"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                    onChange={handleFileChange}
-                                                />
-                                            </label>
-                                        </div>
-                                    )}
                                 </div>
 
                                 <Separator />
