@@ -41,7 +41,6 @@ export default function ParticipantDetailPage() {
     );
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [groupMembers, setGroupMembers] = useState<any[]>([]);
     const [expandedEvents, setExpandedEvents] = useState<{
         [key: string]: boolean;
     }>({});
@@ -73,24 +72,25 @@ export default function ParticipantDetailPage() {
                 if (response.data) {
                     setParticipant(response.data);
 
-                    if (response.data.groupMembersData) {
-                        try {
-                            const parsedData =
-                                typeof response.data.groupMembersData ===
-                                    "string"
-                                    ? JSON.parse(response.data.groupMembersData)
-                                    : response.data.groupMembersData;
-
-                            setGroupMembers(
-                                Array.isArray(parsedData) ? parsedData : []
-                            );
-                        } catch (err) {
-                            console.error(
-                                "Error parsing group members data:",
-                                err
-                            );
-                            setGroupMembers([]);
-                        }
+                    if (
+                        response.data.paymentScreenshotUrls &&
+                        Array.isArray(response.data.paymentScreenshotUrls) &&
+                        response.data.paymentScreenshotUrls.length > 0
+                    ) {
+                        const cache = await caches.open(
+                            "payment-screenshots-cache"
+                        );
+                        response.data.paymentScreenshotUrls.forEach(
+                            async (url) => {
+                                const cached = await cache.match(url);
+                                if (!cached) {
+                                    const response = await fetch(url, {
+                                        mode: "no-cors",
+                                    });
+                                    cache.put(url, response);
+                                }
+                            }
+                        );
                     }
                 }
             } catch (err) {
@@ -128,7 +128,10 @@ export default function ParticipantDetailPage() {
 
                                 <div className="space-y-4">
                                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                                        <div key={i} className="flex items-start">
+                                        <div
+                                            key={i}
+                                            className="flex items-start"
+                                        >
                                             <div className="h-5 w-5 mr-2 bg-gray-200 animate-pulse rounded-md"></div>
                                             <div className="space-y-2 flex-1">
                                                 <div className="h-5 w-20 bg-gray-200 animate-pulse rounded-md"></div>
@@ -147,7 +150,10 @@ export default function ParticipantDetailPage() {
 
                                 <div className="space-y-4">
                                     {[1, 2].map((i) => (
-                                        <div key={i} className="flex items-start">
+                                        <div
+                                            key={i}
+                                            className="flex items-start"
+                                        >
                                             <div className="h-5 w-5 mr-2 bg-gray-200 animate-pulse rounded-md"></div>
                                             <div className="space-y-2 flex-1">
                                                 <div className="h-5 w-28 bg-gray-200 animate-pulse rounded-md"></div>
@@ -172,7 +178,10 @@ export default function ParticipantDetailPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {[1, 2, 3].map((i) => (
-                                    <div key={i} className="border rounded-lg p-4 shadow-sm">
+                                    <div
+                                        key={i}
+                                        className="border rounded-lg p-4 shadow-sm"
+                                    >
                                         <div className="flex justify-between">
                                             <div className="space-y-2">
                                                 <div className="h-5 w-32 bg-gray-200 animate-pulse rounded-md"></div>
@@ -296,7 +305,7 @@ export default function ParticipantDetailPage() {
                                         </div>
                                         <div>
                                             {participant.department || "N/A"} -{" "}
-                                            {participant.year}st Year
+                                            {participant.year} Year
                                         </div>
                                     </div>
                                 </div>
@@ -349,28 +358,38 @@ export default function ParticipantDetailPage() {
                                         </div>
                                     </div>
                                 </div>
-
-                                {participant.paymentScreenshotUrls &&
-                                    participant.paymentScreenshotUrls.map(
-                                        (pS) => (
-                                            <div key={pS}>
-                                                <div className="font-medium mb-2">
-                                                    Payment Screenshot
-                                                </div>
-                                                <div className="border rounded-md overflow-hidden max-w-xs">
+                            </div>
+                        </div>
+                        <div className="space-y-2 flex flex-col md:flex-row gap-4">
+                            {participant.paymentScreenshotUrls &&
+                                participant.paymentScreenshotUrls.map(
+                                    (pS, index) => (
+                                        <div key={index}>
+                                            <div className="font-medium mb-2">
+                                                Payment Screenshot {index + 1}
+                                            </div>
+                                            <div className="border rounded-md overflow-hidden max-w-sm bg-black">
+                                                {pS == "None" ? (
+                                                    <div className="flex items-center justify-center h-48 bg-gray-100">
+                                                        <p className="text-[10px] text-muted-foreground">
+                                                            Registered through
+                                                            /registerAJIET
+                                                        </p>
+                                                    </div>
+                                                ) : (
                                                     <img
                                                         src={
                                                             pS ||
-                                                            "/placeholder.svg"
+                                                            "/Aakarlogo.svg"
                                                         }
                                                         alt="Payment Screenshot"
                                                         className="w-full h-auto"
                                                     />
-                                                </div>
+                                                )}
                                             </div>
-                                        )
-                                    )}
-                            </div>
+                                        </div>
+                                    )
+                                )}
                         </div>
                     </div>
 
@@ -421,7 +440,7 @@ export default function ParticipantDetailPage() {
 
                                             {participant.groupMembersData &&
                                                 participant.groupMembersData[
-                                                event.id
+                                                    event.id
                                                 ] && (
                                                     <div
                                                         className="mt-3 pt-2 border-t"
@@ -437,8 +456,8 @@ export default function ParticipantDetailPage() {
                                                                         ...prev,
                                                                         [event.id]:
                                                                             !prev[
-                                                                            event
-                                                                                .id
+                                                                                event
+                                                                                    .id
                                                                             ],
                                                                     })
                                                                 )
@@ -473,41 +492,41 @@ export default function ParticipantDetailPage() {
                                                         {expandedEvents[
                                                             event.id
                                                         ] && (
-                                                                <div className="mt-2 space-y-2 pl-6">
-                                                                    {participant.groupMembersData[
-                                                                        event.id
-                                                                    ].members.map(
-                                                                        (
-                                                                            member,
-                                                                            index
-                                                                        ) => (
-                                                                            <div
-                                                                                key={
-                                                                                    index
+                                                            <div className="mt-2 space-y-2 pl-6">
+                                                                {participant.groupMembersData[
+                                                                    event.id
+                                                                ].members.map(
+                                                                    (
+                                                                        member,
+                                                                        index
+                                                                    ) => (
+                                                                        <div
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            className="text-sm bg-muted p-2 rounded-md"
+                                                                        >
+                                                                            <div className="font-medium">
+                                                                                {
+                                                                                    member.name
                                                                                 }
-                                                                                className="text-sm bg-muted p-2 rounded-md"
-                                                                            >
-                                                                                <div className="font-medium">
-                                                                                    {
-                                                                                        member.name
-                                                                                    }
-                                                                                </div>
-                                                                                <div className="text-xs text-muted-foreground">
-                                                                                    USN:{" "}
-                                                                                    {
-                                                                                        member.usn
-                                                                                    }{" "}
-                                                                                    |
-                                                                                    Email:{" "}
-                                                                                    {
-                                                                                        member.email
-                                                                                    }
-                                                                                </div>
                                                                             </div>
-                                                                        )
-                                                                    )}
-                                                                </div>
-                                                            )}
+                                                                            <div className="text-xs text-muted-foreground">
+                                                                                USN:{" "}
+                                                                                {
+                                                                                    member.usn
+                                                                                }{" "}
+                                                                                |
+                                                                                Email:{" "}
+                                                                                {
+                                                                                    member.email
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
                                         </CardContent>
