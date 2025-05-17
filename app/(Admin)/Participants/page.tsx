@@ -47,7 +47,7 @@ import { Badge } from "@/components/ui/badge";
 import { EventStats } from "@/components/(Admin)/event-stats"
 import { CollegeStats } from "@/components/(Admin)/college-stats"
 import { Skeleton } from "@/components/ui/skeleton";
-import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
+import { downloadEventRegistrationsByCollege, downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
 import { Montserrat } from "next/font/google";
 
@@ -466,6 +466,14 @@ export default function ParticipantsPage() {
                                             <span className="whitespace-nowrap">
                                                 Download Data
                                             </span>
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => downloadEventRegistrationsByCollege(allParticipants, "A J Institute of Engineering and Technology, Mangalore")}
+                                            className="cursor-pointer"
+                                        >
+                                            <FileSpreadsheet className="mr-2 h-4 w-4" />
+                                            <span className="whitespace-nowrap">Download Event Counts</span>
                                         </Button>
                                         <Button
                                             variant="outline"
