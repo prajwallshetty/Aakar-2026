@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Clock, Wallet, Phone, Building } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -162,6 +162,17 @@ const EventDescription = ({
 
     const hasCoordinators = studentCoordinators.length > 0 || facultyCoordinators.length > 0;
     const hasRules = Array.isArray(eventData.rules) && eventData.rules.length > 0;
+
+    useEffect(()=>{
+        (async()=>{
+            const cache = await caches.open('event-image-cache');
+            const cached = await cache.match(eventData.imageUrl);
+            if (!cached) {
+                const response = await fetch(eventData.imageUrl, { mode: 'no-cors' });
+                cache.put(eventData.imageUrl, response);
+            }
+        })()
+    })
 
     return (
         <div className="min-h-screen p-4 md:p-8 text-white">

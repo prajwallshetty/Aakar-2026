@@ -5,9 +5,7 @@ import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import { FiChevronDown } from "react-icons/fi";
 import { HiDownload } from "react-icons/hi";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { FaPlay } from "react-icons/fa";
 
 const montserrat = Montserrat({
     weight: "600",
@@ -16,8 +14,6 @@ const montserrat = Montserrat({
 
 const LandingPage = () => {
     const [glowIntensity, setGlowIntensity] = useState(0);
-    const [showModal, setShowModal] = useState(false);
-    const [activeVideo, setActiveVideo] = useState("");
 
     useEffect(() => {
         const scrollContainer = document.getElementById("videoScrollContainer");
@@ -49,16 +45,6 @@ const LandingPage = () => {
                 scrollContainer.removeEventListener("scroll", handleScroll);
         }
     }, []);
-
-    const openModal = (videoSrc: string) => {
-        setActiveVideo(videoSrc);
-        setShowModal(true);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-        setActiveVideo("");
-    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -158,48 +144,28 @@ const LandingPage = () => {
                         >
                             <div
                                 className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
-                                onClick={() => openModal("/dj.mp4")}
                             >
-                                <video
-                                    className="w-full h-full object-cover cursor-pointer"
-                                    src="/dj.mp4"
-                                    muted
-                                    loop
-                                    autoPlay
-                                    playsInline
-                                    preload="none"
-                                    poster="/dj.png"
+                                <Image
+                                    className="w-full h-full object-cover"
+                                    src="/dj.png"
+                                    alt="DJ Night"
+                                    width={800}
+                                    height={450}
                                 />
-
-                                <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition">
-                                        <FaPlay className="text-sm" />
-                                    </div>
-                                </div>
 
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
 
                             <div
                                 className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
-                                onClick={() => openModal("/concert.mp4")}
                             >
-                                <video
-                                    className="w-full h-full object-cover cursor-pointer"
-                                    src="/concert.mp4"
-                                    muted
-                                    loop
-                                    autoPlay
-                                    playsInline
-                                    preload="none"
-                                    poster="/Concert.png"
+                                <Image
+                                    className="w-full h-full object-cover"
+                                    src="/concert.png"
+                                    alt="Concert"
+                                    width={800}
+                                    height={450}
                                 />
-
-                                <div className="absolute bottom-3 right-3 z-10 cursor-pointer">
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition">
-                                        <FaPlay className="text-sm" />
-                                    </div>
-                                </div>
 
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
@@ -217,28 +183,6 @@ const LandingPage = () => {
                         </div>
                     </div>
                 </div>
-
-                {showModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
-                        <div className="bg-black rounded-2xl overflow-hidden max-w-3xl w-full">
-                            <video
-                                src={activeVideo}
-                                controls
-                                autoPlay
-                                className="w-full h-auto"
-                                preload="none"
-                            />
-                            <div className="text-right p-2">
-                                <Button
-                                    onClick={closeModal}
-                                    className="text-white text-sm cursor-pointer hover:text-red-400"
-                                >
-                                    Close ✖
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
 
             <div className="flex md:hidden flex-col h-full items-center justify-between py-12">

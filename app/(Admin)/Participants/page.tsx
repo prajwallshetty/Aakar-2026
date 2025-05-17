@@ -44,8 +44,8 @@ import React from "react";
 import { getParticipantsWithEvents } from "@/backend/participant";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { EventStats } from "@/components/(Admin)/Participants/event-stats";
-import { CollegeStats } from "@/components/(Admin)/Participants/college-stats";
+import { EventStats } from "@/components/(Admin)/event-stats"
+import { CollegeStats } from "@/components/(Admin)/college-stats"
 import { Skeleton } from "@/components/ui/skeleton";
 import { downloadParticipantData, downloadParticipantDataByEvents } from "./utils";
 import { ExtendedEvent, ExtendedParticipant } from "@/types";
@@ -351,7 +351,7 @@ export default function ParticipantsPage() {
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="participants">
-                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4 flex gap-4">
+                        <TabsList className="md:flex-row flex-col mt-4 mb-8 md:mb-4  gap-4 hidden md:flex">
                             <TabsTrigger
                                 value="participants"
                                 className="cursor-pointer"
@@ -447,7 +447,7 @@ export default function ParticipantsPage() {
                                 <div className="flex flex-wrap gap-2 justify-between items-center">
                                     <div className="flex items-center flex-col md:flex-row gap-2 overflow-hidden">
                                         <Badge variant="outline">
-                                            {totalItems} participants
+                                            {totalItems} registrations
                                         </Badge>
                                         {selectedCollege && filterType !== "all" && (
                                             <Badge variant="secondary">

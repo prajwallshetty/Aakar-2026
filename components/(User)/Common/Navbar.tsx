@@ -23,7 +23,6 @@ export default function Navbar() {
         { id: 2, name: "TECHNICAL", href: "/events/technical" },
         { id: 3, name: "GAMING", href: "/events/gaming" },
         { id: 4, name: "SPECIAL", href: "/events/special" },
-        { id: 5, name: "COMBO PASS", href: "/events/combo" },
     ];
 
     useEffect(() => {

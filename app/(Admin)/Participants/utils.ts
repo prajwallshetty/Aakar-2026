@@ -388,7 +388,6 @@ export async function downloadEventData(
       "Event Name": event.name,
       Category: event.category,
       Registrations: event.count,
-      "Participant Count": event.participantCount
     }))
 
     const csvContent = objectsToCsv(wsData)
