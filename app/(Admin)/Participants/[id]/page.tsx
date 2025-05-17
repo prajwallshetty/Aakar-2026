@@ -296,7 +296,7 @@ export default function ParticipantDetailPage() {
                                         </div>
                                         <div>
                                             {participant.department || "N/A"} -{" "}
-                                            {participant.year}st Year
+                                            {participant.year} Year
                                         </div>
                                     </div>
                                 </div>
@@ -349,28 +349,37 @@ export default function ParticipantDetailPage() {
                                         </div>
                                     </div>
                                 </div>
-
-                                {participant.paymentScreenshotUrls &&
-                                    participant.paymentScreenshotUrls.map(
-                                        (pS) => (
-                                            <div key={pS}>
-                                                <div className="font-medium mb-2">
-                                                    Payment Screenshot
-                                                </div>
-                                                <div className="border rounded-md overflow-hidden max-w-xs">
+                            </div>
+                        </div>
+                        <div className="space-y-2 flex flex-col md:flex-row gap-4">
+                            {participant.paymentScreenshotUrls &&
+                                participant.paymentScreenshotUrls.map(
+                                    (pS, index) => (
+                                        <div key={index}>
+                                            <div className="font-medium mb-2">
+                                                Payment Screenshot {index + 1}
+                                            </div>
+                                            <div className="border rounded-md overflow-hidden max-w-sm bg-black">
+                                                {pS == "None" ? (
+                                                    <div className="flex items-center justify-center h-48 bg-gray-100">
+                                                        <p className="text-[10px] text-muted-foreground">
+                                                            Registered through /registerAJIET
+                                                        </p>
+                                                    </div>
+                                                ) : (
                                                     <img
                                                         src={
                                                             pS ||
-                                                            "/placeholder.svg"
+                                                            "/Aakarlogo.svg"
                                                         }
                                                         alt="Payment Screenshot"
                                                         className="w-full h-auto"
                                                     />
-                                                </div>
+                                                )}
                                             </div>
-                                        )
-                                    )}
-                            </div>
+                                        </div>
+                                    )
+                                )}
                         </div>
                     </div>
 
