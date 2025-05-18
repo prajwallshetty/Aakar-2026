@@ -51,6 +51,8 @@ export const config = {
         '/AdminPortal',
         '/EventsCRUD',
         '/Participants',
-        '/Participants/:id'
+        '/Participants/:id',
+        "/EventStatistics",
+        "/CollegeStatistics",
     ]
 }
