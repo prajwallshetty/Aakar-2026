@@ -211,7 +211,21 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
           <CardContent>
             <div className="text-xl font-bold truncate">{collegeData.length > 0 ? collegeData[1].name : "N/A"}</div>
             <p className="text-xs text-muted-foreground">
-              {collegeData.length > 0 ? `${collegeData[1].value} participants` : ""}
+              {(() => {
+                const hostCollege = collegeData[0]?.name
+                const topCollege = collegeData
+                  .filter((entry) => entry.name !== hostCollege)
+                  .reduce((max, entry) => (entry.value > max.value ? entry : max), { name: "", value: 0 })
+
+                return (
+                  <>
+                    <div className="text-xl font-bold truncate">{topCollege.name || "N/A"}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {topCollege.name ? `${topCollege.value} participants` : ""}
+                    </p>
+                  </>
+                )
+              })()}
             </p>
           </CardContent>
         </Card>
