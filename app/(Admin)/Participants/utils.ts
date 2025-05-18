@@ -540,3 +540,65 @@ export async function downloadParticipantDetail(participant: ExtendedParticipant
     alert("Failed to download participant details. Please try again.")
   }
 }
+
+export async function downloadEventRegistrationsByCollege(
+  participants: ExtendedParticipant[],
+  collegeCode = "A J Institute of Engineering and Technology, Mangalore",
+): Promise<void> {
+  try {
+    const events = await getEventsOfAllUsers()
+    const eventNameMap: Record<string, string> = {}
+
+    Object.values(events).forEach((userEvents) => {
+      userEvents.forEach((event) => {
+        const eventId = event.id.toString()
+        eventNameMap[eventId] = event.eventName
+      })
+    })
+
+    const eventCounts: Record<
+      string,
+      {
+        total: number
+        collegeCount: number
+        otherCount: number
+      }
+    > = {}
+
+    participants.forEach((participant) => {
+      if (events[participant.id]) {
+        events[participant.id].forEach((event) => {
+          const eventId = event.id.toString()
+          if (!eventCounts[eventId]) {
+            eventCounts[eventId] = { total: 0, collegeCount: 0, otherCount: 0 }
+          }
+          eventCounts[eventId].total++
+          if (participant.college.includes(collegeCode)) {
+            eventCounts[eventId].collegeCount++
+          } else {
+            eventCounts[eventId].otherCount++
+          }
+        })
+      }
+    })
+
+    const csvData = []
+    for (let id = 2; id <= 41; id++) {
+      const eventId = id.toString()
+      csvData.push({
+        "Sl No": eventId,
+        "Event Name": eventNameMap[eventId] || "",
+        "Total Registrations": eventCounts[eventId]?.total || 0,
+        [`Registration of college AJ`]: eventCounts[eventId]?.collegeCount || 0,
+        [`Registrations except AJ`]: eventCounts[eventId]?.otherCount || 0,
+      })
+    }
+
+    const csvContent = objectsToCsv(csvData)
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    downloadFile(blob, `event_registrations_by_college_AJ.csv`)
+  } catch (error) {
+    console.error("Error downloading event registrations by college:", error)
+    alert("Failed to download event registrations by college. Please try again.")
+  }
+}
