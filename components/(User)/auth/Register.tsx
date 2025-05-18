@@ -523,6 +523,8 @@ const Register = () => {
         "Shridevi College of Commerce (B.Com), Mangalore",
         "SDM College of Business Management (MBA), Mangalore",
         "SDM Law College, Mangalore",
+        "SDM PG College Ujire",
+        "SDM Institute of Technology (SDMIT) Ujire",
         "Canara College (MCA Program), Mangalore",
         "Minerva College, Mangalore",
         "Srinivas Institute of Nursing Sciences, Mangalore",

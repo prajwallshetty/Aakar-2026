@@ -63,7 +63,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
         let formattedData = Object.entries(collegeCounts)
           .map(([name, value]) => ({ name, value }))
-          .sort((a, b) => b.value - a.value)
+          .sort((a, b) => a.name.localeCompare(b.name))
 
         setCollegeData(formattedData)
       } catch (err) {
@@ -209,9 +209,28 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
             <CardTitle className="text-sm font-medium">Top College(Except HOST)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold truncate">{collegeData.length > 0 ? collegeData[1].name : "N/A"}</div>
             <p className="text-xs text-muted-foreground">
-              {collegeData.length > 0 ? `${collegeData[1].value} participants` : ""}
+              {(() => {
+                const hostCollege = "A J Institute of Engineering and Technology, Mangalore"
+                const nonHostColleges = collegeData.filter((entry) => entry.name !== hostCollege)
+
+                if (nonHostColleges.length === 0) {
+                  return <p className="text-xs text-muted-foreground">No data available</p>
+                }
+
+                const topCollege = nonHostColleges.reduce((max, entry) =>
+                  entry.value > max.value ? entry : max
+                )
+
+                return (
+                  <>
+                    <div className="text-xl font-bold truncate">{topCollege.name}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {topCollege.value} participants
+                    </p>
+                  </>
+                )
+              })()}
             </p>
           </CardContent>
         </Card>
