@@ -155,13 +155,12 @@ const LandingPage = () => {
 
                                 <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
                             </div>
-
                             <div
                                 className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
                             >
                                 <Image
                                     className="w-full h-full object-cover"
-                                    src="/concert.png"
+                                    src="/Concert.png"
                                     alt="Concert"
                                     width={800}
                                     height={450}
