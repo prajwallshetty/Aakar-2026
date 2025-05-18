@@ -219,7 +219,6 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
                 return (
                   <>
-                    <div className="text-xl font-bold truncate">{topCollege.name || "N/A"}</div>
                     <p className="text-xs text-muted-foreground">
                       {topCollege.name ? `${topCollege.value} participants` : ""}
                     </p>
