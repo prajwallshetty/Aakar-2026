@@ -217,7 +217,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
         </Card>
       </div>
 
-      <Card>
+      <Card className="hidden md:block">
         <CardHeader>
           <CardTitle>Registrations by College</CardTitle>
         </CardHeader>

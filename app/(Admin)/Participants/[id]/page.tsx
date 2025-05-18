@@ -44,6 +44,7 @@ export default function ParticipantDetailPage() {
     const [expandedEvents, setExpandedEvents] = useState<{
         [key: string]: boolean;
     }>({});
+    const [showScreenshots, setShowScreenshots] = useState(false);
 
     useEffect(() => {
         const fetchParticipantDetails = async () => {
@@ -71,27 +72,6 @@ export default function ParticipantDetailPage() {
 
                 if (response.data) {
                     setParticipant(response.data);
-
-                    if (
-                        response.data.paymentScreenshotUrls &&
-                        Array.isArray(response.data.paymentScreenshotUrls) &&
-                        response.data.paymentScreenshotUrls.length > 0
-                    ) {
-                        const cache = await caches.open(
-                            "payment-screenshots-cache"
-                        );
-                        response.data.paymentScreenshotUrls.forEach(
-                            async (url) => {
-                                const cached = await cache.match(url);
-                                if (!cached) {
-                                    const response = await fetch(url, {
-                                        mode: "no-cors",
-                                    });
-                                    cache.put(url, response);
-                                }
-                            }
-                        );
-                    }
                 }
             } catch (err) {
                 setError(
@@ -105,6 +85,27 @@ export default function ParticipantDetailPage() {
 
         fetchParticipantDetails();
     }, [id]);
+
+    const handleShowScreenshots = async () => {
+        if (showScreenshots) return;
+        setShowScreenshots(true);
+        if (
+            participant?.paymentScreenshotUrls &&
+            Array.isArray(participant?.paymentScreenshotUrls) &&
+            participant?.paymentScreenshotUrls.length > 0
+        ) {
+            const cache = await caches.open("payment-screenshots-cache");
+            participant?.paymentScreenshotUrls.forEach(async (url) => {
+                const cached = await cache.match(url);
+                if (!cached) {
+                    const response = await fetch(url, {
+                        mode: "no-cors",
+                    });
+                    cache.put(url, response);
+                }
+            });
+        }
+    };
 
     if (isLoading) {
         return (
@@ -360,8 +361,15 @@ export default function ParticipantDetailPage() {
                                 </div>
                             </div>
                         </div>
-                        <div className="space-y-2 flex flex-col md:flex-row gap-4">
-                            {participant.paymentScreenshotUrls &&
+                        <div className="space-y-2 flex flex-col md:flex-row md:flex-wrap gap-4">
+                            <div className="w-full">
+                                <p className="text-sm font-medium text-red-700">
+                                    ⚠️ Please load screenshots only if necessary...
+                                </p>
+                            </div>
+
+                            {showScreenshots ? (
+                                participant.paymentScreenshotUrls &&
                                 participant.paymentScreenshotUrls.map(
                                     (pS, index) => (
                                         <div key={index}>
@@ -389,7 +397,12 @@ export default function ParticipantDetailPage() {
                                             </div>
                                         </div>
                                     )
-                                )}
+                                )
+                            ) : (
+                                <Button onClick={handleShowScreenshots}>
+                                    Load Payment Screenshot(s)
+                                </Button>
+                            )}
                         </div>
                     </div>
 
