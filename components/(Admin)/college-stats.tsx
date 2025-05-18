@@ -63,12 +63,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
 
         let formattedData = Object.entries(collegeCounts)
           .map(([name, value]) => ({ name, value }))
-          .sort((a, b) => {
-            if (b.value === a.value) {
-              return a.name.localeCompare(b.name)
-            }
-            return b.value - a.value
-          })
+          .sort((a, b) => a.name.localeCompare(b.name))
 
         setCollegeData(formattedData)
       } catch (err) {
