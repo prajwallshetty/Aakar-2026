@@ -166,6 +166,11 @@ export default function ParticipantsPage() {
                                     m.name.toLowerCase().includes(query) ||
                                     m.usn.toLowerCase().includes(query)
                             )
+                        )) ||
+                    (p.events &&
+                        p.events.some((e) =>
+                            e.eventName.toLowerCase().includes(query) ||
+                            e.eventType.toLowerCase().includes(query)
                         ))
             );
         }
@@ -354,7 +359,7 @@ export default function ParticipantsPage() {
                                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="search"
-                                                placeholder="Search participants, USN, email..."
+                                                placeholder="Search participants, USN, email, event name..."
                                                 className="pl-8 w-full"
                                                 value={searchQuery}
                                                 onChange={(e) =>
