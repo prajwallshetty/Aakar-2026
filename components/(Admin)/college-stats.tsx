@@ -209,7 +209,6 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
             <CardTitle className="text-sm font-medium">Top College(Except HOST)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold truncate">{collegeData.length > 0 ? collegeData[1].name : "N/A"}</div>
             <p className="text-xs text-muted-foreground">
               {(() => {
                 const hostCollege = "A J Institute of Engineering and Technology, Mangalore"
