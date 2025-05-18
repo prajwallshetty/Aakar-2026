@@ -212,7 +212,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
             <div className="text-xl font-bold truncate">{collegeData.length > 0 ? collegeData[1].name : "N/A"}</div>
             <p className="text-xs text-muted-foreground">
               {(() => {
-                const hostCollege = collegeData[0]?.name
+                const hostCollege = "A J Institute of Engineering and Technology, Mangalore"
                 const topCollege = collegeData
                   .filter((entry) => entry.name !== hostCollege)
                   .reduce((max, entry) => (entry.value > max.value ? entry : max), { name: "", value: 0 })
