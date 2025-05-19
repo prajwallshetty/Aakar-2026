@@ -155,6 +155,9 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
       {} as Record<string, boolean>,
     ),
   ).length
+  const hostCollege = "A J Institute of Engineering and Technology, Mangalore"
+  const nonHostCollegeData = collegeData.filter((entry) => entry.name !== hostCollege)
+  const nonHostParticipants = nonHostCollegeData.reduce((sum, college) => sum + college.value, 0)
 
   return (
     <div className="space-y-6">
@@ -190,7 +193,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
             <CardTitle className="text-sm font-medium">Registrations (Except HOST)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalParticipants - collegeData[0].value}</div>
+            <div className="text-2xl font-bold">{nonHostParticipants}</div>
           </CardContent>
         </Card>
         <Card>
@@ -250,7 +253,7 @@ export function CollegeStats({ participants }: CollegeStatsProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={collegeData.slice(1)}
+                    data={collegeData.filter((entry) => entry.name !== hostCollege)}
                     cx="50%"
                     cy="50%"
                     labelLine={false}

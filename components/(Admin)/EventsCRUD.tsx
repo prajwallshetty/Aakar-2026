@@ -138,7 +138,6 @@ const EventsCRUD = () => {
         { value: "Cultural", label: "Cultural" },
         { value: "Gaming", label: "Gaming" },
         { value: "Special", label: "Special" },
-        { value: "ComboPass", label: "Combo Pass" },
     ]
 
     const dateOptions = [
