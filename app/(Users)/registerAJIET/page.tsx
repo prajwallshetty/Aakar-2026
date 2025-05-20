@@ -71,7 +71,6 @@ const Register = () => {
                 const eventsToFilter = [38, 11, 12, 39, 40, 41, 2]
                 setFilteredEventIds(eventsToFilter)
 
-
                 const filteredOptions = eventOptions.map((category) => ({
                     ...category,
                     options: category.options.filter((option) => !eventsToFilter.includes(option.id)),

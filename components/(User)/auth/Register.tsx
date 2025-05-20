@@ -70,25 +70,50 @@ const Register = () => {
             members: { name: string; usn: string; email: string }[];
         };
     }>({});
+    const [filteredEventIds, setFilteredEventIds] = useState<number[]>([]);
 
     useEffect(() => {
         (async () => {
             try {
                 setIsLoading(true);
+
+                const eventsToFilter = [ 38, 41 ];
+                setFilteredEventIds(eventsToFilter);
+
                 const eventOptions = await getEventOptions();
-                setEventOptions(eventOptions);
                 const events = await getAllEvents();
+
+                const filteredOptions = eventOptions.map((category) => ({
+                    label: category.label,
+                    options: category.options.filter(
+                        (option) => !eventsToFilter.includes(option.id)
+                    )
+                }));
+
+                setEventOptions(filteredOptions);
+
                 setEvents(events);
                 const cartData = localStorage.getItem("eventCart");
                 if (cartData) {
                     const cartEvents = JSON.parse(cartData) as CartEvents;
-                    setCartEvents(cartEvents);
+                    const filteredCartEvents = cartEvents.filter(
+                        eventId => !eventsToFilter.includes(eventId)
+                    );
+                    setCartEvents(filteredCartEvents);
+
+                    if (filteredCartEvents.length !== cartEvents.length) {
+                        localStorage.setItem("eventCart", JSON.stringify(filteredCartEvents));
+                    }
                 } else {
                     setCartEvents([]);
                 }
+
                 cartEvents.forEach((eventId) => {
+                    if (eventsToFilter.includes(eventId)) return;
+
                     let eventObj = events.find((e) => e.id === eventId);
                     if (!eventObj) return;
+
                     setSelectedEvents((prev) => {
                         if (prev.find((e) => e.id === eventId)) return prev;
                         return [
