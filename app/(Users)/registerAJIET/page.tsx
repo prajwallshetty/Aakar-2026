@@ -68,7 +68,7 @@ const Register = () => {
                 const events = await getAllEvents()
                 setEvents(events)
 
-                const eventsToFilter = [38, 11, 12, 39, 40, 41, 2]
+                const eventsToFilter = [ 11, 12, 40, 41, 2, 38, 41, 3, 8, 10, 14, 15, 16, 22, 23, 24, 29, 32, 36, 39,]
                 setFilteredEventIds(eventsToFilter)
 
                 const filteredOptions = eventOptions.map((category) => ({
