@@ -77,7 +77,7 @@ const Register = () => {
             try {
                 setIsLoading(true);
 
-                const eventsToFilter = [ 38, 41,3,8,10,14,15,16,22,23,24,29,32,36,39,12,13];
+                const eventsToFilter = [ 41, 38, 27, 3, 24, 32, 39, 14, 15, 19, 22, 11, 13, 21, 10, 23, 36, 16, 26, 29, 7, 12, 8 ];
                 setFilteredEventIds(eventsToFilter);
 
                 const eventOptions = await getEventOptions();
