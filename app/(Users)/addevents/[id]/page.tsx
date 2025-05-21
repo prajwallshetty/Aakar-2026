@@ -68,6 +68,7 @@ export default function AddAdditionalEvents({
     const [paymentScreenshot, setPaymentScreenshot] = useState<File>();
     const [qrImageUrl, setQrImageUrl] = useState<string>("");
     const [showQRCode, setShowQRCode] = useState<boolean>(false);
+    const [filteredEventIds, setFilteredEventIds] = useState<number[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,7 +76,8 @@ export default function AddAdditionalEvents({
 
             setIsLoading(true);
             try {
-                setEvents(await getAllEvents());
+                const allEvents = await getAllEvents();
+                setEvents(allEvents);
 
                 const { data: userData } = await getParticipant(userId);
                 setUserInfo(userData);
@@ -94,14 +96,20 @@ export default function AddAdditionalEvents({
                 }
 
                 const eventOpts = await getEventOptions();
-                setEventOptions(
-                    eventOpts.map((eC) => ({
-                        label: eC.label,
-                        options: eC.options.filter(
-                            (e) => !userEvents?.some((ex) => ex.id === e.id)
-                        ),
-                    }))
-                );
+
+                const eventsToFilter = [ 41, 38, 27, 3, 24, 32, 39, 14, 15, 19, 22, 11, 13, 21, 10, 23, 36, 16, 26, 29, 7, 12, 8 ];
+                setFilteredEventIds(eventsToFilter);
+
+                const filteredOptions = eventOpts.map((category) => ({
+                    label: category.label,
+                    options: category.options.filter(
+                        (option) =>
+                            !eventsToFilter.includes(option.id) &&
+                            !userEvents?.some((ex) => ex.id === option.id)
+                    )
+                }));
+
+                setEventOptions(filteredOptions);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {

@@ -484,6 +484,7 @@ export default function ParticipantsPage() {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
+                                                <TableHead>id</TableHead>
                                                 <TableHead>Name</TableHead>
                                                 <TableHead>College</TableHead>
                                                 <TableHead>Events</TableHead>
@@ -518,6 +519,11 @@ export default function ParticipantsPage() {
                                                                         : ""
                                                                 }
                                                             >
+                                                                <TableCell className="font-medium">
+                                                                    {
+                                                                        participant.id
+                                                                    }
+                                                                </TableCell>
                                                                 <TableCell className="font-medium">
                                                                     {
                                                                         participant.name
