@@ -97,7 +97,7 @@ export default function AddAdditionalEvents({
 
                 const eventOpts = await getEventOptions();
 
-                const eventsToFilter = [ 41, 38, 27, 3, 24, 32, 39, 14, 15, 19, 22, 11, 13, 21, 10, 23, 36, 16, 26, 29, 7, 12, 8, 9, 28, 17, 5, 40 ];
+                const eventsToFilter = [ 41, 38, 27, 3, 24, 32, 39, 14, 15, 19, 22, 11, 13, 21, 10, 23, 36, 16, 26, 29, 7, 12, 8, 9, 28, 17, 5, 40, 20 ];
                 setFilteredEventIds(eventsToFilter);
 
                 const filteredOptions = eventOpts.map((category) => ({
