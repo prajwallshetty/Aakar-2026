@@ -115,7 +115,7 @@ const EventsCRUD = () => {
         eventCategory: "Cultural",
         description: "",
         fee: 0,
-        date: new Date("2026-04-24"),
+        date: new Date("2025-05-21"),
         time: "",
         venue: "",
         studentCoordinators: [],
@@ -141,9 +141,9 @@ const EventsCRUD = () => {
     ]
 
     const dateOptions = [
-        { value: new Date("2026-04-24"), label: "April 24, 2026" },
-        { value: new Date("2026-04-25"), label: "April 25, 2026" },
-        { value: new Date("2026-04-26"), label: "April 26, 2026" },
+        { value: new Date("2025-05-20"), label: "May 20, 2025" },
+        { value: new Date("2025-05-21"), label: "May 21, 2025" },
+        { value: new Date("2025-05-22"), label: "May 22, 2025" },
     ]
 
     useEffect(() => {
