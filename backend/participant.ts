@@ -13,6 +13,112 @@ type ServiceResponse<T> = {
     hasNext?: boolean;
 }
 
+// ─── Email Templates ──────────────────────────────────────────────────────────
+
+function buildRegistrationEmail(name: string, eventsText: string, uuid: string): string {
+    const eventRows = eventsText
+        .split("\n")
+        .filter(Boolean)
+        .map((line, i) => {
+            const [eventName, ...dateParts] = line.split(" on ");
+            const date = dateParts.join(" on ");
+            const accentColor = i % 2 === 0 ? "#c9a84c" : "#8bc34a";
+            return `
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+              <tr>
+                <td style="background:#1a1a2e;border-left:3px solid ${accentColor};border-radius:0 8px 8px 0;padding:14px 18px;">
+                  <span style="display:block;font-size:15px;font-weight:500;color:#ffffff;">${eventName}</span>
+                  ${date ? `<span style="display:block;font-size:12px;color:#666688;margin-top:3px;letter-spacing:1px;">${date}</span>` : ""}
+                </td>
+              </tr>
+            </table>`;
+        })
+        .join("");
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Aakar 2026 – Registration Confirmed</title>
+</head>
+<body style="margin:0;padding:0;background:#0a0a0f;font-family:'DM Sans',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0f;padding:40px 20px;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+      <!-- Header -->
+      <tr>
+        <td style="background:linear-gradient(135deg,#0f0f1a 0%,#1a0a2e 50%,#0f1a0f 100%);border-radius:16px 16px 0 0;padding:48px 40px 36px;text-align:center;">
+          <div style="height:3px;background:linear-gradient(90deg,#c9a84c,#f0d080,#c9a84c,#8bc34a,#c9a84c);margin-bottom:32px;border-radius:2px;"></div>
+          <div style="display:inline-block;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#f0d080);margin-bottom:20px;line-height:64px;font-size:28px;font-weight:900;color:#0a0a0f;font-family:Georgia,serif;">A</div>
+          <h1 style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:36px;font-weight:900;letter-spacing:6px;color:#f0d080;text-transform:uppercase;">AAKAR</h1>
+          <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;font-weight:400;letter-spacing:8px;color:#8bc34a;text-transform:uppercase;">2 0 2 6</p>
+          <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);margin:24px auto 0;"></div>
+        </td>
+      </tr>
+
+      <!-- Hero -->
+      <tr>
+        <td style="background:#111122;padding:36px 40px;text-align:center;border-left:1px solid #1e1e3a;border-right:1px solid #1e1e3a;">
+          <p style="margin:0 0 10px;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:#8bc34a;font-weight:500;">✦ Registration Confirmed ✦</p>
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to the Celebration,<br><span style="color:#f0d080;">${name}</span></h2>
+          <p style="margin:0;font-size:15px;color:#8888aa;line-height:1.7;font-weight:300;">Your spot at Aakar 2026 is secured. Get ready for an extraordinary cultural experience at AJIET.</p>
+        </td>
+      </tr>
+
+      <!-- Divider -->
+      <tr><td style="background:#111122;padding:0 40px;border-left:1px solid #1e1e3a;border-right:1px solid #1e1e3a;"><div style="height:1px;background:linear-gradient(90deg,transparent,#2a2a4a,transparent);"></div></td></tr>
+
+      <!-- Events -->
+      <tr>
+        <td style="background:#111122;padding:32px 40px;border-left:1px solid #1e1e3a;border-right:1px solid #1e1e3a;">
+          <p style="margin:0 0 20px;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;font-weight:500;">Your Registered Events</p>
+          ${eventRows || `<p style="color:#666688;font-size:14px;margin:0;">No events found.</p>`}
+        </td>
+      </tr>
+
+      <!-- CTA -->
+      <tr>
+        <td style="background:#0f0f1f;padding:28px 40px 32px;text-align:center;border-left:1px solid #1e1e3a;border-right:1px solid #1e1e3a;">
+          <p style="margin:0 0 18px;font-size:14px;color:#8888aa;line-height:1.6;">Want to participate in more events?</p>
+          <a href="https://aakar.live/addevents/${uuid}"
+             style="display:inline-block;background:linear-gradient(135deg,#c9a84c,#f0d080);color:#0a0a0f;text-decoration:none;font-family:Georgia,serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:14px 36px;border-radius:4px;">
+            Add More Events →
+          </a>
+        </td>
+      </tr>
+
+      <!-- Divider -->
+      <tr><td style="background:#0f0f1f;padding:0 40px;border-left:1px solid #1e1e3a;border-right:1px solid #1e1e3a;"><div style="height:1px;background:linear-gradient(90deg,transparent,#2a2a4a,transparent);"></div></td></tr>
+
+      <!-- Contact -->
+      <tr>
+        <td style="background:#0f0f1f;padding:24px 40px;text-align:center;border-left:1px solid #1e1e3a;border-right:1px solid #1e1e3a;">
+          <p style="margin:0;font-size:13px;color:#555577;line-height:1.7;">
+            Questions? Reach us at <a href="mailto:aakar2026@ajiet.edu.in" style="color:#c9a84c;text-decoration:none;">aakar2026@ajiet.edu.in</a>
+          </p>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td style="background:linear-gradient(135deg,#0f0f1a,#1a0a2e 50%,#0f1a0f);border-radius:0 0 16px 16px;padding:28px 40px 32px;text-align:center;">
+          <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:14px;font-weight:700;letter-spacing:4px;color:#f0d080;">AAKAR 2026</p>
+          <p style="margin:0 0 16px;font-size:11px;color:#444466;letter-spacing:2px;text-transform:uppercase;">A.J. Institute of Engineering &amp; Technology</p>
+          <div style="height:2px;background:linear-gradient(90deg,#c9a84c,#f0d080,#c9a84c,#8bc34a,#c9a84c);border-radius:2px;"></div>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
+// ─── Participant Logic (unchanged) ───────────────────────────────────────────
+
 export async function validateParticipantData(data: ExtendedParticipantCreateInput): Promise<{ [key: string]: string } | null> {
     const errors: { [key: string]: string } = {};
 
@@ -75,28 +181,14 @@ export async function registerParticipant(data: ExtendedParticipantCreateInput, 
             return { data: null, error };
         }
 
-        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n");
+        const eventsOfUser = await getEventsOfUser(participant.id);
+        const eventN = eventsOfUser?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n") || "";
 
-        await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
-
-Thank you for registering for Aakar 2025. We are pleased to confirm that your registration has been successfully completed.
-
-Here are your registration details:
-
-Name: ${participant.name}
-
-Events: 
-${eventN || 'No events found!'}
-
-Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
-
-If you'd like to register for additional events, feel free to visit:
-👉 https://aakar2025.in/addevents/${participant.uuid}
-
-We look forward to your participation!
-
-Warm regards,
-Aakar 2025 Team`);
+        await sendEmail(
+            participant.email,
+            "Registration Confirmed – Aakar 2026! 🎉",
+            buildRegistrationEmail(participant.name, eventN, participant.uuid)
+        );
 
         return { data: participant, error: null };
     } catch (error) {
@@ -278,30 +370,15 @@ export async function updateParticipantWithNotify(id: number | string, data: Pri
         }
 
         const participant = res.data;
+        const eventsOfUser = await getEventsOfUser(participant.id);
+        const eventN = eventsOfUser?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n") || "";
 
+        await sendEmail(
+            participant.email,
+            "Your Registration Has Been Updated – Aakar 2026",
+            buildRegistrationEmail(participant.name, eventN, participant.uuid)
+        );
 
-        const eventN = (await getEventsOfUser(participant.id))?.map(e => e.eventName + ` on ` + e.date.toDateString()).join("\n");
-
-        await sendEmail(participant.email, "Registration Successful for Aakar 2025!", `Dear ${participant.name},
-
-Thank you for registering for Aakar 2025. We are pleased to confirm that your registration has been successfully completed.
-
-Here are your registration details:
-
-Name: ${participant.name}
-
-Events: 
-${eventN}
-
-Further updates and relevant information will be shared with you closer to the event date. If you have any questions or need assistance, feel free to reach out to us at aakar2025@ajiet.edu.in.
-
-If you'd like to register for additional events, feel free to visit:
-👉 https://aakar2025.in/addevents/${participant.uuid}
-
-We look forward to your participation!
-
-Warm regards,
-Aakar 2025 Team`);
         return res;
     } catch (error) {
         console.error("Error updating participant:", error);

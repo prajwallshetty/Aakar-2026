@@ -16,13 +16,13 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-export async function sendEmail(to: string, subject: string, text: string) {
+export async function sendEmail(to: string, subject: string, html: string) {
   try {
     await transporter.sendMail({
       from: process.env.MAIL_USER,
       to,
       subject,
-      text
+      html  // ← was `text`, now `html`
     });
   } catch (error) {
     console.error("Error sending email:", error);
