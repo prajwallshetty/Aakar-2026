@@ -73,67 +73,54 @@ const Register = () => {
     const [filteredEventIds, setFilteredEventIds] = useState<number[]>([]);
 
     useEffect(() => {
-        (async () => {
-            try {
-                setIsLoading(true);
+  (async () => {
+    try {
+      setIsLoading(true)
 
-                const eventsToFilter = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41];
-                setFilteredEventIds(eventsToFilter);
+      // fetch events
+      const eventOptionsData = await getEventOptions()
+      const eventsData = await getAllEvents()
 
-                const eventOptions = await getEventOptions();
-                const events = await getAllEvents();
+      // set events normally (no filtering)
+      setEventOptions(eventOptionsData)
+      setEvents(eventsData)
 
-                const filteredOptions = eventOptions.map((category) => ({
-                    label: category.label,
-                    options: category.options.filter(
-                        (option) => !eventsToFilter.includes(option.id)
-                    )
-                }));
+      // load cart
+      const cartData = localStorage.getItem("eventCart")
 
-                setEventOptions(filteredOptions);
+      if (cartData) {
+        const cartEventsLocal = JSON.parse(cartData) as CartEvents
+        setCartEvents(cartEventsLocal)
 
-                setEvents(events);
-                const cartData = localStorage.getItem("eventCart");
-                if (cartData) {
-                    const cartEvents = JSON.parse(cartData) as CartEvents;
-                    const filteredCartEvents = cartEvents.filter(
-                        eventId => !eventsToFilter.includes(eventId)
-                    );
-                    setCartEvents(filteredCartEvents);
+        cartEventsLocal.forEach((eventId) => {
+          const eventObj = eventsData.find((e) => e.id === eventId)
+          if (!eventObj) return
 
-                    if (filteredCartEvents.length !== cartEvents.length) {
-                        localStorage.setItem("eventCart", JSON.stringify(filteredCartEvents));
-                    }
-                } else {
-                    setCartEvents([]);
-                }
+          setSelectedEvents((prev) => {
+            if (prev.find((e) => e.id === eventId)) return prev
 
-                cartEvents.forEach((eventId) => {
-                    if (eventsToFilter.includes(eventId)) return;
+            return [
+              ...prev,
+              {
+                value: eventId.toString(),
+                label: eventObj.eventName,
+                type: eventObj.eventType,
+                id: eventObj.id,
+              },
+            ]
+          })
+        })
+      } else {
+        setCartEvents([])
+      }
+    } catch (error) {
+      console.error("Error fetching events:", error)
+      setCartEvents([])
+    }
 
-                    let eventObj = events.find((e) => e.id === eventId);
-                    if (!eventObj) return;
-
-                    setSelectedEvents((prev) => {
-                        if (prev.find((e) => e.id === eventId)) return prev;
-                        return [
-                            ...prev,
-                            {
-                                value: eventId.toString(),
-                                label: eventObj.eventName,
-                                type: eventObj.eventType,
-                                id: eventObj.id,
-                            },
-                        ];
-                    });
-                });
-            } catch (error) {
-                console.error("Error fetching cart data:", error);
-                setCartEvents([]);
-            }
-            setIsLoading(false);
-        })();
-    }, []);
+    setIsLoading(false)
+  })()
+}, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;

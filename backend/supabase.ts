@@ -1,63 +1,79 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js"
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-export async function uploadFile(file: File, bucketName: "eventimages" | "paymentscreenshots" = "eventimages") {
-    const fileName = `${Date.now()}-${file.name}`;
+export async function uploadFile(
+  file: File,
+  bucketName: "eventimages" | "paymentscreenshots" = "eventimages"
+) {
 
-    try {
-        const { data, error } = await supabase.storage
-            .from(bucketName)
-            .upload(fileName, file);
+  if (!file) {
+    console.error("No file provided")
+    return null
+  }
 
-        if (error) throw error;
+  const fileName = `${Date.now()}-${file.name}`
 
-        const { data: { publicUrl } } = supabase.storage.from(bucketName).getPublicUrl(data.path);
+  try {
 
-        return publicUrl;
-    } catch (error) {
-        console.error("Error uploading file:", error);
-        return null;
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false
+      })
+
+    if (error) {
+      console.error("Supabase upload error:", error.message)
+      return null
     }
+
+    const { data: publicUrlData } = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(data.path)
+
+    return publicUrlData.publicUrl
+
+  } catch (err) {
+    console.error("Upload failed:", err)
+    return null
+  }
 }
 
-export async function uploadFiles(files: File[], bucketName: "eventimages" | "paymentscreenshots" = "eventimages") {
-    const uploadedUrls = [];
+export async function uploadFiles(
+  files: File[],
+  bucketName: "eventimages" | "paymentscreenshots" = "eventimages"
+) {
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileName = `${Date.now()}-${file.name}`;
-        try {
-            const { data, error } = await supabase.storage
-                .from(bucketName)
-                .upload(fileName, file);
+  const urls: string[] = []
 
-            if (error) throw error;
+  for (const file of files) {
+    const url = await uploadFile(file, bucketName)
+    if (url) urls.push(url)
+  }
 
-            const { data: { publicUrl } } = supabase.storage.from(bucketName).getPublicUrl(data.path);
-
-            uploadedUrls.push(publicUrl);
-        } catch (error) {
-            console.error("Error uploading file:", error);
-        }
-    }
-
-    return uploadedUrls;
+  return urls
 }
 
-export async function deleteFiles(fileUrls: string[], bucketName: "eventimages" | "paymentscreenshots" = "eventimages") {
-    for (let i = 0; i < fileUrls.length; i++) {
-        const fileUrl = fileUrls[i];
-        const fileName = fileUrl.split("/").pop()?.split("?")[0];
-        if (!fileName) continue;
-        try {
-            const { error } = await supabase.storage
-                .from(bucketName)
-                .remove([fileName]);
+export async function deleteFiles(
+  fileUrls: string[],
+  bucketName: "eventimages" | "paymentscreenshots" = "eventimages"
+) {
 
-            if (error) throw error;
-        } catch (error) {
-            console.error("Error deleting file:", error);
-        }
+  for (const fileUrl of fileUrls) {
+
+    const fileName = fileUrl.split("/").pop()?.split("?")[0]
+    if (!fileName) continue
+
+    const { error } = await supabase.storage
+      .from(bucketName)
+      .remove([fileName])
+
+    if (error) {
+      console.error("Delete error:", error.message)
     }
+  }
 }
