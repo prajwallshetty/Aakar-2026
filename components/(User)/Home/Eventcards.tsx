@@ -21,10 +21,10 @@ export default function Eventcards() {
 
 function CardGrid() {
   const cards = [
-    { id: 1, frontText: "CULTURAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/cultural" },
-    { id: 2, frontText: "TECHNICAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/technical" },
-    { id: 3, frontText: "GAMING", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/gaming" },
-    { id: 4, frontText: "SPECIAL", frontImage: "/eventcard.png?height=300&width=400", backImage: "/eventcardc.png", href: "/events/special" },
+    { id: 1, frontText: "CULTURAL", frontImage: "/eventcard.png", backImage: "/eventcardc.png", href: "/events/cultural" },
+    { id: 2, frontText: "TECHNICAL", frontImage: "/eventcard.png", backImage: "/eventcardc.png", href: "/events/technical" },
+    { id: 3, frontText: "GAMING", frontImage: "/eventcard.png", backImage: "/eventcardc.png", href: "/events/gaming" },
+    { id: 4, frontText: "SPECIAL", frontImage: "/eventcard.png", backImage: "/eventcardc.png", href: "/events/special" },
   ]
 
   const [visibleCards, setVisibleCards] = useState<number[]>([])
