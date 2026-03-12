@@ -276,17 +276,20 @@ const EventDescription = ({
   isLoading?: boolean;
 }) => {
 
+  // ── hooks first — never conditionally ──
+  const imageUrl = eventData?.imageUrl ?? "";
+
   useEffect(() => {
-    if (!eventData?.imageUrl) return;
+    if (!imageUrl) return;
     (async () => {
       const cache = await caches.open("event-image-cache");
-      const cached = await cache.match(eventData.imageUrl);
+      const cached = await cache.match(imageUrl);
       if (!cached) {
-        const response = await fetch(eventData.imageUrl, { mode: "no-cors" });
-        cache.put(eventData.imageUrl, response);
+        const response = await fetch(imageUrl, { mode: "no-cors" });
+        cache.put(imageUrl, response);
       }
     })();
-  }, [eventData?.imageUrl]);
+  }, [imageUrl]);
 
   const studentCoordinators = eventData?.studentCoordinators
     ? Array.isArray(eventData.studentCoordinators) ? eventData.studentCoordinators : [eventData.studentCoordinators]
@@ -489,7 +492,7 @@ const EventDescription = ({
                 <SectionHeading color={P.cyan}>Coordinators</SectionHeading>
                 {hasCoordinators ? (
                   <div style={{display:"flex",flexDirection:"column",gap:24}}>
-                    <CoordinatorSection title="Student Coordinators" coordinators={studentCoordinators} accent={P.magenta}/>
+                    <CoordinatorSection title="Student Coordinators" coordinators={studentCoordinators} accent={P.hot}/>
                     <CoordinatorSection title="Faculty Coordinators"  coordinators={facultyCoordinators}  accent={P.cyan}/>
                   </div>
                 ) : (
