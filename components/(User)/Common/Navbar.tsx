@@ -200,7 +200,7 @@ export default function Navbar() {
 
                             {/* Dropdown panel */}
                             <div style={{
-                                position: "absolute", top: "calc(100% + 8px)", left: 0,
+                                position: "absolute", top: "100%", left: 0,
                                 width: 190,
                                 background: "#ffff00",
                                 border: "3px solid #000",
