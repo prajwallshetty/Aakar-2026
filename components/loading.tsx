@@ -451,7 +451,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             {Array(6).fill(null).map((_,i) => (
               <span key={i} style={{paddingRight:"4rem"}}>
                 AAKAR 2026 &nbsp;★&nbsp; BRAINS · GUTS · GLORY &nbsp;★&nbsp;
-                FEB 2026 &nbsp;★&nbsp; REGISTER NOW &nbsp;★&nbsp;
+                APRIL 2026 &nbsp;★&nbsp; REGISTER NOW &nbsp;★&nbsp;
               </span>
             ))}
           </div>

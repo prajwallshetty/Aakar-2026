@@ -9,7 +9,7 @@ const EVENT_CATEGORIES = [
     { id: 1, name: "CULTURAL",  href: "/events/cultural",  color: "#ff00ff" },
     { id: 2, name: "TECHNICAL", href: "/events/technical", color: "#00ffff" },
     { id: 3, name: "GAMING",    href: "/events/gaming",    color: "#ff0066" },
-    { id: 4, name: "SPECIAL",   href: "/events/special",   color: "#ffff00" },
+    { id: 4, name: "SPECIAL",   href: "/events/special",   color: "#ff00ff" },
 ];
 
 export default function Navbar() {
@@ -163,7 +163,7 @@ export default function Navbar() {
 
                     {/* Logo */}
                     <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
-                        <div style={{ background: "#fff", border: "3px solid #000", boxShadow: "3px 3px 0 #000", padding: "4px 10px", display: "inline-block" }}>
+                        <div style={{ background: "#000000", border: "3px solid #000", boxShadow: "3px 3px 0 #ff00ff", padding: "4px 10px", display: "inline-block" }}>
                             <Image src="/aj.png" alt="AJIET Logo" width={200} height={50} style={{ maxHeight: 36, width: "auto", display: "block" }} />
                         </div>
                     </Link>
