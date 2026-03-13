@@ -9,20 +9,26 @@ export const metadata: Metadata = {
     "Experience the spirit of innovation, creativity, and competition at AAKAR 2025 – a premier TechnoCultural fest bringing together students, tech enthusiasts, and innovators for exciting events, workshops, and unforgettable memories.",
 };
 
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <div className={`${GameOfSquids.className} antialiased`}>
-      <Navbar />
-      <div className="relative font-GameOfSquids min-h-screen">
-        {children}
-      </div>
-      <Footer />
+    <div className={`${GameOfSquids.className} antialiased flex flex-col min-h-screen`}>
+      
+      {/* Background */}
       <div className="fixed inset-0 -z-10 bg-custom" />
+
+      <Navbar />
+
+      {/* Page Content */}
+      <main className="flex-grow relative font-GameOfSquids">
+        {children}
+      </main>
+
+      <Footer />
+
     </div>
   );
 }
