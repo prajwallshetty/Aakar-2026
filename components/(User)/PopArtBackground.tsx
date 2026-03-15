@@ -64,7 +64,7 @@ export default function PopArtBackground() {
       <div
         aria-hidden
         style={{
-          position: "fixed", inset: 0, zIndex: 0,
+          position: "absolute", inset: 0, zIndex: 0,
           backgroundImage: `repeating-linear-gradient(45deg,${P.yellow} 0px,${P.yellow} 18px,${P.yellow2} 18px,${P.yellow2} 36px)`,
         }}
       />
@@ -73,7 +73,7 @@ export default function PopArtBackground() {
       <div
         aria-hidden
         style={{
-          position: "fixed", inset: 0, zIndex: 1,
+          position: "absolute", inset: 0, zIndex: 1,
           backgroundImage: `radial-gradient(circle,rgba(0,0,0,0.18) 1.8px,transparent 1.8px)`,
           backgroundSize: "14px 14px",
         }}
@@ -82,7 +82,7 @@ export default function PopArtBackground() {
       {/* 3 — radial speed lines */}
       <svg
         aria-hidden
-        style={{ position:"fixed",inset:0,width:"100%",height:"100%",zIndex:2,pointerEvents:"none",opacity:0.07 }}
+        style={{ position:"absolute",inset:0,width:"100%",height:"100%",zIndex:2,pointerEvents:"none",opacity:0.07 }}
         preserveAspectRatio="xMidYMid slice"
         viewBox="0 0 100 100"
       >
@@ -92,7 +92,7 @@ export default function PopArtBackground() {
       </svg>
 
       {/* 4 — corner triangle blocks */}
-      <svg aria-hidden style={{ position:"fixed",inset:0,width:"100%",height:"100%",zIndex:3,pointerEvents:"none" }}>
+      <svg aria-hidden style={{ position:"absolute",inset:0,width:"100%",height:"100%",zIndex:3,pointerEvents:"none" }}>
         <polygon points="0,0 180,0 0,160"                                           fill={P.magenta} opacity="0.28" />
         <polygon points="100%,0 calc(100% - 180px),0 100%,160"                      fill={P.cyan}    opacity="0.28" />
         <polygon points="0,100% 160,100% 0,calc(100% - 140px)"                      fill={P.hot}     opacity="0.26" />
@@ -100,7 +100,7 @@ export default function PopArtBackground() {
       </svg>
 
       {/* 5 — corner starbursts */}
-      <svg aria-hidden style={{ position:"fixed",inset:0,width:"100%",height:"100%",zIndex:4,pointerEvents:"none" }}>
+      <svg aria-hidden style={{ position:"absolute",inset:0,width:"100%",height:"100%",zIndex:4,pointerEvents:"none" }}>
         <path d={BURST_TL} fill={P.magenta} opacity="0.22" />
         <path d={BURST_TR} fill={P.cyan}    opacity="0.22" transform="translate(-9999,0)" />
         <path d={BURST_BL} fill={P.hot}     opacity="0.20" transform="translate(0,-9999)" />
@@ -120,7 +120,7 @@ export default function PopArtBackground() {
           key={i}
           aria-hidden
           style={{
-            position: "fixed",
+            position: "absolute",
             top: s.top,
             left:  (s as any).left,
             right: (s as any).right,
@@ -148,7 +148,7 @@ export default function PopArtBackground() {
           key={i}
           aria-hidden
           style={{
-            position: "fixed",
+            position: "absolute",
             top:    (s as any).top,
             bottom: (s as any).bottom,
             left:   (s as any).left,
