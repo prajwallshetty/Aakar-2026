@@ -2,55 +2,38 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import PopArtBackground from "@/components/(User)/PopArtBackground";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
-    yellow:  "#ffff00",
+    yellow: "#ffff00",
     magenta: "#ff00ff",
-    cyan:    "#00ffff",
-    pink:    "#ff0066",
-    black:   "#000",
-    white:   "#fff",
+    cyan: "#00ffff",
+    pink: "#ff0066",
+    black: "#000",
+    white: "#fff",
 };
-const popFont     = "'Arial Black', Impact, sans-serif";
-const monoFont    = "'Courier New', 'Space Mono', monospace";
+const popFont = "'Arial Black', Impact, sans-serif";
+const monoFont = "'Courier New', 'Space Mono', monospace";
 const displayFont = "'Bebas Neue', Impact, sans-serif";
-
-// ─── Pre-computed starburst (no runtime Math.random/trig to avoid hydration) ──
-const BURST_PTS_CENTER = (() => {
-    const cx = 720, cy = 400, r = 380, pts = 20;
-    return Array.from({ length: pts * 2 }, (_, i) => {
-        const a = (i / (pts * 2)) * Math.PI * 2 - Math.PI / 2;
-        const rad = i % 2 === 0 ? r : r * 0.52;
-        return `${(cx + rad * Math.cos(a)).toFixed(2)},${(cy + rad * Math.sin(a)).toFixed(2)}`;
-    }).join(" ");
-})();
 
 // ─── Confetti pieces (static positions, CSS animates them) ────────────────────
 const CONFETTI = [
-    { left: "8%",  color: C.magenta, delay: "0s",    size: 14, rotate: 20  },
-    { left: "15%", color: C.cyan,    delay: "0.3s",  size: 10, rotate: -30 },
-    { left: "22%", color: C.pink,    delay: "0.1s",  size: 16, rotate: 45  },
-    { left: "30%", color: C.yellow,  delay: "0.5s",  size: 12, rotate: -15 },
-    { left: "38%", color: C.magenta, delay: "0.2s",  size: 18, rotate: 60  },
-    { left: "48%", color: C.cyan,    delay: "0.4s",  size: 10, rotate: -45 },
-    { left: "55%", color: C.pink,    delay: "0s",    size: 14, rotate: 30  },
-    { left: "63%", color: C.yellow,  delay: "0.6s",  size: 12, rotate: -20 },
-    { left: "70%", color: C.magenta, delay: "0.15s", size: 16, rotate: 10  },
-    { left: "78%", color: C.cyan,    delay: "0.35s", size: 10, rotate: -60 },
-    { left: "85%", color: C.pink,    delay: "0.25s", size: 18, rotate: 40  },
-    { left: "92%", color: C.yellow,  delay: "0.45s", size: 12, rotate: -35 },
+    { left: "8%", color: C.magenta, delay: "0s", size: 14, rotate: 20 },
+    { left: "15%", color: C.cyan, delay: "0.3s", size: 10, rotate: -30 },
+    { left: "22%", color: C.pink, delay: "0.1s", size: 16, rotate: 45 },
+    { left: "30%", color: C.yellow, delay: "0.5s", size: 12, rotate: -15 },
+    { left: "38%", color: C.magenta, delay: "0.2s", size: 18, rotate: 60 },
+    { left: "48%", color: C.cyan, delay: "0.4s", size: 10, rotate: -45 },
+    { left: "55%", color: C.pink, delay: "0s", size: 14, rotate: 30 },
+    { left: "63%", color: C.yellow, delay: "0.6s", size: 12, rotate: -20 },
+    { left: "70%", color: C.magenta, delay: "0.15s", size: 16, rotate: 10 },
+    { left: "78%", color: C.cyan, delay: "0.35s", size: 10, rotate: -60 },
+    { left: "85%", color: C.pink, delay: "0.25s", size: 18, rotate: 40 },
+    { left: "92%", color: C.yellow, delay: "0.45s", size: 12, rotate: -35 },
 ];
 
-// ─── Floating shapes (fixed positions, CSS animates) ─────────────────────────
-const FLOATERS = [
-    { top: "12%", left: "3%",   size: 44, color: C.magenta, shape: "circle"  },
-    { top: "18%", right: "4%",  size: 36, color: C.cyan,    shape: "circle"  },
-    { top: "50%", left: "2%",   size: 30, color: C.pink,    shape: "diamond" },
-    { top: "55%", right: "2%",  size: 34, color: C.yellow,  shape: "diamond" },
-    { top: "78%", left: "5%",   size: 40, color: C.cyan,    shape: "circle"  },
-    { top: "75%", right: "4%",  size: 32, color: C.magenta, shape: "diamond" },
-];
+// ─── Float animations handled by the unified PopArtBackground ─────────
 
 export default function RegistrationSuccess() {
     const [mounted, setMounted] = useState(false);
@@ -156,57 +139,7 @@ export default function RegistrationSuccess() {
             `}</style>
 
             {/* ── Background ────────────────────────────────────────────── */}
-            <div className="sr-bg" aria-hidden>
-                <div className="sr-dots" />
-                <div className="sr-tri-tl" />
-                <div className="sr-tri-tr" />
-                <div className="sr-tri-bl" />
-                <div className="sr-tri-br" />
-
-                {/* Centre starburst */}
-                <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.12 }}
-                    viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
-                    <polygon points={BURST_PTS_CENTER} fill="#ff00ff" />
-                </svg>
-
-                {/* Floating shapes */}
-                {FLOATERS.map((s: any, i) => (
-                    <div key={i} style={{
-                        position: "absolute",
-                        top: s.top, left: s.left, right: s.right,
-                        width: s.size, height: s.size,
-                        background: s.color,
-                        border: `3px solid ${C.black}`,
-                        boxShadow: `4px 4px 0 ${C.black}`,
-                        borderRadius: s.shape === "circle" ? "50%" : 0,
-                        transform: s.shape === "diamond" ? "rotate(45deg)" : "none",
-                        opacity: 0.65,
-                        animation: `floatShape ${3 + i * 0.4}s ease-in-out ${i * 0.25}s infinite alternate`,
-                    }} />
-                ))}
-
-                {/* Comic stamps */}
-                {[
-                    { text: "YAY!",  x: "6%",  y: "25%", color: C.magenta, rot: -10 },
-                    { text: "WOO!",  x: "85%", y: "20%", color: C.cyan,    rot: 8   },
-                    { text: "DONE!", x: "4%",  y: "68%", color: C.pink,    rot: 6   },
-                    { text: "WIN!",  x: "84%", y: "65%", color: C.magenta, rot: -7  },
-                ].map((s, i) => (
-                    <div key={i} style={{
-                        position: "absolute", left: s.x, top: s.y,
-                        fontFamily: displayFont, fontSize: 20, letterSpacing: 3,
-                        color: s.color,
-                        WebkitTextStroke: `2px ${C.black}`,
-                        textShadow: `3px 3px 0 ${C.black}`,
-                        transform: `rotate(${s.rot}deg)`,
-                        opacity: 0.5,
-                        userSelect: "none",
-                        animation: `wiggle ${2.5 + i * 0.4}s ease-in-out infinite alternate`,
-                    }}>
-                        {s.text}
-                    </div>
-                ))}
-            </div>
+            <PopArtBackground />
 
             {/* ── Confetti (only after mount to avoid hydration diff) ────── */}
             {mounted && CONFETTI.map((c, i) => (
@@ -324,9 +257,9 @@ export default function RegistrationSuccess() {
                     {/* What's next pills */}
                     <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
                         {[
-                            { icon: "📧", text: "Confirmation email sent to your inbox",  color: C.cyan    },
+                            { icon: "📧", text: "Confirmation email sent to your inbox", color: C.cyan },
                             { icon: "🎟️", text: "Show your ticket at the venue on event day", color: C.pink },
-                            { icon: "📱", text: "Follow us on Instagram for updates",      color: C.magenta },
+                            { icon: "📱", text: "Follow us on Instagram for updates", color: C.magenta },
                         ].map((item, i) => (
                             <div key={i} style={{
                                 display: "flex", alignItems: "center", gap: 12,
