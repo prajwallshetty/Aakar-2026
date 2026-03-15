@@ -46,12 +46,14 @@ export default function LandingHero() {
   const mx   = useSpring(rawX, sp);
   const my   = useSpring(rawY, sp);
 
-  const d0x = useTransform(mx, [0,1], [-12,  12]);
-  const d0y = useTransform(my, [0,1], [-8,    8]);
-  const d1x = useTransform(mx, [0,1], [-22,  22]);
-  const d1y = useTransform(my, [0,1], [-14,  14]);
-  const d2x = useTransform(mx, [0,1], [-8,    8]);
-  const d2y = useTransform(my, [0,1], [-5,    5]);
+  const d0x = useTransform(mx, [0,1], [-25,  25]);
+  const d0y = useTransform(my, [0,1], [-15,  15]);
+  const d1x = useTransform(mx, [0,1], [-45,  45]);
+  const d1y = useTransform(my, [0,1], [-25,  25]);
+  const d2x = useTransform(mx, [0,1], [-18,  18]);
+  const d2y = useTransform(my, [0,1], [-12,  12]);
+  const dTitleX = useTransform(mx, [0,1], [ 25, -25]);
+  const dTitleY = useTransform(my, [0,1], [ 15, -15]);
 
   function onMove(e: React.MouseEvent<HTMLElement>) {
     const r = e.currentTarget.getBoundingClientRect();
@@ -78,8 +80,8 @@ export default function LandingHero() {
         @keyframes sCCW    { to{ transform:rotate(-360deg); } }
         @keyframes sTick   { from{transform:translateX(0)} to{transform:translateX(-50%)} }
         @keyframes sFloat  {
-          0%,100%{ transform:translateY(0);    }
-          50%    { transform:translateY(-14px); }
+          0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
+          50%    { transform:translateY(-18px) scale(1.02) rotate(1.5deg); }
         }
         @keyframes sAurora {
           0%,100%{ opacity:.55; transform:translate(-50%,-50%) scale(1)    rotate(0deg);  }
@@ -126,40 +128,40 @@ export default function LandingHero() {
           50%    { transform:translateY(-8px) rotate(1deg); }
         }
 
-        /* ── AAKAR 2026 title glitch ── */
+        /* ── AAKAR title glitch ── */
         @keyframes sTitleGlitch {
           0%,78%,100% {
-            text-shadow: 4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot};
+            text-shadow: 8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot};
             transform: skewX(0deg) translate(0,0);
           }
           79% {
-            text-shadow: -4px 0 0 ${C.cyan}, 4px 0 0 ${C.magenta}, 4px 4px 0 ${C.black};
-            transform: skewX(-4deg) translate(-5px, 0);
+            text-shadow: -15px 0 0 ${C.cyan}, 15px 0 0 ${C.magenta}, 8px 8px 0 ${C.black};
+            transform: skewX(-15deg) translate(-15px, 0);
             clip-path: inset(15% 0 60% 0);
           }
           80% {
-            text-shadow: 5px 0 0 ${C.magenta}, -5px 0 0 ${C.cyan}, 4px 4px 0 ${C.black};
-            transform: skewX(3deg) translate(6px, 1px);
+            text-shadow: 20px 0 0 ${C.magenta}, -20px 0 0 ${C.cyan}, 8px 8px 0 ${C.black};
+            transform: skewX(10deg) translate(20px, 5px);
             clip-path: inset(55% 0 8% 0);
           }
           81% {
-            text-shadow: -3px 0 0 ${C.hot}, 3px 0 0 ${C.cyan}, 4px 4px 0 ${C.black};
-            transform: skewX(-2deg) translate(-3px, -1px);
+            text-shadow: -10px 0 0 ${C.hot}, 10px 0 0 ${C.cyan}, 8px 8px 0 ${C.black};
+            transform: skewX(-10deg) translate(-10px, -5px);
             clip-path: inset(30% 0 38% 0);
           }
           82%,83% {
-            text-shadow: 4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot};
+            text-shadow: 8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot};
             transform: skewX(0deg) translate(0,0);
             clip-path: none;
-            filter: brightness(1.5);
+            filter: brightness(2);
           }
           84% {
-            text-shadow: 6px 0 0 ${C.cyan}, -6px 0 0 ${C.magenta}, 4px 4px 0 ${C.black};
-            transform: skewX(5deg) translate(8px, 0);
+            text-shadow: 25px 0 0 ${C.cyan}, -25px 0 0 ${C.magenta}, 8px 8px 0 ${C.black};
+            transform: skewX(15deg) translate(25px, 0);
             clip-path: inset(0 0 72% 0);
           }
           85%,86% {
-            text-shadow: 4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot};
+            text-shadow: 8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot};
             transform: skewX(0deg) translate(0,0);
             clip-path: none;
             filter: brightness(1);
@@ -167,18 +169,18 @@ export default function LandingHero() {
         }
         @keyframes sTitleTop {
           0%,78%,87%,100%{ opacity:0; }
-          79%{ opacity:1; clip-path:inset(0 0 72% 0); transform:translate(10px,0); filter:hue-rotate(90deg) brightness(1.6); color:${C.cyan}; }
-          80%{ opacity:1; clip-path:inset(2% 0 68% 0); transform:translate(-8px,0); color:${C.magenta}; }
+          79%{ opacity:1; clip-path:inset(0 0 72% 0); transform:translate(30px,0); filter:hue-rotate(90deg) brightness(2); color:${C.cyan}; }
+          80%{ opacity:1; clip-path:inset(2% 0 68% 0); transform:translate(-25px,0); color:${C.magenta}; filter:brightness(1.5); }
           81%,82%{ opacity:0; }
-          84%{ opacity:1; clip-path:inset(0 0 65% 0); transform:translate(12px,-2px); filter:brightness(1.8); color:${C.hot}; }
+          84%{ opacity:1; clip-path:inset(0 0 65% 0); transform:translate(35px,-5px); filter:brightness(2.5); color:${C.hot}; }
           85%,86%{ opacity:0; }
         }
         @keyframes sTitleBot {
           0%,78%,87%,100%{ opacity:0; }
-          79%{ opacity:1; clip-path:inset(68% 0 0 0); transform:translate(-10px,0); filter:hue-rotate(-90deg) brightness(1.6); color:${C.magenta}; }
-          80%{ opacity:1; clip-path:inset(65% 0 2% 0); transform:translate(8px,0); color:${C.cyan}; }
+          79%{ opacity:1; clip-path:inset(68% 0 0 0); transform:translate(-30px,0); filter:hue-rotate(-90deg) brightness(2); color:${C.magenta}; }
+          80%{ opacity:1; clip-path:inset(65% 0 2% 0); transform:translate(25px,0); color:${C.cyan}; filter:brightness(1.5); }
           81%,82%{ opacity:0; }
-          84%{ opacity:1; clip-path:inset(70% 0 0 0); transform:translate(-12px,2px); filter:brightness(1.8); color:${C.yellow}; }
+          84%{ opacity:1; clip-path:inset(70% 0 0 0); transform:translate(-35px,5px); filter:brightness(2.5); color:${C.yellow}; }
           85%,86%{ opacity:0; }
         }
         @keyframes sTitleIn {
@@ -546,17 +548,18 @@ export default function LandingHero() {
             <div style={{ position:"relative" }}>
               {/* halo */}
               <div style={{
-                position:"absolute", inset:"-18% -22%",
+                position:"absolute", inset:"-30% -30%",
                 borderRadius:"50%",
-                background:`radial-gradient(ellipse, ${C.white}18 0%, ${C.cyan}12 32%, transparent 62%)`,
-                filter:"blur(10px)",
+                background:`radial-gradient(ellipse, ${C.magenta}25 0%, ${C.cyan}1A 40%, transparent 70%)`,
+                filter:"blur(20px)",
                 pointerEvents:"none",
               }}/>
               <div className="chroma" style={{
                 position:"relative",
-                width:"clamp(170px, 30vw, 340px)",
+                width:"clamp(200px, 45vw, 500px)",
                 aspectRatio:"1/1",
                 marginBottom:0,
+                filter:`drop-shadow(0 0 20px ${C.magenta}66)`
               }}>
                 <Image
                   src="/ak26.png"
@@ -574,7 +577,9 @@ export default function LandingHero() {
               pointerEvents:"auto",
               display:"flex", flexDirection:"column", alignItems:"center",
               gap:10,
-              marginTop:"clamp(8px,1.8vh,16px)",
+              marginTop:"clamp(-45px, -5vh, -25px)",
+              position:"relative",
+              zIndex:30,
             }}
             initial={{ opacity:0, y:22 }}
             animate={{ opacity:1, y:0  }}
@@ -584,14 +589,14 @@ export default function LandingHero() {
             <div style={{
               display:"inline-flex",
               alignItems:"center",
-              gap:8,
+              gap:10,
               background:C.hot,
-              border:`2.5px solid ${C.black}`,
-              boxShadow:`4px 4px 0 ${C.black}`,
-              padding:"6px 22px",
+              border:`3px solid ${C.black}`,
+              boxShadow:`5px 5px 0 ${C.black}`,
+              padding:"8px 28px",
               fontFamily:"'Bebas Neue',sans-serif",
-              fontSize:"clamp(0.78rem,1.7vw,0.98rem)",
-              letterSpacing:"0.24em",
+              fontSize:"clamp(0.9rem,1.9vw,1.1rem)",
+              letterSpacing:"0.28em",
               color:C.white,
               animation:"sBadge 2.5s ease-in-out infinite",
               whiteSpace:"nowrap",
@@ -605,26 +610,26 @@ export default function LandingHero() {
             <motion.a
               href="/events"
               whileHover={{
-                y: -4,
-                boxShadow:`8px 8px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
+                y: -6,
+                boxShadow:`10px 10px 0 ${C.black}, 18px 18px 0 ${C.magenta}`,
               }}
               whileTap={{ scale:0.96 }}
               style={{
                 display:"inline-flex",
                 alignItems:"center",
                 justifyContent:"center",
-                gap:8,
+                gap:10,
                 background:C.yellow,
                 border:`3px solid ${C.black}`,
-                boxShadow:`6px 6px 0 ${C.black}, 10px 10px 0 ${C.magenta}`,
-                padding:"clamp(11px,2vh,15px) clamp(28px,5vw,52px)",
+                boxShadow:`8px 8px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
+                padding:"clamp(14px,2.5vh,20px) clamp(36px,6vw,64px)",
                 fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:"clamp(1rem,2.3vw,1.3rem)",
+                fontSize:"clamp(1.2rem,2.8vw,1.6rem)",
                 letterSpacing:"0.22em",
                 color:C.black,
                 textDecoration:"none",
                 cursor:"pointer",
-                transition:"box-shadow 0.14s ease",
+                transition:"all 0.14s ease",
                 whiteSpace:"nowrap",
               }}
             >
@@ -632,81 +637,75 @@ export default function LandingHero() {
               <span style={{
                 display:"inline-flex", alignItems:"center", justifyContent:"center",
                 background:C.black, color:C.yellow,
-                width:"1.6em", height:"1.6em",
-                fontSize:"0.85em",
-                marginLeft:4,
+                width:"1.8em", height:"1.8em",
+                fontSize:"0.9em",
+                marginLeft:6,
               }}>→</span>
             </motion.a>
           </motion.div>
 
         </div>
 
-        {/* ═══════════ Z:22 AAKAR 2026 GLITCH TITLE — top ═══════════ */}
-        <motion.div
-          style={{
-            position:"absolute",
-            top:"clamp(16px, 3.5vh, 36px)",
-            left:0, right:0,
-            zIndex:22,
-            display:"flex", justifyContent:"center",
-            pointerEvents:"none",
-          }}
-          initial={{ opacity:0, y:-24 }}
-          animate={{ opacity:1, y:0   }}
-          transition={{ delay:0.1, duration:0.7, ease:[0.23,1.3,0.5,1] }}
-        >
-          {/* wrapper so clones sit on top */}
-          <div style={{ position:"relative", display:"inline-block", lineHeight:1 }}>
+        {/* ═══════════ Z:19 BACKGROUND GLITCH TITLE ═══════════ */}
+        <div style={{
+          position:"absolute",
+          top:"28%", left:0, right:0,
+          transform:"translateY(-50%)",
+          zIndex:19,
+          pointerEvents:"none",
+        }}>
+          <motion.div
+            className="parallax-layer"
+            style={{ x: dTitleX, y: dTitleY, display:"flex", justifyContent:"center" }}
+            initial={{ opacity:0, scale:0.85 }}
+            animate={{ opacity:1, scale:1   }}
+            transition={{ delay:0.1, duration:0.9, ease:[0.23,1.3,0.5,1] }}
+          >
+            {/* wrapper so clones sit on top */}
+            <div style={{ position:"relative", display:"inline-block", lineHeight:1 }}>
 
-            {/* clone TOP */}
-            <div className="title-clone-top" style={{
-              position:"absolute", inset:0,
-              fontFamily:"'Bebas Neue',sans-serif",
-              fontSize:"clamp(2.4rem, 7vw, 5.5rem)",
-              letterSpacing:"0.16em",
-              color:C.cyan,
-              WebkitTextStroke:`1px ${C.black}`,
-              whiteSpace:"nowrap",
-              opacity:0,
-              userSelect:"none",
-            }}>AAKAR&nbsp;2026</div>
+              {/* clone TOP */}
+              <div className="title-clone-top" style={{
+                position:"absolute", inset:0,
+                fontFamily:"'Bebas Neue',sans-serif",
+                fontSize:"clamp(6rem, 20vw, 18rem)",
+                letterSpacing:"0.06em",
+                color:C.cyan,
+                WebkitTextStroke:`2px ${C.black}`,
+                whiteSpace:"nowrap",
+                opacity:0,
+                userSelect:"none",
+              }}>AAKAR</div>
 
-            {/* clone BOT */}
-            <div className="title-clone-bot" style={{
-              position:"absolute", inset:0,
-              fontFamily:"'Bebas Neue',sans-serif",
-              fontSize:"clamp(2.4rem, 7vw, 5.5rem)",
-              letterSpacing:"0.16em",
-              color:C.magenta,
-              WebkitTextStroke:`1px ${C.black}`,
-              whiteSpace:"nowrap",
-              opacity:0,
-              userSelect:"none",
-            }}>AAKAR&nbsp;2026</div>
+              {/* clone BOT */}
+              <div className="title-clone-bot" style={{
+                position:"absolute", inset:0,
+                fontFamily:"'Bebas Neue',sans-serif",
+                fontSize:"clamp(6rem, 20vw, 18rem)",
+                letterSpacing:"0.06em",
+                color:C.magenta,
+                WebkitTextStroke:`2px ${C.black}`,
+                whiteSpace:"nowrap",
+                opacity:0,
+                userSelect:"none",
+              }}>AAKAR</div>
 
-            {/* BASE title */}
-            <h1 className="title-glitch" style={{
-              fontFamily:"'Bebas Neue',sans-serif",
-              fontSize:"clamp(2.4rem, 7vw, 5.5rem)",
-              letterSpacing:"0.16em",
-              color:C.yellow,
-              WebkitTextStroke:`2px ${C.black}`,
-              textShadow:`4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot}`,
-              margin:0,
-              whiteSpace:"nowrap",
-              position:"relative", zIndex:2,
-            }}>AAKAR&nbsp;2026</h1>
+              {/* BASE title */}
+              <h1 className="title-glitch" style={{
+                fontFamily:"'Bebas Neue',sans-serif",
+                fontSize:"clamp(6rem, 20vw, 18rem)",
+                letterSpacing:"0.06em",
+                color:C.yellow,
+                WebkitTextStroke:`4px ${C.black}`,
+                textShadow:`8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot}`,
+                margin:0,
+                whiteSpace:"nowrap",
+                position:"relative", zIndex:2,
+              }}>AAKAR</h1>
 
-            {/* underline bar */}
-            <div style={{
-              height:3,
-              background:`linear-gradient(90deg, ${C.magenta}, ${C.cyan}, ${C.yellow})`,
-              border:`1px solid ${C.black}`,
-              marginTop:4,
-            }}/>
-
-          </div>
-        </motion.div>
+            </div>
+          </motion.div>
+        </div>
 
         {/* ═══════════ Z:25 LEFT-SIDE LOGO ═══════════ */}
         <motion.div
@@ -822,9 +821,9 @@ export default function LandingHero() {
         {/* ═══════════ Z:40 TICKER ═══════════ */}
         <div style={{
           position:"absolute", bottom:0, left:0, right:0,
-          zIndex:40, height:34,
+          zIndex:40, height:48,
           background:C.magenta,
-          borderTop:`3px solid ${C.black}`,
+          borderTop:`4px solid ${C.black}`,
           overflow:"hidden",
           display:"flex", alignItems:"center",
         }}>
@@ -832,10 +831,10 @@ export default function LandingHero() {
             display:"flex", whiteSpace:"nowrap",
             animation:"sTick 16s linear infinite",
             fontFamily:"'Bebas Neue',sans-serif",
-            fontSize:"0.92rem", letterSpacing:"0.28em", color:C.black,
+            fontSize:"1.25rem", letterSpacing:"0.28em", color:C.black,
           }}>
             {[0,1].map(i => (
-              <span key={i} style={{ paddingRight:"2rem" }}>
+              <span key={i} style={{ paddingRight:"2rem", paddingTop: "4px" }}>
                 {"★ AAKAR 2026  ·  BRAINS  ·  GUTS  ·  GLORY  ·  MGIT MANGALURU  ·  AURORAS OF ADVENTURE  ·  ".repeat(6)}
               </span>
             ))}
