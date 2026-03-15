@@ -1,235 +1,854 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Montserrat } from "next/font/google";
 import Image from "next/image";
-import { FiChevronDown } from "react-icons/fi";
-import { HiDownload } from "react-icons/hi";
-import Link from "next/link";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-const montserrat = Montserrat({
-    weight: "600",
-    subsets: ["latin"],
-});
-
-const LandingPage = () => {
-    const [glowIntensity, setGlowIntensity] = useState(0);
-
-    useEffect(() => {
-        const scrollContainer = document.getElementById("videoScrollContainer");
-        const dot1 = document.getElementById("scrollDot1");
-        const dot2 = document.getElementById("scrollDot2");
-
-        if (scrollContainer && dot1 && dot2) {
-            const handleScroll = () => {
-                const scrollPosition = scrollContainer.scrollLeft;
-                const maxScroll =
-                    scrollContainer.scrollWidth - scrollContainer.clientWidth;
-                const scrollRatio = scrollPosition / maxScroll;
-
-                if (scrollRatio < 0.5) {
-                    dot1.classList.remove("w-1", "h-1", "bg-white/30");
-                    dot1.classList.add("w-2", "h-2", "bg-white/60");
-                    dot2.classList.remove("w-2", "h-2", "bg-white/60");
-                    dot2.classList.add("w-1", "h-1", "bg-white/30");
-                } else {
-                    dot2.classList.remove("w-1", "h-1", "bg-white/30");
-                    dot2.classList.add("w-2", "h-2", "bg-white/60");
-                    dot1.classList.remove("w-2", "h-2", "bg-white/60");
-                    dot1.classList.add("w-1", "h-1", "bg-white/30");
-                }
-            };
-
-            scrollContainer.addEventListener("scroll", handleScroll);
-            return () =>
-                scrollContainer.removeEventListener("scroll", handleScroll);
-        }
-    }, []);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setGlowIntensity((prev) => (prev + 0.02) % 1);
-        }, 50);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const glowOpacity = 0.3 + 0.2 * Math.sin(glowIntensity * Math.PI * 2);
-
-    return (
-        <div className="relative w-full h-screen overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full">
-                <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-red-600 opacity-20 blur-3xl"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-40 h-40 rounded-full bg-blue-600 opacity-20 blur-3xl"></div>
-            </div>
-
-            <div className="hidden md:flex h-full relative z-10">
-                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 flex items-center justify-center lg:space-x-4 text-4xl lg:text-8xl font-bold text-center tracking-widest z-10">
-                    <span className="text-outline relative">
-                        AAKAR
-                        <span
-                            className="absolute inset-0 text-gray-400 blur-md"
-                            style={{ opacity: glowOpacity }}
-                        >
-                            AAKAR
-                        </span>
-                    </span>
-                    <span className="text-outline relative">
-                        2025
-                        <span
-                            className="absolute inset-0 text-blue-400 blur-md"
-                            style={{ opacity: glowOpacity }}
-                        >
-                            2025
-                        </span>
-                    </span>
-                </div>
-
-                <div className="w-1/4 flex items-center justify-center">
-                    <div className="relative right-[-20vw] top-[-50px] z-30 overflow-hidden">
-                        <Image
-                            src="/new_logo.png"
-                            alt="AAKAR Logo"
-                            width={300}
-                            height={150}
-                            className="mx-auto h-auto"
-                        />
-                    </div>
-                </div>
-
-                <div className="w-2/4 flex flex-col h-full items-center justify-center relative overflow-hidden">
-                    <div className="h-[90vh] flex items-center justify-center">
-                        <div
-                            className="h-5/6 w-auto bg-contain bg-no-repeat bg-center z-20"
-                            style={{
-                                backgroundImage: "url('/character.png')",
-                                minWidth: "250px",
-                            }}
-                        ></div>
-                        <div
-                            className={`absolute bottom-36 z-20 ${montserrat.className} cursor-pointer`}
-                        >
-                            <Link
-                                href="/Aakar_2025_brochure.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                download
-                                className="flex items-center px-6 py-3 text-white bg-transparent hover:bg-transparent cursor-pointer transition duration-300 group"
-                            >
-                                <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
-                                    <HiDownload className="text-lg" />
-                                </div>
-                                <span className="text-white bg-transparent font-semibold transition-colors duration-300 group-hover:text-white/80">
-                                    Download Brochure
-                                </span>
-                            </Link>
-                        </div>
-                    </div>
-                    <div className="flex justify-center h-[10vh] mt-4 animate-blink text-red-400">
-                        <FiChevronDown className="text-6xl" />
-                    </div>
-                </div>
-
-                <div className="w-1/4 flex items-center justify-start relative">
-                    <div className="relative rounded-l-[3rem] w-full">
-                        <div className="absolute inset-0 bg-black/50 rounded-l-[3rem] z-0 pointer-events-none"></div>
-
-                        <div
-                            className="relative z-10 flex flex-row space-x-4 py-14 px-8 overflow-x-auto scrollbar-hide w-full"
-                            style={{
-                                scrollbarWidth: "none",
-                                msOverflowStyle: "none",
-                            }}
-                            id="videoScrollContainer"
-                        >
-                            <div
-                                className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
-                            >
-                                <Image
-                                    className="w-full h-full object-cover"
-                                    src="/dj.png"
-                                    alt="DJ Night"
-                                    width={800}
-                                    height={450}
-                                />
-
-                                <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
-                            </div>
-                            <div
-                                className="min-w-[280px] w-[18vw] h-auto rounded-3xl overflow-hidden shadow-lg shadow-blue-500/30 relative flex-shrink-0"
-                            >
-                                <Image
-                                    className="w-full h-full object-cover"
-                                    src="/Concert.png"
-                                    alt="Concert"
-                                    width={800}
-                                    height={450}
-                                />
-
-                                <div className="absolute inset-0 rounded-3xl border border-blue-400/30 pointer-events-none"></div>
-                            </div>
-                        </div>
-
-                        <div className="absolute bottom-4 left-1/2 flex items-center gap-3">
-                            <div
-                                className="w-2 h-2 bg-white/60 rounded-full transition-all duration-300"
-                                id="scrollDot1"
-                            ></div>
-                            <div
-                                className="w-1 h-1 bg-white/30 rounded-full transition-all duration-300"
-                                id="scrollDot2"
-                            ></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex md:hidden flex-col h-full items-center justify-between py-12">
-                <div className="flex flex-col h-[90vh] items-center justify-center space-y-16">
-                    <div className="text-white text-6xl font-bold tracking-wider relative top-[30px] text-centeroverflow-hidden">
-                        <Image
-                            src="/new_logo.png"
-                            alt="AAKAR Logo"
-                            width={200}
-                            height={100}
-                            className="mx-auto h-auto"
-                        />
-                    </div>
-
-                    <div className="h-full flex items-center justify-center mt relative">
-                        <div
-                            className="h-5/6 w-auto bg-contain bg-no-repeat bg-center"
-                            style={{
-                                backgroundImage: "url('/character.png')",
-                                minWidth: "250px",
-                            }}
-                        ></div>
-                        <div
-                            className={`mt-8 absolute bottom-10 ${montserrat.className}`}
-                        >
-                            <Link
-                                href="/Aakar_2025_brochure.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                download
-                                className="flex items-center bg-transparent hover:bg-transparent cursor-pointer rounded-full px-4 py-2 text-white hover:text-black transition duration-300"
-                            >
-                                <div className="mr-3 w-10 h-10 flex items-center justify-center border-2 border-white rounded-full transition-all duration-300">
-                                    <HiDownload className="text-sm" />
-                                </div>
-                                <span className="text-white text-sm font-semibold transition-colors duration-300 group-hover:text-white/80">
-                                    Download Brochure
-                                </span>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex justify-center h-[10vh] mt-4 animate-blink text-red-400">
-                    <FiChevronDown className="text-6xl" />
-                </div>
-            </div>
-        </div>
-    );
+const C = {
+  yellow:  "#FFE600",
+  magenta: "#FF00CC",
+  cyan:    "#00F5FF",
+  hot:     "#FF2D6B",
+  lime:    "#BCFF00",
+  black:   "#05000E",
+  white:   "#FFFFFF",
 };
 
-export default LandingPage;
+/* ── SSR-safe geometry ──────────────────────────────────────── */
+function makeBurst(cx: number, cy: number, R: number, r: number, n: number) {
+  let d = "";
+  for (let i = 0; i < n * 2; i++) {
+    const rad = i % 2 === 0 ? R : r;
+    const a   = (Math.PI / n) * i - Math.PI / 2;
+    const x   = Math.round((cx + rad * Math.cos(a)) * 1e4) / 1e4;
+    const y   = Math.round((cy + rad * Math.sin(a)) * 1e4) / 1e4;
+    d += (i === 0 ? "M" : "L") + `${x},${y}`;
+  }
+  return d + "Z";
+}
+
+const BA = makeBurst(50, 50, 47, 30, 22);
+const BB = makeBurst(50, 50, 34, 22, 16);
+const BC = makeBurst(50, 50, 26, 16, 12);
+
+const LINES = Array.from({ length: 18 }, (_, i) => {
+  const a = ((360 / 18) * i * Math.PI) / 180;
+  return {
+    x2: Math.round((50 + 86 * Math.cos(a)) * 1e4) / 1e4,
+    y2: Math.round((50 + 86 * Math.sin(a)) * 1e4) / 1e4,
+  };
+});
+
+/* ═══════════════════════════════════════════════════════════ */
+export default function LandingHero() {
+  const rawX = useMotionValue(0.5);
+  const rawY = useMotionValue(0.5);
+  const sp   = { stiffness: 45, damping: 18, mass: 1 };
+  const mx   = useSpring(rawX, sp);
+  const my   = useSpring(rawY, sp);
+
+  const d0x = useTransform(mx, [0,1], [-12,  12]);
+  const d0y = useTransform(my, [0,1], [-8,    8]);
+  const d1x = useTransform(mx, [0,1], [-22,  22]);
+  const d1y = useTransform(my, [0,1], [-14,  14]);
+  const d2x = useTransform(mx, [0,1], [-8,    8]);
+  const d2y = useTransform(my, [0,1], [-5,    5]);
+
+  function onMove(e: React.MouseEvent<HTMLElement>) {
+    const r = e.currentTarget.getBoundingClientRect();
+    rawX.set((e.clientX - r.left) / r.width);
+    rawY.set((e.clientY - r.top)  / r.height);
+  }
+  function onLeave() { rawX.set(0.5); rawY.set(0.5); }
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
+
+        /* scanlines */
+        .hl-root::after {
+          content:""; position:absolute; inset:0; pointer-events:none; z-index:99;
+          background:repeating-linear-gradient(
+            0deg, transparent 0, transparent 3px,
+            rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+          );
+        }
+
+        @keyframes sCW     { to{ transform:rotate(360deg);  } }
+        @keyframes sCCW    { to{ transform:rotate(-360deg); } }
+        @keyframes sTick   { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+        @keyframes sFloat  {
+          0%,100%{ transform:translateY(0);    }
+          50%    { transform:translateY(-14px); }
+        }
+        @keyframes sAurora {
+          0%,100%{ opacity:.55; transform:translate(-50%,-50%) scale(1)    rotate(0deg);  }
+          33%    { opacity:.72; transform:translate(-50%,-50%) scale(1.08)  rotate(3deg); }
+          66%    { opacity:.58; transform:translate(-50%,-50%) scale(0.95)  rotate(-2deg);}
+        }
+        @keyframes sPulse  {
+          0%  { transform:translate(-50%,-50%) scale(0.85); opacity:.5; }
+          100%{ transform:translate(-50%,-50%) scale(1.38); opacity:0;  }
+        }
+        @keyframes sChroma {
+          0%,100%{
+            filter:brightness(1.22) saturate(1.4) contrast(1.1)
+              drop-shadow(0 0 28px ${C.cyan}AA) drop-shadow(0 0 12px ${C.magenta}88);
+          }
+          50%{
+            filter:brightness(1.26) saturate(1.45) contrast(1.14)
+              drop-shadow(0 0 40px ${C.magenta}CC) drop-shadow(0 0 16px ${C.cyan}66);
+          }
+        }
+        @keyframes sStamp  {
+          0%  { opacity:0; transform:scale(2.2) rotate(-20deg); }
+          65% { opacity:1; transform:scale(0.93) rotate(4deg);  }
+          100%{ opacity:1; transform:scale(1) rotate(0deg);     }
+        }
+        @keyframes sDiamond {
+          0%,100%{ transform:rotate(45deg) translateY(0);     }
+          50%    { transform:rotate(45deg) translateY(-10px); }
+        }
+        @keyframes sBadge  {
+          0%,100%{ box-shadow:4px 4px 0 ${C.black},0 0 0 ${C.hot};     }
+          50%    { box-shadow:4px 4px 0 ${C.black},0 0 20px ${C.hot}99; }
+        }
+        @keyframes sFlare  {
+          0%,100%{ opacity:.12; transform:translate(-50%,-50%) scale(1);    }
+          50%    { opacity:.22; transform:translate(-50%,-50%) scale(1.14); }
+        }
+        @keyframes sGridMove {
+          from{ background-position:0 0;       }
+          to  { background-position:64px 64px; }
+        }
+        @keyframes sLogoFloat {
+          0%,100%{ transform:translateY(0) rotate(-1deg);  }
+          50%    { transform:translateY(-8px) rotate(1deg); }
+        }
+
+        /* ── AAKAR 2026 title glitch ── */
+        @keyframes sTitleGlitch {
+          0%,78%,100% {
+            text-shadow: 4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot};
+            transform: skewX(0deg) translate(0,0);
+          }
+          79% {
+            text-shadow: -4px 0 0 ${C.cyan}, 4px 0 0 ${C.magenta}, 4px 4px 0 ${C.black};
+            transform: skewX(-4deg) translate(-5px, 0);
+            clip-path: inset(15% 0 60% 0);
+          }
+          80% {
+            text-shadow: 5px 0 0 ${C.magenta}, -5px 0 0 ${C.cyan}, 4px 4px 0 ${C.black};
+            transform: skewX(3deg) translate(6px, 1px);
+            clip-path: inset(55% 0 8% 0);
+          }
+          81% {
+            text-shadow: -3px 0 0 ${C.hot}, 3px 0 0 ${C.cyan}, 4px 4px 0 ${C.black};
+            transform: skewX(-2deg) translate(-3px, -1px);
+            clip-path: inset(30% 0 38% 0);
+          }
+          82%,83% {
+            text-shadow: 4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot};
+            transform: skewX(0deg) translate(0,0);
+            clip-path: none;
+            filter: brightness(1.5);
+          }
+          84% {
+            text-shadow: 6px 0 0 ${C.cyan}, -6px 0 0 ${C.magenta}, 4px 4px 0 ${C.black};
+            transform: skewX(5deg) translate(8px, 0);
+            clip-path: inset(0 0 72% 0);
+          }
+          85%,86% {
+            text-shadow: 4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot};
+            transform: skewX(0deg) translate(0,0);
+            clip-path: none;
+            filter: brightness(1);
+          }
+        }
+        @keyframes sTitleTop {
+          0%,78%,87%,100%{ opacity:0; }
+          79%{ opacity:1; clip-path:inset(0 0 72% 0); transform:translate(10px,0); filter:hue-rotate(90deg) brightness(1.6); color:${C.cyan}; }
+          80%{ opacity:1; clip-path:inset(2% 0 68% 0); transform:translate(-8px,0); color:${C.magenta}; }
+          81%,82%{ opacity:0; }
+          84%{ opacity:1; clip-path:inset(0 0 65% 0); transform:translate(12px,-2px); filter:brightness(1.8); color:${C.hot}; }
+          85%,86%{ opacity:0; }
+        }
+        @keyframes sTitleBot {
+          0%,78%,87%,100%{ opacity:0; }
+          79%{ opacity:1; clip-path:inset(68% 0 0 0); transform:translate(-10px,0); filter:hue-rotate(-90deg) brightness(1.6); color:${C.magenta}; }
+          80%{ opacity:1; clip-path:inset(65% 0 2% 0); transform:translate(8px,0); color:${C.cyan}; }
+          81%,82%{ opacity:0; }
+          84%{ opacity:1; clip-path:inset(70% 0 0 0); transform:translate(-12px,2px); filter:brightness(1.8); color:${C.yellow}; }
+          85%,86%{ opacity:0; }
+        }
+        @keyframes sTitleIn {
+          0%  { opacity:0; transform:skewX(-8deg) translateY(-30px) scale(0.9); }
+          100%{ opacity:1; transform:skewX(0deg)  translateY(0)      scale(1);  }
+        }
+
+        .title-glitch     { animation: sTitleGlitch 5s ease-in-out infinite; }
+        .title-clone-top  { animation: sTitleTop    5s ease-in-out infinite; }
+        .title-clone-bot  { animation: sTitleBot    5s ease-in-out infinite; }
+
+        /* ── glitch animation for side logo ── */
+        @keyframes sGlitch {
+          0%,82%,100% {
+            clip-path: none;
+            transform: translate(0,0) skewX(0deg);
+            filter: drop-shadow(0 0 10px ${C.cyan}88);
+          }
+          83% {
+            clip-path: inset(12% 0 65% 0);
+            transform: translate(-6px, 0) skewX(-4deg);
+            filter: drop-shadow(4px 0 0 ${C.cyan}) drop-shadow(-4px 0 0 ${C.magenta});
+          }
+          85% {
+            clip-path: inset(55% 0 10% 0);
+            transform: translate(7px, 0) skewX(3deg);
+            filter: drop-shadow(-4px 0 0 ${C.cyan}) drop-shadow(4px 0 0 ${C.hot});
+          }
+          87% {
+            clip-path: inset(28% 0 42% 0);
+            transform: translate(-4px, 2px) skewX(-2deg);
+            filter: drop-shadow(4px 0 0 ${C.magenta}) drop-shadow(-3px 0 0 ${C.cyan});
+          }
+          89% {
+            clip-path: inset(70% 0 5% 0);
+            transform: translate(5px, -2px) skewX(4deg);
+            filter: drop-shadow(-5px 0 0 ${C.hot}) drop-shadow(3px 0 0 ${C.cyan});
+          }
+          91% {
+            clip-path: inset(5% 0 80% 0);
+            transform: translate(-3px, 1px) skewX(-1deg);
+            filter: drop-shadow(3px 0 0 ${C.yellow}) drop-shadow(-3px 0 0 ${C.magenta});
+          }
+          93%,94% {
+            clip-path: none;
+            transform: translate(0,0) skewX(0deg);
+            filter: drop-shadow(0 0 18px ${C.magenta}CC) brightness(1.4);
+          }
+          95% {
+            clip-path: inset(40% 0 35% 0);
+            transform: translate(8px, 0) skewX(5deg);
+            filter: drop-shadow(-6px 0 0 ${C.cyan}) drop-shadow(4px 0 0 ${C.hot});
+          }
+          97% {
+            clip-path: none;
+            transform: translate(0,0) skewX(0deg);
+            filter: drop-shadow(0 0 10px ${C.cyan}88);
+          }
+        }
+
+        /* ghost layers for the glitch clones */
+        @keyframes sGlitchTop {
+          0%,82%,100%{ opacity:0; }
+          83%{ opacity:1; clip-path:inset(0 0 75% 0); transform:translate(8px,0); filter:hue-rotate(90deg) brightness(1.5); }
+          85%{ opacity:1; clip-path:inset(5% 0 70% 0); transform:translate(-6px,0); }
+          87%,88%{ opacity:0; }
+          89%{ opacity:1; clip-path:inset(2% 0 72% 0); transform:translate(10px,1px); filter:hue-rotate(180deg); }
+          91%{ opacity:0; }
+          95%{ opacity:1; clip-path:inset(0 0 68% 0); transform:translate(-8px,-1px); filter:brightness(1.6); }
+          97%{ opacity:0; }
+        }
+        @keyframes sGlitchBot {
+          0%,82%,100%{ opacity:0; }
+          83%{ opacity:1; clip-path:inset(70% 0 0 0); transform:translate(-8px,0); filter:hue-rotate(-90deg) brightness(1.5); }
+          85%{ opacity:1; clip-path:inset(65% 0 2% 0); transform:translate(6px,0); }
+          87%,88%{ opacity:0; }
+          89%{ opacity:1; clip-path:inset(72% 0 0 0); transform:translate(-10px,1px); }
+          91%{ opacity:0; }
+          95%{ opacity:1; clip-path:inset(68% 0 0 0); transform:translate(8px,-1px); filter:brightness(1.6); }
+          97%{ opacity:0; }
+        }
+        @keyframes sGlitchScan {
+          0%,82%,100%{ opacity:0; }
+          83%,97%{ opacity:1; background:linear-gradient(90deg,transparent,${C.cyan}22,transparent); transform:translateY(-100%); animation-timing-function:linear; }
+          93%{ transform:translateY(200%); }
+          94%,96%{ opacity:0; }
+        }
+
+        .logo-glitch       { animation: sGlitch    4.5s ease-in-out infinite; }
+        .logo-glitch-top   { animation: sGlitchTop 4.5s ease-in-out infinite; }
+        .logo-glitch-bot   { animation: sGlitchBot 4.5s ease-in-out infinite; }
+
+        .cw    { animation:sCW   26s linear infinite; }
+        .cw2   { animation:sCW   40s linear infinite; }
+        .ccw   { animation:sCCW  19s linear infinite; }
+        .chroma{ animation:sChroma 4s ease-in-out infinite; }
+        .floatMe{ animation:sFloat 4.5s ease-in-out infinite; }
+        .stamp { animation:sStamp 0.6s cubic-bezier(.23,1.5,.6,1) both; }
+
+        @media (hover:none) {
+          .parallax-layer { transform:none !important; }
+        }
+
+        @media (max-width:480px) {
+          .stamps-hide { display:none; }
+        }
+      `}</style>
+
+      <section
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        className="hl-root"
+        style={{
+          position:"relative",
+          width:"100%",
+          height:"100svh",
+          minHeight:600,
+          overflow:"hidden",
+          background:C.black,
+          cursor:"crosshair",
+          isolation:"isolate",
+        }}
+      >
+
+        {/* ═══════════ Z:1 DEEP BACKGROUND ═══════════ */}
+        <motion.div aria-hidden className="parallax-layer"
+          style={{ x:d0x, y:d0y, position:"absolute", inset:"-4%", zIndex:1, pointerEvents:"none" }}
+        >
+          <div style={{
+            position:"absolute", inset:0,
+            background:`
+              radial-gradient(ellipse 120% 100% at 50% 50%, #200048 0%, ${C.black} 62%),
+              radial-gradient(ellipse 55% 42% at 15% 25%, ${C.magenta}45 0%, transparent 52%),
+              radial-gradient(ellipse 50% 55% at 85% 68%, ${C.cyan}40 0%, transparent 50%),
+              radial-gradient(ellipse 45% 38% at 60% 92%, ${C.hot}2E 0%, transparent 46%),
+              radial-gradient(ellipse 38% 32% at 28% 82%, #6600BB44 0%, transparent 48%)
+            `,
+          }}/>
+          {/* animated moving grid */}
+          <div style={{
+            position:"absolute", inset:0, opacity:0.07,
+            backgroundImage:`
+              linear-gradient(${C.cyan}66 1px, transparent 1px),
+              linear-gradient(90deg, ${C.cyan}66 1px, transparent 1px)
+            `,
+            backgroundSize:"64px 64px",
+            animation:"sGridMove 8s linear infinite",
+          }}/>
+          {/* diagonal golden streaks */}
+          <div style={{
+            position:"absolute", inset:0, opacity:0.07,
+            backgroundImage:`repeating-linear-gradient(
+              -52deg, ${C.yellow} 0, ${C.yellow} 1px, transparent 1px, transparent 56px
+            )`,
+          }}/>
+          {/* floor glow */}
+          <div style={{
+            position:"absolute", bottom:0, left:0, right:0, height:"50%",
+            background:`linear-gradient(to top, ${C.magenta}32 0%, ${C.cyan}14 38%, transparent 100%)`,
+          }}/>
+          {/* horizontal scan lines */}
+          <div style={{
+            position:"absolute", inset:0, opacity:0.07,
+            backgroundImage:`repeating-linear-gradient(
+              180deg, transparent 0, transparent 40px, ${C.cyan}22 40px, ${C.cyan}22 41px
+            )`,
+          }}/>
+        </motion.div>
+
+        {/* ═══════════ Z:2 AURORA BLOBS ═══════════ */}
+        <motion.div aria-hidden className="parallax-layer"
+          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:2, pointerEvents:"none" }}
+        >
+          <div style={{
+            position:"absolute", top:"50%", left:"50%",
+            width:"min(120vw,1000px)", height:"min(88vw,720px)",
+            borderRadius:"50%",
+            background:`radial-gradient(ellipse, ${C.magenta}34 0%, ${C.cyan}1C 38%, transparent 65%)`,
+            filter:"blur(52px)",
+            animation:"sAurora 7s ease-in-out infinite",
+          }}/>
+          <div style={{
+            position:"absolute", top:"72%", left:"50%",
+            width:"min(80vw,640px)", height:"min(40vw,340px)",
+            borderRadius:"50%",
+            background:`radial-gradient(ellipse, ${C.hot}28 0%, ${C.magenta}14 45%, transparent 70%)`,
+            filter:"blur(40px)",
+            animation:"sFlare 5s ease-in-out infinite",
+          }}/>
+          <div style={{
+            position:"absolute", top:"18%", left:"50%",
+            width:"min(60vw,520px)", height:"min(30vw,260px)",
+            borderRadius:"50%",
+            background:`radial-gradient(ellipse, ${C.cyan}20 0%, transparent 65%)`,
+            filter:"blur(32px)",
+            animation:"sFlare 6s ease-in-out infinite",
+            animationDelay:"2s",
+          }}/>
+        </motion.div>
+
+        {/* ═══════════ Z:3 SPEED LINES ═══════════ */}
+        <motion.div aria-hidden className="parallax-layer"
+          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:3, pointerEvents:"none",
+            display:"flex", alignItems:"center", justifyContent:"center" }}
+        >
+          <div style={{ width:"min(100vw,900px)", height:"min(100vw,900px)", flexShrink:0 }}>
+            <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%", opacity:0.12 }}>
+              {LINES.map((l,i) => (
+                <line key={i} x1="50" y1="50" x2={l.x2} y2={l.y2}
+                  stroke={i%3===0 ? C.cyan : i%3===1 ? C.magenta : C.yellow}
+                  strokeWidth="0.4"/>
+              ))}
+            </svg>
+          </div>
+        </motion.div>
+
+        {/* ═══════════ Z:4 STARBURST RINGS ═══════════ */}
+        <motion.div aria-hidden className="parallax-layer"
+          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:4, pointerEvents:"none",
+            display:"flex", alignItems:"center", justifyContent:"center" }}
+        >
+          <div style={{ position:"relative", width:"min(92vw,820px)", height:"min(92vw,820px)", flexShrink:0 }}>
+            <div className="cw2" style={{ position:"absolute", inset:0 }}>
+              <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%" }}>
+                <path d={BA} fill="none" stroke={C.yellow} strokeWidth="0.35" opacity="0.25"/>
+              </svg>
+            </div>
+            <div className="ccw" style={{ position:"absolute", inset:"14%" }}>
+              <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%" }}>
+                <path d={BB} fill={C.magenta} opacity="0.07"/>
+                <path d={BB} fill="none" stroke={C.cyan} strokeWidth="0.5" opacity="0.3"/>
+              </svg>
+            </div>
+            <div className="cw" style={{ position:"absolute", inset:"29%" }}>
+              <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%" }}>
+                <path d={BC} fill="none" stroke={C.hot} strokeWidth="0.55" opacity="0.22"/>
+              </svg>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ═══════════ Z:5 PULSE RINGS ═══════════ */}
+        <div aria-hidden style={{ position:"absolute", inset:0, zIndex:5, pointerEvents:"none" }}>
+          {[C.cyan, C.magenta, C.yellow].map((col,i) => (
+            <div key={i} style={{
+              position:"absolute", top:"50%", left:"50%",
+              width:"min(68vw,580px)", height:"min(68vw,580px)",
+              borderRadius:"50%",
+              border:`1.5px solid ${col}`,
+              opacity:0,
+              animation:`sPulse 3.8s ease-out infinite`,
+              animationDelay:`${i * 1.26}s`,
+            }}/>
+          ))}
+        </div>
+
+        {/* ═══════════ Z:6 HALFTONE HALO ═══════════ */}
+        <motion.div aria-hidden className="parallax-layer"
+          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:6, pointerEvents:"none",
+            display:"flex", alignItems:"center", justifyContent:"center" }}
+        >
+          <div style={{
+            width:"min(70vw,620px)", height:"min(70vw,620px)", flexShrink:0,
+            borderRadius:"50%",
+            backgroundImage:`radial-gradient(circle, ${C.yellow}3A 1.4px, transparent 1.4px)`,
+            backgroundSize:"18px 18px",
+            maskImage:"radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
+            WebkitMaskImage:"radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
+          }}/>
+        </motion.div>
+
+        {/* ═══════════ Z:7 CORNER DECOR + STAMPS ═══════════ */}
+        <div aria-hidden style={{ position:"absolute", inset:0, zIndex:7, pointerEvents:"none" }}>
+          {/* corner brackets */}
+          {[
+            {t:20,l:20,rot:0,   col:C.cyan   },
+            {t:20,r:20,rot:90,  col:C.magenta},
+            {b:24,l:20,rot:270, col:C.hot    },
+            {b:24,r:20,rot:180, col:C.yellow },
+          ].map((c,i) => (
+            <svg key={i} width="44" height="44" viewBox="0 0 44 44" style={{
+              position:"absolute",
+              top:(c as any).t, bottom:(c as any).b,
+              left:(c as any).l, right:(c as any).r,
+              transform:`rotate(${c.rot}deg)`, opacity:0.65,
+            }}>
+              <polyline points="0,28 0,0 28,0" fill="none"
+                stroke={c.col} strokeWidth="2.5" strokeLinecap="square"/>
+            </svg>
+          ))}
+
+          {/* floating diamonds */}
+          {[
+            {top:"20%", left:"6%",    s:11, col:C.lime,    d:"0s"   },
+            {top:"24%", right:"7%",   s:8,  col:C.magenta, d:"0.7s" },
+            {top:"50%", left:"3%",    s:7,  col:C.hot,     d:"1.4s" },
+            {top:"56%", right:"4%",   s:9,  col:C.cyan,    d:"2.1s" },
+            {bottom:"26%",left:"7%",  s:10, col:C.yellow,  d:"1.0s" },
+            {bottom:"20%",right:"6%", s:12, col:C.lime,    d:"1.7s" },
+          ].map((s,i) => (
+            <div key={i} style={{
+              position:"absolute",
+              top:(s as any).top, bottom:(s as any).bottom,
+              left:(s as any).left, right:(s as any).right,
+              width:s.s, height:s.s,
+              background:s.col,
+              border:`1.5px solid ${C.black}`,
+              boxShadow:`2px 2px 0 ${C.black}`,
+              animation:`sDiamond 3.5s ease-in-out infinite`,
+              animationDelay:s.d,
+            }}/>
+          ))}
+
+          {/* word stamps — hidden on very small screens */}
+          <div className="stamps-hide">
+            {[
+              {text:"POW!",  top:"9%",    left:"5%",   rot:-13, col:C.hot    },
+              {text:"ZAP!",  top:"7%",    right:"5%",  rot:11,  col:C.cyan   },
+              {text:"EPIC!", bottom:"14%",left:"5%",   rot:-7,  col:C.lime   },
+              {text:"WOW!",  bottom:"12%",right:"5%",  rot:9,   col:C.magenta},
+            ].map((s,i) => (
+              <div key={i} className="stamp" style={{
+                position:"absolute",
+                top:(s as any).top, bottom:(s as any).bottom,
+                left:(s as any).left, right:(s as any).right,
+                fontFamily:"'Bebas Neue',sans-serif",
+                fontSize:"clamp(1rem,2.5vw,1.8rem)",
+                letterSpacing:"0.06em",
+                color:s.col,
+                WebkitTextStroke:`1.5px ${C.black}`,
+                textShadow:`3px 3px 0 ${C.black}`,
+                transform:`rotate(${s.rot}deg)`,
+                animationDelay:`${0.3+i*0.15}s`,
+                opacity:0.6, userSelect:"none",
+              }}>{s.text}</div>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════
+            Z:20  MAIN CONTENT  (logo · char · cta)
+            All stacked in one flex column, centered
+        ═══════════════════════════════════════════ */}
+        <div style={{
+          position:"absolute", inset:0, zIndex:20,
+          display:"flex", flexDirection:"column",
+          alignItems:"center", justifyContent:"center",
+          paddingTop:"clamp(0px,2vh,20px)",
+          paddingBottom:"clamp(40px,7vh,60px)", /* leave room for ticker */
+          gap:0,
+          pointerEvents:"none",
+        }}>
+
+          {/* ── CHARACTER ── */}
+          <motion.div
+            className="floatMe parallax-layer"
+            style={{
+              x:d2x, y:d2y,
+              marginTop:0,
+            }}
+            initial={{ opacity:0, scale:0.86, y:40 }}
+            animate={{ opacity:1, scale:1,    y:0  }}
+            transition={{ duration:0.9, ease:[0.23,1.2,0.5,1], delay:0.18 }}
+          >
+            <div style={{ position:"relative" }}>
+              {/* halo */}
+              <div style={{
+                position:"absolute", inset:"-18% -22%",
+                borderRadius:"50%",
+                background:`radial-gradient(ellipse, ${C.white}18 0%, ${C.cyan}12 32%, transparent 62%)`,
+                filter:"blur(10px)",
+                pointerEvents:"none",
+              }}/>
+              <div className="chroma" style={{
+                position:"relative",
+                width:"clamp(170px, 30vw, 340px)",
+                aspectRatio:"1/1",
+                marginBottom:0,
+              }}>
+                <Image
+                  src="/ak26.png"
+                  alt="AAKAR 2026 mascot"
+                  fill priority
+                  style={{ objectFit:"contain", objectPosition:"center bottom" }}
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* ── CTA — TWO SEPARATE ELEMENTS ── */}
+          <motion.div
+            style={{
+              pointerEvents:"auto",
+              display:"flex", flexDirection:"column", alignItems:"center",
+              gap:10,
+              marginTop:"clamp(8px,1.8vh,16px)",
+            }}
+            initial={{ opacity:0, y:22 }}
+            animate={{ opacity:1, y:0  }}
+            transition={{ delay:0.68, duration:0.6 }}
+          >
+            {/* date badge — standalone, no shared border with button */}
+            <div style={{
+              display:"inline-flex",
+              alignItems:"center",
+              gap:8,
+              background:C.hot,
+              border:`2.5px solid ${C.black}`,
+              boxShadow:`4px 4px 0 ${C.black}`,
+              padding:"6px 22px",
+              fontFamily:"'Bebas Neue',sans-serif",
+              fontSize:"clamp(0.78rem,1.7vw,0.98rem)",
+              letterSpacing:"0.24em",
+              color:C.white,
+              animation:"sBadge 2.5s ease-in-out infinite",
+              whiteSpace:"nowrap",
+            }}>
+              <span style={{fontSize:"0.7em",opacity:0.8}}>★</span>
+              FEB 2026 · MANGALURU
+              <span style={{fontSize:"0.7em",opacity:0.8}}>★</span>
+            </div>
+
+            {/* CTA button — fully independent element */}
+            <motion.a
+              href="/events"
+              whileHover={{
+                y: -4,
+                boxShadow:`8px 8px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
+              }}
+              whileTap={{ scale:0.96 }}
+              style={{
+                display:"inline-flex",
+                alignItems:"center",
+                justifyContent:"center",
+                gap:8,
+                background:C.yellow,
+                border:`3px solid ${C.black}`,
+                boxShadow:`6px 6px 0 ${C.black}, 10px 10px 0 ${C.magenta}`,
+                padding:"clamp(11px,2vh,15px) clamp(28px,5vw,52px)",
+                fontFamily:"'Bebas Neue',sans-serif",
+                fontSize:"clamp(1rem,2.3vw,1.3rem)",
+                letterSpacing:"0.22em",
+                color:C.black,
+                textDecoration:"none",
+                cursor:"pointer",
+                transition:"box-shadow 0.14s ease",
+                whiteSpace:"nowrap",
+              }}
+            >
+              EXPLORE EVENTS
+              <span style={{
+                display:"inline-flex", alignItems:"center", justifyContent:"center",
+                background:C.black, color:C.yellow,
+                width:"1.6em", height:"1.6em",
+                fontSize:"0.85em",
+                marginLeft:4,
+              }}>→</span>
+            </motion.a>
+          </motion.div>
+
+        </div>
+
+        {/* ═══════════ Z:22 AAKAR 2026 GLITCH TITLE — top ═══════════ */}
+        <motion.div
+          style={{
+            position:"absolute",
+            top:"clamp(16px, 3.5vh, 36px)",
+            left:0, right:0,
+            zIndex:22,
+            display:"flex", justifyContent:"center",
+            pointerEvents:"none",
+          }}
+          initial={{ opacity:0, y:-24 }}
+          animate={{ opacity:1, y:0   }}
+          transition={{ delay:0.1, duration:0.7, ease:[0.23,1.3,0.5,1] }}
+        >
+          {/* wrapper so clones sit on top */}
+          <div style={{ position:"relative", display:"inline-block", lineHeight:1 }}>
+
+            {/* clone TOP */}
+            <div className="title-clone-top" style={{
+              position:"absolute", inset:0,
+              fontFamily:"'Bebas Neue',sans-serif",
+              fontSize:"clamp(2.4rem, 7vw, 5.5rem)",
+              letterSpacing:"0.16em",
+              color:C.cyan,
+              WebkitTextStroke:`1px ${C.black}`,
+              whiteSpace:"nowrap",
+              opacity:0,
+              userSelect:"none",
+            }}>AAKAR&nbsp;2026</div>
+
+            {/* clone BOT */}
+            <div className="title-clone-bot" style={{
+              position:"absolute", inset:0,
+              fontFamily:"'Bebas Neue',sans-serif",
+              fontSize:"clamp(2.4rem, 7vw, 5.5rem)",
+              letterSpacing:"0.16em",
+              color:C.magenta,
+              WebkitTextStroke:`1px ${C.black}`,
+              whiteSpace:"nowrap",
+              opacity:0,
+              userSelect:"none",
+            }}>AAKAR&nbsp;2026</div>
+
+            {/* BASE title */}
+            <h1 className="title-glitch" style={{
+              fontFamily:"'Bebas Neue',sans-serif",
+              fontSize:"clamp(2.4rem, 7vw, 5.5rem)",
+              letterSpacing:"0.16em",
+              color:C.yellow,
+              WebkitTextStroke:`2px ${C.black}`,
+              textShadow:`4px 4px 0 ${C.black}, 8px 8px 0 ${C.hot}`,
+              margin:0,
+              whiteSpace:"nowrap",
+              position:"relative", zIndex:2,
+            }}>AAKAR&nbsp;2026</h1>
+
+            {/* underline bar */}
+            <div style={{
+              height:3,
+              background:`linear-gradient(90deg, ${C.magenta}, ${C.cyan}, ${C.yellow})`,
+              border:`1px solid ${C.black}`,
+              marginTop:4,
+            }}/>
+
+          </div>
+        </motion.div>
+
+        {/* ═══════════ Z:25 LEFT-SIDE LOGO ═══════════ */}
+        <motion.div
+          style={{
+            position:"absolute",
+            left:"clamp(40px, 7vw, 100px)",
+            top:"50%",
+            zIndex:25,
+            pointerEvents:"none",
+          }}
+          initial={{ opacity:0, x:-40 }}
+          animate={{ opacity:1, x:0   }}
+          transition={{ delay:0.4, duration:0.7, ease:[0.23,1.3,0.5,1] }}
+        >
+          {/* outer container — vertical orientation */}
+          <div style={{
+            position:"relative",
+            width:"clamp(60px, 9vw, 110px)",
+            transform:"translateY(-50%)",
+          }}>
+
+            {/* subtle neon frame behind logo */}
+            <div style={{
+              position:"absolute",
+              inset:"-6px",
+              border:`1.5px solid ${C.cyan}44`,
+              boxShadow:`0 0 12px ${C.cyan}33, inset 0 0 8px ${C.magenta}22`,
+            }}/>
+
+            {/* scan-line sweep over the logo */}
+            <div style={{
+              position:"absolute", inset:0,
+              overflow:"hidden",
+              pointerEvents:"none",
+              zIndex:3,
+            }}>
+              <div style={{
+                position:"absolute", left:0, right:0, height:"30%",
+                background:`linear-gradient(180deg, transparent, ${C.cyan}18, transparent)`,
+                animation:"sGlitchScan 4.5s ease-in-out infinite",
+              }}/>
+            </div>
+
+            {/* BASE logo */}
+            <div
+              className="logo-glitch"
+              style={{
+                position:"relative",
+                width:"100%",
+                aspectRatio:"1/1",
+                zIndex:2,
+              }}
+            >
+              <Image
+                src="/ak26-logo.png"
+                alt="Aakar 2026"
+                fill
+                style={{ objectFit:"contain" }}
+              />
+            </div>
+
+            {/* TOP glitch clone */}
+            <div
+              className="logo-glitch-top"
+              style={{
+                position:"absolute", inset:0,
+                width:"100%", aspectRatio:"1/1",
+                zIndex:4, pointerEvents:"none",
+                opacity:0,
+              }}
+            >
+              <Image
+                src="/ak26-logo.png"
+                alt=""
+                fill
+                style={{ objectFit:"contain" }}
+              />
+            </div>
+
+            {/* BOTTOM glitch clone */}
+            <div
+              className="logo-glitch-bot"
+              style={{
+                position:"absolute", inset:0,
+                width:"100%", aspectRatio:"1/1",
+                zIndex:4, pointerEvents:"none",
+                opacity:0,
+              }}
+            >
+              <Image
+                src="/ak26-logo.png"
+                alt=""
+                fill
+                style={{ objectFit:"contain" }}
+              />
+            </div>
+
+            {/* label below */}
+            <div style={{
+              marginTop:6,
+              fontFamily:"'Share Tech Mono',monospace",
+              fontSize:"clamp(0.38rem, 0.7vw, 0.52rem)",
+              letterSpacing:"0.22em",
+              color:C.cyan,
+              textAlign:"center",
+              opacity:0.7,
+              textTransform:"uppercase",
+            }}>AAKAR&nbsp;'26</div>
+
+          </div>
+        </motion.div>
+
+        {/* ═══════════ Z:40 TICKER ═══════════ */}
+        <div style={{
+          position:"absolute", bottom:0, left:0, right:0,
+          zIndex:40, height:34,
+          background:C.magenta,
+          borderTop:`3px solid ${C.black}`,
+          overflow:"hidden",
+          display:"flex", alignItems:"center",
+        }}>
+          <div style={{
+            display:"flex", whiteSpace:"nowrap",
+            animation:"sTick 16s linear infinite",
+            fontFamily:"'Bebas Neue',sans-serif",
+            fontSize:"0.92rem", letterSpacing:"0.28em", color:C.black,
+          }}>
+            {[0,1].map(i => (
+              <span key={i} style={{ paddingRight:"2rem" }}>
+                {"★ AAKAR 2026  ·  BRAINS  ·  GUTS  ·  GLORY  ·  MGIT MANGALURU  ·  AURORAS OF ADVENTURE  ·  ".repeat(6)}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══════════ Z:90 VIGNETTE ═══════════ */}
+        <div aria-hidden style={{
+          position:"absolute", inset:0, zIndex:90, pointerEvents:"none",
+          background:`radial-gradient(ellipse 88% 88% at 50% 50%, transparent 36%, ${C.black}C4 100%)`,
+        }}/>
+
+      </section>
+    </>
+  );
+}

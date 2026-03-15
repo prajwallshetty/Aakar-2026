@@ -287,7 +287,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               }}>LOGO</div>
             )}
             <Image
-              src="/new_logo.png"
+              src="/ak26-logo.png"
               alt="AAKAR logo"
               fill
               style={{ objectFit:"contain" }}
