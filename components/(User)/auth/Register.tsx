@@ -16,23 +16,24 @@ import {
 } from "@/types";
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
+import PopArtBackground from "@/components/(User)/PopArtBackground";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
-    yellow:  "#ffff00",
+    yellow: "#ffff00",
     magenta: "#ff00ff",
-    cyan:    "#00ffff",
-    pink:    "#ff0066",
-    black:   "#000",
-    white:   "#fff",
+    cyan: "#00ffff",
+    pink: "#ff0066",
+    black: "#000",
+    white: "#fff",
 };
-const popFont     = "'Arial Black', Impact, sans-serif";
-const monoFont    = "'Courier New', 'Space Mono', monospace";
+const popFont = "'Arial Black', Impact, sans-serif";
+const monoFont = "'Courier New', 'Space Mono', monospace";
 const displayFont = "'Bebas Neue', Impact, sans-serif";
 
 // ─── Style helpers ────────────────────────────────────────────────────────────
 const cardStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.96)",
+    background: C.white,
     border: `3px solid ${C.black}`,
     boxShadow: `6px 6px 0 ${C.black}`,
     borderRadius: 0,
@@ -80,126 +81,7 @@ const errorMsg: React.CSSProperties = {
     display: "flex", alignItems: "center", gap: 4,
 };
 
-// ─── Pre-computed static SVG paths (avoids SSR/client float mismatch) ─────────
-function buildBurst(cx: number, cy: number, r: number, pts: number) {
-    return Array.from({ length: pts * 2 }, (_, i) => {
-        const a = (i / (pts * 2)) * Math.PI * 2 - Math.PI / 2;
-        const rad = i % 2 === 0 ? r : r * 0.55;
-        return `${(cx + rad * Math.cos(a)).toFixed(2)},${(cy + rad * Math.sin(a)).toFixed(2)}`;
-    }).join(" ");
-}
-
-// All starburst point-strings computed once at module level (never at render time)
-const BURST_POINTS = {
-    tl:  buildBurst(-40,  -40,  280, 24),
-    tr:  buildBurst(1480, -60,  300, 22),
-    bl:  buildBurst(-60,  960,  320, 20),
-    br:  buildBurst(1500, 960,  280, 24),
-    top: buildBurst(720,  -30,  160, 16),
-};
-
-// Speed-line endpoints computed once
-const SPEED_LINES = Array.from({ length: 48 }, (_, i) => {
-    const a = (i / 48) * Math.PI * 2;
-    return {
-        x2: (720 + 900 * Math.cos(a)).toFixed(2),
-        y2: (450 + 900 * Math.sin(a)).toFixed(2),
-    };
-});
-
-// ─── Pop-art background ───────────────────────────────────────────────────────
-function PopArtBg() {
-    return (
-        <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
-            {/* Diagonal stripe base */}
-            <div style={{
-                position: "absolute", inset: 0,
-                background: `repeating-linear-gradient(45deg,
-                    #ffff00 0px, #ffff00 18px,
-                    #fff500 18px, #fff500 20px)`,
-            }} />
-            {/* Halftone dots */}
-            <div style={{
-                position: "absolute", inset: 0,
-                backgroundImage: "radial-gradient(circle, #00000020 1.8px, transparent 1.8px)",
-                backgroundSize: "18px 18px",
-            }} />
-
-            {/* Large corner starbursts — static points, no runtime math */}
-            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-                viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-                <polygon points={BURST_POINTS.tl}  fill="#ff00ff" opacity={0.18} />
-                <polygon points={BURST_POINTS.tr}  fill="#00ffff" opacity={0.20} />
-                <polygon points={BURST_POINTS.bl}  fill="#ff0066" opacity={0.16} />
-                <polygon points={BURST_POINTS.br}  fill="#ff00ff" opacity={0.14} />
-                <polygon points={BURST_POINTS.top} fill="#ff0066" opacity={0.11} />
-            </svg>
-
-            {/* Triangle corner blocks */}
-            <div style={{ position: "absolute", top: 0, left: 0, width: 200, height: 200,
-                background: C.magenta, opacity: 0.16, clipPath: "polygon(0 0,100% 0,0 100%)" }} />
-            <div style={{ position: "absolute", top: 0, right: 0, width: 200, height: 200,
-                background: C.cyan, opacity: 0.16, clipPath: "polygon(0 0,100% 0,100% 100%)" }} />
-            <div style={{ position: "absolute", bottom: 0, left: 0, width: 200, height: 200,
-                background: C.pink, opacity: 0.16, clipPath: "polygon(0 0,0 100%,100% 100%)" }} />
-            <div style={{ position: "absolute", bottom: 0, right: 0, width: 200, height: 200,
-                background: C.magenta, opacity: 0.16, clipPath: "polygon(100% 0,100% 100%,0 100%)" }} />
-
-            {/* Speed lines — static endpoints */}
-            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.04 }}
-                viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-                {SPEED_LINES.map((l, i) => (
-                    <line key={i} x1="720" y1="450" x2={l.x2} y2={l.y2} stroke="#000" strokeWidth="1.5" />
-                ))}
-            </svg>
-
-            {/* Floating shapes */}
-            {[
-                { top: "8%",   left: "3%",    size: 52, color: C.magenta, shape: "circle"  },
-                { top: "12%",  right: "3%",   size: 44, color: C.cyan,    shape: "circle"  },
-                { top: "40%",  left: "1.5%",  size: 36, color: C.pink,    shape: "diamond" },
-                { top: "38%",  right: "1.5%", size: 40, color: C.magenta, shape: "diamond" },
-                { bottom: "14%", left: "4%",  size: 48, color: C.cyan,    shape: "circle"  },
-                { bottom: "10%", right: "3%", size: 44, color: C.pink,    shape: "circle"  },
-                { top: "62%",  left: "2%",    size: 30, color: C.yellow,  shape: "diamond" },
-                { top: "25%",  right: "2%",   size: 32, color: C.yellow,  shape: "circle"  },
-            ].map((s: any, i) => (
-                <div key={i} style={{
-                    position: "absolute", top: s.top, left: s.left, right: s.right, bottom: s.bottom,
-                    width: s.size, height: s.size,
-                    background: s.color,
-                    border: `3px solid ${C.black}`,
-                    boxShadow: `4px 4px 0 ${C.black}`,
-                    borderRadius: s.shape === "circle" ? "50%" : 0,
-                    transform: s.shape === "diamond" ? "rotate(45deg)" : "none",
-                    opacity: 0.7,
-                    animation: `floatShape ${3 + i * 0.4}s ease-in-out ${i * 0.3}s infinite alternate`,
-                }} />
-            ))}
-
-            {/* Comic word stamps */}
-            {[
-                { text: "POW!", x: "6%",  y: "28%", color: C.magenta, rotate: -8  },
-                { text: "ZAP!", x: "88%", y: "55%", color: C.cyan,    rotate: 10  },
-                { text: "WOW!", x: "5%",  y: "72%", color: C.pink,    rotate:  6  },
-                { text: "BOOM",  x: "82%", y: "20%", color: C.magenta, rotate: -6  },
-            ].map((s, i) => (
-                <div key={i} style={{
-                    position: "absolute", left: s.x, top: s.y,
-                    fontFamily: displayFont, fontSize: 22, letterSpacing: 3,
-                    color: s.color,
-                    WebkitTextStroke: `2px ${C.black}`,
-                    textShadow: `3px 3px 0 ${C.black}`,
-                    transform: `rotate(${s.rotate}deg)`,
-                    opacity: 0.55, userSelect: "none" as const,
-                    animation: `wiggle ${2.5 + i * 0.5}s ease-in-out infinite alternate`,
-                }}>
-                    {s.text}
-                </div>
-            ))}
-        </div>
-    );
-}
+// ─── Inline background functions removed in favor of unified PopArtBackground
 
 // ─── Pop-Art Button ───────────────────────────────────────────────────────────
 const PopButton: React.FC<{
@@ -277,7 +159,7 @@ const Field: React.FC<{ label: string; error?: string; children: React.ReactNode
 function LoadingSkeleton() {
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <PopArtBg />
+            <PopArtBackground />
             <div style={{ ...cardStyle, padding: 32, width: "min(600px,90vw)", background: C.white, position: "relative", zIndex: 1 }}>
                 <div style={{ background: C.magenta, height: 8, border: `3px solid ${C.black}`, marginBottom: 24 }} />
                 <div style={sectionHeaderStyle(C.yellow)}>Loading Events…</div>
@@ -299,14 +181,14 @@ function LoadingSkeleton() {
 // ─────────────────────────────────────────────────────────────────────────────
 const Register = () => {
     const router = useRouter();
-    const [isRegistering, setIsRegistering]   = useState(false);
-    const [isLoading, setIsLoading]           = useState(true);
-    const [formErrors, setFormErrors]         = useState<{ [key: string]: string | undefined }>({});
-    const [generalError, setGeneralError]     = useState("");
-    const [totalAmount, setTotalAmount]       = useState(0);
-    const [showQRCode, setShowQRCode]         = useState(false);
-    const [qrImageUrl, setQrImageUrl]         = useState("");
-    const [paymentStep, setPaymentStep]       = useState<"details"|"payment"|"verification">("details");
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
+    const [generalError, setGeneralError] = useState("");
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [showQRCode, setShowQRCode] = useState(false);
+    const [qrImageUrl, setQrImageUrl] = useState("");
+    const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "verification">("details");
 
     const [formData, setFormData] = useState({
         name: "", email: "", phone: "", college: "",
@@ -314,9 +196,9 @@ const Register = () => {
         transactionId: "", paymentScreenshot: null as File | null,
     });
 
-    const [cartEvents, setCartEvents]         = useState<CartEvents>([]);
-    const [eventOptions, setEventOptions]     = useState<Awaited<ReturnType<typeof getEventOptions>>>([]);
-    const [events, setEvents]                 = useState<ExtendedEvent[]>([]);
+    const [cartEvents, setCartEvents] = useState<CartEvents>([]);
+    const [eventOptions, setEventOptions] = useState<Awaited<ReturnType<typeof getEventOptions>>>([]);
+    const [events, setEvents] = useState<ExtendedEvent[]>([]);
     const [selectedEvents, setSelectedEvents] = useState<{ value: string; label: string; type: eventType; id: number }[]>([]);
     const [groupEventData, setGroupEventData] = useState<{
         [groupId: string]: { participantCount: number; members: { name: string; usn: string; email: string }[] };
@@ -427,8 +309,8 @@ const Register = () => {
         Object.keys(groupEventData).forEach((groupId) => {
             if (selectedEvents.find((e) => e.value === groupId || e.id === parseInt(groupId))) {
                 groupEventData[groupId].members.forEach((member, index) => {
-                    if (!member.name)  errors[`group_${groupId}_member_${index}_name`]  = "Member name is required";
-                    if (!member.usn)   errors[`group_${groupId}_member_${index}_usn`]   = "Member USN is required";
+                    if (!member.name) errors[`group_${groupId}_member_${index}_name`] = "Member name is required";
+                    if (!member.usn) errors[`group_${groupId}_member_${index}_usn`] = "Member USN is required";
                     if (!member.email) errors[`group_${groupId}_member_${index}_email`] = "Member Email is required";
                 });
             }
@@ -444,72 +326,72 @@ const Register = () => {
         setPaymentStep("verification");
     };
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    setIsRegistering(true);
-    setFormErrors({});
-    setGeneralError("");
+        setIsRegistering(true);
+        setFormErrors({});
+        setGeneralError("");
 
-    try {
-        // upload screenshot first
-        const fileUrl = await uploadFile(
-            formData.paymentScreenshot!,
-            "paymentscreenshots"
-        );
+        try {
+            // upload screenshot first
+            const fileUrl = await uploadFile(
+                formData.paymentScreenshot!,
+                "paymentscreenshots"
+            );
 
-        if (!fileUrl) {
-            setIsRegistering(false);
-            setGeneralError("Payment screenshot upload failed.");
-            return;
-        }
-
-        const participantData: ExtendedParticipantCreateInput = {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            college: formData.college,
-            year: formData.year,
-            department: formData.department,
-            usn: formData.usn.toUpperCase(),
-            transaction_ids: [formData.transactionId],
-            paymentScreenshotUrls: [fileUrl],
-            groupMembersData: groupEventData,
-            amount: totalAmount,
-        };
-
-        const result = await registerParticipant(
-            participantData,
-            selectedEvents.map((e) => e.id)
-        );
-
-        if (!result || result.error) {
-            setIsRegistering(false);
-
-            if (typeof result?.error === "object" && result.error !== null) {
-                setFormErrors(result.error);
-            } else {
-                setGeneralError(result?.error || "Registration failed.");
+            if (!fileUrl) {
+                setIsRegistering(false);
+                setGeneralError("Payment screenshot upload failed.");
+                return;
             }
 
-            return;
+            const participantData: ExtendedParticipantCreateInput = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                college: formData.college,
+                year: formData.year,
+                department: formData.department,
+                usn: formData.usn.toUpperCase(),
+                transaction_ids: [formData.transactionId],
+                paymentScreenshotUrls: [fileUrl],
+                groupMembersData: groupEventData,
+                amount: totalAmount,
+            };
+
+            const result = await registerParticipant(
+                participantData,
+                selectedEvents.map((e) => e.id)
+            );
+
+            if (!result || result.error) {
+                setIsRegistering(false);
+
+                if (typeof result?.error === "object" && result.error !== null) {
+                    setFormErrors(result.error);
+                } else {
+                    setGeneralError(result?.error || "Registration failed.");
+                }
+
+                return;
+            }
+
+            // success
+            setIsRegistering(false);
+
+            // redirect to success page
+            setTimeout(() => {
+                router.replace("/registration-success");
+            }, 200);
+
+        } catch (error) {
+            console.error("Registration error:", error);
+            setIsRegistering(false);
+            setGeneralError("Something went wrong. Please try again.");
         }
-
-        // success
-        setIsRegistering(false);
-
-        // redirect to success page
-        setTimeout(() => {
-            router.replace("/registration-success");
-        }, 200);
-
-    } catch (error) {
-        console.error("Registration error:", error);
-        setIsRegistering(false);
-        setGeneralError("Something went wrong. Please try again.");
-    }
-};
+    };
     const colleges = [...[
-        "A J Institute of Engineering and Technology, Mangalore","Alva's Ayurveda Medical College, Moodbidri","Srinivas institute of technology, valachill","Alva's Homoeopathic Medical College, Moodbidri","Alva's Institute of Engineering Technology, Moodbidri","Alvas College of Nursing, Moodbidri","The Oxford college of engineering","Aloysius MBA, Mangalore","Canara Engineering College, Mangalore","Carmel Degree College, Modankap, BC Road","St. Mary's College, Shirva","adichunchanagiri institute of engineering, coorg","CIT, chickmagalur","Rajarajeshwari college Bangalore","Shri Madhwa Vadiraja Institute of Technology and Management, Udupi","Mahathma Gandhi Memorial (MGM) College, Udupi","Vaikunta Baliga College of Law, Udupi","Trisha Vidya College of Commerce and Management","Upendra Pai Memorial College, Udupi","Udupi Group of Institutions, Manipal","Kasturba Medical College (KMC), Manipal","Laxmi Memorial College of Nursing & Physiotherapy","Manipal Institute of Technology, Manipal","College of Fisheries, Mangalore","Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi","Govt. First Grade College, Kaup","Government Girls Degree College, Brahmagiri, Udupi","Govinda Dasa College, Surathkal","GTTC Baikampady, Mangalore","Karavali Ayurveda and Medical Research, Mangalore","Karavali College of Hotel Management","Karavali College of Nursing Science","Karavali College of Pharmacy, Mangalore","Karavali College of Pharmacy, Vamanjoor, Mangalore","Karavali College of Physiotherapy","Karavali Institute of Technology, Mangalore","Karavali Institute of Technology, Moodbidri","KMC, Manipal","Mahatma Gandhi Memorial (MGM) College, Udupi","MIT Hotel Management","MIT Manipal","MITE - Mangalore Institute of Technology & Engineering","Moodlakatte Institute of Technology, Kundapur","N.M.A.M. Institute of Technology, Nitte, Karkala","NITK, Surathkal","Nitte Institute of Pharmacy","Padua College, Mangaluru","Padu Thirupathi Degree College, Karkala","Poornaprajna College, Udupi","Pompeii College, Aikala","Sahyadri College of Engineering and Management","SDM College of Engineering and Technology (SDMC)","SDM Polytechnic, Ujire","SDPT First Grade College, Kateel","Shirdi Sai Degree College, Karkala","Shri Madhwa Vadiraja Institute of Technology & Management, Bantakal","Sri Bhuvanendra College, Karkala","Sri Devi Institute of Technology, Kenjara, Bajpe","Sri Mahaveera College, Kodangallu, Moodbidri","Sri Taralabalu Jagadguru Institute of Technology","Srinivas Institute of Engineering and Technology, Mukka","Srinivas Institute of Medical Sciences and Research Center, Mukka","St Joseph Engineering College, Vamanjoor, Mangaluru","St. Raymond's Degree College, Vamanjoor, Kudupu, Karnataka","Sumedha Fashion Institute, Karkala","S NM Polytechnic, Moodbidri","Udupi Group of Institutions","Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi","Yenapoya Institute of Arts Science and Commerce","Muniyal Ayurveda College","Vaikunta Baliga College of Law, Kunjibettu","Gandhinagar First Grade College","Tejaswini Group of Institutions","Mangala Group of Institutions","PACE Mangalore","Yenepoya School Of Engineering & Technology","Bearys Institute of Technology","Kanachur Institute of Medical Science","NITTE Architecture","NITTE Nursing","St Mary's College, Shirva","Ids college, Mangalore","Canara Degree College","St Agnes College(Autonomous). Bendur, Mangaluru","Besant Women's College","Shree Gokarnanatheshwara College","Mahatma Gandhi Memorial College, Udupi","Yenepoya Allied Science","NITTE Institute of Communication","Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore","Trisha College of Commerce and Management, Alake Road, Kodailbail","Narayana Guru School And College, Barke Road, Kudroli","Athene Institute of Health Science","Athena Institute of Nursing Science","Indira Institute of Nursing Science","Laxmi Memorial College of Nursing","St. Aloysius","Ramakrishna Degree College","MAPS College","NITTE MBA","Moti Mahal","Govt. JJJ College","Dr. Dayananda Pai - P Sathisha Pai Govt. First Grade College, Car Street, Mangalore","AJIM","M. V. Shetty College of Physiotherapy, Mangalore","Trisha College of Nursing, Mangalore","Shree Devi Institute of Technology, Mangalore","Manel Srinivas Nayak Institute of Management, Mangalore","Yenepoya Institute of Technology (YIT), Moodbidri","Sahyadri College of Nursing, Mangalore","A.J. Institute of Management, Mangalore","A.J. Institute of Dental Sciences, Mangalore","A.J. Institute of Allied Health Sciences, Mangalore","A.J. Institute of Medical Sciences, Mangalore","Padua College of Commerce and Management, Mangalore","A.J. Institute of Nursing, Mangalore","A.J. Institute of Physiotherapy, Mangalore","Yenepoya Degree College, Mangalore","Shridevi Institute of Computer Sciences (BCA), Mangalore","Shridevi College of Nursing, Mangalore","Shridevi College of Commerce (B.Com), Mangalore","SDM College of Business Management (MBA), Mangalore","SDM Law College, Mangalore","SDM PG College Ujire","SDM Institute of Technology (SDMIT) Ujire","Canara College (MCA Program), Mangalore","Minerva College, Mangalore","Srinivas Institute of Nursing Sciences, Mangalore","Srinivas College of Pharmacy, Mangalore","P.A. College of Engineering, Mangalore","P.A. Polytechnic, Mangalore","P.A. First Grade College, Mangalore","Alva's College, Moodbidri","Alva's College of Law, Moodbidri","Alva's College of Naturopathy and Yogic Sciences, Moodbidri","Canara Engineering College (CEC), Benjanapadavu","Anugraha Women's College, Kalladka","Sri Rama First Grade College, Kalladka","Vivekananda Degree College, Puttur","Vivekananda College of Engineering & Technology, Puttur","St Philomena College, Puttur","St Philomena PG and Research Centre, Puttur","Akshaya College, Puttur","Ambika First Grade College, Puttur","KVG Ayurveda College, Sulya","KVG College of Engineering, Sulya","KVG Dental College, Sulya","BGS Institute of Technology, Bangalore","Shri Shirdi Sai Mandira College, Karkala","Vijaya College, Mulki","Srinivas Institute of Allied Health Sciences, Mangalore","BGS Institute of Technology, Mangalore","Acharya Institute of Technology, Bangalore","Adi Shankara Institute of Engineering Technology, Kalady","Amrita Vishwa Vidyapeetham, Coimbatore","Angadi Institute of Technology, Belagavi","Bangalore Institute of Technology, Bangalore","BMS College of Engineering, Bangalore","BMS Institute of Technology and Management, Bangalore","BNM Institute of Technology, Bangalore","CMR Institute of Technology, Bangalore","Dayananda Sagar College of Engineering, Bangalore","Dr. Ambedkar Institute of Technology, Bangalore","East Point College of Engineering, Bangalore","Global Academy of Technology, Bangalore","Gogte Institute of Technology, Belagavi","HKBK College of Engineering, Bangalore","KS Institute of Technology, Bangalore","KLE Technological University, Hubli","LBS Institute of Technology for Women, Thiruvananthapuram","M S Engineering College, Bangalore","MS Ramaiah Institute of Technology, Bangalore","New Horizon College of Engineering, Bangalore","Nitte Meenakshi Institute of Technology, Bangalore","PES College of Engineering, Mandya","PES University, Bangalore","Poojya Doddappa Appa College of Engineering, Kalaburagi","RNS Institute of Technology, Bangalore","RV College of Engineering, Bangalore","Sir M Visvesvaraya Institute of Technology, Bangalore","SJB Institute of Technology, Bangalore","SNS College of Engineering, Coimbatore","Sri Jayachamarajendra College of Engineering (SJCE), Mysore","Sri Ramakrishna Engineering College, Coimbatore","Vidyavardhaka College of Engineering, Mysore","College of Engineering Chengannur","College of Engineering Trivandrum","Federal Institute of Science and Technology, Angamaly","Government Engineering College Adoor","Government Engineering College Alappuzha","Government Engineering College Attingal","Government Engineering College Barton Hill, Thiruvananthapuram","Government Engineering College Chavara, Kollam","Government Engineering College Ernakulam","Government Engineering College Idukki","Government Engineering College Kanhangad","Government Engineering College Kannur","Government Engineering College Karunagapally","Government Engineering College Kasaragod","Government Engineering College Kayamkulam","Government Engineering College Kollam","Government Engineering College Kottarakkara","Government Engineering College Kottayam","Government Engineering College Kozhikode","Government Engineering College Kunnamkulam","Government Engineering College Malappuram","Yenepoya Homoeopathic Medical College and hospital","Government Engineering College Mananthavady","Government Engineering College Munnar","Government Engineering College Painavu","Government Engineering College Palakkad","Government Engineering College Pathanamthitta","Government Engineering College Payyannur","Government Engineering College Sreekrishnapuram","Government Engineering College Thalassery","Government Engineering College Thiruvananthapuram","Government Engineering College Thodupuzha","Government Engineering College Thrissur","Government Engineering College Vadakara","Government Engineering College Vatakara","Government Engineering College Wayanad","Ilahia College of Engineering, Muvattupuzha","Jyothi Engineering College, Thrissur","Mar Baselios College of Engineering, Thiruvananthapuram","Model Engineering College, Kochi","Mohandas College of Engineering, Thiruvananthapuram","Rajagiri School of Engineering and Technology, Kochi","Saintgits College of Engineering, Kottayam","Sree Buddha College of Engineering, Alappuzha","TKM College of Engineering, Kollam","Vidya Academy of Science and Technology, Thrissur","Coimbatore Institute of Technology","Garden City University, Bangalore","Indian Institute of Science (IISc), Bangalore","Jain University, Bangalore","JSS Science and Technology University, Mysuru","Karpagam College of Engineering, Coimbatore","Karunya Institute of Technology and Sciences, Coimbatore","Kumaraguru College of Technology, Coimbatore","National Institute of Engineering (NIE), Mysuru","PSG College of Technology, Coimbatore","Reva University, Bangalore"
+        "A J Institute of Engineering and Technology, Mangalore", "Alva's Ayurveda Medical College, Moodbidri", "Srinivas institute of technology, valachill", "Alva's Homoeopathic Medical College, Moodbidri", "Alva's Institute of Engineering Technology, Moodbidri", "Alvas College of Nursing, Moodbidri", "The Oxford college of engineering", "Aloysius MBA, Mangalore", "Canara Engineering College, Mangalore", "Carmel Degree College, Modankap, BC Road", "St. Mary's College, Shirva", "adichunchanagiri institute of engineering, coorg", "CIT, chickmagalur", "Rajarajeshwari college Bangalore", "Shri Madhwa Vadiraja Institute of Technology and Management, Udupi", "Mahathma Gandhi Memorial (MGM) College, Udupi", "Vaikunta Baliga College of Law, Udupi", "Trisha Vidya College of Commerce and Management", "Upendra Pai Memorial College, Udupi", "Udupi Group of Institutions, Manipal", "Kasturba Medical College (KMC), Manipal", "Laxmi Memorial College of Nursing & Physiotherapy", "Manipal Institute of Technology, Manipal", "College of Fisheries, Mangalore", "Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi", "Govt. First Grade College, Kaup", "Government Girls Degree College, Brahmagiri, Udupi", "Govinda Dasa College, Surathkal", "GTTC Baikampady, Mangalore", "Karavali Ayurveda and Medical Research, Mangalore", "Karavali College of Hotel Management", "Karavali College of Nursing Science", "Karavali College of Pharmacy, Mangalore", "Karavali College of Pharmacy, Vamanjoor, Mangalore", "Karavali College of Physiotherapy", "Karavali Institute of Technology, Mangalore", "Karavali Institute of Technology, Moodbidri", "KMC, Manipal", "Mahatma Gandhi Memorial (MGM) College, Udupi", "MIT Hotel Management", "MIT Manipal", "MITE - Mangalore Institute of Technology & Engineering", "Moodlakatte Institute of Technology, Kundapur", "N.M.A.M. Institute of Technology, Nitte, Karkala", "NITK, Surathkal", "Nitte Institute of Pharmacy", "Padua College, Mangaluru", "Padu Thirupathi Degree College, Karkala", "Poornaprajna College, Udupi", "Pompeii College, Aikala", "Sahyadri College of Engineering and Management", "SDM College of Engineering and Technology (SDMC)", "SDM Polytechnic, Ujire", "SDPT First Grade College, Kateel", "Shirdi Sai Degree College, Karkala", "Shri Madhwa Vadiraja Institute of Technology & Management, Bantakal", "Sri Bhuvanendra College, Karkala", "Sri Devi Institute of Technology, Kenjara, Bajpe", "Sri Mahaveera College, Kodangallu, Moodbidri", "Sri Taralabalu Jagadguru Institute of Technology", "Srinivas Institute of Engineering and Technology, Mukka", "Srinivas Institute of Medical Sciences and Research Center, Mukka", "St Joseph Engineering College, Vamanjoor, Mangaluru", "St. Raymond's Degree College, Vamanjoor, Kudupu, Karnataka", "Sumedha Fashion Institute, Karkala", "S NM Polytechnic, Moodbidri", "Udupi Group of Institutions", "Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi", "Yenapoya Institute of Arts Science and Commerce", "Muniyal Ayurveda College", "Vaikunta Baliga College of Law, Kunjibettu", "Gandhinagar First Grade College", "Tejaswini Group of Institutions", "Mangala Group of Institutions", "PACE Mangalore", "Yenepoya School Of Engineering & Technology", "Bearys Institute of Technology", "Kanachur Institute of Medical Science", "NITTE Architecture", "NITTE Nursing", "St Mary's College, Shirva", "Ids college, Mangalore", "Canara Degree College", "St Agnes College(Autonomous). Bendur, Mangaluru", "Besant Women's College", "Shree Gokarnanatheshwara College", "Mahatma Gandhi Memorial College, Udupi", "Yenepoya Allied Science", "NITTE Institute of Communication", "Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore", "Trisha College of Commerce and Management, Alake Road, Kodailbail", "Narayana Guru School And College, Barke Road, Kudroli", "Athene Institute of Health Science", "Athena Institute of Nursing Science", "Indira Institute of Nursing Science", "Laxmi Memorial College of Nursing", "St. Aloysius", "Ramakrishna Degree College", "MAPS College", "NITTE MBA", "Moti Mahal", "Govt. JJJ College", "Dr. Dayananda Pai - P Sathisha Pai Govt. First Grade College, Car Street, Mangalore", "AJIM", "M. V. Shetty College of Physiotherapy, Mangalore", "Trisha College of Nursing, Mangalore", "Shree Devi Institute of Technology, Mangalore", "Manel Srinivas Nayak Institute of Management, Mangalore", "Yenepoya Institute of Technology (YIT), Moodbidri", "Sahyadri College of Nursing, Mangalore", "A.J. Institute of Management, Mangalore", "A.J. Institute of Dental Sciences, Mangalore", "A.J. Institute of Allied Health Sciences, Mangalore", "A.J. Institute of Medical Sciences, Mangalore", "Padua College of Commerce and Management, Mangalore", "A.J. Institute of Nursing, Mangalore", "A.J. Institute of Physiotherapy, Mangalore", "Yenepoya Degree College, Mangalore", "Shridevi Institute of Computer Sciences (BCA), Mangalore", "Shridevi College of Nursing, Mangalore", "Shridevi College of Commerce (B.Com), Mangalore", "SDM College of Business Management (MBA), Mangalore", "SDM Law College, Mangalore", "SDM PG College Ujire", "SDM Institute of Technology (SDMIT) Ujire", "Canara College (MCA Program), Mangalore", "Minerva College, Mangalore", "Srinivas Institute of Nursing Sciences, Mangalore", "Srinivas College of Pharmacy, Mangalore", "P.A. College of Engineering, Mangalore", "P.A. Polytechnic, Mangalore", "P.A. First Grade College, Mangalore", "Alva's College, Moodbidri", "Alva's College of Law, Moodbidri", "Alva's College of Naturopathy and Yogic Sciences, Moodbidri", "Canara Engineering College (CEC), Benjanapadavu", "Anugraha Women's College, Kalladka", "Sri Rama First Grade College, Kalladka", "Vivekananda Degree College, Puttur", "Vivekananda College of Engineering & Technology, Puttur", "St Philomena College, Puttur", "St Philomena PG and Research Centre, Puttur", "Akshaya College, Puttur", "Ambika First Grade College, Puttur", "KVG Ayurveda College, Sulya", "KVG College of Engineering, Sulya", "KVG Dental College, Sulya", "BGS Institute of Technology, Bangalore", "Shri Shirdi Sai Mandira College, Karkala", "Vijaya College, Mulki", "Srinivas Institute of Allied Health Sciences, Mangalore", "BGS Institute of Technology, Mangalore", "Acharya Institute of Technology, Bangalore", "Adi Shankara Institute of Engineering Technology, Kalady", "Amrita Vishwa Vidyapeetham, Coimbatore", "Angadi Institute of Technology, Belagavi", "Bangalore Institute of Technology, Bangalore", "BMS College of Engineering, Bangalore", "BMS Institute of Technology and Management, Bangalore", "BNM Institute of Technology, Bangalore", "CMR Institute of Technology, Bangalore", "Dayananda Sagar College of Engineering, Bangalore", "Dr. Ambedkar Institute of Technology, Bangalore", "East Point College of Engineering, Bangalore", "Global Academy of Technology, Bangalore", "Gogte Institute of Technology, Belagavi", "HKBK College of Engineering, Bangalore", "KS Institute of Technology, Bangalore", "KLE Technological University, Hubli", "LBS Institute of Technology for Women, Thiruvananthapuram", "M S Engineering College, Bangalore", "MS Ramaiah Institute of Technology, Bangalore", "New Horizon College of Engineering, Bangalore", "Nitte Meenakshi Institute of Technology, Bangalore", "PES College of Engineering, Mandya", "PES University, Bangalore", "Poojya Doddappa Appa College of Engineering, Kalaburagi", "RNS Institute of Technology, Bangalore", "RV College of Engineering, Bangalore", "Sir M Visvesvaraya Institute of Technology, Bangalore", "SJB Institute of Technology, Bangalore", "SNS College of Engineering, Coimbatore", "Sri Jayachamarajendra College of Engineering (SJCE), Mysore", "Sri Ramakrishna Engineering College, Coimbatore", "Vidyavardhaka College of Engineering, Mysore", "College of Engineering Chengannur", "College of Engineering Trivandrum", "Federal Institute of Science and Technology, Angamaly", "Government Engineering College Adoor", "Government Engineering College Alappuzha", "Government Engineering College Attingal", "Government Engineering College Barton Hill, Thiruvananthapuram", "Government Engineering College Chavara, Kollam", "Government Engineering College Ernakulam", "Government Engineering College Idukki", "Government Engineering College Kanhangad", "Government Engineering College Kannur", "Government Engineering College Karunagapally", "Government Engineering College Kasaragod", "Government Engineering College Kayamkulam", "Government Engineering College Kollam", "Government Engineering College Kottarakkara", "Government Engineering College Kottayam", "Government Engineering College Kozhikode", "Government Engineering College Kunnamkulam", "Government Engineering College Malappuram", "Yenepoya Homoeopathic Medical College and hospital", "Government Engineering College Mananthavady", "Government Engineering College Munnar", "Government Engineering College Painavu", "Government Engineering College Palakkad", "Government Engineering College Pathanamthitta", "Government Engineering College Payyannur", "Government Engineering College Sreekrishnapuram", "Government Engineering College Thalassery", "Government Engineering College Thiruvananthapuram", "Government Engineering College Thodupuzha", "Government Engineering College Thrissur", "Government Engineering College Vadakara", "Government Engineering College Vatakara", "Government Engineering College Wayanad", "Ilahia College of Engineering, Muvattupuzha", "Jyothi Engineering College, Thrissur", "Mar Baselios College of Engineering, Thiruvananthapuram", "Model Engineering College, Kochi", "Mohandas College of Engineering, Thiruvananthapuram", "Rajagiri School of Engineering and Technology, Kochi", "Saintgits College of Engineering, Kottayam", "Sree Buddha College of Engineering, Alappuzha", "TKM College of Engineering, Kollam", "Vidya Academy of Science and Technology, Thrissur", "Coimbatore Institute of Technology", "Garden City University, Bangalore", "Indian Institute of Science (IISc), Bangalore", "Jain University, Bangalore", "JSS Science and Technology University, Mysuru", "Karpagam College of Engineering, Coimbatore", "Karunya Institute of Technology and Sciences, Coimbatore", "Kumaraguru College of Technology, Coimbatore", "National Institute of Engineering (NIE), Mysuru", "PSG College of Technology, Coimbatore", "Reva University, Bangalore"
     ]].sort((a, b) => a.localeCompare(b));
 
     const selectStyles = {
@@ -574,7 +456,7 @@ const Register = () => {
                 .review-key { font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:10px; color:#000; min-width:110px; flex-shrink:0; }
             `}</style>
 
-            <PopArtBg />
+            <PopArtBackground />
 
             <div style={{ maxWidth: 780, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
@@ -593,7 +475,7 @@ const Register = () => {
                 </div>
 
                 {/* Step indicator */}
-                <div style={{ ...cardStyle, background: "rgba(255,255,255,0.97)", padding: "16px 28px", marginBottom: 24 }}>
+                <div style={{ ...cardStyle, background: C.white, padding: "16px 28px", marginBottom: 24 }}>
                     <div style={{ display: "flex", alignItems: "center" }}>
                         <StepPill label="Details" num={1} active={stepNum === 1} done={stepNum > 1} />
                         <StepConnector done={stepNum > 1} />
@@ -621,12 +503,12 @@ const Register = () => {
                         <SectionCard title="01 · Personal Info" color={C.cyan}>
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16 }}>
                                 {([
-                                    { id: "name",       label: "Full Name",       placeholder: "Enter your full name",  type: "text"   },
-                                    { id: "email",      label: "Email Address",   placeholder: "your@email.com",        type: "email"  },
-                                    { id: "phone",      label: "Phone Number",    placeholder: "+91 XXXXXXXXXX",        type: "tel"    },
-                                    { id: "usn",        label: "USN",             placeholder: "1AJ21CS000",            type: "text"   },
-                                    { id: "year",       label: "Year of Study",   placeholder: "1, 2, 3 or 4",          type: "number" },
-                                    { id: "department", label: "Department",      placeholder: "e.g. Computer Science", type: "text"   },
+                                    { id: "name", label: "Full Name", placeholder: "Enter your full name", type: "text" },
+                                    { id: "email", label: "Email Address", placeholder: "your@email.com", type: "email" },
+                                    { id: "phone", label: "Phone Number", placeholder: "+91 XXXXXXXXXX", type: "tel" },
+                                    { id: "usn", label: "USN", placeholder: "1AJ21CS000", type: "text" },
+                                    { id: "year", label: "Year of Study", placeholder: "1, 2, 3 or 4", type: "number" },
+                                    { id: "department", label: "Department", placeholder: "e.g. Computer Science", type: "text" },
                                 ] as const).map(({ id, label, placeholder, type }) => (
                                     <Field key={id} label={label} error={formErrors[id]}>
                                         <input type={type} id={id}
@@ -724,9 +606,9 @@ const Register = () => {
                                             <div style={{ ...sectionHeaderStyle(C.cyan), fontSize: 10, marginBottom: 12 }}>MEMBER {index + 1}</div>
                                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
                                                 {[
-                                                    { field: "name",  label: "Full Name",  placeholder: "Member Name"  },
-                                                    { field: "usn",   label: "USN",         placeholder: "Member USN"   },
-                                                    { field: "email", label: "Email",       placeholder: "Member Email" },
+                                                    { field: "name", label: "Full Name", placeholder: "Member Name" },
+                                                    { field: "usn", label: "USN", placeholder: "Member USN" },
+                                                    { field: "email", label: "Email", placeholder: "Member Email" },
                                                 ].map(({ field, label, placeholder }) => (
                                                     <Field key={field} label={label} error={formErrors[`group_${event.id}_member_${index}_${field}`]}>
                                                         <input type="text" value={(member as any)[field] || ""}
@@ -772,7 +654,7 @@ const Register = () => {
                                     <PopButton bg={C.cyan} fg={C.black} onClick={generateQRCode}>GENERATE QR CODE</PopButton>
                                 )}
                                 <div style={{ width: "100%" }}>
-                                    <div style={{ ...cardStyle, padding: 20, background: "rgba(255,255,255,0.97)" }}>
+                                    <div style={{ ...cardStyle, padding: 20, background: C.white }}>
                                         <div style={sectionHeaderStyle(C.magenta)}>After Payment</div>
                                         <Field label="Transaction ID / Reference Number" error={formErrors.transactionId}>
                                             <input type="text" id="transactionId" value={formData.transactionId} onChange={handleChange}

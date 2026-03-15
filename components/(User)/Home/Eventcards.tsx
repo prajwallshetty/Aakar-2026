@@ -39,8 +39,8 @@ const CARDS = [
     label: "SPECIAL",
     sub: "UNIQUE · RARE · EPIC",
     href: "/events/special",
-    accent: P.yellow,
-    shadow: P.hot,
+    accent: P.magenta,
+    shadow: P.cyan,
     image: "/eventcard.png",
   },
 ];
@@ -140,7 +140,7 @@ export default function EventCards() {
             border-color 0.28s ease;
         }
         .ec-card:hover .ec-card-face {
-          transform: translate(-4px,-4px) !important;
+          transform: translate(-8px,-8px) !important;
         }
         .ec-shimmer {
           position:absolute; inset:0; pointer-events:none; overflow:hidden;
@@ -237,7 +237,7 @@ export default function EventCards() {
               const op  = 0.28 + 0.72 * cos;
               const zi  = Math.round(50 + 50 * Math.cos(rad));
               const isActive = idx === active;
-              const CARD_W = 200;
+              const CARD_W = 240;
 
               return (
                 <Link
@@ -303,28 +303,29 @@ export default function EventCards() {
                       animation: isActive ? "ecBarGrow 0.4s cubic-bezier(.25,.8,.25,1) both" : "none",
                     }}/>
 
-                    {/* label area */}
+                    {/* label area - background matches accent now */}
                     <div style={{
                       position: "absolute", bottom: 0, left: 0, right: 0,
-                      padding: "12px 14px 14px",
-                      borderTop: `2px solid ${isActive ? card.accent : "rgba(255,255,255,0.1)"}`,
-                      transition: "border-color 0.3s ease",
+                      padding: "16px 14px 14px",
+                      background: isActive ? card.accent : "rgba(0,0,0,0.85)",
+                      borderTop: `2px solid ${isActive ? P.black : "rgba(255,255,255,0.1)"}`,
+                      transition: "background 0.3s ease, border-color 0.3s ease",
                     }}>
                       <div style={{
                         fontFamily: "'Bebas Neue',sans-serif",
-                        fontSize: "clamp(1.1rem,2.2vw,1.45rem)",
+                        fontSize: "clamp(1.2rem,2.5vw,1.6rem)",
                         letterSpacing: "0.1em",
-                        color: isActive ? card.accent : "rgba(255,255,255,0.7)",
-                        textShadow: isActive ? `2px 2px 0 ${P.black}` : "none",
+                        color: isActive ? P.black : "rgba(255,255,255,0.7)",
+                        textShadow: isActive ? `0 0 0 transparent` : "none",
                         transition: "color 0.3s ease",
                         lineHeight: 1,
                         display: "block",
                       }}>{card.label}</div>
                       <div style={{
                         fontFamily: "'Share Tech Mono',monospace",
-                        fontSize: "clamp(0.38rem,0.8vw,0.48rem)",
+                        fontSize: "clamp(0.42rem,0.9vw,0.55rem)",
                         letterSpacing: "0.18em",
-                        color: "rgba(255,255,255,0.35)",
+                        color: isActive ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.35)",
                         marginTop: 4,
                         textTransform: "uppercase",
                       }}>{card.sub}</div>
