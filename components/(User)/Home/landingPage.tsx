@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const C = {
@@ -563,77 +562,20 @@ export default function LandingHero() {
                 pointerEvents: "none",
               }} />
 
-              {/* Chat Bubble (Right Side) - Hidden on mobile, pops up on desktop */}
-              <div style={{
-                position: "absolute",
-                top: "60%",
-                right: "-200px",
-                zIndex: 5,
-                animation: "sFloat 3s ease-in-out infinite alternate",
+              <div className="chroma" style={{
+                position: "relative",
+                width: "clamp(200px, 45vw, 500px)",
+                aspectRatio: "1/1",
+                marginBottom: 0,
+                filter: `drop-shadow(0 0 20px ${C.magenta}66)`
               }}>
-                <div style={{
-                  position: "relative",
-                  background: C.white,
-                  border: `3px solid ${C.black}`,
-                  boxShadow: `4px 4px 0 ${C.magenta}, 8px 8px 0 ${C.cyan}`,
-                  padding: "16px",
-                  width: "160px",
-                  borderRadius: "16px",
-                  borderBottomLeftRadius: "0",
-                  fontFamily: "'Share Tech Mono', monospace",
-                  fontSize: "1rem",
-                  fontWeight: "bold",
-                  color: C.black,
-                  textAlign: "center",
-                  lineHeight: "1.2",
-                  cursor: "pointer",
-                }}
-                onClick={() => window.location.href = '/chat'}>
-                  Ask me anything about AAKAR 2026!
-                  {/* Speech bubble pointer */}
-                  <div style={{
-                    position: "absolute",
-                    bottom: "-3px",
-                    left: "-15px",
-                    width: "0",
-                    height: "0",
-                    borderTop: `15px solid ${C.black}`,
-                    borderLeft: `15px solid transparent`,
-                  }}/>
-                  <div style={{
-                    position: "absolute",
-                    bottom: "2px",
-                    left: "-9px",
-                    width: "0",
-                    height: "0",
-                    borderTop: `9px solid ${C.white}`,
-                    borderLeft: `9px solid transparent`,
-                    zIndex: 2,
-                  }}/>
-                </div>
+                <Image
+                  src="/ak26.png"
+                  alt="AAKAR 2026 mascot"
+                  fill priority
+                  style={{ objectFit: "contain", objectPosition: "center bottom" }}
+                />
               </div>
-
-              <Link href="/chat" style={{ display: "block" }}>
-                <div className="chroma" style={{
-                  position: "relative",
-                  width: "clamp(200px, 45vw, 500px)",
-                  aspectRatio: "1/1",
-                  marginBottom: 0,
-                  filter: `drop-shadow(0 0 20px ${C.magenta}66)`,
-                  cursor: "pointer",
-                  transition: "transform 0.2s cubic-bezier(0.25, 1.5, 0.5, 1)",
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                >
-                  <Image
-                    src="/ak26.png"
-                    alt="AAKAR 2026 mascot"
-                    fill priority
-                    style={{ objectFit: "contain", objectPosition: "center bottom" }}
-                  />
-                </div>
-              </Link>
             </div>
           </motion.div>
 
@@ -777,7 +719,7 @@ export default function LandingHero() {
         <motion.div
           style={{
             position: "absolute",
-            left: "clamp(40px, 7vw, 100px)",
+            left: "clamp(100px, 16vw, 200px)",
             top: "50%",
             zIndex: 25,
             pointerEvents: "none",
@@ -789,7 +731,7 @@ export default function LandingHero() {
           {/* outer container — vertical orientation */}
           <div style={{
             position: "relative",
-            width: "clamp(60px, 9vw, 110px)",
+            width: "clamp(150px, 14vw, 160px)",
             transform: "translateY(-50%)",
           }}>
 
