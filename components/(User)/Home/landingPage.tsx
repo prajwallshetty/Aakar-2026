@@ -1,16 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const C = {
-  yellow:  "#FFE600",
+  yellow: "#FFE600",
   magenta: "#FF00CC",
-  cyan:    "#00F5FF",
-  hot:     "#FF2D6B",
-  lime:    "#BCFF00",
-  black:   "#05000E",
-  white:   "#FFFFFF",
+  cyan: "#00F5FF",
+  hot: "#FF2D6B",
+  lime: "#BCFF00",
+  black: "#05000E",
+  white: "#FFFFFF",
 };
 
 /* ── SSR-safe geometry ──────────────────────────────────────── */
@@ -18,9 +19,9 @@ function makeBurst(cx: number, cy: number, R: number, r: number, n: number) {
   let d = "";
   for (let i = 0; i < n * 2; i++) {
     const rad = i % 2 === 0 ? R : r;
-    const a   = (Math.PI / n) * i - Math.PI / 2;
-    const x   = Math.round((cx + rad * Math.cos(a)) * 1e4) / 1e4;
-    const y   = Math.round((cy + rad * Math.sin(a)) * 1e4) / 1e4;
+    const a = (Math.PI / n) * i - Math.PI / 2;
+    const x = Math.round((cx + rad * Math.cos(a)) * 1e4) / 1e4;
+    const y = Math.round((cy + rad * Math.sin(a)) * 1e4) / 1e4;
     d += (i === 0 ? "M" : "L") + `${x},${y}`;
   }
   return d + "Z";
@@ -42,23 +43,23 @@ const LINES = Array.from({ length: 18 }, (_, i) => {
 export default function LandingHero() {
   const rawX = useMotionValue(0.5);
   const rawY = useMotionValue(0.5);
-  const sp   = { stiffness: 45, damping: 18, mass: 1 };
-  const mx   = useSpring(rawX, sp);
-  const my   = useSpring(rawY, sp);
+  const sp = { stiffness: 45, damping: 18, mass: 1 };
+  const mx = useSpring(rawX, sp);
+  const my = useSpring(rawY, sp);
 
-  const d0x = useTransform(mx, [0,1], [-25,  25]);
-  const d0y = useTransform(my, [0,1], [-15,  15]);
-  const d1x = useTransform(mx, [0,1], [-45,  45]);
-  const d1y = useTransform(my, [0,1], [-25,  25]);
-  const d2x = useTransform(mx, [0,1], [-18,  18]);
-  const d2y = useTransform(my, [0,1], [-12,  12]);
-  const dTitleX = useTransform(mx, [0,1], [ 25, -25]);
-  const dTitleY = useTransform(my, [0,1], [ 15, -15]);
+  const d0x = useTransform(mx, [0, 1], [-25, 25]);
+  const d0y = useTransform(my, [0, 1], [-15, 15]);
+  const d1x = useTransform(mx, [0, 1], [-45, 45]);
+  const d1y = useTransform(my, [0, 1], [-25, 25]);
+  const d2x = useTransform(mx, [0, 1], [-18, 18]);
+  const d2y = useTransform(my, [0, 1], [-12, 12]);
+  const dTitleX = useTransform(mx, [0, 1], [25, -25]);
+  const dTitleY = useTransform(my, [0, 1], [15, -15]);
 
   function onMove(e: React.MouseEvent<HTMLElement>) {
     const r = e.currentTarget.getBoundingClientRect();
     rawX.set((e.clientX - r.left) / r.width);
-    rawY.set((e.clientY - r.top)  / r.height);
+    rawY.set((e.clientY - r.top) / r.height);
   }
   function onLeave() { rawX.set(0.5); rawY.set(0.5); }
 
@@ -294,104 +295,106 @@ export default function LandingHero() {
         onMouseLeave={onLeave}
         className="hl-root"
         style={{
-          position:"relative",
-          width:"100%",
-          height:"100svh",
-          minHeight:600,
-          overflow:"hidden",
-          background:C.black,
-          cursor:"crosshair",
-          isolation:"isolate",
+          position: "relative",
+          width: "100%",
+          height: "100svh",
+          minHeight: 600,
+          overflow: "hidden",
+          background: C.black,
+          cursor: "crosshair",
+          isolation: "isolate",
         }}
       >
 
         {/* ═══════════ Z:1 DEEP BACKGROUND ═══════════ */}
         <motion.div aria-hidden className="parallax-layer"
-          style={{ x:d0x, y:d0y, position:"absolute", inset:"-4%", zIndex:1, pointerEvents:"none" }}
+          style={{ x: d0x, y: d0y, position: "absolute", inset: "-4%", zIndex: 1, pointerEvents: "none" }}
         >
           <div style={{
-            position:"absolute", inset:0,
-            background:`
+            position: "absolute", inset: 0,
+            background: `
               radial-gradient(ellipse 120% 100% at 50% 50%, #200048 0%, ${C.black} 62%),
               radial-gradient(ellipse 55% 42% at 15% 25%, ${C.magenta}45 0%, transparent 52%),
               radial-gradient(ellipse 50% 55% at 85% 68%, ${C.cyan}40 0%, transparent 50%),
               radial-gradient(ellipse 45% 38% at 60% 92%, ${C.hot}2E 0%, transparent 46%),
               radial-gradient(ellipse 38% 32% at 28% 82%, #6600BB44 0%, transparent 48%)
             `,
-          }}/>
+          }} />
           {/* animated moving grid */}
           <div style={{
-            position:"absolute", inset:0, opacity:0.07,
-            backgroundImage:`
+            position: "absolute", inset: 0, opacity: 0.07,
+            backgroundImage: `
               linear-gradient(${C.cyan}66 1px, transparent 1px),
               linear-gradient(90deg, ${C.cyan}66 1px, transparent 1px)
             `,
-            backgroundSize:"64px 64px",
-            animation:"sGridMove 8s linear infinite",
-          }}/>
+            backgroundSize: "64px 64px",
+            animation: "sGridMove 8s linear infinite",
+          }} />
           {/* diagonal golden streaks */}
           <div style={{
-            position:"absolute", inset:0, opacity:0.07,
-            backgroundImage:`repeating-linear-gradient(
+            position: "absolute", inset: 0, opacity: 0.07,
+            backgroundImage: `repeating-linear-gradient(
               -52deg, ${C.yellow} 0, ${C.yellow} 1px, transparent 1px, transparent 56px
             )`,
-          }}/>
+          }} />
           {/* floor glow */}
           <div style={{
-            position:"absolute", bottom:0, left:0, right:0, height:"50%",
-            background:`linear-gradient(to top, ${C.magenta}32 0%, ${C.cyan}14 38%, transparent 100%)`,
-          }}/>
+            position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
+            background: `linear-gradient(to top, ${C.magenta}32 0%, ${C.cyan}14 38%, transparent 100%)`,
+          }} />
           {/* horizontal scan lines */}
           <div style={{
-            position:"absolute", inset:0, opacity:0.07,
-            backgroundImage:`repeating-linear-gradient(
+            position: "absolute", inset: 0, opacity: 0.07,
+            backgroundImage: `repeating-linear-gradient(
               180deg, transparent 0, transparent 40px, ${C.cyan}22 40px, ${C.cyan}22 41px
             )`,
-          }}/>
+          }} />
         </motion.div>
 
         {/* ═══════════ Z:2 AURORA BLOBS ═══════════ */}
         <motion.div aria-hidden className="parallax-layer"
-          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:2, pointerEvents:"none" }}
+          style={{ x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none" }}
         >
           <div style={{
-            position:"absolute", top:"50%", left:"50%",
-            width:"min(120vw,1000px)", height:"min(88vw,720px)",
-            borderRadius:"50%",
-            background:`radial-gradient(ellipse, ${C.magenta}34 0%, ${C.cyan}1C 38%, transparent 65%)`,
-            filter:"blur(52px)",
-            animation:"sAurora 7s ease-in-out infinite",
-          }}/>
+            position: "absolute", top: "50%", left: "50%",
+            width: "min(120vw,1000px)", height: "min(88vw,720px)",
+            borderRadius: "50%",
+            background: `radial-gradient(ellipse, ${C.magenta}34 0%, ${C.cyan}1C 38%, transparent 65%)`,
+            filter: "blur(52px)",
+            animation: "sAurora 7s ease-in-out infinite",
+          }} />
           <div style={{
-            position:"absolute", top:"72%", left:"50%",
-            width:"min(80vw,640px)", height:"min(40vw,340px)",
-            borderRadius:"50%",
-            background:`radial-gradient(ellipse, ${C.hot}28 0%, ${C.magenta}14 45%, transparent 70%)`,
-            filter:"blur(40px)",
-            animation:"sFlare 5s ease-in-out infinite",
-          }}/>
+            position: "absolute", top: "72%", left: "50%",
+            width: "min(80vw,640px)", height: "min(40vw,340px)",
+            borderRadius: "50%",
+            background: `radial-gradient(ellipse, ${C.hot}28 0%, ${C.magenta}14 45%, transparent 70%)`,
+            filter: "blur(40px)",
+            animation: "sFlare 5s ease-in-out infinite",
+          }} />
           <div style={{
-            position:"absolute", top:"18%", left:"50%",
-            width:"min(60vw,520px)", height:"min(30vw,260px)",
-            borderRadius:"50%",
-            background:`radial-gradient(ellipse, ${C.cyan}20 0%, transparent 65%)`,
-            filter:"blur(32px)",
-            animation:"sFlare 6s ease-in-out infinite",
-            animationDelay:"2s",
-          }}/>
+            position: "absolute", top: "18%", left: "50%",
+            width: "min(60vw,520px)", height: "min(30vw,260px)",
+            borderRadius: "50%",
+            background: `radial-gradient(ellipse, ${C.cyan}20 0%, transparent 65%)`,
+            filter: "blur(32px)",
+            animation: "sFlare 6s ease-in-out infinite",
+            animationDelay: "2s",
+          }} />
         </motion.div>
 
         {/* ═══════════ Z:3 SPEED LINES ═══════════ */}
         <motion.div aria-hidden className="parallax-layer"
-          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:3, pointerEvents:"none",
-            display:"flex", alignItems:"center", justifyContent:"center" }}
+          style={{
+            x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none",
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}
         >
-          <div style={{ width:"min(100vw,900px)", height:"min(100vw,900px)", flexShrink:0 }}>
-            <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%", opacity:0.12 }}>
-              {LINES.map((l,i) => (
+          <div style={{ width: "min(100vw,900px)", height: "min(100vw,900px)", flexShrink: 0 }}>
+            <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", opacity: 0.12 }}>
+              {LINES.map((l, i) => (
                 <line key={i} x1="50" y1="50" x2={l.x2} y2={l.y2}
-                  stroke={i%3===0 ? C.cyan : i%3===1 ? C.magenta : C.yellow}
-                  strokeWidth="0.4"/>
+                  stroke={i % 3 === 0 ? C.cyan : i % 3 === 1 ? C.magenta : C.yellow}
+                  strokeWidth="0.4" />
               ))}
             </svg>
           </div>
@@ -399,122 +402,126 @@ export default function LandingHero() {
 
         {/* ═══════════ Z:4 STARBURST RINGS ═══════════ */}
         <motion.div aria-hidden className="parallax-layer"
-          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:4, pointerEvents:"none",
-            display:"flex", alignItems:"center", justifyContent:"center" }}
+          style={{
+            x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none",
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}
         >
-          <div style={{ position:"relative", width:"min(92vw,820px)", height:"min(92vw,820px)", flexShrink:0 }}>
-            <div className="cw2" style={{ position:"absolute", inset:0 }}>
-              <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%" }}>
-                <path d={BA} fill="none" stroke={C.yellow} strokeWidth="0.35" opacity="0.25"/>
+          <div style={{ position: "relative", width: "min(92vw,820px)", height: "min(92vw,820px)", flexShrink: 0 }}>
+            <div className="cw2" style={{ position: "absolute", inset: 0 }}>
+              <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                <path d={BA} fill="none" stroke={C.yellow} strokeWidth="0.35" opacity="0.25" />
               </svg>
             </div>
-            <div className="ccw" style={{ position:"absolute", inset:"14%" }}>
-              <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%" }}>
-                <path d={BB} fill={C.magenta} opacity="0.07"/>
-                <path d={BB} fill="none" stroke={C.cyan} strokeWidth="0.5" opacity="0.3"/>
+            <div className="ccw" style={{ position: "absolute", inset: "14%" }}>
+              <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                <path d={BB} fill={C.magenta} opacity="0.07" />
+                <path d={BB} fill="none" stroke={C.cyan} strokeWidth="0.5" opacity="0.3" />
               </svg>
             </div>
-            <div className="cw" style={{ position:"absolute", inset:"29%" }}>
-              <svg viewBox="0 0 100 100" style={{ width:"100%", height:"100%" }}>
-                <path d={BC} fill="none" stroke={C.hot} strokeWidth="0.55" opacity="0.22"/>
+            <div className="cw" style={{ position: "absolute", inset: "29%" }}>
+              <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
+                <path d={BC} fill="none" stroke={C.hot} strokeWidth="0.55" opacity="0.22" />
               </svg>
             </div>
           </div>
         </motion.div>
 
         {/* ═══════════ Z:5 PULSE RINGS ═══════════ */}
-        <div aria-hidden style={{ position:"absolute", inset:0, zIndex:5, pointerEvents:"none" }}>
-          {[C.cyan, C.magenta, C.yellow].map((col,i) => (
+        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none" }}>
+          {[C.cyan, C.magenta, C.yellow].map((col, i) => (
             <div key={i} style={{
-              position:"absolute", top:"50%", left:"50%",
-              width:"min(68vw,580px)", height:"min(68vw,580px)",
-              borderRadius:"50%",
-              border:`1.5px solid ${col}`,
-              opacity:0,
-              animation:`sPulse 3.8s ease-out infinite`,
-              animationDelay:`${i * 1.26}s`,
-            }}/>
+              position: "absolute", top: "50%", left: "50%",
+              width: "min(68vw,580px)", height: "min(68vw,580px)",
+              borderRadius: "50%",
+              border: `1.5px solid ${col}`,
+              opacity: 0,
+              animation: `sPulse 3.8s ease-out infinite`,
+              animationDelay: `${i * 1.26}s`,
+            }} />
           ))}
         </div>
 
         {/* ═══════════ Z:6 HALFTONE HALO ═══════════ */}
         <motion.div aria-hidden className="parallax-layer"
-          style={{ x:d1x, y:d1y, position:"absolute", inset:0, zIndex:6, pointerEvents:"none",
-            display:"flex", alignItems:"center", justifyContent:"center" }}
+          style={{
+            x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}
         >
           <div style={{
-            width:"min(70vw,620px)", height:"min(70vw,620px)", flexShrink:0,
-            borderRadius:"50%",
-            backgroundImage:`radial-gradient(circle, ${C.yellow}3A 1.4px, transparent 1.4px)`,
-            backgroundSize:"18px 18px",
-            maskImage:"radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
-            WebkitMaskImage:"radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
-          }}/>
+            width: "min(70vw,620px)", height: "min(70vw,620px)", flexShrink: 0,
+            borderRadius: "50%",
+            backgroundImage: `radial-gradient(circle, ${C.yellow}3A 1.4px, transparent 1.4px)`,
+            backgroundSize: "18px 18px",
+            maskImage: "radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
+            WebkitMaskImage: "radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
+          }} />
         </motion.div>
 
         {/* ═══════════ Z:7 CORNER DECOR + STAMPS ═══════════ */}
-        <div aria-hidden style={{ position:"absolute", inset:0, zIndex:7, pointerEvents:"none" }}>
+        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 7, pointerEvents: "none" }}>
           {/* corner brackets */}
           {[
-            {t:20,l:20,rot:0,   col:C.cyan   },
-            {t:20,r:20,rot:90,  col:C.magenta},
-            {b:24,l:20,rot:270, col:C.hot    },
-            {b:24,r:20,rot:180, col:C.yellow },
-          ].map((c,i) => (
+            { t: 20, l: 20, rot: 0, col: C.cyan },
+            { t: 20, r: 20, rot: 90, col: C.magenta },
+            { b: 24, l: 20, rot: 270, col: C.hot },
+            { b: 24, r: 20, rot: 180, col: C.yellow },
+          ].map((c, i) => (
             <svg key={i} width="44" height="44" viewBox="0 0 44 44" style={{
-              position:"absolute",
-              top:(c as any).t, bottom:(c as any).b,
-              left:(c as any).l, right:(c as any).r,
-              transform:`rotate(${c.rot}deg)`, opacity:0.65,
+              position: "absolute",
+              top: (c as any).t, bottom: (c as any).b,
+              left: (c as any).l, right: (c as any).r,
+              transform: `rotate(${c.rot}deg)`, opacity: 0.65,
             }}>
               <polyline points="0,28 0,0 28,0" fill="none"
-                stroke={c.col} strokeWidth="2.5" strokeLinecap="square"/>
+                stroke={c.col} strokeWidth="2.5" strokeLinecap="square" />
             </svg>
           ))}
 
           {/* floating diamonds */}
           {[
-            {top:"20%", left:"6%",    s:11, col:C.lime,    d:"0s"   },
-            {top:"24%", right:"7%",   s:8,  col:C.magenta, d:"0.7s" },
-            {top:"50%", left:"3%",    s:7,  col:C.hot,     d:"1.4s" },
-            {top:"56%", right:"4%",   s:9,  col:C.cyan,    d:"2.1s" },
-            {bottom:"26%",left:"7%",  s:10, col:C.yellow,  d:"1.0s" },
-            {bottom:"20%",right:"6%", s:12, col:C.lime,    d:"1.7s" },
-          ].map((s,i) => (
+            { top: "20%", left: "6%", s: 11, col: C.lime, d: "0s" },
+            { top: "24%", right: "7%", s: 8, col: C.magenta, d: "0.7s" },
+            { top: "50%", left: "3%", s: 7, col: C.hot, d: "1.4s" },
+            { top: "56%", right: "4%", s: 9, col: C.cyan, d: "2.1s" },
+            { bottom: "26%", left: "7%", s: 10, col: C.yellow, d: "1.0s" },
+            { bottom: "20%", right: "6%", s: 12, col: C.lime, d: "1.7s" },
+          ].map((s, i) => (
             <div key={i} style={{
-              position:"absolute",
-              top:(s as any).top, bottom:(s as any).bottom,
-              left:(s as any).left, right:(s as any).right,
-              width:s.s, height:s.s,
-              background:s.col,
-              border:`1.5px solid ${C.black}`,
-              boxShadow:`2px 2px 0 ${C.black}`,
-              animation:`sDiamond 3.5s ease-in-out infinite`,
-              animationDelay:s.d,
-            }}/>
+              position: "absolute",
+              top: (s as any).top, bottom: (s as any).bottom,
+              left: (s as any).left, right: (s as any).right,
+              width: s.s, height: s.s,
+              background: s.col,
+              border: `1.5px solid ${C.black}`,
+              boxShadow: `2px 2px 0 ${C.black}`,
+              animation: `sDiamond 3.5s ease-in-out infinite`,
+              animationDelay: s.d,
+            }} />
           ))}
 
           {/* word stamps — hidden on very small screens */}
           <div className="stamps-hide">
             {[
-              {text:"POW!",  top:"9%",    left:"5%",   rot:-13, col:C.hot    },
-              {text:"ZAP!",  top:"7%",    right:"5%",  rot:11,  col:C.cyan   },
-              {text:"EPIC!", bottom:"14%",left:"5%",   rot:-7,  col:C.lime   },
-              {text:"WOW!",  bottom:"12%",right:"5%",  rot:9,   col:C.magenta},
-            ].map((s,i) => (
+              { text: "POW!", top: "9%", left: "5%", rot: -13, col: C.hot },
+              { text: "ZAP!", top: "7%", right: "5%", rot: 11, col: C.cyan },
+              { text: "EPIC!", bottom: "14%", left: "5%", rot: -7, col: C.lime },
+              { text: "WOW!", bottom: "12%", right: "5%", rot: 9, col: C.magenta },
+            ].map((s, i) => (
               <div key={i} className="stamp" style={{
-                position:"absolute",
-                top:(s as any).top, bottom:(s as any).bottom,
-                left:(s as any).left, right:(s as any).right,
-                fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:"clamp(1rem,2.5vw,1.8rem)",
-                letterSpacing:"0.06em",
-                color:s.col,
-                WebkitTextStroke:`1.5px ${C.black}`,
-                textShadow:`3px 3px 0 ${C.black}`,
-                transform:`rotate(${s.rot}deg)`,
-                animationDelay:`${0.3+i*0.15}s`,
-                opacity:0.6, userSelect:"none",
+                position: "absolute",
+                top: (s as any).top, bottom: (s as any).bottom,
+                left: (s as any).left, right: (s as any).right,
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: "clamp(1rem,2.5vw,1.8rem)",
+                letterSpacing: "0.06em",
+                color: s.col,
+                WebkitTextStroke: `1.5px ${C.black}`,
+                textShadow: `3px 3px 0 ${C.black}`,
+                transform: `rotate(${s.rot}deg)`,
+                animationDelay: `${0.3 + i * 0.15}s`,
+                opacity: 0.6, userSelect: "none",
               }}>{s.text}</div>
             ))}
           </div>
@@ -525,85 +532,144 @@ export default function LandingHero() {
             All stacked in one flex column, centered
         ═══════════════════════════════════════════ */}
         <div style={{
-          position:"absolute", inset:0, zIndex:20,
-          display:"flex", flexDirection:"column",
-          alignItems:"center", justifyContent:"center",
-          paddingTop:"clamp(0px,2vh,20px)",
-          paddingBottom:"clamp(40px,7vh,60px)", /* leave room for ticker */
-          gap:0,
-          pointerEvents:"none",
+          position: "absolute", inset: 0, zIndex: 20,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          paddingTop: "clamp(0px,2vh,20px)",
+          paddingBottom: "clamp(40px,7vh,60px)", /* leave room for ticker */
+          gap: 0,
+          pointerEvents: "none",
         }}>
 
           {/* ── CHARACTER ── */}
           <motion.div
             className="floatMe parallax-layer"
             style={{
-              x:d2x, y:d2y,
-              marginTop:0,
+              x: d2x, y: d2y,
+              marginTop: 0,
+              pointerEvents: "auto",
             }}
-            initial={{ opacity:0, scale:0.86, y:40 }}
-            animate={{ opacity:1, scale:1,    y:0  }}
-            transition={{ duration:0.9, ease:[0.23,1.2,0.5,1], delay:0.18 }}
+            initial={{ opacity: 0, scale: 0.86, y: 40 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: [0.23, 1.2, 0.5, 1], delay: 0.18 }}
           >
-            <div style={{ position:"relative" }}>
+            <div style={{ position: "relative" }}>
               {/* halo */}
               <div style={{
-                position:"absolute", inset:"-30% -30%",
-                borderRadius:"50%",
-                background:`radial-gradient(ellipse, ${C.magenta}25 0%, ${C.cyan}1A 40%, transparent 70%)`,
-                filter:"blur(20px)",
-                pointerEvents:"none",
-              }}/>
-              <div className="chroma" style={{
-                position:"relative",
-                width:"clamp(200px, 45vw, 500px)",
-                aspectRatio:"1/1",
-                marginBottom:0,
-                filter:`drop-shadow(0 0 20px ${C.magenta}66)`
+                position: "absolute", inset: "-30% -30%",
+                borderRadius: "50%",
+                background: `radial-gradient(ellipse, ${C.magenta}25 0%, ${C.cyan}1A 40%, transparent 70%)`,
+                filter: "blur(20px)",
+                pointerEvents: "none",
+              }} />
+
+              {/* Chat Bubble (Right Side) - Hidden on mobile, pops up on desktop */}
+              <div style={{
+                position: "absolute",
+                top: "60%",
+                right: "-200px",
+                zIndex: 5,
+                animation: "sFloat 3s ease-in-out infinite alternate",
               }}>
-                <Image
-                  src="/ak26.png"
-                  alt="AAKAR 2026 mascot"
-                  fill priority
-                  style={{ objectFit:"contain", objectPosition:"center bottom" }}
-                />
+                <div style={{
+                  position: "relative",
+                  background: C.white,
+                  border: `3px solid ${C.black}`,
+                  boxShadow: `4px 4px 0 ${C.magenta}, 8px 8px 0 ${C.cyan}`,
+                  padding: "16px",
+                  width: "160px",
+                  borderRadius: "16px",
+                  borderBottomLeftRadius: "0",
+                  fontFamily: "'Share Tech Mono', monospace",
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                  color: C.black,
+                  textAlign: "center",
+                  lineHeight: "1.2",
+                  cursor: "pointer",
+                }}
+                onClick={() => window.location.href = '/chat'}>
+                  Ask me anything about AAKAR 2026!
+                  {/* Speech bubble pointer */}
+                  <div style={{
+                    position: "absolute",
+                    bottom: "-3px",
+                    left: "-15px",
+                    width: "0",
+                    height: "0",
+                    borderTop: `15px solid ${C.black}`,
+                    borderLeft: `15px solid transparent`,
+                  }}/>
+                  <div style={{
+                    position: "absolute",
+                    bottom: "2px",
+                    left: "-9px",
+                    width: "0",
+                    height: "0",
+                    borderTop: `9px solid ${C.white}`,
+                    borderLeft: `9px solid transparent`,
+                    zIndex: 2,
+                  }}/>
+                </div>
               </div>
+
+              <Link href="/chat" style={{ display: "block" }}>
+                <div className="chroma" style={{
+                  position: "relative",
+                  width: "clamp(200px, 45vw, 500px)",
+                  aspectRatio: "1/1",
+                  marginBottom: 0,
+                  filter: `drop-shadow(0 0 20px ${C.magenta}66)`,
+                  cursor: "pointer",
+                  transition: "transform 0.2s cubic-bezier(0.25, 1.5, 0.5, 1)",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                >
+                  <Image
+                    src="/ak26.png"
+                    alt="AAKAR 2026 mascot"
+                    fill priority
+                    style={{ objectFit: "contain", objectPosition: "center bottom" }}
+                  />
+                </div>
+              </Link>
             </div>
           </motion.div>
 
           {/* ── CTA — TWO SEPARATE ELEMENTS ── */}
           <motion.div
             style={{
-              pointerEvents:"auto",
-              display:"flex", flexDirection:"column", alignItems:"center",
-              gap:10,
-              marginTop:"clamp(-45px, -5vh, -25px)",
-              position:"relative",
-              zIndex:30,
+              pointerEvents: "auto",
+              display: "flex", flexDirection: "column", alignItems: "center",
+              gap: 10,
+              marginTop: "clamp(-45px, -5vh, -25px)",
+              position: "relative",
+              zIndex: 30,
             }}
-            initial={{ opacity:0, y:22 }}
-            animate={{ opacity:1, y:0  }}
-            transition={{ delay:0.68, duration:0.6 }}
+            initial={{ opacity: 0, y: 22 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.68, duration: 0.6 }}
           >
             {/* date badge — standalone, no shared border with button */}
             <div style={{
-              display:"inline-flex",
-              alignItems:"center",
-              gap:10,
-              background:C.hot,
-              border:`3px solid ${C.black}`,
-              boxShadow:`5px 5px 0 ${C.black}`,
-              padding:"8px 28px",
-              fontFamily:"'Bebas Neue',sans-serif",
-              fontSize:"clamp(0.9rem,1.9vw,1.1rem)",
-              letterSpacing:"0.28em",
-              color:C.white,
-              animation:"sBadge 2.5s ease-in-out infinite",
-              whiteSpace:"nowrap",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: C.hot,
+              border: `3px solid ${C.black}`,
+              boxShadow: `5px 5px 0 ${C.black}`,
+              padding: "8px 28px",
+              fontFamily: "'Bebas Neue',sans-serif",
+              fontSize: "clamp(0.9rem,1.9vw,1.1rem)",
+              letterSpacing: "0.28em",
+              color: C.white,
+              animation: "sBadge 2.5s ease-in-out infinite",
+              whiteSpace: "nowrap",
             }}>
-              <span style={{fontSize:"0.7em",opacity:0.8}}>★</span>
+              <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
               FEB 2026 · MANGALURU
-              <span style={{fontSize:"0.7em",opacity:0.8}}>★</span>
+              <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
             </div>
 
             {/* CTA button — fully independent element */}
@@ -611,35 +677,35 @@ export default function LandingHero() {
               href="/events"
               whileHover={{
                 y: -6,
-                boxShadow:`10px 10px 0 ${C.black}, 18px 18px 0 ${C.magenta}`,
+                boxShadow: `10px 10px 0 ${C.black}, 18px 18px 0 ${C.magenta}`,
               }}
-              whileTap={{ scale:0.96 }}
+              whileTap={{ scale: 0.96 }}
               style={{
-                display:"inline-flex",
-                alignItems:"center",
-                justifyContent:"center",
-                gap:10,
-                background:C.yellow,
-                border:`3px solid ${C.black}`,
-                boxShadow:`8px 8px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
-                padding:"clamp(14px,2.5vh,20px) clamp(36px,6vw,64px)",
-                fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:"clamp(1.2rem,2.8vw,1.6rem)",
-                letterSpacing:"0.22em",
-                color:C.black,
-                textDecoration:"none",
-                cursor:"pointer",
-                transition:"all 0.14s ease",
-                whiteSpace:"nowrap",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                background: C.yellow,
+                border: `3px solid ${C.black}`,
+                boxShadow: `8px 8px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
+                padding: "clamp(14px,2.5vh,20px) clamp(36px,6vw,64px)",
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: "clamp(1.2rem,2.8vw,1.6rem)",
+                letterSpacing: "0.22em",
+                color: C.black,
+                textDecoration: "none",
+                cursor: "pointer",
+                transition: "all 0.14s ease",
+                whiteSpace: "nowrap",
               }}
             >
               EXPLORE EVENTS
               <span style={{
-                display:"inline-flex", alignItems:"center", justifyContent:"center",
-                background:C.black, color:C.yellow,
-                width:"1.8em", height:"1.8em",
-                fontSize:"0.9em",
-                marginLeft:6,
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                background: C.black, color: C.yellow,
+                width: "1.8em", height: "1.8em",
+                fontSize: "0.9em",
+                marginLeft: 6,
               }}>→</span>
             </motion.a>
           </motion.div>
@@ -648,59 +714,59 @@ export default function LandingHero() {
 
         {/* ═══════════ Z:19 BACKGROUND GLITCH TITLE ═══════════ */}
         <div style={{
-          position:"absolute",
-          top:"28%", left:0, right:0,
-          transform:"translateY(-50%)",
-          zIndex:19,
-          pointerEvents:"none",
+          position: "absolute",
+          top: "28%", left: 0, right: 0,
+          transform: "translateY(-50%)",
+          zIndex: 19,
+          pointerEvents: "none",
         }}>
           <motion.div
             className="parallax-layer"
-            style={{ x: dTitleX, y: dTitleY, display:"flex", justifyContent:"center" }}
-            initial={{ opacity:0, scale:0.85 }}
-            animate={{ opacity:1, scale:1   }}
-            transition={{ delay:0.1, duration:0.9, ease:[0.23,1.3,0.5,1] }}
+            style={{ x: dTitleX, y: dTitleY, display: "flex", justifyContent: "center" }}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1, duration: 0.9, ease: [0.23, 1.3, 0.5, 1] }}
           >
             {/* wrapper so clones sit on top */}
-            <div style={{ position:"relative", display:"inline-block", lineHeight:1 }}>
+            <div style={{ position: "relative", display: "inline-block", lineHeight: 1 }}>
 
               {/* clone TOP */}
               <div className="title-clone-top" style={{
-                position:"absolute", inset:0,
-                fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:"clamp(6rem, 20vw, 18rem)",
-                letterSpacing:"0.06em",
-                color:C.cyan,
-                WebkitTextStroke:`2px ${C.black}`,
-                whiteSpace:"nowrap",
-                opacity:0,
-                userSelect:"none",
+                position: "absolute", inset: 0,
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: "clamp(6rem, 20vw, 18rem)",
+                letterSpacing: "0.06em",
+                color: C.cyan,
+                WebkitTextStroke: `2px ${C.black}`,
+                whiteSpace: "nowrap",
+                opacity: 0,
+                userSelect: "none",
               }}>AAKAR</div>
 
               {/* clone BOT */}
               <div className="title-clone-bot" style={{
-                position:"absolute", inset:0,
-                fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:"clamp(6rem, 20vw, 18rem)",
-                letterSpacing:"0.06em",
-                color:C.magenta,
-                WebkitTextStroke:`2px ${C.black}`,
-                whiteSpace:"nowrap",
-                opacity:0,
-                userSelect:"none",
+                position: "absolute", inset: 0,
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: "clamp(6rem, 20vw, 18rem)",
+                letterSpacing: "0.06em",
+                color: C.magenta,
+                WebkitTextStroke: `2px ${C.black}`,
+                whiteSpace: "nowrap",
+                opacity: 0,
+                userSelect: "none",
               }}>AAKAR</div>
 
               {/* BASE title */}
               <h1 className="title-glitch" style={{
-                fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:"clamp(6rem, 20vw, 18rem)",
-                letterSpacing:"0.06em",
-                color:C.yellow,
-                WebkitTextStroke:`4px ${C.black}`,
-                textShadow:`8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot}`,
-                margin:0,
-                whiteSpace:"nowrap",
-                position:"relative", zIndex:2,
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: "clamp(6rem, 20vw, 18rem)",
+                letterSpacing: "0.06em",
+                color: C.yellow,
+                WebkitTextStroke: `4px ${C.black}`,
+                textShadow: `8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot}`,
+                margin: 0,
+                whiteSpace: "nowrap",
+                position: "relative", zIndex: 2,
               }}>AAKAR</h1>
 
             </div>
@@ -710,60 +776,60 @@ export default function LandingHero() {
         {/* ═══════════ Z:25 LEFT-SIDE LOGO ═══════════ */}
         <motion.div
           style={{
-            position:"absolute",
-            left:"clamp(40px, 7vw, 100px)",
-            top:"50%",
-            zIndex:25,
-            pointerEvents:"none",
+            position: "absolute",
+            left: "clamp(40px, 7vw, 100px)",
+            top: "50%",
+            zIndex: 25,
+            pointerEvents: "none",
           }}
-          initial={{ opacity:0, x:-40 }}
-          animate={{ opacity:1, x:0   }}
-          transition={{ delay:0.4, duration:0.7, ease:[0.23,1.3,0.5,1] }}
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4, duration: 0.7, ease: [0.23, 1.3, 0.5, 1] }}
         >
           {/* outer container — vertical orientation */}
           <div style={{
-            position:"relative",
-            width:"clamp(60px, 9vw, 110px)",
-            transform:"translateY(-50%)",
+            position: "relative",
+            width: "clamp(60px, 9vw, 110px)",
+            transform: "translateY(-50%)",
           }}>
 
             {/* subtle neon frame behind logo */}
             <div style={{
-              position:"absolute",
-              inset:"-6px",
-              border:`1.5px solid ${C.cyan}44`,
-              boxShadow:`0 0 12px ${C.cyan}33, inset 0 0 8px ${C.magenta}22`,
-            }}/>
+              position: "absolute",
+              inset: "-6px",
+              border: `1.5px solid ${C.cyan}44`,
+              boxShadow: `0 0 12px ${C.cyan}33, inset 0 0 8px ${C.magenta}22`,
+            }} />
 
             {/* scan-line sweep over the logo */}
             <div style={{
-              position:"absolute", inset:0,
-              overflow:"hidden",
-              pointerEvents:"none",
-              zIndex:3,
+              position: "absolute", inset: 0,
+              overflow: "hidden",
+              pointerEvents: "none",
+              zIndex: 3,
             }}>
               <div style={{
-                position:"absolute", left:0, right:0, height:"30%",
-                background:`linear-gradient(180deg, transparent, ${C.cyan}18, transparent)`,
-                animation:"sGlitchScan 4.5s ease-in-out infinite",
-              }}/>
+                position: "absolute", left: 0, right: 0, height: "30%",
+                background: `linear-gradient(180deg, transparent, ${C.cyan}18, transparent)`,
+                animation: "sGlitchScan 4.5s ease-in-out infinite",
+              }} />
             </div>
 
             {/* BASE logo */}
             <div
               className="logo-glitch"
               style={{
-                position:"relative",
-                width:"100%",
-                aspectRatio:"1/1",
-                zIndex:2,
+                position: "relative",
+                width: "100%",
+                aspectRatio: "1/1",
+                zIndex: 2,
               }}
             >
               <Image
                 src="/ak26-logo.png"
                 alt="Aakar 2026"
                 fill
-                style={{ objectFit:"contain" }}
+                style={{ objectFit: "contain" }}
               />
             </div>
 
@@ -771,17 +837,17 @@ export default function LandingHero() {
             <div
               className="logo-glitch-top"
               style={{
-                position:"absolute", inset:0,
-                width:"100%", aspectRatio:"1/1",
-                zIndex:4, pointerEvents:"none",
-                opacity:0,
+                position: "absolute", inset: 0,
+                width: "100%", aspectRatio: "1/1",
+                zIndex: 4, pointerEvents: "none",
+                opacity: 0,
               }}
             >
               <Image
                 src="/ak26-logo.png"
                 alt=""
                 fill
-                style={{ objectFit:"contain" }}
+                style={{ objectFit: "contain" }}
               />
             </div>
 
@@ -789,30 +855,30 @@ export default function LandingHero() {
             <div
               className="logo-glitch-bot"
               style={{
-                position:"absolute", inset:0,
-                width:"100%", aspectRatio:"1/1",
-                zIndex:4, pointerEvents:"none",
-                opacity:0,
+                position: "absolute", inset: 0,
+                width: "100%", aspectRatio: "1/1",
+                zIndex: 4, pointerEvents: "none",
+                opacity: 0,
               }}
             >
               <Image
                 src="/ak26-logo.png"
                 alt=""
                 fill
-                style={{ objectFit:"contain" }}
+                style={{ objectFit: "contain" }}
               />
             </div>
 
             {/* label below */}
             <div style={{
-              marginTop:6,
-              fontFamily:"'Share Tech Mono',monospace",
-              fontSize:"clamp(0.38rem, 0.7vw, 0.52rem)",
-              letterSpacing:"0.22em",
-              color:C.cyan,
-              textAlign:"center",
-              opacity:0.7,
-              textTransform:"uppercase",
+              marginTop: 6,
+              fontFamily: "'Share Tech Mono',monospace",
+              fontSize: "clamp(0.38rem, 0.7vw, 0.52rem)",
+              letterSpacing: "0.22em",
+              color: C.cyan,
+              textAlign: "center",
+              opacity: 0.7,
+              textTransform: "uppercase",
             }}>AAKAR&nbsp;'26</div>
 
           </div>
@@ -820,21 +886,21 @@ export default function LandingHero() {
 
         {/* ═══════════ Z:40 TICKER ═══════════ */}
         <div style={{
-          position:"absolute", bottom:0, left:0, right:0,
-          zIndex:40, height:48,
-          background:C.magenta,
-          borderTop:`4px solid ${C.black}`,
-          overflow:"hidden",
-          display:"flex", alignItems:"center",
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          zIndex: 40, height: 48,
+          background: C.magenta,
+          borderTop: `4px solid ${C.black}`,
+          overflow: "hidden",
+          display: "flex", alignItems: "center",
         }}>
           <div style={{
-            display:"flex", whiteSpace:"nowrap",
-            animation:"sTick 16s linear infinite",
-            fontFamily:"'Bebas Neue',sans-serif",
-            fontSize:"1.25rem", letterSpacing:"0.28em", color:C.black,
+            display: "flex", whiteSpace: "nowrap",
+            animation: "sTick 16s linear infinite",
+            fontFamily: "'Bebas Neue',sans-serif",
+            fontSize: "1.25rem", letterSpacing: "0.28em", color: C.black,
           }}>
-            {[0,1].map(i => (
-              <span key={i} style={{ paddingRight:"2rem", paddingTop: "4px" }}>
+            {[0, 1].map(i => (
+              <span key={i} style={{ paddingRight: "2rem", paddingTop: "4px" }}>
                 {"★ AAKAR 2026  ·  BRAINS  ·  GUTS  ·  GLORY  ·  MGIT MANGALURU  ·  AURORAS OF ADVENTURE  ·  ".repeat(6)}
               </span>
             ))}
@@ -843,9 +909,9 @@ export default function LandingHero() {
 
         {/* ═══════════ Z:90 VIGNETTE ═══════════ */}
         <div aria-hidden style={{
-          position:"absolute", inset:0, zIndex:90, pointerEvents:"none",
-          background:`radial-gradient(ellipse 88% 88% at 50% 50%, transparent 36%, ${C.black}C4 100%)`,
-        }}/>
+          position: "absolute", inset: 0, zIndex: 90, pointerEvents: "none",
+          background: `radial-gradient(ellipse 88% 88% at 50% 50%, transparent 36%, ${C.black}C4 100%)`,
+        }} />
 
       </section>
     </>
