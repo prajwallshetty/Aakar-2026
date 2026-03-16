@@ -287,6 +287,17 @@ export default function LandingHero() {
         @media (max-width:480px) {
           .stamps-hide { display:none; }
         }
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .mobile-only { display: block !important; }
+          .char-responsive { width: clamp(300px, 85vw, 500px) !important; }
+          .cta-responsive { margin-top: clamp(-60px, -8vh, -40px) !important; transform: scale(0.85); }
+        }
+        @media (min-width: 769px) {
+          .mobile-only { display: none !important; }
+          .char-responsive { width: clamp(200px, 45vw, 500px); }
+          .cta-responsive { margin-top: clamp(-45px, -5vh, -25px); }
+        }
       `}</style>
 
       <section
@@ -562,13 +573,34 @@ export default function LandingHero() {
                 pointerEvents: "none",
               }} />
 
-              <div className="chroma" style={{
+              <div className="chroma char-responsive" style={{
                 position: "relative",
-                width: "clamp(200px, 45vw, 500px)",
                 aspectRatio: "1/1",
                 marginBottom: 0,
                 filter: `drop-shadow(0 0 20px ${C.magenta}66)`
               }}>
+                {/* Mobile-only background logo */}
+                <div className="mobile-only" style={{
+                  position: "absolute",
+                  top: "40%", left: "50%",
+                  width: "140%",
+                  aspectRatio: "1/1",
+                  zIndex: -1,
+                  opacity: 0.6,
+                  pointerEvents: "none"
+                }}>
+                  <div style={{ width: "100%", height: "100%", transform: "translate(-50%, -50%)" }}>
+                    <div className="logo-glitch" style={{ width: "100%", height: "100%", position: "relative" }}>
+                      <Image
+                        src="/ak26-logo.png"
+                        alt=""
+                        fill
+                        style={{ objectFit: "contain" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <Image
                   src="/ak26.png"
                   alt="AAKAR 2026 mascot"
@@ -581,11 +613,11 @@ export default function LandingHero() {
 
           {/* ── CTA — TWO SEPARATE ELEMENTS ── */}
           <motion.div
+            className="cta-responsive"
             style={{
               pointerEvents: "auto",
               display: "flex", flexDirection: "column", alignItems: "center",
               gap: 10,
-              marginTop: "clamp(-45px, -5vh, -25px)",
               position: "relative",
               zIndex: 30,
             }}
@@ -655,7 +687,7 @@ export default function LandingHero() {
         </div>
 
         {/* ═══════════ Z:19 BACKGROUND GLITCH TITLE ═══════════ */}
-        <div style={{
+        <div className="desktop-only" style={{
           position: "absolute",
           top: "28%", left: 0, right: 0,
           transform: "translateY(-50%)",
@@ -717,6 +749,7 @@ export default function LandingHero() {
 
         {/* ═══════════ Z:25 LEFT-SIDE LOGO ═══════════ */}
         <motion.div
+          className="desktop-only"
           style={{
             position: "absolute",
             left: "clamp(100px, 16vw, 200px)",
