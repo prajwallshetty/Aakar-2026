@@ -157,7 +157,7 @@ export default function PopArtBackground() {
             fontSize: "clamp(1.6rem,4vw,2.8rem)",
             letterSpacing: "0.06em",
             color: s.color,
-            WebkitTextStroke: `2px ${P.black}`,
+            WebkitTextStroke: `0.02em ${P.black}`,
             transform: `rotate(${s.rot}deg)`,
             animation: `stampWiggle 3s ease-in-out infinite`,
             "--r": `${s.rot}deg`,

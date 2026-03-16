@@ -116,8 +116,8 @@ function MemberCard({ member, index }: { member: TeamMember; index: number }) {
           fontSize:"clamp(1rem,2.2vw,1.2rem)",
           letterSpacing:"0.06em",
           color:P.black,
-          margin:"0 0 4px",
-          lineHeight:1,
+          margin:"0 0 6px",
+          lineHeight:1.1,
         }}>{member.name}</p>
         <div style={{
           display:"inline-block",
@@ -131,6 +131,8 @@ function MemberCard({ member, index }: { member: TeamMember; index: number }) {
           letterSpacing:"0.12em",
           color:P.black,
           textTransform:"uppercase",
+          lineHeight:1.2,
+          wordBreak:"break-word",
         }}>{member.role}</div>
       </div>
 
@@ -155,8 +157,8 @@ function SectionHeading({ children, color }: { children: React.ReactNode; color:
         fontSize:"clamp(1.6rem,4vw,2.6rem)",
         letterSpacing:"0.08em",
         color:P.black,
-        textShadow:`3px 3px 0 ${color}`,
-        WebkitTextStroke:`1px ${P.black}`,
+        textShadow:`0.07em 0.07em 0 ${color}`,
+        WebkitTextStroke:`0.02em ${P.black}`,
         margin:0,
       }}>{children}</h2>
       <div style={{height:3,width:40,background:color,border:`1px solid ${P.black}`}}/>
@@ -208,8 +210,8 @@ const Team = () => (
             lineHeight:0.88,
             letterSpacing:"0.04em",
             color:P.black,
-            textShadow:`5px 5px 0 ${P.magenta}, 10px 10px 0 ${P.cyan}`,
-            WebkitTextStroke:`2px ${P.black}`,
+            textShadow:`0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
+            WebkitTextStroke:`0.02em ${P.black}`,
             animation:"titleIn 0.5s ease both",
             transform:"skewX(-6deg)",
           }}>OUR TEAM</div>

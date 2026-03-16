@@ -221,7 +221,7 @@ export default function RegistrationSuccess() {
                             fontSize: "clamp(42px, 8vw, 80px)",
                             letterSpacing: 6, lineHeight: 0.9,
                             color: C.magenta,
-                            WebkitTextStroke: `3px ${C.black}`,
+                            WebkitTextStroke: `0.05em ${C.black}`,
                         }}>
                             CONFIRMED!
                         </div>

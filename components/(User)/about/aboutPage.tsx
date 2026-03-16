@@ -38,8 +38,8 @@ function SectionHeading({ children, color = P.magenta, center = false }: {
       letterSpacing:"0.05em",
       lineHeight:0.95,
       color:P.black,
-      textShadow:`4px 4px 0 ${color}`,
-      WebkitTextStroke:`1px ${P.black}`,
+      textShadow:`0.08em 0.08em 0 ${color}`,
+      WebkitTextStroke:`0.02em ${P.black}`,
       margin:"0 0 1.2rem",
       textAlign:center?"center":"left",
     }}>{children}</h2>
@@ -115,8 +115,8 @@ export default function AboutPage() {
               lineHeight:0.88,
               letterSpacing:"0.04em",
               color:P.black,
-              textShadow:`5px 5px 0 ${P.magenta}, 10px 10px 0 ${P.cyan}`,
-              WebkitTextStroke:`2px ${P.black}`,
+              textShadow:`0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
+              WebkitTextStroke:`0.02em ${P.black}`,
             }}>ABOUT</div>
           </div>
 

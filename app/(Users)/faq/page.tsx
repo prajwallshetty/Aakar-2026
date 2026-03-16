@@ -85,7 +85,7 @@ export default function FAQPage() {
               lineHeight: 0.9,
               letterSpacing: "0.06em",
               color: P.black,
-              textShadow: `4px 4px 0 ${P.magenta}, 8px 8px 0 ${P.cyan}`,
+              textShadow: `0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
               margin: 0,
             }}>
               FREQUENTLY ASKED QUESTIONS
