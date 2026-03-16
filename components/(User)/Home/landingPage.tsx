@@ -582,7 +582,7 @@ export default function LandingHero() {
                 {/* Mobile-only background logo */}
                 <div className="mobile-only" style={{
                   position: "absolute",
-                  top: "40%", left: "50%",
+                  top: "3%", left: "50%",
                   width: "140%",
                   aspectRatio: "1/1",
                   zIndex: -1,
