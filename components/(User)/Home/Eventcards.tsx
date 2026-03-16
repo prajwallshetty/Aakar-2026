@@ -14,7 +14,7 @@ const CARDS = [
     href: "/events/cultural",
     accent: P.magenta,
     shadow: P.cyan,
-    image: "/eventcard.png",
+    image: "/events/9.png",
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const CARDS = [
     href: "/events/technical",
     accent: P.cyan,
     shadow: P.hot,
-    image: "/eventcard.png",
+    image: "/events/12.png",
   },
   {
     id: 3,
@@ -32,7 +32,7 @@ const CARDS = [
     href: "/events/gaming",
     accent: P.hot,
     shadow: P.magenta,
-    image: "/eventcard.png",
+    image: "/events/13.png",
   },
   {
     id: 4,
@@ -41,7 +41,7 @@ const CARDS = [
     href: "/events/special",
     accent: P.magenta,
     shadow: P.cyan,
-    image: "/eventcard.png",
+    image: "/events/11.png",
   },
 ];
 

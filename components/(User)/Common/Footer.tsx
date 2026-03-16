@@ -26,20 +26,20 @@ const Footer = () => {
           <ul className="space-y-2">
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
               <FaInstagram />
-              <Link href="https://www.instagram.com/aakar__2025/" target="_blank" rel="noopener noreferrer">
-                @aakar__25
+              <Link href="https://www.instagram.com/aakar_2026/" target="_blank" rel="noopener noreferrer">
+                @aakar_2026
               </Link>
             </li>
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
               <FaPhone />
-              <Link href="tel:+919611829800" target="_blank" rel="noopener noreferrer">
-                +91 96118 29800
+              <Link href="tel:+916282759863" target="_blank" rel="noopener noreferrer">
+                +91 62827 59863
               </Link>
             </li>
             <li className="flex items-center gap-2 text-gray-400 hover:text-white">
               <FaEnvelope />
-              <Link href="mailto:aakaar2025@ajiet.edu.in" target="_blank" rel="noopener noreferrer">
-                aakar2025@ajiet.edu.in
+              <Link href="mailto:aakaar2026@ajiet.edu.in" target="_blank" rel="noopener noreferrer">
+                aakar2026@ajiet.edu.in
               </Link>
             </li>
           </ul>

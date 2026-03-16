@@ -610,7 +610,7 @@ export default function LandingHero() {
               whiteSpace: "nowrap",
             }}>
               <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
-              FEB 2026 · MANGALURU
+              APR 24,25,26, 2026
               <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
             </div>
 
