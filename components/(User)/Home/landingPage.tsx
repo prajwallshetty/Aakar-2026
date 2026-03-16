@@ -287,6 +287,17 @@ export default function LandingHero() {
         @media (max-width:480px) {
           .stamps-hide { display:none; }
         }
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .mobile-only { display: block !important; }
+          .char-responsive { width: clamp(300px, 85vw, 500px) !important; }
+          .cta-responsive { margin-top: clamp(-60px, -8vh, -40px) !important; transform: scale(0.85); }
+        }
+        @media (min-width: 769px) {
+          .mobile-only { display: none !important; }
+          .char-responsive { width: clamp(200px, 45vw, 500px); }
+          .cta-responsive { margin-top: clamp(-45px, -5vh, -25px); }
+        }
       `}</style>
 
       <section
@@ -562,13 +573,34 @@ export default function LandingHero() {
                 pointerEvents: "none",
               }} />
 
-              <div className="chroma" style={{
+              <div className="chroma char-responsive" style={{
                 position: "relative",
-                width: "clamp(200px, 45vw, 500px)",
                 aspectRatio: "1/1",
                 marginBottom: 0,
                 filter: `drop-shadow(0 0 20px ${C.magenta}66)`
               }}>
+                {/* Mobile-only background logo */}
+                <div className="mobile-only" style={{
+                  position: "absolute",
+                  top: "3%", left: "50%",
+                  width: "140%",
+                  aspectRatio: "1/1",
+                  zIndex: -1,
+                  opacity: 0.6,
+                  pointerEvents: "none"
+                }}>
+                  <div style={{ width: "100%", height: "100%", transform: "translate(-50%, -50%)" }}>
+                    <div className="logo-glitch" style={{ width: "100%", height: "100%", position: "relative" }}>
+                      <Image
+                        src="/ak26-logo.png"
+                        alt=""
+                        fill
+                        style={{ objectFit: "contain" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <Image
                   src="/ak26.png"
                   alt="AAKAR 2026 mascot"
@@ -581,11 +613,11 @@ export default function LandingHero() {
 
           {/* ── CTA — TWO SEPARATE ELEMENTS ── */}
           <motion.div
+            className="cta-responsive"
             style={{
               pointerEvents: "auto",
               display: "flex", flexDirection: "column", alignItems: "center",
               gap: 10,
-              marginTop: "clamp(-45px, -5vh, -25px)",
               position: "relative",
               zIndex: 30,
             }}
@@ -610,7 +642,7 @@ export default function LandingHero() {
               whiteSpace: "nowrap",
             }}>
               <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
-              FEB 2026 · MANGALURU
+              APR 24,25,26, 2026
               <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
             </div>
 
@@ -655,7 +687,7 @@ export default function LandingHero() {
         </div>
 
         {/* ═══════════ Z:19 BACKGROUND GLITCH TITLE ═══════════ */}
-        <div style={{
+        <div className="desktop-only" style={{
           position: "absolute",
           top: "28%", left: 0, right: 0,
           transform: "translateY(-50%)",
@@ -717,6 +749,7 @@ export default function LandingHero() {
 
         {/* ═══════════ Z:25 LEFT-SIDE LOGO ═══════════ */}
         <motion.div
+          className="desktop-only"
           style={{
             position: "absolute",
             left: "clamp(100px, 16vw, 200px)",
@@ -825,6 +858,43 @@ export default function LandingHero() {
 
           </div>
         </motion.div>
+
+        {/* ═══════════ Z:35 SCROLL DOWN INDICATOR ═══════════ */}
+        <div style={{
+          position: "absolute",
+          bottom: "100px",
+          left: 0,
+          right: 0,
+          zIndex: 35,
+          display: "flex",
+          justifyContent: "center",
+          pointerEvents: "none",
+        }}>
+          <motion.div
+            onClick={() => window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" })}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "2px",
+              color: C.cyan,
+              fontFamily: "'Share Tech Mono',monospace",
+              fontSize: "0.8rem",
+              letterSpacing: "0.1em",
+              cursor: "pointer",
+              pointerEvents: "auto",
+              opacity: 0.8,
+              textShadow: `0 0 10px ${C.cyan}88`,
+            }}
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          >
+            <span>SCROLL</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </motion.div>
+        </div>
 
         {/* ═══════════ Z:40 TICKER ═══════════ */}
         <div style={{
