@@ -152,11 +152,14 @@ export default function EventCards() {
           background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
           transform:translateX(-130%);
         }
-        .ec-card:hover .ec-shimmer::after {
-          animation: ecShimmer 0.6s cubic-bezier(.4,0,.2,1) forwards;
+        @media (max-width: 768px) {
+          .mobile-text-spacing {
+            padding: 18px 14px 14px !important;
+            margin-bottom: 2px !important;
+          }
         }
       `}</style>
-
+        
       <section
         style={{
           position: "relative",
@@ -192,9 +195,9 @@ export default function EventCards() {
             lineHeight:0.9,
             letterSpacing:"0.06em",
             color:P.black,
-            WebkitTextStroke:`1px ${P.black}`,
+            WebkitTextStroke:`0.015em ${P.black}`,
             /* hard offset shadow — pop-art signature */
-            textShadow:`4px 4px 0 ${P.magenta}, 8px 8px 0 ${P.cyan}`,
+            textShadow:`0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
             margin:0,
           }}>
             PICK YOUR<br/>BATTLEGROUND
@@ -304,7 +307,7 @@ export default function EventCards() {
                     }}/>
 
                     {/* label area - background matches accent now */}
-                    <div style={{
+                    <div className="mobile-text-spacing" style={{
                       position: "absolute", bottom: 0, left: 0, right: 0,
                       padding: "16px 14px 14px",
                       background: isActive ? card.accent : "rgba(0,0,0,0.85)",
@@ -315,10 +318,10 @@ export default function EventCards() {
                         fontFamily: "'Bebas Neue',sans-serif",
                         fontSize: "clamp(1.2rem,2.5vw,1.6rem)",
                         letterSpacing: "0.1em",
-                        color: isActive ? P.black : "rgba(255,255,255,0.7)",
+                        color: isActive ? P.black : "rgba(255,255,255,0.9)",
                         textShadow: isActive ? `0 0 0 transparent` : "none",
                         transition: "color 0.3s ease",
-                        lineHeight: 1,
+                        lineHeight: 1.1,
                         display: "block",
                       }}>{card.label}</div>
                       <div style={{
@@ -377,7 +380,7 @@ export default function EventCards() {
               fontSize: "clamp(2rem,6vw,4.5rem)",
               letterSpacing: "0.12em",
               color: P.black,
-              textShadow: `3px 3px 0 ${activeCard.accent}, 6px 6px 0 ${activeCard.shadow}`,
+              textShadow: `0.06em 0.06em 0 ${activeCard.accent}, 0.12em 0.12em 0 ${activeCard.shadow}`,
               transform: "skewX(-6deg)",
               display: "inline-block",
               lineHeight: 1,

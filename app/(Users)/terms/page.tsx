@@ -65,7 +65,7 @@ export default function TermsPage() {
               lineHeight:0.9,
               letterSpacing:"0.06em",
               color:P.black,
-              textShadow:`4px 4px 0 ${P.hot}, 8px 8px 0 ${P.magenta}`,
+              textShadow:`0.05em 0.05em 0 ${P.hot}, 0.1em 0.1em 0 ${P.magenta}`,
               margin:0,
             }}>TERMS &<br/>CONDITIONS</h1>
 
@@ -147,7 +147,7 @@ export default function TermsPage() {
                     fontSize:"clamp(1.1rem,2.5vw,1.5rem)",
                     letterSpacing:"0.08em",
                     color:P.black,
-                    textShadow:`2px 2px 0 ${accent}`,
+                    textShadow:`0.08em 0.08em 0 ${accent}`,
                     margin:"0 0 10px",
                     lineHeight:1.1,
                   }}>{item.title}</h2>

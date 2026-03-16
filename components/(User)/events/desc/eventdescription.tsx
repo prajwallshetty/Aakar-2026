@@ -38,8 +38,8 @@ function SectionHeading({ children, color = P.magenta }: { children: React.React
       fontSize:"clamp(1.4rem,3.5vw,2.2rem)",
       letterSpacing:"0.08em",
       color:P.black,
-      textShadow:`3px 3px 0 ${color}`,
-      WebkitTextStroke:`1px ${P.black}`,
+      textShadow:`0.08em 0.08em 0 ${color}`,
+      WebkitTextStroke:`0.02em ${P.black}`,
       marginBottom:"1rem",
     }}>{children}</div>
   );
@@ -235,8 +235,8 @@ const EventDescription = ({
                     lineHeight:0.92,
                     letterSpacing:"0.04em",
                     color:P.black,
-                    textShadow:`4px 4px 0 ${P.magenta}, 8px 8px 0 ${P.cyan}`,
-                    WebkitTextStroke:`1.5px ${P.black}`,
+                    textShadow:`0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
+                    WebkitTextStroke:`0.02em ${P.black}`,
                     marginBottom:"0.3rem",
                   }}>
                     {eventData.eventName}

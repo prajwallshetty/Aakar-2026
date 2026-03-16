@@ -57,7 +57,7 @@ export default function ContactPage() {
               fontSize: "clamp(3rem,9vw,6.5rem)",
               lineHeight: 0.9, letterSpacing: "0.06em",
               color: P.black,
-              textShadow: `4px 4px 0 ${P.cyan}, 8px 8px 0 ${P.hot}`,
+              textShadow: `0.05em 0.05em 0 ${P.cyan}, 0.1em 0.1em 0 ${P.hot}`,
               margin: 0,
             }}>CONTACT<br/>US</h1>
 
@@ -98,7 +98,7 @@ export default function ContactPage() {
                 fontSize: "clamp(1.3rem,2.8vw,1.8rem)",
                 letterSpacing: "0.1em",
                 color: P.black,
-                textShadow: `2px 2px 0 ${P.magenta}`,
+                textShadow: `0.08em 0.08em 0 ${P.magenta}`,
                 margin: "0 0 18px",
               }}>GENERAL INFO</h2>
 
@@ -146,7 +146,7 @@ export default function ContactPage() {
                 fontSize: "clamp(1.3rem,2.8vw,1.8rem)",
                 letterSpacing: "0.1em",
                 color: P.black,
-                textShadow: `2px 2px 0 ${P.cyan}`,
+                textShadow: `0.08em 0.08em 0 ${P.cyan}`,
                 margin: "0 0 18px",
               }}>COLLEGE ADDRESS</h2>
 
@@ -195,7 +195,7 @@ export default function ContactPage() {
                 fontSize: "clamp(1.3rem,2.8vw,1.8rem)",
                 letterSpacing: "0.1em",
                 color: P.black,
-                textShadow: `2px 2px 0 ${P.hot}`,
+                textShadow: `0.08em 0.08em 0 ${P.hot}`,
                 margin: "0 0 14px",
               }}>FIND US ON MAP</h2>
             </div>

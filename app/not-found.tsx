@@ -104,7 +104,7 @@ function PopArtBackground() {
           fontSize:"clamp(1.6rem,4vw,2.8rem)",
           letterSpacing:"0.06em",
           color:s.color,
-          WebkitTextStroke:`2px ${P.black}`,
+          WebkitTextStroke:`0.02em ${P.black}`,
           transform:`rotate(${s.rot}deg)`,
           animation:`stampWiggle 3s ease-in-out infinite`,
           "--r":`${s.rot}deg`,
@@ -201,7 +201,7 @@ export default function NotFound() {
             fontSize:"clamp(8rem,28vw,18rem)",
             lineHeight:0.85, letterSpacing:"0.02em",
             color:"transparent",
-            WebkitTextStroke:`4px ${P.cyan}`,
+            WebkitTextStroke:`0.04em ${P.cyan}`,
             top:"6px", left:"-8px",
             opacity:0.5, pointerEvents:"none",
           }}>404</div>
@@ -212,7 +212,7 @@ export default function NotFound() {
             fontSize:"clamp(8rem,28vw,18rem)",
             lineHeight:0.85, letterSpacing:"0.02em",
             color:"transparent",
-            WebkitTextStroke:`4px ${P.magenta}`,
+            WebkitTextStroke:`0.04em ${P.magenta}`,
             top:"-5px", left:"8px",
             opacity:0.4, pointerEvents:"none",
           }}>404</div>
@@ -222,8 +222,8 @@ export default function NotFound() {
             fontSize:"clamp(8rem,28vw,18rem)",
             lineHeight:0.85, letterSpacing:"0.02em",
             color:P.black,
-            WebkitTextStroke:`3px ${P.black}`,
-            textShadow:`6px 6px 0 ${P.black}`,
+            WebkitTextStroke:`0.03em ${P.black}`,
+            textShadow:`0.06em 0.06em 0 ${P.black}`,
             margin:0, position:"relative", zIndex:2,
           }}>404</h1>
         </div>
@@ -251,7 +251,7 @@ export default function NotFound() {
             fontSize:"clamp(1.4rem,4vw,2.2rem)",
             letterSpacing:"0.06em",
             color:P.black,
-            textShadow:`3px 3px 0 ${P.magenta}`,
+            textShadow:`0.05em 0.05em 0 ${P.magenta}`,
             margin:"0 0 0.5rem",
           }}>PAGE NOT FOUND</p>
 
