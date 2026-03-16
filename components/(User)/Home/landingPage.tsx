@@ -859,6 +859,43 @@ export default function LandingHero() {
           </div>
         </motion.div>
 
+        {/* ═══════════ Z:35 SCROLL DOWN INDICATOR ═══════════ */}
+        <div style={{
+          position: "absolute",
+          bottom: "100px",
+          left: 0,
+          right: 0,
+          zIndex: 35,
+          display: "flex",
+          justifyContent: "center",
+          pointerEvents: "none",
+        }}>
+          <motion.div
+            onClick={() => window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" })}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "2px",
+              color: C.cyan,
+              fontFamily: "'Share Tech Mono',monospace",
+              fontSize: "0.8rem",
+              letterSpacing: "0.1em",
+              cursor: "pointer",
+              pointerEvents: "auto",
+              opacity: 0.8,
+              textShadow: `0 0 10px ${C.cyan}88`,
+            }}
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          >
+            <span>SCROLL</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </motion.div>
+        </div>
+
         {/* ═══════════ Z:40 TICKER ═══════════ */}
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0,
