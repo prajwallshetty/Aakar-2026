@@ -6,6 +6,7 @@ import { eventCategory } from "@prisma/client";
 import { getEventsByCategory } from "@/backend/events";
 import { ExtendedEvent } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { generateEventSlug } from "@/lib/utils";
 
 /* ─── palette ────────────────────────────────────────────────────────── */
 const P = {
@@ -85,7 +86,7 @@ function EventCard({ event, index }: { event: ExtendedEvent; index: number }) {
   const shadow = [P.cyan, P.hot, P.magenta, P.magenta][index % 4];
 
   return (
-    <Link href={`/events/${event.id}`} className="block w-full" style={{ perspective: "700px" }}>
+    <Link href={`/events/${generateEventSlug(event)}`} className="block w-full" style={{ perspective: "700px" }}>
       <div
         ref={ref}
         onMouseMove={onMove}
