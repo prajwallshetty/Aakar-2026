@@ -63,7 +63,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className={`fixed top-0 left-0 w-full bg-transparent backdrop-blur-sm z-40 ${montserrat.className}`}>
+            <nav className={`fixed top-0 left-0 w-full bg-black z-40 ${montserrat.className}`}>
                 <div className="container mx-auto flex items-center justify-between max-w-7xl px-6 py-8">
                     <Link href="/" className="flex items-center max-h-[20px]">
                         <Image src="/aj.png" alt="Logo" width={480} height={120} className="max-w-[80%]" />
@@ -119,9 +119,9 @@ export default function Navbar() {
                     <div className="hidden md:block">
                         <Link
                             href="/register"
-                            className="relative inline-flex items-center justify-center w-full py-2 px-8 overflow-hidden font-semibold text-white transition-all duration-300 bg-[#9d0208] rounded-lg group hover:bg-black hover:text-[#ff006e] shadow-md shadow-[#ff006e]/30"
+                            className="relative inline-flex items-center justify-center w-full py-2 px-8 overflow-hidden font-semibold text-white transition-all duration-300 bg-[#ff00ff] rounded-lg group hover:bg-black hover:text-[#ff006e] shadow-md shadow-[#ff006e]/30"
                         >
-                            <span className="absolute inset-0 w-full h-full transition-all duration-500 bg-[#ff006e] opacity-10 group-hover:scale-100 rounded-lg blur-sm"></span>
+                            <span className="absolute inset-0 w-full h-full transition-all duration-500 bg-[#ff00ff] opacity-10 group-hover:scale-100 rounded-lg blur-sm"></span>
                             <span className="relative z-10 group-hover:tracking-wider transition-all duration-300">Register</span>
                         </Link>
                     </div>
