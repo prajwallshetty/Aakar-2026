@@ -287,7 +287,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               }}>LOGO</div>
             )}
             <Image
-              src="/new_logo.png"
+              src="/ak26-logo.png"
               alt="AAKAR logo"
               fill
               style={{ objectFit:"contain" }}
@@ -304,7 +304,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               fontSize:"clamp(4.5rem,16vw,11rem)",
               lineHeight:1, letterSpacing:"0.04em",
               color:"transparent",
-              WebkitTextStroke:`2px ${C.cyan}`,
+              WebkitTextStroke:`0.02em ${C.cyan}`,
               top:"4px", left:"-5px",
               opacity:0.7,
               mixBlendMode:"screen",
@@ -317,7 +317,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               fontSize:"clamp(4.5rem,16vw,11rem)",
               lineHeight:1, letterSpacing:"0.04em",
               color:"transparent",
-              WebkitTextStroke:`2px ${C.magenta}`,
+              WebkitTextStroke:`0.02em ${C.magenta}`,
               top:"-3px", left:"5px",
               opacity:0.7,
               mixBlendMode:"screen",
@@ -355,7 +355,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             letterSpacing:"0.18em",
             lineHeight:1,
             marginTop:"-0.4em",
-            textShadow:`0 0 20px ${C.hot}, 4px 0 0 ${C.yellow}`,
+            textShadow:`0 0 0.5em ${C.hot}, 0.08em 0 0 ${C.yellow}`,
             animation:"subIn 0.6s 0.2s ease both",
             opacity:0,
             animationFillMode:"forwards",
@@ -451,7 +451,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             {Array(6).fill(null).map((_,i) => (
               <span key={i} style={{paddingRight:"4rem"}}>
                 AAKAR 2026 &nbsp;★&nbsp; BRAINS · GUTS · GLORY &nbsp;★&nbsp;
-                FEB 2026 &nbsp;★&nbsp; REGISTER NOW &nbsp;★&nbsp;
+                APRIL 2026 &nbsp;★&nbsp; REGISTER NOW &nbsp;★&nbsp;
               </span>
             ))}
           </div>

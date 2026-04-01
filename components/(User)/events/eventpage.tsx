@@ -6,6 +6,7 @@ import { eventCategory } from "@prisma/client";
 import { getEventsByCategory } from "@/backend/events";
 import { ExtendedEvent } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { generateEventSlug } from "@/lib/utils";
 
 /* ─── palette ────────────────────────────────────────────────────────── */
 const P = {
@@ -85,7 +86,7 @@ function EventCard({ event, index }: { event: ExtendedEvent; index: number }) {
   const shadow = [P.cyan, P.hot, P.magenta, P.magenta][index % 4];
 
   return (
-    <Link href={`/events/${event.id}`} className="block w-full" style={{ perspective: "700px" }}>
+    <Link href={`/events/${generateEventSlug(event)}`} className="block w-full" style={{ perspective: "700px" }}>
       <div
         ref={ref}
         onMouseMove={onMove}
@@ -460,8 +461,8 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
               margin: 0,
               transform: "skewX(-6deg)",
               animation: "titleIn 0.5s ease both",
-              textShadow: `4px 4px 0 ${P.magenta}, 8px 8px 0 ${P.cyan}`,
-              WebkitTextStroke: `2px ${P.black}`,
+              textShadow: `0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
+              WebkitTextStroke: `0.02em ${P.black}`,
             }}>
               {eventCategory}
             </h1>
