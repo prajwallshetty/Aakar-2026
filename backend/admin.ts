@@ -6,23 +6,13 @@ import { auth } from "../auth";
 
 export async function isAdmin(email?: string) {
     try {
-        // if (email) {
-        //     return !!(await db.admin.findUnique({
-        //         where: {
-        //             email: email.toLowerCase()
-        //         }
-        //     }))
-        // }
-        // let session = await auth();
-        // if (!session || !session.user || !session.user.email) return false;
-        // let user = await db.admin.findUnique({
-        //     where: {
-        //         email: session.user.email
-        //     }
-        // });
-        // return !!user;
-        let session = await auth();
-        return !!session?.user?.email;
+        const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+        if (!configuredEmail) return false;
+
+        const resolvedEmail = email?.toLowerCase() || (await auth())?.user?.email?.toLowerCase();
+        if (!resolvedEmail) return false;
+
+        return resolvedEmail === configuredEmail;
     } catch (e) {
         console.error(e);
         return false;
@@ -74,17 +64,19 @@ export async function updateAdmin(id: number, admin: Prisma.AdminUpdateInput) {
 
 export async function verifyAdmin(email: string, password: string) {
     try {
+        const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+        const configuredPassword = process.env.ADMIN_PASSWORD;
 
-        const ad = await db.admin.findUnique({
-            where: {
-                email: email.toLowerCase(),
-                password: password
-            },
-        })
-        if (!ad) return null;
-        let { password: pass, ...rest } = ad;
-        if (password === pass) return rest;
-        else return null;
+        if (!configuredEmail || !configuredPassword) return null;
+        if (email.toLowerCase() !== configuredEmail) return null;
+        if (password !== configuredPassword) return null;
+
+        return {
+            id: 1,
+            name: "Admin",
+            email: configuredEmail,
+            phone: "",
+        };
     } catch (e) {
         console.error(e);
         return null;

@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import { verifyAdmin } from "./backend/admin"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "dev-secret-change-me",
   providers: [
     Credentials({
       credentials: {

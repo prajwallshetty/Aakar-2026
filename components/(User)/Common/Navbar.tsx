@@ -85,6 +85,11 @@ export default function Navbar() {
                                 Team
                             </Link>
                         </li>
+                        <li>
+                            <Link href="/merch" className="hover:text-pink-400 transition">
+                                Merch
+                            </Link>
+                        </li>
                         <li ref={dropdownRef} className="relative">
                             <Button
                                 className={`flex items-center bg-transparent text-lg hover:text-pink-400 hover:bg-transparent transition cursor-pointer focus:outline-none ${montserrat.className}`}
@@ -175,6 +180,15 @@ export default function Navbar() {
                                     onClick={closeSidebar}
                                 >
                                     Team
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/merch"
+                                    className="block py-2 hover:text-pink-400 transition transform hover:translate-x-2 duration-200"
+                                    onClick={closeSidebar}
+                                >
+                                    Merch
                                 </Link>
                             </li>
                             <li>

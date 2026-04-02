@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { UserPlus, Trash2, Pencil, User, AlertCircle, Ticket, Users, Search } from 'lucide-react';
+import { UserPlus, Trash2, Pencil, User, AlertCircle, Ticket, Users, Search, Shirt } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/backend/admi
 import { Admin } from '@prisma/client';
 import { getParticipantsCount } from '@/backend/participant';
 import { getTotalEvents } from '@/backend/events';
+import { getMerchOrdersCount } from '@/backend/merch';
 
 interface ErrorResponse {
   error: string;
@@ -72,6 +73,7 @@ const AdminPortal = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState('');
   const [stats, setStats] = useState({ totalUsers: 0, totalEvents: 0 });
+  const [merchCount, setMerchCount] = useState(0);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<number | null>(null);
 
@@ -107,6 +109,7 @@ const AdminPortal = () => {
         totalUsers: await getParticipantsCount(),
         totalEvents: await getTotalEvents(),
       });
+      setMerchCount(await getMerchOrdersCount());
     } catch (error) {
       console.error("Error fetching stats:", error);
     } finally {
@@ -210,10 +213,11 @@ const AdminPortal = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-4">
           <StatCard title="Participants" value={stats.totalUsers} icon={Users} loading={loading.stats} description="Total registered" />
           <StatCard title="Events" value={stats.totalEvents} icon={Ticket} loading={loading.stats} description="Across all categories" />
           <StatCard title="Admins" value={admins.length} icon={User} loading={loading.admins} description="Active accounts" />
+          <StatCard title="Merch Orders" value={merchCount} icon={Shirt} loading={loading.stats} description="Shirt orders" />
         </div>
 
         {/* Admin Table Card */}
