@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Shirt } from "lucide-react";
 import { getMerchOrders } from "@/backend/merch";
+import { Button } from "@/components/ui/button";
 
 type MerchOrderRow = {
   id: number;
@@ -17,12 +18,15 @@ type MerchOrderRow = {
   phone: string;
   size: string;
   transactionId: string;
+  paymentScreenshotUrl?: string | null;
 };
 
 export default function MerchOrders() {
   const [orders, setOrders] = useState<MerchOrderRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
+  const [loadedScreenshots, setLoadedScreenshots] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     (async () => {
@@ -44,6 +48,14 @@ export default function MerchOrders() {
       order.size.toLowerCase().includes(query)
     );
   }, [orders, search]);
+
+  const toggleOrderScreenshots = (orderId: number) => {
+    setExpandedOrderId((current) => (current === orderId ? null : orderId));
+    setLoadedScreenshots((current) => ({
+      ...current,
+      [orderId]: true,
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50/50">
@@ -102,18 +114,57 @@ export default function MerchOrders() {
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Transaction ID</TableHead>
+                      <TableHead>Screenshot</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium text-zinc-900">{order.name}</TableCell>
-                        <TableCell>{order.usn}</TableCell>
-                        <TableCell>{order.size}</TableCell>
-                        <TableCell>{order.email}</TableCell>
-                        <TableCell>{order.phone}</TableCell>
-                        <TableCell className="font-mono text-xs">{order.transactionId}</TableCell>
-                      </TableRow>
+                      <React.Fragment key={order.id}>
+                        <TableRow>
+                          <TableCell className="font-medium text-zinc-900">{order.name}</TableCell>
+                          <TableCell>{order.usn}</TableCell>
+                          <TableCell>{order.size}</TableCell>
+                          <TableCell>{order.email}</TableCell>
+                          <TableCell>{order.phone}</TableCell>
+                          <TableCell className="font-mono text-xs">{order.transactionId}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-xs"
+                              onClick={() => toggleOrderScreenshots(order.id)}
+                              disabled={!order.paymentScreenshotUrl}
+                            >
+                              {expandedOrderId === order.id ? "Hide Screenshot" : "Load Screenshot"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+
+                        {expandedOrderId === order.id && (
+                          <TableRow>
+                            <TableCell colSpan={7} className="bg-zinc-50/70 p-4">
+                              <div className="space-y-3">
+                                <p className="text-xs font-medium text-zinc-700">
+                                  Payment screenshot loads only when requested.
+                                </p>
+                                {loadedScreenshots[order.id] && order.paymentScreenshotUrl ? (
+                                  <div className="max-w-md overflow-hidden rounded-md border border-zinc-200 bg-white">
+                                    <img
+                                      src={order.paymentScreenshotUrl}
+                                      alt={`Payment screenshot for ${order.name}`}
+                                      className="w-full h-auto"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-zinc-500">
+                                    No screenshot available for this order.
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
                     ))}
                   </TableBody>
                 </Table>

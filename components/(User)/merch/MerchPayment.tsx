@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopArtBackground";
 import { createMerchOrder } from "@/backend/merch";
+import { uploadFile } from "@/backend/supabase";
 
 const merchUpiId = "aakar2026@upi";
 const merchQrImageUrl ="/merch-qr.jpeg";
@@ -12,6 +13,8 @@ const merchQrImageUrl ="/merch-qr.jpeg";
 export default function MerchPayment() {
   const params = useSearchParams();
   const [transactionId, setTransactionId] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -24,6 +27,18 @@ export default function MerchPayment() {
     size: params.get("size") || "M",
   }), [params]);
 
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setScreenshotFile(file);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setScreenshotPreview(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -33,11 +48,32 @@ export default function MerchPayment() {
       return;
     }
 
+    if (!screenshotFile) {
+      setError("Screenshot is required");
+      return;
+    }
+
     setLoading(true);
+
+    let screenshotUrl: string | null = null;
+    try {
+      screenshotUrl = await uploadFile(screenshotFile, "paymentscreenshots");
+      if (!screenshotUrl) {
+        setError("Failed to upload screenshot. Please try again.");
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      setError("Error uploading screenshot. Please try again.");
+      setLoading(false);
+      return;
+    }
+
     const response = await createMerchOrder({
       ...order,
       transactionId: transactionId.trim(),
       size: order.size as "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL",
+      paymentScreenshotUrl: screenshotUrl,
     });
     setLoading(false);
 
@@ -137,10 +173,7 @@ export default function MerchPayment() {
                 {submitted ? (
                   <div className="flex h-full min-h-[520px] flex-col justify-center rounded-[1.75rem] border-2 border-black bg-[#00ffff] p-8 text-center shadow-[6px_6px_0_#000]">
                     <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Order Submitted</p>
-                    <h2 className="merch-pay-heading mt-2 text-[clamp(2.2rem,5vw,4rem)] uppercase leading-none">Saved for Admin</h2>
-                    <p className="merch-pay-copy mt-4 text-base leading-8">
-                      Your merch order is now stored in the admin panel with the transaction ID you entered.
-                    </p>
+                    <h2 className="merch-pay-heading mt-2 text-[clamp(2.2rem,5vw,4rem)] uppercase leading-none">Order placed successfully</h2>
                     <div className="mt-6 rounded-2xl border-2 border-black bg-white px-5 py-4 shadow-[4px_4px_0_#000] text-left">
                       <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">USN:</span> {order.usn}</p>
                       <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">Size:</span> {order.size}</p>
@@ -166,6 +199,23 @@ export default function MerchPayment() {
                         />
                       </label>
 
+                      <label className="block space-y-2">
+                        <span className="merch-pay-label">Payment Screenshot</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleScreenshotChange}
+                          className="merch-pay-input w-full cursor-pointer file:mr-3 file:py-2 file:px-3 file:border-0 file:border-r-2 file:border-black file:bg-gray-100 file:rounded-none file:font-bold file:uppercase file:text-xs"
+                        />
+                      </label>
+
+                      {screenshotPreview && (
+                        <div className="rounded-lg border-2 border-black bg-white p-3">
+                          <p className="merch-pay-label mb-2">Preview</p>
+                          <img src={screenshotPreview} alt="Screenshot preview" className="h-40 w-full object-cover border-2 border-black rounded" />
+                        </div>
+                      )}
+
                       {error && (
                         <div className="border-2 border-black bg-[#ff0066] px-4 py-3 font-bold text-white shadow-[4px_4px_0_#000]">
                           {error}
@@ -177,7 +227,7 @@ export default function MerchPayment() {
                         disabled={loading}
                         className="rounded-lg border-2 border-black bg-black px-6 py-3 font-bold uppercase tracking-[0.18em] text-white shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 hover:bg-[#1a1a1a] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70"
                       >
-                        {loading ? "Saving..." : "Submit Order"}
+                        {loading ? "Uploading..." : "Submit Order"}
                       </button>
                     </form>
                   </div>

@@ -14,6 +14,7 @@ type MerchOrderInput = {
   phone: string;
   size: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL";
   transactionId: string;
+  paymentScreenshotUrl?: string;
 };
 
 type ServiceResponse<T> = {
@@ -68,11 +69,7 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
 
   const existingOrders = await merchDb.merchOrder.findMany({
     where: {
-      OR: [
-        { usn: normalizedUsn },
-        { email: normalizedEmail },
-        { transactionId: normalizedTransactionId },
-      ],
+      transactionId: normalizedTransactionId,
     },
     select: {
       usn: true,
@@ -81,19 +78,9 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
     },
   });
 
-  const hasUsn = existingOrders.some((order: { usn: string }) => order.usn === normalizedUsn);
-  const hasEmail = existingOrders.some((order: { email: string }) => order.email === normalizedEmail);
   const hasTransactionId = existingOrders.some(
     (order: { transactionId: string }) => order.transactionId === normalizedTransactionId,
   );
-
-  if (hasUsn) {
-    errors.usn = "This USN has already placed a merch order";
-  }
-
-  if (hasEmail) {
-    errors.email = "This email has already placed a merch order";
-  }
 
   if (hasTransactionId) {
     errors.transactionId = "This transaction ID already exists";
@@ -119,6 +106,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
         size: data.size,
         transactionId: data.transactionId.trim(),
         amount: MERCH_PRICE,
+        paymentScreenshotUrl: data.paymentScreenshotUrl || null,
       },
     });
 
@@ -129,7 +117,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
       data: null,
       error:
         error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
-          ? "A merch order with this information already exists"
+          ? "A merch order with this transaction ID already exists"
           : "Failed to create merch order",
     };
   }
