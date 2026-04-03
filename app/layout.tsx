@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { GameOfSquids } from "@/lib/font";
+import { baseFont } from "@/lib/font";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Analytics } from "@vercel/analytics/react";
@@ -289,7 +289,7 @@ export default async function RootLayout({
                         }
                 </script>
             </head>
-            <body className={`${GameOfSquids.className} antialiased`}>
+            <body className={`${baseFont.className} antialiased`}>
                 <SessionProvider session={session}>{children}</SessionProvider>
                 <Analytics />
                 <SpeedInsights />

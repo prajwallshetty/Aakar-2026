@@ -1,7 +1,6 @@
-import localFont from 'next/font/local'
+import { Montserrat } from 'next/font/google'
 
-export const GameOfSquids = localFont({
-    src: '../fonts/GameOfSquids.ttf',
-    display: 'swap',
-    variable: '--font-GameOfSquids',
+export const baseFont = Montserrat({
+    subsets: ['latin'],
+    variable: '--font-base',
 })

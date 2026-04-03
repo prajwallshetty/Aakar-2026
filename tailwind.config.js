@@ -21,7 +21,6 @@ module.exports = {
         },
       },
       fontFamily: {
-        GameOfSquids: ['GameOfSquids', 'sans-serif'],
         inter: ["Inter", "sans-serif"],
         cinzel: ["var(--font-cinzel)", "serif"],
         montserrat: ["var(--font-montserrat)", "sans-serif"],
