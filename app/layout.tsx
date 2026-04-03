@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     description:
         "Experience the spirit of innovation, creativity, and competition at AAKAR 2025 – a premier TechnoCultural fest bringing together students, tech enthusiasts, and innovators for exciting events, workshops, and unforgettable memories.",
     keywords: [
-        "AAKAR 2025","TechnoCultural Fest","Engineering Fest","Cultural Fest India","Student Innovation","Workshops","Competitions","Technical Events","Cultural Events",
+        "AAKAR 2026","TechnoCultural Fest","Engineering Fest","Cultural Fest India","Student Innovation","Workshops","Competitions","Technical Events","Cultural Events",
         "College Fest","Best College Fest in India","AAKAR Events","AAKAR Tech Fest","AAKAR Cultural Night","AAKAR Workshops","AAKAR Competitions","College Fest Karnataka",
         "South India Tech Fest","Student Techno Fest","Youth Cultural Fest","Tech Symposium 2025","Hackathon India","Robotics Competition","Technical Paper Presentation",
         "Dance Battle College","Music Fest for Students","Innovation Challenge","Entrepreneurship Event","Cultural Talent Hunt","Online Gaming Competition","LAN Gaming Fest",
@@ -243,17 +243,17 @@ export const metadata: Metadata = {
     robots: "index, follow",
     metadataBase: new URL("https://aakar.live"),
     openGraph: {
-        title: "AAKAR 2025 | Brains, Guts and Glory",
+        title: "AAKAR 2026 | Brains, Guts and Glory",
         description:
-            "Join us for AAKAR 2025, the ultimate blend of technology and culture. Participate in events, win prizes, and make unforgettable memories!",
+            "Join us for AAKAR 2026, the ultimate blend of technology and culture. Participate in events, win prizes, and make unforgettable memories!",
         url: "https://aakar.live",
-        siteName: "AAKAR 2025",
+        siteName: "AAKAR 2026",
         images: [
             {
-                url: "https://aakar.live/Aakarlogo.svg",
+                url: "https://aakar.live/aklogo.png",
                 width: 1200,
                 height: 630,
-                alt: "AAKAR 2025 Banner",
+                alt: "AAKAR 2026 Banner",
             },
         ],
         locale: "en_US",
@@ -261,10 +261,10 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "AAKAR 2025 | Brains, Guts and Glory",
+        title: "AAKAR 2026 | Brains, Guts and Glory",
         description:
-            "Tech meets culture at AAKAR 2025! Explore innovation, creativity, and fun at our annual fest.",
-        images: ["https://aakar.live/Aakarlogo.svg"],
+            "Tech meets culture at AAKAR 2026! Explore innovation, creativity, and fun at our annual fest.",
+        images: ["https://aakar.live/aklogo.png"],
         creator: "@aakar__2025",
     },
 };
