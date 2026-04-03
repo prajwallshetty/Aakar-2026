@@ -30,7 +30,7 @@ type EventData = {
 
 const COLORS = ["#18181b", "#3f3f46", "#71717a", "#2563eb", "#7c3aed", "#db2777", "#dc2626", "#d97706", "#16a34a", "#0891b2"]
 
-const CATEGORY_ICONS: Record<string, React.ElementType> = {
+const CATEGORY_ICONS: Record<string, any> = {
   Technical: Cpu,
   Cultural: Music2,
   Gaming: Gamepad2,

@@ -36,7 +36,7 @@ const StatCard = ({
 }: {
   title: string;
   value: number;
-  icon: React.ElementType;
+  icon: any;
   loading: boolean;
   description?: string;
 }) => (

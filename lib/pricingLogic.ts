@@ -37,9 +37,9 @@ export function calculateRegistrationFee(
     let eventFee = event.fee;
 
     // Apply fee waivers based on participant status and event flags
-    if (intent.isInternal && event.isFreeForInternal) {
+    if (intent.isInternal && (event as any).isFreeForInternal) {
       eventFee = 0;
-    } else if (!intent.isInternal && intent.wantsPronightPass && event.isIncludedInPass) {
+    } else if (!intent.isInternal && intent.wantsPronightPass && (event as any).isIncludedInPass) {
       eventFee = 0;
     }
 
