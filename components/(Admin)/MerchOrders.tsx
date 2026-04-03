@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Shirt } from "lucide-react";
+import { Download, Search, Shirt } from "lucide-react";
 import { getMerchOrders } from "@/backend/merch";
 import { Button } from "@/components/ui/button";
+import { downloadCsv } from "@/lib/downloadCsv";
 
 type MerchOrderRow = {
   id: number;
@@ -57,6 +58,20 @@ export default function MerchOrders() {
     }));
   };
 
+  const handleDownload = () => {
+    const rows = filteredOrders.map((order) => ({
+      Name: order.name,
+      USN: order.usn,
+      Size: order.size,
+      Email: order.email,
+      Phone: order.phone,
+      "Transaction ID": order.transactionId,
+      "Payment Screenshot URL": order.paymentScreenshotUrl || "",
+    }));
+
+    downloadCsv(rows, "merch_orders.csv");
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50/50">
       <div className="mx-auto max-w-7xl px-6 py-8 space-y-8">
@@ -80,14 +95,26 @@ export default function MerchOrders() {
                   Orders are saved after the transaction ID is submitted.
                 </CardDescription>
               </div>
-              <div className="relative">
-                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-                <Input
-                  placeholder="Search orders..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8 h-8 text-sm w-56 border-zinc-200 bg-white"
-                />
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5 text-xs border-zinc-200"
+                  onClick={handleDownload}
+                  disabled={loading || filteredOrders.length === 0}
+                >
+                  <Download size={13} />
+                  Download CSV
+                </Button>
+                <div className="relative">
+                  <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                  <Input
+                    placeholder="Search orders..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-8 h-8 text-sm w-56 border-zinc-200 bg-white"
+                  />
+                </div>
               </div>
             </div>
           </CardHeader>
