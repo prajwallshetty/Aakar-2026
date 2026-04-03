@@ -13,19 +13,7 @@ const features = [
   "Vibrant AAKAR branding",
 ];
 
-const merchModelSignedUrl = process.env.NEXT_PUBLIC_MERCH_3D_MODEL_URL || "";
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const merchModelBucket = process.env.NEXT_PUBLIC_MERCH_3D_BUCKET || "";
-const merchModelFilePath = process.env.NEXT_PUBLIC_MERCH_3D_FILE_PATH || "";
-
-const merchModelUrl =
-  merchModelSignedUrl ||
-  (supabaseUrl && merchModelBucket && merchModelFilePath
-    ? `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${encodeURIComponent(merchModelBucket)}/${merchModelFilePath
-        .split("/")
-        .map((segment) => encodeURIComponent(segment))
-        .join("/")}`
-    : "");
+const merchModelUrl ="/merch-tshirt.glb";
 
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
@@ -139,7 +127,7 @@ export default function MerchPage() {
                           <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
                           <directionalLight position={[4, 8, 5]} intensity={1.35} />
                           <Suspense fallback={null}>
-                            <Bounds fit clip observe margin={1.28}>
+                            <Bounds fit clip observe margin={3.5}>
                               <TshirtModel modelUrl={merchModelUrl} />
                             </Bounds>
                             <Environment preset="studio" />
