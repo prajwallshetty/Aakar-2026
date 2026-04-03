@@ -348,8 +348,8 @@ export default function HeroLanding() {
             !isMobile
               ? {
                   position: "absolute",
-                  right: "-2vw",
-                  bottom: 0,
+                  right: "15vw",
+                  bottom: "-8vh",
                   zIndex: 25,
                   y: charY,
                   x: chX,
@@ -357,8 +357,8 @@ export default function HeroLanding() {
                 }
               : {
                   position: "absolute",
-                  right: "-8vw",
-                  bottom: 0,
+                  right: "-3vw",
+                  bottom: "-3vh",
                   zIndex: 25,
                   opacity: 0.35,
                 }
