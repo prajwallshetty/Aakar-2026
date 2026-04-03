@@ -7,19 +7,7 @@ import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopA
 import { createMerchOrder } from "@/backend/merch";
 
 const merchUpiId = "aakar2026@upi";
-const merchQrSignedUrl = process.env.NEXT_PUBLIC_MERCH_QR_URL || "";
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const merchQrBucket = process.env.NEXT_PUBLIC_MERCH_QR_BUCKET || "";
-const merchQrFilePath = process.env.NEXT_PUBLIC_MERCH_QR_FILE_PATH || "";
-
-const merchQrImageUrl =
-  merchQrSignedUrl ||
-  (supabaseUrl && merchQrBucket && merchQrFilePath
-    ? `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${encodeURIComponent(merchQrBucket)}/${merchQrFilePath
-        .split("/")
-        .map((segment) => encodeURIComponent(segment))
-        .join("/")}`
-    : "");
+const merchQrImageUrl ="/merch-qr.jpeg";
 
 export default function MerchPayment() {
   const params = useSearchParams();

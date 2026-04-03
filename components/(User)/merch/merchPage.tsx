@@ -13,19 +13,7 @@ const features = [
   "Vibrant AAKAR branding",
 ];
 
-const merchModelSignedUrl = process.env.NEXT_PUBLIC_MERCH_3D_MODEL_URL || "";
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const merchModelBucket = process.env.NEXT_PUBLIC_MERCH_3D_BUCKET || "";
-const merchModelFilePath = process.env.NEXT_PUBLIC_MERCH_3D_FILE_PATH || "";
-
-const merchModelUrl =
-  merchModelSignedUrl ||
-  (supabaseUrl && merchModelBucket && merchModelFilePath
-    ? `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${encodeURIComponent(merchModelBucket)}/${merchModelFilePath
-        .split("/")
-        .map((segment) => encodeURIComponent(segment))
-        .join("/")}`
-    : "");
+const merchModelUrl ="/merch-tshirt.glb";
 
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
