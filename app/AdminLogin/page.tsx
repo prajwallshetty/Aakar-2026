@@ -8,6 +8,9 @@ import { LockKeyhole } from "lucide-react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -42,7 +45,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-muted px-4 sm:px-8">
+    <div className={`relative flex items-center justify-center min-h-screen bg-muted px-4 sm:px-8 ${montserrat.className}`}>
       <div className="bg-background w-full max-w-md rounded-lg border border-border p-8 shadow-lg">
         <div className="flex items-center justify-center mb-6">
           <div className="bg-primary p-3 rounded-full">
