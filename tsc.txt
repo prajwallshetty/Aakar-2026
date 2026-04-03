@@ -1,9 +1,0 @@
-﻿.next/types/validator.ts(134,39): error TS2307: Cannot find module '../../app/(Users)/events/[id]/page.js' or its corresponding type declarations.
-components/(Admin)/AdminPortal.tsx(58,17): error TS2322: Type 'number' is not assignable to type 'never'.
-components/(Admin)/AdminPortal.tsx(58,27): error TS2322: Type 'string' is not assignable to type 'never'.
-components/(Admin)/college-stats.tsx(54,17): error TS2322: Type 'number' is not assignable to type 'never'.
-components/(Admin)/college-stats.tsx(54,27): error TS2322: Type 'string' is not assignable to type 'never'.
-components/(Admin)/event-stats.tsx(264,27): error TS2322: Type 'number' is not assignable to type 'never'.
-components/(Admin)/event-stats.tsx(264,37): error TS2322: Type 'string' is not assignable to type 'never'.
-lib/pricingLogic.ts(40,36): error TS2339: Property 'isFreeForInternal' does not exist on type '{ id: number; eventName: string; eventCategory: eventCategory; eventType: eventType; minMembers: number; maxMembers: number; description: string; fee: number; date: Date; ... 5 more ...; imageUrl: string; }'.
-lib/pricingLogic.ts(42,72): error TS2339: Property 'isIncludedInPass' does not exist on type '{ id: number; eventName: string; eventCategory: eventCategory; eventType: eventType; minMembers: number; maxMembers: number; description: string; fee: number; date: Date; ... 5 more ...; imageUrl: string; }'.

@@ -12,6 +12,7 @@ import {
     BarChart2,
     School,
     Shirt,
+    Ticket,
     ChevronRight,
     X,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const menuItems = [
     { icon: CalendarDays, label: "Events", href: "/EventsCRUD" },
     { icon: User, label: "Participants", href: "/Participants" },
     { icon: Shirt, label: "Merch Orders", href: "/MerchOrders" },
+    { icon: Ticket, label: "Elite Pass Orders", href: "/ElitePassOrders" },
     { icon: BarChart2, label: "Event Stats", href: "/EventStatistics" },
     { icon: School, label: "College Stats", href: "/CollegeStatistics" },
 ];
