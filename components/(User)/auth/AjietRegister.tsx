@@ -253,7 +253,7 @@ const AjietRegister = () => {
     const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "verification">("details");
 
     const [formData, setFormData] = useState({
-        name: "", email: "", phone: "", college: "A.J. Institute of Engineering & Technology",
+        name: "", email: "", phone: "", college: "A J Institute of Engineering and Technology, Mangalore",
         year: 0, department: "", usn: "",
         transactionId: "", paymentScreenshot: null as File | null,
     });
