@@ -220,3 +220,12 @@ textarea::placeholder {
   font-family: '--default-mono-font-family', sans-serif;
   color: #999;
 }
+
+@keyframes gridPan {
+  0% { transform: translate(0, 0); background-position: 0px 0px; }
+  100% { transform: translate(0, 0); background-position: 60px 60px; }
+}
+
+.grid-animate {
+  animation: gridPan 3s linear infinite;
+}

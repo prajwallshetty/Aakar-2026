@@ -215,36 +215,8 @@ const Team = () => (
       .member-card:hover::before {
         left: 150%;
       }
-      @keyframes gridPan {
-        0% { background-position: 0px 0px; }
-        100% { background-position: 60px 60px; }
-      }
-      .grid-animate {
-        animation: gridPan 3s linear infinite;
-      }
     `}</style>
 
-    {/* Background Image Setup */}
-    <div className="fixed inset-0 z-[-1]">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/bg.jpg)", transform: "scale(1.02)" /* slight scale to avoid edge artifacting */ }}
-      />
-      {/* Dark gradient mapping overlay for cinematic feel */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 backdrop-blur-[4px]" />
-
-      {/* Cyber/Anime Tech grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03] grid-animate pointer-events-none"
-        style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
-
-      {/* Vignette */}
-      <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />
-    </div>
 
     <main style={{
       position: "relative", zIndex: 10,

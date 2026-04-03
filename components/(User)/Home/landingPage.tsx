@@ -310,7 +310,7 @@ export default function LandingHero() {
           height: "100svh",
           minHeight: 600,
           overflow: "hidden",
-          background: C.black,
+          background: "transparent",
           cursor: "crosshair",
           isolation: "isolate",
         }}
@@ -323,11 +323,11 @@ export default function LandingHero() {
           <div style={{
             position: "absolute", inset: 0,
             background: `
-              radial-gradient(ellipse 120% 100% at 50% 50%, #200048 0%, ${C.black} 62%),
-              radial-gradient(ellipse 55% 42% at 15% 25%, ${C.magenta}45 0%, transparent 52%),
-              radial-gradient(ellipse 50% 55% at 85% 68%, ${C.cyan}40 0%, transparent 50%),
-              radial-gradient(ellipse 45% 38% at 60% 92%, ${C.hot}2E 0%, transparent 46%),
-              radial-gradient(ellipse 38% 32% at 28% 82%, #6600BB44 0%, transparent 48%)
+              radial-gradient(ellipse 120% 100% at 50% 50%, transparent 0%, transparent 62%),
+              radial-gradient(ellipse 55% 42% at 15% 25%, ${C.magenta}25 0%, transparent 52%),
+              radial-gradient(ellipse 50% 55% at 85% 68%, ${C.cyan}20 0%, transparent 50%),
+              radial-gradient(ellipse 45% 38% at 60% 92%, ${C.hot}1E 0%, transparent 46%),
+              radial-gradient(ellipse 38% 32% at 28% 82%, #6600BB20 0%, transparent 48%)
             `,
           }} />
           {/* animated moving grid */}
