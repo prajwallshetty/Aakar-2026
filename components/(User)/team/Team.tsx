@@ -24,7 +24,7 @@ const teamData: TeamCategory[] = [
       { name: "Ankitha", role: "Sponsorship & Finance Head", image: "/Team/Core-Committee/ankitha.jpeg" },
       { name: "Rishitha", role: "Public Relation Head", image: "/Team/Core-Committee/rishitha.jpg" },
       { name: "Ayisha", role: "Designs & Creatives Head", image: "/Team/Core-Committee/Ayisha.jpg" },
-      { name: "Pratham", role: "Operations Manager", image: "/Team/Core-Committee/pratham.jpg" },
+      { name: "Pratham", role: "Operations Manager", image: "/Team/Core-Committee/pratham.png" },
       { name: "Rahul", role: "Social Media Manager", image: "/Team/Core-Committee/rahul.PNG" },
       { name: "Monith", role: "Event Coordinator", image: "/Team/Core-Committee/monith.png" },
       { name: "Dhyan", role: "Content & Media Head", image: "/Team/Core-Committee/dhyan.jpeg" },

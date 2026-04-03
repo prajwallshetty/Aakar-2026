@@ -20,6 +20,9 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 const menuItems = [
     { icon: LayoutDashboard, label: "Admin Portal", href: "/AdminPortal" },
@@ -53,7 +56,8 @@ const AdminSidebar = () => {
                     "fixed top-0 left-0 z-50 h-screen flex flex-col",
                     "bg-white border-r border-zinc-200 shadow-sm",
                     "transition-all duration-300 ease-in-out",
-                    isOpen ? "w-64" : "w-[60px]"
+                    isOpen ? "w-64" : "w-[60px]",
+                    montserrat.className
                 )}
             >
                 {/* Header */}
@@ -135,7 +139,7 @@ const AdminSidebar = () => {
                                         <Icon size={16} />
                                     </Link>
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="text-xs">
+                                <TooltipContent side="right" className={cn("text-xs", montserrat.className)}>
                                     {item.label}
                                 </TooltipContent>
                             </Tooltip>
@@ -179,7 +183,7 @@ const AdminSidebar = () => {
                                     <LogOut size={15} />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="text-xs">Sign out</TooltipContent>
+                            <TooltipContent side="right" className={cn("text-xs", montserrat.className)}>Sign out</TooltipContent>
                         </Tooltip>
                     )}
                 </div>
