@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopArtBackground";
+import { Canvas } from "@react-three/fiber";
+import { Bounds, Center, Environment, OrbitControls, useGLTF } from "@react-three/drei";
 
 const features = [
   "100% Premium Cotton Blend",
@@ -11,29 +13,34 @@ const features = [
   "Vibrant AAKAR branding",
 ];
 
+const merchModelSignedUrl = process.env.NEXT_PUBLIC_MERCH_3D_MODEL_URL || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const merchModelBucket = process.env.NEXT_PUBLIC_MERCH_3D_BUCKET || "";
+const merchModelFilePath = process.env.NEXT_PUBLIC_MERCH_3D_FILE_PATH || "";
+
+const merchModelUrl =
+  merchModelSignedUrl ||
+  (supabaseUrl && merchModelBucket && merchModelFilePath
+    ? `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${encodeURIComponent(merchModelBucket)}/${merchModelFilePath
+        .split("/")
+        .map((segment) => encodeURIComponent(segment))
+        .join("/")}`
+    : "");
+
+function TshirtModel({ modelUrl }: { modelUrl: string }) {
+  const { scene } = useGLTF(modelUrl);
+  const centeredScene = scene.clone(true);
+
+  return (
+    <group rotation={[0.02, -0.32, 0]}>
+      <Center>
+        <primitive object={centeredScene} scale={1} position={[0, 0, 0]} />
+      </Center>
+    </group>
+  );
+}
+
 export default function MerchPage() {
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const [rotationX, setRotationX] = useState(-4);
-  const [rotationY, setRotationY] = useState(-8);
-  const [isDragging, setIsDragging] = useState(false);
-  const [lastPointer, setLastPointer] = useState({ x: 0, y: 0 });
-
-  const shirtTransform = useMemo(() => {
-    return `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
-  }, [rotationX, rotationY]);
-
-  function rotateFromPointer(clientX: number, clientY: number) {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const rect = stage.getBoundingClientRect();
-    const ratioX = (clientX - rect.left) / rect.width;
-    const ratioY = (clientY - rect.top) / rect.height;
-    const mappedY = (ratioX - 0.5) * 76;
-    const mappedX = (0.5 - ratioY) * 34;
-    setRotationY(mappedY);
-    setRotationX(Math.max(-22, Math.min(22, mappedX)));
-  }
-
   return (
     <>
       <style>{`
@@ -122,66 +129,37 @@ export default function MerchPage() {
                 <div className="pointer-events-none absolute inset-x-14 top-6 h-24 rounded-full bg-cyan-300/45 blur-3xl merch-spot" />
 
                 <div
-                  ref={stageRef}
                   className="relative mx-auto flex h-[520px] w-full max-w-[430px] items-center justify-center [perspective:1100px]"
-                  onMouseMove={(e) => {
-                    if (isDragging) {
-                      const dx = e.clientX - lastPointer.x;
-                      const dy = e.clientY - lastPointer.y;
-                      setLastPointer({ x: e.clientX, y: e.clientY });
-                      setRotationY((prev) => prev + dx * 0.45);
-                      setRotationX((prev) => Math.max(-25, Math.min(25, prev - dy * 0.18)));
-                      return;
-                    }
-                    rotateFromPointer(e.clientX, e.clientY);
-                  }}
-                  onMouseDown={(e) => {
-                    setIsDragging(true);
-                    setLastPointer({ x: e.clientX, y: e.clientY });
-                  }}
-                  onMouseUp={() => setIsDragging(false)}
-                  onMouseLeave={() => setIsDragging(false)}
-                  onTouchStart={(e) => {
-                    const x = e.touches[0].clientX;
-                    const y = e.touches[0].clientY;
-                    setIsDragging(true);
-                    setLastPointer({ x, y });
-                  }}
-                  onTouchMove={(e) => {
-                    if (!isDragging) return;
-                    const x = e.touches[0].clientX;
-                    const y = e.touches[0].clientY;
-                    const dx = x - lastPointer.x;
-                    const dy = y - lastPointer.y;
-                    setLastPointer({ x, y });
-                    setRotationY((prev) => prev + dx * 0.4);
-                    setRotationX((prev) => Math.max(-25, Math.min(25, prev - dy * 0.16)));
-                  }}
-                  onTouchEnd={() => setIsDragging(false)}
                 >
-                  {isDragging && (
-                    <div className="absolute inset-0 z-20" />
-                  )}
-
-                  <div className={`merch-auto-spin ${isDragging ? "paused" : ""}`}>
-                    <div
-                      className="relative h-[430px] w-[290px] [transform-style:preserve-3d] transition-transform duration-150"
-                      style={{ transform: shirtTransform }}
-                    >
-                      <div className="absolute left-1/2 top-0 h-8 w-24 -translate-x-1/2 rounded-t-full bg-[#c4c4c6] shadow-[0_0_20px_rgba(255,255,255,0.3)]" />
-                      <div className="absolute left-1/2 top-4 h-[390px] w-[250px] -translate-x-1/2 rounded-[2.5rem] bg-gradient-to-b from-[#1b1930] via-[#111528] to-[#0a0f1f] shadow-[inset_0_0_0_2px_rgba(255,255,255,0.06),0_28px_40px_rgba(0,0,0,0.75)]" />
-                      <div className="absolute left-[6px] top-[78px] h-[90px] w-[74px] -rotate-12 rounded-[1.4rem] bg-gradient-to-b from-[#181a2b] to-[#101424] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]" />
-                      <div className="absolute right-[6px] top-[78px] h-[90px] w-[74px] rotate-12 rounded-[1.4rem] bg-gradient-to-b from-[#181a2b] to-[#101424] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]" />
-
-                      <div className="absolute left-1/2 top-[98px] h-[190px] w-[190px] -translate-x-1/2 rounded-full border border-fuchsia-400/75 bg-[radial-gradient(circle_at_center,rgba(226,160,255,0.85),rgba(145,73,198,0.45)_42%,rgba(38,27,61,0.8)_66%,rgba(14,18,29,0.95)_100%)] shadow-[0_0_0_6px_rgba(129,53,182,0.16),0_0_45px_rgba(170,97,255,0.38)]" />
-                      <div className="absolute left-1/2 top-[130px] h-[128px] w-[128px] -translate-x-1/2 rounded-full border border-black/50 bg-[radial-gradient(circle_at_38%_40%,#272c47_0%,#0a0d16_54%,#000_100%)]" />
-                      <div className="absolute left-1/2 top-[140px] h-[105px] w-[105px] -translate-x-1/2 rounded-full border border-white/20" />
-
-                      <div className="absolute left-1/2 top-[301px] w-[220px] -translate-x-1/2 text-center">
-                        <p className="merch-shirt-text text-[0.95rem] font-bold uppercase tracking-[0.18em] text-cyan-100/95">AAKAR</p>
-                        <p className="merch-theme-meta mt-1 text-[0.5rem] font-semibold uppercase text-cyan-100/80">DIMENSIONAL DRIFT</p>
+                  <div>
+                    {merchModelUrl ? (
+                      <div className="h-[450px] w-[320px] overflow-hidden">
+                        <Canvas camera={{ position: [0, 0, 5.8], fov: 30 }} dpr={[1, 2]}>
+                          <ambientLight intensity={0.9} />
+                          <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
+                          <directionalLight position={[4, 8, 5]} intensity={1.35} />
+                          <Suspense fallback={null}>
+                            <Bounds fit clip observe margin={1.28}>
+                              <TshirtModel modelUrl={merchModelUrl} />
+                            </Bounds>
+                            <Environment preset="studio" />
+                          </Suspense>
+                          <OrbitControls
+                            enablePan={false}
+                            minDistance={3.6}
+                            maxDistance={8}
+                            minPolarAngle={Math.PI / 2.7}
+                            maxPolarAngle={Math.PI / 1.85}
+                            autoRotate
+                            autoRotateSpeed={0.95}
+                          />
+                        </Canvas>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="flex h-[450px] w-[320px] items-center justify-center text-center">
+                        <p className="merch-theme-meta px-6 text-xs uppercase">3D model not configured</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pointer-events-none absolute bottom-4 h-14 w-64 rounded-full bg-black/35 blur-xl" />
@@ -189,7 +167,7 @@ export default function MerchPage() {
 
                 <div className="mx-auto mt-2 flex w-fit items-center gap-3 rounded-full border-2 border-black/80 bg-white/85 px-4 py-3 text-xs uppercase tracking-[0.35em] text-black/70 shadow-[3px_3px_0_#0a0005]">
                   <span className="merch-hint inline-block text-fuchsia-600">O</span>
-                  drag to rotate
+                  drag model to rotate
                 </div>
               </div>
 

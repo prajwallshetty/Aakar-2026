@@ -7,6 +7,19 @@ import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopA
 import { createMerchOrder } from "@/backend/merch";
 
 const merchUpiId = "aakar2026@upi";
+const merchQrSignedUrl = process.env.NEXT_PUBLIC_MERCH_QR_URL || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const merchQrBucket = process.env.NEXT_PUBLIC_MERCH_QR_BUCKET || "";
+const merchQrFilePath = process.env.NEXT_PUBLIC_MERCH_QR_FILE_PATH || "";
+
+const merchQrImageUrl =
+  merchQrSignedUrl ||
+  (supabaseUrl && merchQrBucket && merchQrFilePath
+    ? `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${encodeURIComponent(merchQrBucket)}/${merchQrFilePath
+        .split("/")
+        .map((segment) => encodeURIComponent(segment))
+        .join("/")}`
+    : "");
 
 export default function MerchPayment() {
   const params = useSearchParams();
@@ -101,7 +114,13 @@ export default function MerchPayment() {
 
                 <div className="mt-8 rounded-[1.75rem] border-2 border-black bg-white p-5 shadow-[6px_6px_0_#000]">
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <img src="/aakar2026.jpeg" alt="Merch payment scanner" className="h-64 w-64 border-2 border-black bg-white p-2 object-cover" />
+                    {merchQrImageUrl ? (
+                      <img src={merchQrImageUrl} alt="Merch payment scanner" className="h-64 w-64 border-2 border-black bg-white p-2 object-cover" />
+                    ) : (
+                      <div className="flex h-64 w-64 items-center justify-center border-2 border-black bg-white p-2 text-center text-sm font-bold uppercase tracking-[0.12em] text-black">
+                        QR not configured
+                      </div>
+                    )}
                     <div className="space-y-1">
                       <p className="merch-pay-label">UPI ID</p>
                       <p className="merch-pay-copy text-sm font-bold">{merchUpiId}</p>

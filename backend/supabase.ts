@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js"
 
+type StorageBucketName = "eventimages" | "paymentscreenshots" | "merchqr"
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -7,7 +9,7 @@ const supabase = createClient(
 
 export async function uploadFile(
   file: File,
-  bucketName: "eventimages" | "paymentscreenshots" = "eventimages"
+  bucketName: StorageBucketName = "eventimages"
 ) {
 
   if (!file) {
@@ -45,7 +47,7 @@ export async function uploadFile(
 
 export async function uploadFiles(
   files: File[],
-  bucketName: "eventimages" | "paymentscreenshots" = "eventimages"
+  bucketName: StorageBucketName = "eventimages"
 ) {
 
   const urls: string[] = []
@@ -60,7 +62,7 @@ export async function uploadFiles(
 
 export async function deleteFiles(
   fileUrls: string[],
-  bucketName: "eventimages" | "paymentscreenshots" = "eventimages"
+  bucketName: StorageBucketName = "eventimages"
 ) {
 
   for (const fileUrl of fileUrls) {
@@ -76,4 +78,17 @@ export async function deleteFiles(
       console.error("Delete error:", error.message)
     }
   }
+}
+
+export function getPublicFileUrl(
+  filePath: string,
+  bucketName: string = "eventimages"
+) {
+  if (!filePath) return null
+
+  const { data } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath)
+
+  return data.publicUrl || null
 }
