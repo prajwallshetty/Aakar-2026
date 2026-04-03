@@ -1,929 +1,618 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-const C = {
-  yellow: "#FFE600",
-  magenta: "#FF00CC",
-  cyan: "#00F5FF",
-  hot: "#FF2D6B",
-  lime: "#BCFF00",
-  black: "#05000E",
-  white: "#FFFFFF",
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// HeroLanding — AAKAR 2026
+// landingbg.png  →  epic fire panorama (full parallax BG)
+// landingch.png  →  anime character pinned bottom-right, deep parallax
+// aklogo.png     →  AAKAR 2026 logo, dramatic centre reveal
+// ─────────────────────────────────────────────────────────────────────────────
 
-/* ── SSR-safe geometry ──────────────────────────────────────── */
-function makeBurst(cx: number, cy: number, R: number, r: number, n: number) {
-  let d = "";
-  for (let i = 0; i < n * 2; i++) {
-    const rad = i % 2 === 0 ? R : r;
-    const a = (Math.PI / n) * i - Math.PI / 2;
-    const x = Math.round((cx + rad * Math.cos(a)) * 1e4) / 1e4;
-    const y = Math.round((cy + rad * Math.sin(a)) * 1e4) / 1e4;
-    d += (i === 0 ? "M" : "L") + `${x},${y}`;
-  }
-  return d + "Z";
-}
+export default function HeroLanding() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const rafRef     = useRef<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-const BA = makeBurst(50, 50, 47, 30, 22);
-const BB = makeBurst(50, 50, 34, 22, 16);
-const BC = makeBurst(50, 50, 26, 16, 12);
+  useEffect(() => {
+    setMounted(true);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
-const LINES = Array.from({ length: 18 }, (_, i) => {
-  const a = ((360 / 18) * i * Math.PI) / 180;
-  return {
-    x2: Math.round((50 + 86 * Math.cos(a)) * 1e4) / 1e4,
-    y2: Math.round((50 + 86 * Math.sin(a)) * 1e4) / 1e4,
-  };
-});
+  // ── Scroll parallax ───────────────────────────────────────────────────────
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const bgY       = useTransform(scrollYProgress, [0, 1], ["0%",   "28%"]);
+  const charY     = useTransform(scrollYProgress, [0, 1], ["0%",   "14%"]);
+  const charScale = useTransform(scrollYProgress, [0, 1], [1,      0.92]);
+  const logoY     = useTransform(scrollYProgress, [0, 1], ["0%",  "-10%"]);
+  const overlayOp = useTransform(scrollYProgress, [0, 0.6], [0.55, 0.82]);
+  const textY     = useTransform(scrollYProgress, [0, 1], ["0%",   "22%"]);
 
-/* ═══════════════════════════════════════════════════════════ */
-export default function LandingHero() {
-  const rawX = useMotionValue(0.5);
-  const rawY = useMotionValue(0.5);
-  const sp = { stiffness: 45, damping: 18, mass: 1 };
-  const mx = useSpring(rawX, sp);
-  const my = useSpring(rawY, sp);
+  // ── Mouse parallax ────────────────────────────────────────────────────────
+  const rawMX   = useMotionValue(0);
+  const rawMY   = useMotionValue(0);
+  const rawBgX  = useMotionValue(0);
+  const rawBgY  = useMotionValue(0);
+  const rawChX  = useMotionValue(0);
+  const rawChY  = useMotionValue(0);
 
-  const d0x = useTransform(mx, [0, 1], [-25, 25]);
-  const d0y = useTransform(my, [0, 1], [-15, 15]);
-  const d1x = useTransform(mx, [0, 1], [-45, 45]);
-  const d1y = useTransform(my, [0, 1], [-25, 25]);
-  const d2x = useTransform(mx, [0, 1], [-18, 18]);
-  const d2y = useTransform(my, [0, 1], [-12, 12]);
-  const dTitleX = useTransform(mx, [0, 1], [25, -25]);
-  const dTitleY = useTransform(my, [0, 1], [15, -15]);
+  const mX  = useSpring(rawMX,  { stiffness: 50, damping: 20 });
+  const mY  = useSpring(rawMY,  { stiffness: 50, damping: 20 });
+  const bgX = useSpring(rawBgX, { stiffness: 18, damping: 28 });
+  const bgYm = useSpring(rawBgY, { stiffness: 18, damping: 28 });
+  const chX = useSpring(rawChX, { stiffness: 30, damping: 22 });
+  const chY = useSpring(rawChY, { stiffness: 30, damping: 22 });
 
-  function onMove(e: React.MouseEvent<HTMLElement>) {
-    const r = e.currentTarget.getBoundingClientRect();
-    rawX.set((e.clientX - r.left) / r.width);
-    rawY.set((e.clientY - r.top) / r.height);
-  }
-  function onLeave() { rawX.set(0.5); rawY.set(0.5); }
+  useEffect(() => {
+    if (isMobile) return;
+    const handler = (e: MouseEvent) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const nx = (e.clientX - cx) / cx;
+      const ny = (e.clientY - cy) / cy;
+      rawMX.set(nx * 14);
+      rawMY.set(ny * 10);
+      rawBgX.set(nx * -18);
+      rawBgY.set(ny * -10);
+      rawChX.set(nx * -22);
+      rawChY.set(ny * -12);
+    };
+    window.addEventListener("mousemove", handler);
+    return () => window.removeEventListener("mousemove", handler);
+  }, [isMobile, rawMX, rawMY, rawBgX, rawBgY, rawChX, rawChY]);
+
+  // ── Ember particle canvas ─────────────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    type Ember = {
+      x: number; y: number; vx: number; vy: number;
+      r: number; opacity: number; life: number; maxLife: number;
+      hue: number;
+    };
+
+    const embers: Ember[] = [];
+    for (let i = 0; i < 110; i++) {
+      embers.push(spawn(canvas.width, canvas.height));
+    }
+
+    function spawn(w: number, h: number): Ember {
+      return {
+        x: Math.random() * w,
+        y: h + Math.random() * 60,
+        vx: (Math.random() - 0.5) * 0.9,
+        vy: -(Math.random() * 1.8 + 0.5),
+        r: Math.random() * 2.2 + 0.4,
+        opacity: Math.random() * 0.7 + 0.2,
+        life: 0,
+        maxLife: 140 + Math.random() * 120,
+        hue: 10 + Math.random() * 40, // orange to yellow
+      };
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      embers.forEach((e, i) => {
+        e.x += e.vx + Math.sin(e.life * 0.04) * 0.35;
+        e.y += e.vy;
+        e.life++;
+        if (e.life > e.maxLife || e.y < -10) {
+          embers[i] = spawn(canvas.width, canvas.height);
+          return;
+        }
+        const t = e.life / e.maxLife;
+        const fade = Math.sin(t * Math.PI);
+        ctx.save();
+        ctx.globalAlpha = e.opacity * fade;
+        // glow
+        const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 3);
+        g.addColorStop(0, `hsla(${e.hue}, 100%, 80%, 1)`);
+        g.addColorStop(0.4, `hsla(${e.hue}, 100%, 55%, 0.7)`);
+        g.addColorStop(1, `hsla(${e.hue}, 100%, 40%, 0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.r * 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+      rafRef.current = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  // ── Staggered text reveal ─────────────────────────────────────────────────
+  const chars = "A NEW ERA BEGINS".split("");
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;700&family=Noto+Serif+JP:wght@200;300&display=swap');
 
-        /* scanlines */
-        .hl-root::after {
-          content:""; position:absolute; inset:0; pointer-events:none; z-index:99;
-          background:repeating-linear-gradient(
-            0deg, transparent 0, transparent 3px,
+        .hl * { box-sizing: border-box; }
+
+        /* Ink wash scanlines */
+        .hl-scan {
+          background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0px, transparent 3px,
             rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
           );
         }
 
-        @keyframes sCW     { to{ transform:rotate(360deg);  } }
-        @keyframes sCCW    { to{ transform:rotate(-360deg); } }
-        @keyframes sTick   { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        @keyframes sFloat  {
-          0%,100%{ transform:translateY(0) scale(1) rotate(0deg); }
-          50%    { transform:translateY(-18px) scale(1.02) rotate(1.5deg); }
-        }
-        @keyframes sAurora {
-          0%,100%{ opacity:.55; transform:translate(-50%,-50%) scale(1)    rotate(0deg);  }
-          33%    { opacity:.72; transform:translate(-50%,-50%) scale(1.08)  rotate(3deg); }
-          66%    { opacity:.58; transform:translate(-50%,-50%) scale(0.95)  rotate(-2deg);}
-        }
-        @keyframes sPulse  {
-          0%  { transform:translate(-50%,-50%) scale(0.85); opacity:.5; }
-          100%{ transform:translate(-50%,-50%) scale(1.38); opacity:0;  }
-        }
-        @keyframes sChroma {
-          0%,100%{
-            filter:brightness(1.22) saturate(1.4) contrast(1.1)
-              drop-shadow(0 0 28px ${C.cyan}AA) drop-shadow(0 0 12px ${C.magenta}88);
-          }
-          50%{
-            filter:brightness(1.26) saturate(1.45) contrast(1.14)
-              drop-shadow(0 0 40px ${C.magenta}CC) drop-shadow(0 0 16px ${C.cyan}66);
-          }
-        }
-        @keyframes sStamp  {
-          0%  { opacity:0; transform:scale(2.2) rotate(-20deg); }
-          65% { opacity:1; transform:scale(0.93) rotate(4deg);  }
-          100%{ opacity:1; transform:scale(1) rotate(0deg);     }
-        }
-        @keyframes sDiamond {
-          0%,100%{ transform:rotate(45deg) translateY(0);     }
-          50%    { transform:rotate(45deg) translateY(-10px); }
-        }
-        @keyframes sBadge  {
-          0%,100%{ box-shadow:4px 4px 0 ${C.black},0 0 0 ${C.hot};     }
-          50%    { box-shadow:4px 4px 0 ${C.black},0 0 20px ${C.hot}99; }
-        }
-        @keyframes sFlare  {
-          0%,100%{ opacity:.12; transform:translate(-50%,-50%) scale(1);    }
-          50%    { opacity:.22; transform:translate(-50%,-50%) scale(1.14); }
-        }
-        @keyframes sGridMove {
-          from{ background-position:0 0;       }
-          to  { background-position:64px 64px; }
-        }
-        @keyframes sLogoFloat {
-          0%,100%{ transform:translateY(0) rotate(-1deg);  }
-          50%    { transform:translateY(-8px) rotate(1deg); }
+        /* Noise grain overlay */
+        .hl-grain {
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+          background-repeat: repeat;
+          background-size: 180px 180px;
+          mix-blend-mode: overlay;
         }
 
-        /* ── AAKAR title glitch ── */
-        @keyframes sTitleGlitch {
-          0%,78%,100% {
-            text-shadow: 8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot};
-            transform: skewX(0deg) translate(0,0);
+        /* Character bloom */
+        @keyframes hl-char-float {
+          0%,100% { transform: translateY(0px);   }
+          50%      { transform: translateY(-10px); }
+        }
+        .hl-char-float { animation: hl-char-float 6s ease-in-out infinite; }
+
+        /* Logo glow pulse */
+        @keyframes hl-logo-glow {
+          0%,100% {
+            filter: drop-shadow(0 0 20px rgba(255,120,30,0.45))
+                    drop-shadow(0 0 55px rgba(255,60,10,0.20));
           }
-          79% {
-            text-shadow: -15px 0 0 ${C.cyan}, 15px 0 0 ${C.magenta}, 8px 8px 0 ${C.black};
-            transform: skewX(-15deg) translate(-15px, 0);
-            clip-path: inset(15% 0 60% 0);
-          }
-          80% {
-            text-shadow: 20px 0 0 ${C.magenta}, -20px 0 0 ${C.cyan}, 8px 8px 0 ${C.black};
-            transform: skewX(10deg) translate(20px, 5px);
-            clip-path: inset(55% 0 8% 0);
-          }
-          81% {
-            text-shadow: -10px 0 0 ${C.hot}, 10px 0 0 ${C.cyan}, 8px 8px 0 ${C.black};
-            transform: skewX(-10deg) translate(-10px, -5px);
-            clip-path: inset(30% 0 38% 0);
-          }
-          82%,83% {
-            text-shadow: 8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot};
-            transform: skewX(0deg) translate(0,0);
-            clip-path: none;
-            filter: brightness(2);
-          }
-          84% {
-            text-shadow: 25px 0 0 ${C.cyan}, -25px 0 0 ${C.magenta}, 8px 8px 0 ${C.black};
-            transform: skewX(15deg) translate(25px, 0);
-            clip-path: inset(0 0 72% 0);
-          }
-          85%,86% {
-            text-shadow: 8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot};
-            transform: skewX(0deg) translate(0,0);
-            clip-path: none;
-            filter: brightness(1);
+          50% {
+            filter: drop-shadow(0 0 40px rgba(255,160,50,0.75))
+                    drop-shadow(0 0 90px rgba(255,80,10,0.38));
           }
         }
-        @keyframes sTitleTop {
-          0%,78%,87%,100%{ opacity:0; }
-          79%{ opacity:1; clip-path:inset(0 0 72% 0); transform:translate(30px,0); filter:hue-rotate(90deg) brightness(2); color:${C.cyan}; }
-          80%{ opacity:1; clip-path:inset(2% 0 68% 0); transform:translate(-25px,0); color:${C.magenta}; filter:brightness(1.5); }
-          81%,82%{ opacity:0; }
-          84%{ opacity:1; clip-path:inset(0 0 65% 0); transform:translate(35px,-5px); filter:brightness(2.5); color:${C.hot}; }
-          85%,86%{ opacity:0; }
+        .hl-logo-glow { animation: hl-logo-glow 3.5s ease-in-out infinite; }
+
+        /* Badge shimmer */
+        @keyframes hl-badge {
+          0%  { background-position: -200% center; }
+          100%{ background-position:  200% center; }
         }
-        @keyframes sTitleBot {
-          0%,78%,87%,100%{ opacity:0; }
-          79%{ opacity:1; clip-path:inset(68% 0 0 0); transform:translate(-30px,0); filter:hue-rotate(-90deg) brightness(2); color:${C.magenta}; }
-          80%{ opacity:1; clip-path:inset(65% 0 2% 0); transform:translate(25px,0); color:${C.cyan}; filter:brightness(1.5); }
-          81%,82%{ opacity:0; }
-          84%{ opacity:1; clip-path:inset(70% 0 0 0); transform:translate(-35px,5px); filter:brightness(2.5); color:${C.yellow}; }
-          85%,86%{ opacity:0; }
-        }
-        @keyframes sTitleIn {
-          0%  { opacity:0; transform:skewX(-8deg) translateY(-30px) scale(0.9); }
-          100%{ opacity:1; transform:skewX(0deg)  translateY(0)      scale(1);  }
+        .hl-badge {
+          background: linear-gradient(105deg,
+            rgba(255,255,255,0.03) 0%,
+            rgba(255,200,100,0.18) 40%,
+            rgba(255,255,255,0.03) 60%,
+            rgba(255,255,255,0.01) 100%
+          );
+          background-size: 200% auto;
+          animation: hl-badge 4s linear infinite;
         }
 
-        .title-glitch     { animation: sTitleGlitch 5s ease-in-out infinite; }
-        .title-clone-top  { animation: sTitleTop    5s ease-in-out infinite; }
-        .title-clone-bot  { animation: sTitleBot    5s ease-in-out infinite; }
+        /* Char reveal */
+        .hl-tc {
+          display: inline-block;
+          opacity: 0;
+          transform: translateY(22px) rotate(2deg);
+          animation: hl-cu 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+        }
+        @keyframes hl-cu { to { opacity:1; transform:translateY(0) rotate(0deg); } }
 
-        /* ── glitch animation for side logo ── */
-        @keyframes sGlitch {
-          0%,82%,100% {
-            clip-path: none;
-            transform: translate(0,0) skewX(0deg);
-            filter: drop-shadow(0 0 10px ${C.cyan}88);
-          }
-          83% {
-            clip-path: inset(12% 0 65% 0);
-            transform: translate(-6px, 0) skewX(-4deg);
-            filter: drop-shadow(4px 0 0 ${C.cyan}) drop-shadow(-4px 0 0 ${C.magenta});
-          }
-          85% {
-            clip-path: inset(55% 0 10% 0);
-            transform: translate(7px, 0) skewX(3deg);
-            filter: drop-shadow(-4px 0 0 ${C.cyan}) drop-shadow(4px 0 0 ${C.hot});
-          }
-          87% {
-            clip-path: inset(28% 0 42% 0);
-            transform: translate(-4px, 2px) skewX(-2deg);
-            filter: drop-shadow(4px 0 0 ${C.magenta}) drop-shadow(-3px 0 0 ${C.cyan});
-          }
-          89% {
-            clip-path: inset(70% 0 5% 0);
-            transform: translate(5px, -2px) skewX(4deg);
-            filter: drop-shadow(-5px 0 0 ${C.hot}) drop-shadow(3px 0 0 ${C.cyan});
-          }
-          91% {
-            clip-path: inset(5% 0 80% 0);
-            transform: translate(-3px, 1px) skewX(-1deg);
-            filter: drop-shadow(3px 0 0 ${C.yellow}) drop-shadow(-3px 0 0 ${C.magenta});
-          }
-          93%,94% {
-            clip-path: none;
-            transform: translate(0,0) skewX(0deg);
-            filter: drop-shadow(0 0 18px ${C.magenta}CC) brightness(1.4);
-          }
-          95% {
-            clip-path: inset(40% 0 35% 0);
-            transform: translate(8px, 0) skewX(5deg);
-            filter: drop-shadow(-6px 0 0 ${C.cyan}) drop-shadow(4px 0 0 ${C.hot});
-          }
-          97% {
-            clip-path: none;
-            transform: translate(0,0) skewX(0deg);
-            filter: drop-shadow(0 0 10px ${C.cyan}88);
-          }
+        /* Horizontal rule sweep */
+        @keyframes hl-line {
+          0%   { transform: scaleX(0); transform-origin: left;  }
+          100% { transform: scaleX(1); transform-origin: left;  }
+        }
+        .hl-line { animation: hl-line 1.2s cubic-bezier(0.22,1,0.36,1) 0.6s both; }
+
+        /* Vignette breathe */
+        @keyframes hl-vp { 0%,100%{opacity:1} 50%{opacity:0.88} }
+        .hl-vp { animation: hl-vp 8s ease-in-out infinite; }
+
+        /* Fire flicker on overlay */
+        @keyframes hl-flicker {
+          0%,100%{ opacity: 0.55 }
+          30%    { opacity: 0.50 }
+          60%    { opacity: 0.58 }
+          80%    { opacity: 0.52 }
+        }
+        .hl-flicker { animation: hl-flicker 5s ease-in-out infinite; }
+
+        /* Scroll cue bounce */
+        @keyframes hl-bounce {
+          0%,100%{ transform: translateY(0);   opacity: 0.4; }
+          50%    { transform: translateY(7px);  opacity: 0.9; }
+        }
+        .hl-bounce { animation: hl-bounce 2s ease-in-out infinite; }
+
+        /* Side label */
+        .hl-side {
+          writing-mode: vertical-rl;
+          font-family: 'Cinzel', serif;
+          font-size: 9px;
+          letter-spacing: 0.55em;
+          text-transform: uppercase;
+          color: rgba(255,200,120,0.22);
         }
 
-        /* ghost layers for the glitch clones */
-        @keyframes sGlitchTop {
-          0%,82%,100%{ opacity:0; }
-          83%{ opacity:1; clip-path:inset(0 0 75% 0); transform:translate(8px,0); filter:hue-rotate(90deg) brightness(1.5); }
-          85%{ opacity:1; clip-path:inset(5% 0 70% 0); transform:translate(-6px,0); }
-          87%,88%{ opacity:0; }
-          89%{ opacity:1; clip-path:inset(2% 0 72% 0); transform:translate(10px,1px); filter:hue-rotate(180deg); }
-          91%{ opacity:0; }
-          95%{ opacity:1; clip-path:inset(0 0 68% 0); transform:translate(-8px,-1px); filter:brightness(1.6); }
-          97%{ opacity:0; }
+        /* Red diagonal slash — decorative */
+        @keyframes hl-slash {
+          0%  { clip-path: inset(0 100% 0 0); }
+          100%{ clip-path: inset(0 0% 0 0);   }
         }
-        @keyframes sGlitchBot {
-          0%,82%,100%{ opacity:0; }
-          83%{ opacity:1; clip-path:inset(70% 0 0 0); transform:translate(-8px,0); filter:hue-rotate(-90deg) brightness(1.5); }
-          85%{ opacity:1; clip-path:inset(65% 0 2% 0); transform:translate(6px,0); }
-          87%,88%{ opacity:0; }
-          89%{ opacity:1; clip-path:inset(72% 0 0 0); transform:translate(-10px,1px); }
-          91%{ opacity:0; }
-          95%{ opacity:1; clip-path:inset(68% 0 0 0); transform:translate(8px,-1px); filter:brightness(1.6); }
-          97%{ opacity:0; }
-        }
-        @keyframes sGlitchScan {
-          0%,82%,100%{ opacity:0; }
-          83%,97%{ opacity:1; background:linear-gradient(90deg,transparent,${C.cyan}22,transparent); transform:translateY(-100%); animation-timing-function:linear; }
-          93%{ transform:translateY(200%); }
-          94%,96%{ opacity:0; }
-        }
-
-        .logo-glitch       { animation: sGlitch    4.5s ease-in-out infinite; }
-        .logo-glitch-top   { animation: sGlitchTop 4.5s ease-in-out infinite; }
-        .logo-glitch-bot   { animation: sGlitchBot 4.5s ease-in-out infinite; }
-
-        .cw    { animation:sCW   26s linear infinite; }
-        .cw2   { animation:sCW   40s linear infinite; }
-        .ccw   { animation:sCCW  19s linear infinite; }
-        .chroma{ animation:sChroma 4s ease-in-out infinite; }
-        .floatMe{ animation:sFloat 4.5s ease-in-out infinite; }
-        .stamp { animation:sStamp 0.6s cubic-bezier(.23,1.5,.6,1) both; }
-
-        @media (hover:none) {
-          .parallax-layer { transform:none !important; }
-        }
-
-        @media (max-width:480px) {
-          .stamps-hide { display:none; }
-        }
-        @media (max-width: 768px) {
-          .desktop-only { display: none !important; }
-          .mobile-only { display: block !important; }
-          .char-responsive { width: clamp(300px, 85vw, 500px) !important; }
-          .cta-responsive { margin-top: clamp(-60px, -8vh, -40px) !important; transform: scale(0.85); }
-        }
-        @media (min-width: 769px) {
-          .mobile-only { display: none !important; }
-          .char-responsive { width: clamp(200px, 45vw, 500px); }
-          .cta-responsive { margin-top: clamp(-45px, -5vh, -25px); }
-        }
+        .hl-slash { animation: hl-slash 1s cubic-bezier(0.22,1,0.36,1) 1.8s both; }
       `}</style>
 
       <section
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        className="hl-root"
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100svh",
-          minHeight: 600,
-          overflow: "hidden",
-          background: "transparent",
-          cursor: "crosshair",
-          isolation: "isolate",
-        }}
+        ref={sectionRef}
+        className="hl relative w-full h-screen min-h-[640px] overflow-hidden bg-black"
+        style={{ fontFamily: "'Cinzel', serif" }}
       >
 
-        {/* ═══════════ Z:1 DEEP BACKGROUND ═══════════ */}
-        <motion.div aria-hidden className="parallax-layer"
-          style={{ x: d0x, y: d0y, position: "absolute", inset: "-4%", zIndex: 1, pointerEvents: "none" }}
+        {/* ════════════════════════════ BG IMAGE — fire panorama ══ */}
+        <motion.div
+          className="absolute z-0"
+          style={
+            !isMobile
+              ? { inset: "-80px", y: bgY, x: bgX }
+              : { inset: "-30px" }
+          }
         >
+          <motion.div
+            className="absolute inset-0"
+            style={!isMobile ? { y: bgYm } : undefined}
+          >
+            <Image
+              src="/landingbg.jpg"
+              alt=""
+              fill
+              priority
+              quality={95}
+              sizes="120vw"
+              style={{ objectFit: "cover", objectPosition: "center 40%" }}
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* ── Ember particles ─────────────────────────────────────── */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{ mixBlendMode: "screen", opacity: 0.75 }}
+        />
+
+        {/* ── Ink-wash scanlines ───────────────────────────────────── */}
+        <div className="hl-scan absolute inset-0 z-10 pointer-events-none" />
+
+        {/* ── Noise grain ──────────────────────────────────────────── */}
+        <div className="hl-grain absolute inset-0 z-10 pointer-events-none" />
+
+        {/* ── Multi-layer fire gradient overlay ───────────────────── */}
+        <motion.div
+          className="hl-vp absolute inset-0 z-10 pointer-events-none"
+          style={{ opacity: overlayOp }}
+        >
+          {/* Bottom darkness — pulls eye to text */}
           <div style={{
             position: "absolute", inset: 0,
-            background: `
-              radial-gradient(ellipse 120% 100% at 50% 50%, transparent 0%, transparent 62%),
-              radial-gradient(ellipse 55% 42% at 15% 25%, ${C.magenta}25 0%, transparent 52%),
-              radial-gradient(ellipse 50% 55% at 85% 68%, ${C.cyan}20 0%, transparent 50%),
-              radial-gradient(ellipse 45% 38% at 60% 92%, ${C.hot}1E 0%, transparent 46%),
-              radial-gradient(ellipse 38% 32% at 28% 82%, #6600BB20 0%, transparent 48%)
-            `,
-          }} />
-          {/* animated moving grid */}
-          <div style={{
-            position: "absolute", inset: 0, opacity: 0.07,
-            backgroundImage: `
-              linear-gradient(${C.cyan}66 1px, transparent 1px),
-              linear-gradient(90deg, ${C.cyan}66 1px, transparent 1px)
-            `,
-            backgroundSize: "64px 64px",
-            animation: "sGridMove 8s linear infinite",
-          }} />
-          {/* diagonal golden streaks */}
-          <div style={{
-            position: "absolute", inset: 0, opacity: 0.07,
-            backgroundImage: `repeating-linear-gradient(
-              -52deg, ${C.yellow} 0, ${C.yellow} 1px, transparent 1px, transparent 56px
-            )`,
-          }} />
-          {/* floor glow */}
-          <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
-            background: `linear-gradient(to top, ${C.magenta}32 0%, ${C.cyan}14 38%, transparent 100%)`,
-          }} />
-          {/* horizontal scan lines */}
-          <div style={{
-            position: "absolute", inset: 0, opacity: 0.07,
-            backgroundImage: `repeating-linear-gradient(
-              180deg, transparent 0, transparent 40px, ${C.cyan}22 40px, ${C.cyan}22 41px
-            )`,
+            background: [
+              "radial-gradient(ellipse 120% 80% at 50% 115%, #0a0000 0%, transparent 55%)",
+              "linear-gradient(to top, rgba(5,0,0,0.97) 0%, rgba(8,2,0,0.65) 30%, rgba(10,2,0,0.15) 60%, transparent 100%)",
+              "linear-gradient(to bottom, rgba(4,0,0,0.60) 0%, transparent 30%)",
+              "linear-gradient(to right, rgba(3,0,0,0.55) 0%, transparent 40%)",
+            ].join(", "),
           }} />
         </motion.div>
 
-        {/* ═══════════ Z:2 AURORA BLOBS ═══════════ */}
-        <motion.div aria-hidden className="parallax-layer"
-          style={{ x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none" }}
-        >
-          <div style={{
-            position: "absolute", top: "50%", left: "50%",
-            width: "min(120vw,1000px)", height: "min(88vw,720px)",
-            borderRadius: "50%",
-            background: `radial-gradient(ellipse, ${C.magenta}34 0%, ${C.cyan}1C 38%, transparent 65%)`,
-            filter: "blur(52px)",
-            animation: "sAurora 7s ease-in-out infinite",
-          }} />
-          <div style={{
-            position: "absolute", top: "72%", left: "50%",
-            width: "min(80vw,640px)", height: "min(40vw,340px)",
-            borderRadius: "50%",
-            background: `radial-gradient(ellipse, ${C.hot}28 0%, ${C.magenta}14 45%, transparent 70%)`,
-            filter: "blur(40px)",
-            animation: "sFlare 5s ease-in-out infinite",
-          }} />
-          <div style={{
-            position: "absolute", top: "18%", left: "50%",
-            width: "min(60vw,520px)", height: "min(30vw,260px)",
-            borderRadius: "50%",
-            background: `radial-gradient(ellipse, ${C.cyan}20 0%, transparent 65%)`,
-            filter: "blur(32px)",
-            animation: "sFlare 6s ease-in-out infinite",
-            animationDelay: "2s",
-          }} />
-        </motion.div>
+        {/* ── Diagonal red accent — top-left corner ───────────────── */}
+        <div className="hl-flicker absolute top-0 left-0 z-20 pointer-events-none" style={{
+          width: "35vw", height: "35vw", maxWidth: 320, maxHeight: 320,
+          background: "radial-gradient(ellipse at 0% 0%, rgba(180,30,0,0.28) 0%, transparent 65%)",
+        }} />
 
-        {/* ═══════════ Z:3 SPEED LINES ═══════════ */}
-        <motion.div aria-hidden className="parallax-layer"
-          style={{
-            x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none",
-            display: "flex", alignItems: "center", justifyContent: "center"
-          }}
-        >
-          <div style={{ width: "min(100vw,900px)", height: "min(100vw,900px)", flexShrink: 0 }}>
-            <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", opacity: 0.12 }}>
-              {LINES.map((l, i) => (
-                <line key={i} x1="50" y1="50" x2={l.x2} y2={l.y2}
-                  stroke={i % 3 === 0 ? C.cyan : i % 3 === 1 ? C.magenta : C.yellow}
-                  strokeWidth="0.4" />
-              ))}
-            </svg>
-          </div>
-        </motion.div>
+        {/* ── Right fire bloom behind character ───────────────────── */}
+        <div className="absolute right-0 bottom-0 z-10 pointer-events-none" style={{
+          width: "55vw", height: "90vh",
+          background: "radial-gradient(ellipse 80% 100% at 100% 100%, rgba(200,60,0,0.22) 0%, transparent 60%)",
+        }} />
 
-        {/* ═══════════ Z:4 STARBURST RINGS ═══════════ */}
-        <motion.div aria-hidden className="parallax-layer"
-          style={{
-            x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none",
-            display: "flex", alignItems: "center", justifyContent: "center"
-          }}
-        >
-          <div style={{ position: "relative", width: "min(92vw,820px)", height: "min(92vw,820px)", flexShrink: 0 }}>
-            <div className="cw2" style={{ position: "absolute", inset: 0 }}>
-              <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                <path d={BA} fill="none" stroke={C.yellow} strokeWidth="0.35" opacity="0.25" />
-              </svg>
-            </div>
-            <div className="ccw" style={{ position: "absolute", inset: "14%" }}>
-              <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                <path d={BB} fill={C.magenta} opacity="0.07" />
-                <path d={BB} fill="none" stroke={C.cyan} strokeWidth="0.5" opacity="0.3" />
-              </svg>
-            </div>
-            <div className="cw" style={{ position: "absolute", inset: "29%" }}>
-              <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%" }}>
-                <path d={BC} fill="none" stroke={C.hot} strokeWidth="0.55" opacity="0.22" />
-              </svg>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* ═══════════ Z:5 PULSE RINGS ═══════════ */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none" }}>
-          {[C.cyan, C.magenta, C.yellow].map((col, i) => (
-            <div key={i} style={{
-              position: "absolute", top: "50%", left: "50%",
-              width: "min(68vw,580px)", height: "min(68vw,580px)",
-              borderRadius: "50%",
-              border: `1.5px solid ${col}`,
-              opacity: 0,
-              animation: `sPulse 3.8s ease-out infinite`,
-              animationDelay: `${i * 1.26}s`,
-            }} />
-          ))}
-        </div>
-
-        {/* ═══════════ Z:6 HALFTONE HALO ═══════════ */}
-        <motion.div aria-hidden className="parallax-layer"
-          style={{
-            x: d1x, y: d1y, position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
-            display: "flex", alignItems: "center", justifyContent: "center"
-          }}
-        >
-          <div style={{
-            width: "min(70vw,620px)", height: "min(70vw,620px)", flexShrink: 0,
-            borderRadius: "50%",
-            backgroundImage: `radial-gradient(circle, ${C.yellow}3A 1.4px, transparent 1.4px)`,
-            backgroundSize: "18px 18px",
-            maskImage: "radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
-            WebkitMaskImage: "radial-gradient(circle, transparent 28%, black 44%, transparent 76%)",
-          }} />
-        </motion.div>
-
-        {/* ═══════════ Z:7 CORNER DECOR + STAMPS ═══════════ */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 7, pointerEvents: "none" }}>
-          {/* corner brackets */}
-          {[
-            { t: 20, l: 20, rot: 0, col: C.cyan },
-            { t: 20, r: 20, rot: 90, col: C.magenta },
-            { b: 24, l: 20, rot: 270, col: C.hot },
-            { b: 24, r: 20, rot: 180, col: C.yellow },
-          ].map((c, i) => (
-            <svg key={i} width="44" height="44" viewBox="0 0 44 44" style={{
-              position: "absolute",
-              top: (c as any).t, bottom: (c as any).b,
-              left: (c as any).l, right: (c as any).r,
-              transform: `rotate(${c.rot}deg)`, opacity: 0.65,
-            }}>
-              <polyline points="0,28 0,0 28,0" fill="none"
-                stroke={c.col} strokeWidth="2.5" strokeLinecap="square" />
-            </svg>
-          ))}
-
-          {/* floating diamonds */}
-          {[
-            { top: "20%", left: "6%", s: 11, col: C.lime, d: "0s" },
-            { top: "24%", right: "7%", s: 8, col: C.magenta, d: "0.7s" },
-            { top: "50%", left: "3%", s: 7, col: C.hot, d: "1.4s" },
-            { top: "56%", right: "4%", s: 9, col: C.cyan, d: "2.1s" },
-            { bottom: "26%", left: "7%", s: 10, col: C.yellow, d: "1.0s" },
-            { bottom: "20%", right: "6%", s: 12, col: C.lime, d: "1.7s" },
-          ].map((s, i) => (
-            <div key={i} style={{
-              position: "absolute",
-              top: (s as any).top, bottom: (s as any).bottom,
-              left: (s as any).left, right: (s as any).right,
-              width: s.s, height: s.s,
-              background: s.col,
-              border: `1.5px solid ${C.black}`,
-              boxShadow: `2px 2px 0 ${C.black}`,
-              animation: `sDiamond 3.5s ease-in-out infinite`,
-              animationDelay: s.d,
-            }} />
-          ))}
-
-          {/* word stamps — hidden on very small screens */}
-          <div className="stamps-hide">
-            {[
-              { text: "POW!", top: "9%", left: "5%", rot: -13, col: C.hot },
-              { text: "ZAP!", top: "7%", right: "5%", rot: 11, col: C.cyan },
-              { text: "EPIC!", bottom: "14%", left: "5%", rot: -7, col: C.lime },
-              { text: "WOW!", bottom: "12%", right: "5%", rot: 9, col: C.magenta },
-            ].map((s, i) => (
-              <div key={i} className="stamp" style={{
-                position: "absolute",
-                top: (s as any).top, bottom: (s as any).bottom,
-                left: (s as any).left, right: (s as any).right,
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(1rem,2.5vw,1.8rem)",
-                letterSpacing: "0.06em",
-                color: s.col,
-                WebkitTextStroke: `1.5px ${C.black}`,
-                textShadow: `3px 3px 0 ${C.black}`,
-                transform: `rotate(${s.rot}deg)`,
-                animationDelay: `${0.3 + i * 0.15}s`,
-                opacity: 0.6, userSelect: "none",
-              }}>{s.text}</div>
-            ))}
-          </div>
-        </div>
-
-        {/* ═══════════════════════════════════════════
-            Z:20  MAIN CONTENT  (logo · char · cta)
-            All stacked in one flex column, centered
-        ═══════════════════════════════════════════ */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 20,
-          display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          paddingTop: "clamp(0px,2vh,20px)",
-          paddingBottom: "clamp(40px,7vh,60px)", /* leave room for ticker */
-          gap: 0,
-          pointerEvents: "none",
-        }}>
-
-          {/* ── CHARACTER ── */}
-          <motion.div
-            className="floatMe parallax-layer"
-            style={{
-              x: d2x, y: d2y,
-              marginTop: 0,
-              pointerEvents: "auto",
-            }}
-            initial={{ opacity: 0, scale: 0.86, y: 40 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.23, 1.2, 0.5, 1], delay: 0.18 }}
-          >
-            <div style={{ position: "relative" }}>
-              {/* halo */}
-              <div style={{
-                position: "absolute", inset: "-30% -30%",
-                borderRadius: "50%",
-                background: `radial-gradient(ellipse, ${C.magenta}25 0%, ${C.cyan}1A 40%, transparent 70%)`,
-                filter: "blur(20px)",
-                pointerEvents: "none",
-              }} />
-
-              <div className="chroma char-responsive" style={{
-                position: "relative",
-                aspectRatio: "1/1",
-                marginBottom: 0,
-                filter: `drop-shadow(0 0 20px ${C.magenta}66)`
-              }}>
-                {/* Mobile-only background logo */}
-                <div className="mobile-only" style={{
+        {/* ════════════════════════════ CHARACTER ══ */}
+        <motion.div
+          className={!isMobile ? "hl-char-float" : ""}
+          style={
+            !isMobile
+              ? {
                   position: "absolute",
-                  top: "3%", left: "50%",
-                  width: "140%",
-                  aspectRatio: "1/1",
-                  zIndex: -1,
-                  opacity: 0.6,
-                  pointerEvents: "none"
-                }}>
-                  <div style={{ width: "100%", height: "100%", transform: "translate(-50%, -50%)" }}>
-                    <div className="logo-glitch" style={{ width: "100%", height: "100%", position: "relative" }}>
-                      <Image
-                        src="/ak26-logo.png"
-                        alt=""
-                        fill
-                        style={{ objectFit: "contain" }}
-                      />
-                    </div>
-                  </div>
-                </div>
+                  right: "-2vw",
+                  bottom: 0,
+                  zIndex: 25,
+                  y: charY,
+                  x: chX,
+                  scale: charScale,
+                }
+              : {
+                  position: "absolute",
+                  right: "-8vw",
+                  bottom: 0,
+                  zIndex: 25,
+                  opacity: 0.35,
+                }
+          }
+        >
+          {/* Rim glow under character */}
+          <div style={{
+            position: "absolute",
+            bottom: 0, left: "10%", right: "10%",
+            height: "40%",
+            background: "radial-gradient(ellipse 80% 100% at 50% 100%, rgba(220,70,10,0.45) 0%, transparent 70%)",
+            filter: "blur(18px)",
+            zIndex: -1,
+          }} />
+          <motion.div
+            initial={{ opacity: 0, x: 80, filter: "blur(16px)" }}
+            animate={{ opacity: 1, x: 0,  filter: "blur(0px)"  }}
+            transition={{ duration: 1.4, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            style={!isMobile ? { y: chY } : undefined}
+          >
+            <img
+              src="/kuko.png"
+              alt="AAKAR character"
+              style={{
+                display: "block",
+                objectFit: "contain",
+                height: "clamp(420px, 90vh, 820px)",
+                width: "auto",
+                filter: "drop-shadow(-4px 0 30px rgba(220,80,10,0.55)) drop-shadow(0 0 60px rgba(180,40,0,0.30))",
+              }}
+            />
+          </motion.div>
+        </motion.div>
 
-                <Image
-                  src="/ak26.png"
-                  alt="AAKAR 2026 mascot"
-                  fill priority
-                  style={{ objectFit: "contain", objectPosition: "center bottom" }}
-                />
-              </div>
-            </div>
+        {/* ════════════════════════════ CENTER CONTENT ══ */}
+        <motion.div
+          className="absolute inset-0 z-30 flex flex-col items-start justify-center"
+          style={!isMobile ? { paddingLeft: "clamp(28px, 7vw, 100px)", y: textY, x: mX } : { paddingLeft: "24px" }}
+        >
+
+          {/* ── Top eyebrow ─────────────────────────────────────────── */}
+          <motion.div
+            className="flex items-center gap-3 mb-5 md:mb-6"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Red slash accent */}
+            <div style={{
+              width: 3, height: 28,
+              background: "linear-gradient(to bottom, rgba(255,80,20,0.9), rgba(255,40,0,0.4))",
+              borderRadius: 2,
+            }} />
+            <span style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: "clamp(8px, 1.3vw, 11px)",
+              letterSpacing: "0.55em",
+              color: "rgba(255,160,80,0.70)",
+              textTransform: "uppercase",
+            }}>
+              A J Institute of Engineering &amp; Technology
+            </span>
           </motion.div>
 
-          {/* ── CTA — TWO SEPARATE ELEMENTS ── */}
+          {/* ── AAKAR logo ──────────────────────────────────────────── */}
           <motion.div
-            className="cta-responsive"
-            style={{
-              pointerEvents: "auto",
-              display: "flex", flexDirection: "column", alignItems: "center",
-              gap: 10,
-              position: "relative",
-              zIndex: 30,
-            }}
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.68, duration: 0.6 }}
+            style={!isMobile ? { y: logoY } : undefined}
+            initial={{ opacity: 0, scale: 0.88, filter: "blur(22px)" }}
+            animate={{ opacity: 1, scale: 1,    filter: "blur(0px)"  }}
+            transition={{ duration: 1.5, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* date badge — standalone, no shared border with button */}
-            <div style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 10,
-              background: C.hot,
-              border: `3px solid ${C.black}`,
-              boxShadow: `5px 5px 0 ${C.black}`,
-              padding: "8px 28px",
-              fontFamily: "'Bebas Neue',sans-serif",
-              fontSize: "clamp(0.9rem,1.9vw,1.1rem)",
-              letterSpacing: "0.28em",
-              color: C.white,
-              animation: "sBadge 2.5s ease-in-out infinite",
+            <Image
+              src="/aklogo.png"
+              alt="AAKAR 2026"
+              width={620}
+              height={240}
+              priority
+              className="hl-logo-glow"
+              style={{
+                objectFit: "contain",
+                width: "clamp(240px, 52vw, 620px)",
+                height: "auto",
+                filter: "invert(1) drop-shadow(0 0 30px rgba(255,120,30,0.5))",
+              }}
+            />
+          </motion.div>
+
+          {/* ── "A NEW ERA BEGINS" char reveal ──────────────────────── */}
+          <div className="overflow-hidden mt-4 md:mt-5">
+            <p style={{
+              fontFamily: "'Cinzel', serif",
+              fontWeight: 300,
+              fontSize: "clamp(0.75rem, 2.6vw, 1.5rem)",
+              letterSpacing: "clamp(0.2em, 1.2vw, 0.38em)",
+              color: "#fff",
               whiteSpace: "nowrap",
             }}>
-              <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
-              APR 24,25,26, 2026
-              <span style={{ fontSize: "0.7em", opacity: 0.8 }}>★</span>
-            </div>
-
-            {/* CTA button — fully independent element */}
-            <motion.a
-              href="/events"
-              whileHover={{
-                y: -6,
-                boxShadow: `10px 10px 0 ${C.black}, 18px 18px 0 ${C.magenta}`,
-              }}
-              whileTap={{ scale: 0.96 }}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 10,
-                background: C.yellow,
-                border: `3px solid ${C.black}`,
-                boxShadow: `8px 8px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
-                padding: "clamp(14px,2.5vh,20px) clamp(36px,6vw,64px)",
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(1.2rem,2.8vw,1.6rem)",
-                letterSpacing: "0.22em",
-                color: C.black,
-                textDecoration: "none",
-                cursor: "pointer",
-                transition: "all 0.14s ease",
-                whiteSpace: "nowrap",
-              }}
-            >
-              EXPLORE EVENTS
-              <span style={{
-                display: "inline-flex", alignItems: "center", justifyContent: "center",
-                background: C.black, color: C.yellow,
-                width: "1.8em", height: "1.8em",
-                fontSize: "0.9em",
-                marginLeft: 6,
-              }}>→</span>
-            </motion.a>
-          </motion.div>
-
-        </div>
-
-        {/* ═══════════ Z:19 BACKGROUND GLITCH TITLE ═══════════ */}
-        <div className="desktop-only" style={{
-          position: "absolute",
-          top: "28%", left: 0, right: 0,
-          transform: "translateY(-50%)",
-          zIndex: 19,
-          pointerEvents: "none",
-        }}>
-          <motion.div
-            className="parallax-layer"
-            style={{ x: dTitleX, y: dTitleY, display: "flex", justifyContent: "center" }}
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1, duration: 0.9, ease: [0.23, 1.3, 0.5, 1] }}
-          >
-            {/* wrapper so clones sit on top */}
-            <div style={{ position: "relative", display: "inline-block", lineHeight: 1 }}>
-
-              {/* clone TOP */}
-              <div className="title-clone-top" style={{
-                position: "absolute", inset: 0,
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(6rem, 20vw, 18rem)",
-                letterSpacing: "0.06em",
-                color: C.cyan,
-                WebkitTextStroke: `2px ${C.black}`,
-                whiteSpace: "nowrap",
-                opacity: 0,
-                userSelect: "none",
-              }}>AAKAR</div>
-
-              {/* clone BOT */}
-              <div className="title-clone-bot" style={{
-                position: "absolute", inset: 0,
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(6rem, 20vw, 18rem)",
-                letterSpacing: "0.06em",
-                color: C.magenta,
-                WebkitTextStroke: `2px ${C.black}`,
-                whiteSpace: "nowrap",
-                opacity: 0,
-                userSelect: "none",
-              }}>AAKAR</div>
-
-              {/* BASE title */}
-              <h1 className="title-glitch" style={{
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(6rem, 20vw, 18rem)",
-                letterSpacing: "0.06em",
-                color: C.yellow,
-                WebkitTextStroke: `4px ${C.black}`,
-                textShadow: `8px 8px 0 ${C.black}, 14px 14px 0 ${C.hot}`,
-                margin: 0,
-                whiteSpace: "nowrap",
-                position: "relative", zIndex: 2,
-              }}>AAKAR</h1>
-
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ═══════════ Z:25 LEFT-SIDE LOGO ═══════════ */}
-        <motion.div
-          className="desktop-only"
-          style={{
-            position: "absolute",
-            left: "clamp(100px, 16vw, 200px)",
-            top: "50%",
-            zIndex: 25,
-            pointerEvents: "none",
-          }}
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.7, ease: [0.23, 1.3, 0.5, 1] }}
-        >
-          {/* outer container — vertical orientation */}
-          <div style={{
-            position: "relative",
-            width: "clamp(150px, 14vw, 160px)",
-            transform: "translateY(-50%)",
-          }}>
-
-            {/* subtle neon frame behind logo */}
-            <div style={{
-              position: "absolute",
-              inset: "-6px",
-              border: `1.5px solid ${C.cyan}44`,
-              boxShadow: `0 0 12px ${C.cyan}33, inset 0 0 8px ${C.magenta}22`,
-            }} />
-
-            {/* scan-line sweep over the logo */}
-            <div style={{
-              position: "absolute", inset: 0,
-              overflow: "hidden",
-              pointerEvents: "none",
-              zIndex: 3,
-            }}>
-              <div style={{
-                position: "absolute", left: 0, right: 0, height: "30%",
-                background: `linear-gradient(180deg, transparent, ${C.cyan}18, transparent)`,
-                animation: "sGlitchScan 4.5s ease-in-out infinite",
-              }} />
-            </div>
-
-            {/* BASE logo */}
-            <div
-              className="logo-glitch"
-              style={{
-                position: "relative",
-                width: "100%",
-                aspectRatio: "1/1",
-                zIndex: 2,
-              }}
-            >
-              <Image
-                src="/ak26-logo.png"
-                alt="Aakar 2026"
-                fill
-                style={{ objectFit: "contain" }}
-              />
-            </div>
-
-            {/* TOP glitch clone */}
-            <div
-              className="logo-glitch-top"
-              style={{
-                position: "absolute", inset: 0,
-                width: "100%", aspectRatio: "1/1",
-                zIndex: 4, pointerEvents: "none",
-                opacity: 0,
-              }}
-            >
-              <Image
-                src="/ak26-logo.png"
-                alt=""
-                fill
-                style={{ objectFit: "contain" }}
-              />
-            </div>
-
-            {/* BOTTOM glitch clone */}
-            <div
-              className="logo-glitch-bot"
-              style={{
-                position: "absolute", inset: 0,
-                width: "100%", aspectRatio: "1/1",
-                zIndex: 4, pointerEvents: "none",
-                opacity: 0,
-              }}
-            >
-              <Image
-                src="/ak26-logo.png"
-                alt=""
-                fill
-                style={{ objectFit: "contain" }}
-              />
-            </div>
-
-            {/* label below */}
-            <div style={{
-              marginTop: 6,
-              fontFamily: "'Share Tech Mono',monospace",
-              fontSize: "clamp(0.38rem, 0.7vw, 0.52rem)",
-              letterSpacing: "0.22em",
-              color: C.cyan,
-              textAlign: "center",
-              opacity: 0.7,
-              textTransform: "uppercase",
-            }}>AAKAR&nbsp;'26</div>
-
+              {chars.map((ch, i) => (
+                <span
+                  key={i}
+                  className="hl-tc"
+                  style={{
+                    animationDelay: `${1.0 + i * 0.04}s`,
+                    whiteSpace: ch === " " ? "pre" : undefined,
+                  }}
+                >
+                  {ch}
+                </span>
+              ))}
+            </p>
           </div>
+
+          {/* ── Japanese subtitle ───────────────────────────────────── */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.2, duration: 1.2 }}
+            style={{
+              fontFamily: "'Noto Serif JP', serif",
+              fontWeight: 200,
+              fontSize: "clamp(9px, 1.2vw, 13px)",
+              letterSpacing: "0.48em",
+              color: "rgba(255,180,100,0.38)",
+              marginTop: "10px",
+            }}
+          >
+            新たな時代の幕開け
+          </motion.p>
+
+          {/* ── Divider line ────────────────────────────────────────── */}
+          <div className="mt-6 md:mt-8" style={{ width: "clamp(140px, 30vw, 280px)", height: 1, background: "linear-gradient(to right, rgba(255,100,30,0.7), rgba(255,200,100,0.4), transparent)", }} />
+
+          {/* ── Badge + CTA row ─────────────────────────────────────── */}
+          <motion.div
+            className="flex items-center gap-4 md:gap-6 mt-6 md:mt-7"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Badge */}
+            <span
+              className="hl-badge border border-white/15 uppercase"
+              style={{
+                backdropFilter: "blur(8px)",
+                borderRadius: "2px",
+                padding: "6px 14px",
+                fontFamily: "'Cinzel', serif",
+                fontSize: "clamp(7px, 1vw, 9.5px)",
+                letterSpacing: "0.40em",
+                color: "rgba(255,200,120,0.72)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Techno-Cultural Fest
+            </span>
+
+            {/* CTA button */}
+            <motion.button
+              whileHover={{ scale: 1.04, boxShadow: "0 0 24px rgba(255,80,10,0.5)" }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                fontFamily: "'Cinzel', serif",
+                fontSize: "clamp(7px, 1vw, 9.5px)",
+                letterSpacing: "0.40em",
+                textTransform: "uppercase",
+                color: "#fff",
+                background: "linear-gradient(135deg, rgba(200,50,0,0.85) 0%, rgba(255,90,10,0.75) 100%)",
+                border: "1px solid rgba(255,120,40,0.45)",
+                borderRadius: "2px",
+                padding: "6px 18px",
+                cursor: "pointer",
+                backdropFilter: "blur(8px)",
+                transition: "box-shadow 0.3s",
+              }}
+            >
+              Explore ›
+            </motion.button>
+          </motion.div>
+
+          {/* ── Date pill ───────────────────────────────────────────── */}
+          <motion.div
+            className="flex items-center gap-2 mt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.0, duration: 0.8 }}
+          >
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,80,20,0.8)", boxShadow: "0 0 8px rgba(255,60,0,0.7)" }} />
+            <span style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(8px, 1vw, 10px)", letterSpacing: "0.35em", color: "rgba(255,255,255,0.28)", textTransform: "uppercase" }}>
+              Mangaluru · 2026
+            </span>
+          </motion.div>
         </motion.div>
 
-        {/* ═══════════ Z:35 SCROLL DOWN INDICATOR ═══════════ */}
-        <div style={{
-          position: "absolute",
-          bottom: "100px",
-          left: 0,
-          right: 0,
-          zIndex: 35,
-          display: "flex",
-          justifyContent: "center",
-          pointerEvents: "none",
-        }}>
-          <motion.div
-            onClick={() => window.scrollBy({ top: window.innerHeight * 0.8, behavior: "smooth" })}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "2px",
-              color: C.cyan,
-              fontFamily: "'Share Tech Mono',monospace",
-              fontSize: "0.8rem",
-              letterSpacing: "0.1em",
-              cursor: "pointer",
-              pointerEvents: "auto",
-              opacity: 0.8,
-              textShadow: `0 0 10px ${C.cyan}88`,
-            }}
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          >
-            <span>SCROLL</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-              <polyline points="6 9 12 15 18 9"></polyline>
+        {/* ════════════════════════════ SIDE LABELS ══ */}
+        <motion.div
+          className="absolute left-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
+          initial={{ opacity: 0, x: -14 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.8, duration: 0.9 }}
+        >
+          <div className="h-14 w-px" style={{ background: "rgba(255,160,80,0.12)" }} />
+          <span className="hl-side">Aakar 2026</span>
+          <div className="h-14 w-px" style={{ background: "rgba(255,160,80,0.12)" }} />
+        </motion.div>
+
+        <motion.div
+          className="absolute right-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
+          initial={{ opacity: 0, x: 14 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.8, duration: 0.9 }}
+        >
+          <div className="h-14 w-px" style={{ background: "rgba(255,160,80,0.12)" }} />
+          <span className="hl-side" style={{ transform: "rotate(180deg)" }}>AJIET · Mangaluru</span>
+          <div className="h-14 w-px" style={{ background: "rgba(255,160,80,0.12)" }} />
+        </motion.div>
+
+        {/* ════════════════════════════ BOTTOM BAR ══ */}
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 z-40 flex items-end justify-between px-6 md:px-12 pb-5 md:pb-7"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4, duration: 1 }}
+        >
+          {/* Left — flavour text */}
+          <span className="hidden md:block" style={{ fontFamily: "'Cinzel', serif", fontSize: "9px", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.14)" }}>
+            Where Technology Meets Culture
+          </span>
+
+          {/* Centre — scroll cue */}
+          <div className="flex flex-col items-center gap-1 absolute left-1/2 -translate-x-1/2 bottom-5">
+            <span style={{ fontFamily: "'Cinzel', serif", fontSize: "8px", letterSpacing: "0.4em", color: "rgba(255,255,255,0.18)", textTransform: "uppercase" }}>Scroll</span>
+            <svg className="hl-bounce" width="10" height="14" viewBox="0 0 10 14" fill="none">
+              <path d="M5 1v12M1 9l4 4 4-4" stroke="rgba(255,160,80,0.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </motion.div>
-        </div>
-
-        {/* ═══════════ Z:40 TICKER ═══════════ */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0,
-          zIndex: 40, height: 48,
-          background: C.magenta,
-          borderTop: `4px solid ${C.black}`,
-          overflow: "hidden",
-          display: "flex", alignItems: "center",
-        }}>
-          <div style={{
-            display: "flex", whiteSpace: "nowrap",
-            animation: "sTick 16s linear infinite",
-            fontFamily: "'Bebas Neue',sans-serif",
-            fontSize: "1.25rem", letterSpacing: "0.28em", color: C.black,
-          }}>
-            {[0, 1].map(i => (
-              <span key={i} style={{ paddingRight: "2rem", paddingTop: "4px" }}>
-                {"★ AAKAR 2026  ·  BRAINS  ·  GUTS  ·  GLORY  ·  MGIT MANGALURU  ·  AURORAS OF ADVENTURE  ·  ".repeat(6)}
-              </span>
-            ))}
           </div>
-        </div>
 
-        {/* ═══════════ Z:90 VIGNETTE ═══════════ */}
-        <div aria-hidden style={{
-          position: "absolute", inset: 0, zIndex: 90, pointerEvents: "none",
-          background: `radial-gradient(ellipse 88% 88% at 50% 50%, transparent 36%, ${C.black}C4 100%)`,
-        }} />
+          {/* Right — contact */}
+          <a
+            href="mailto:prajwal@ajiet.edu.in"
+            style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: "9px",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.22)",
+              textDecoration: "none",
+              transition: "color 0.3s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,200,100,0.75)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.22)")}
+          >
+            prajwal@ajiet.edu.in
+          </a>
+        </motion.div>
 
       </section>
     </>
