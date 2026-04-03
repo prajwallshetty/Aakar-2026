@@ -113,9 +113,8 @@ const EventsCRUD = () => {
   const [formData, setFormData] = useState<FormData>(defaultForm)
 
   const dateOptions = [
-    { value: new Date("2025-05-20"), label: "May 20, 2025" },
-    { value: new Date("2025-05-21"), label: "May 21, 2025" },
-    { value: new Date("2025-05-22"), label: "May 22, 2025" },
+    { value: new Date("2026-04-24"), label: "Apr 24, 2026" },
+    { value: new Date("2026-04-25"), label: "Apr 25, 2026" },
   ]
 
   useEffect(() => { fetchEvents() }, [])
