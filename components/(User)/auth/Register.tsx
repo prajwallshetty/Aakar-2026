@@ -17,6 +17,7 @@ import {
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 import PopArtBackground from "@/components/(User)/PopArtBackground";
+import { ElitePassCard } from "@/components/(User)/auth/ElitePassCard";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
@@ -535,6 +536,10 @@ const Register = () => {
                                 </div>
                             </div>
                         </SectionCard>
+
+                        <div style={{ marginBottom: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+                            <ElitePassCard />
+                        </div>
 
                         <SectionCard title="02 · Pick Your Events" color={C.magenta}>
                             {selectedEvents.length > 0 && (

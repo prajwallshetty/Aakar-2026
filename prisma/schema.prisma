@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum eventCategory {
@@ -87,6 +88,23 @@ model MerchOrder {
   size                  tshirtSize
   transactionId         String           @unique
   amount                Int              @default(499)
+  paymentScreenshotUrl  String?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+}
+
+model ElitePassOrder {
+  id                    Int              @id @default(autoincrement())
+  uuid                  String           @unique @default(uuid())
+  name                  String
+  usn                   String           @unique
+  email                 String           @unique
+  phone                 String
+  college               String
+  department            String?
+  year                  Int              @default(1)
+  transactionId         String           @unique
+  amount                Int              @default(0)
   paymentScreenshotUrl  String?
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
