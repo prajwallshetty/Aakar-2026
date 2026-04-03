@@ -139,7 +139,7 @@ const AdminSidebar = () => {
                                         <Icon size={16} />
                                     </Link>
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="text-xs">
+                                <TooltipContent side="right" className={cn("text-xs", montserrat.className)}>
                                     {item.label}
                                 </TooltipContent>
                             </Tooltip>
@@ -183,7 +183,7 @@ const AdminSidebar = () => {
                                     <LogOut size={15} />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="right" className="text-xs">Sign out</TooltipContent>
+                            <TooltipContent side="right" className={cn("text-xs", montserrat.className)}>Sign out</TooltipContent>
                         </Tooltip>
                     )}
                 </div>
