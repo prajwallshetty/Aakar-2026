@@ -127,7 +127,7 @@ export default function MerchPage() {
                           <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
                           <directionalLight position={[4, 8, 5]} intensity={1.35} />
                           <Suspense fallback={null}>
-                            <Bounds fit clip observe margin={1.28}>
+                            <Bounds fit clip observe margin={3.5}>
                               <TshirtModel modelUrl={merchModelUrl} />
                             </Bounds>
                             <Environment preset="studio" />
