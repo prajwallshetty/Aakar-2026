@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
-    title: "AAKAR 2025 | Brains, Guts and Glory",
+    title: "AAKAR 2026",
     description:
         "Experience the spirit of innovation, creativity, and competition at AAKAR 2025 – a premier TechnoCultural fest bringing together students, tech enthusiasts, and innovators for exciting events, workshops, and unforgettable memories.",
     keywords: [
@@ -241,16 +241,16 @@ export const metadata: Metadata = {
     creator: "AAKAR Team",
     publisher: "AAKAR Fest Committee",
     robots: "index, follow",
-    metadataBase: new URL("https://aakar2025.in"),
+    metadataBase: new URL("https://aakar.live"),
     openGraph: {
         title: "AAKAR 2025 | Brains, Guts and Glory",
         description:
             "Join us for AAKAR 2025, the ultimate blend of technology and culture. Participate in events, win prizes, and make unforgettable memories!",
-        url: "https://aakar2025.in",
+        url: "https://aakar.live",
         siteName: "AAKAR 2025",
         images: [
             {
-                url: "https://aakar2025.in/Aakarlogo.svg",
+                url: "https://aakar.live/Aakarlogo.svg",
                 width: 1200,
                 height: 630,
                 alt: "AAKAR 2025 Banner",
@@ -264,7 +264,7 @@ export const metadata: Metadata = {
         title: "AAKAR 2025 | Brains, Guts and Glory",
         description:
             "Tech meets culture at AAKAR 2025! Explore innovation, creativity, and fun at our annual fest.",
-        images: ["https://aakar2025.in/Aakarlogo.svg"],
+        images: ["https://aakar.live/Aakarlogo.svg"],
         creator: "@aakar__2025",
     },
 };

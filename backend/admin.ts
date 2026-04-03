@@ -61,24 +61,4 @@ export async function updateAdmin(id: number, admin: Prisma.AdminUpdateInput) {
         data: { ...admin, email: (admin.email as string)?.toLowerCase() || undefined }
     })
 }
-
-export async function verifyAdmin(email: string, password: string) {
-    try {
-        const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-        const configuredPassword = process.env.ADMIN_PASSWORD;
-
-        if (!configuredEmail || !configuredPassword) return null;
-        if (email.toLowerCase() !== configuredEmail) return null;
-        if (password !== configuredPassword) return null;
-
-        return {
-            id: 1,
-            name: "Admin",
-            email: configuredEmail,
-            phone: "",
-        };
-    } catch (e) {
-        console.error(e);
-        return null;
-    }
-}
+

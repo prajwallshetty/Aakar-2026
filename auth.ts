@@ -1,6 +1,26 @@
 import NextAuth, { DefaultSession } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { verifyAdmin } from "./backend/admin"
+
+async function verifyAdmin(email: string, password: string) {
+    try {
+        const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+        const configuredPassword = process.env.ADMIN_PASSWORD;
+
+        if (!configuredEmail || !configuredPassword) return null;
+        if (email.toLowerCase() !== configuredEmail) return null;
+        if (password !== configuredPassword) return null;
+
+        return {
+            id: 1,
+            name: "Admin",
+            email: configuredEmail,
+            phone: "",
+        };
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "dev-secret-change-me",
