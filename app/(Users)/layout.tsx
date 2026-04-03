@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/(User)/Common/Navbar";
 import Footer from "@/components/(User)/Common/Footer";
-import { GameOfSquids } from "@/lib/font";
+import { baseFont } from "@/lib/font";
 
 export const metadata: Metadata = {
   title: "AAKAR 2025 | Brains, Guts and Glory",
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${GameOfSquids.className} antialiased flex flex-col min-h-screen`}>
+    <div className={`${baseFont.className} antialiased flex flex-col min-h-screen`}>
       {/* Dynamic Global Background */}
       <div className="fixed inset-0 z-[-10]">
         <div
@@ -41,7 +41,7 @@ export default function RootLayout({
       <Navbar />
 
       {/* Page Content */}
-      <main className="flex-grow relative font-GameOfSquids">
+      <main className="flex-grow relative font-sans">
         {children}
       </main>
 

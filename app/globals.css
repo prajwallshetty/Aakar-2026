@@ -54,15 +54,7 @@
   background-repeat: no-repeat;
 }
 
-@font-face {
-  font-family: "GameOfSquids";
-  src: url("/fonts/GameOfSquids.otf") format("otf"),
-    url("/fonts/GameOfSquids.png") format("png"),
-    url("/fonts/GameOfSquids.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+
 
 :root {
   --radius: 0.625rem;
