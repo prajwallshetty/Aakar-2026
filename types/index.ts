@@ -29,3 +29,29 @@ export interface ExtendedParticipantCreateInput extends Prisma.ParticipantCreate
 }
 
 export type CartEvents = number[];
+
+export interface ExtendedMerchOrder {
+    id: number;
+    uuid: string;
+    name: string;
+    usn: string;
+    email: string;
+    phone: string;
+    size: string;
+    transactionId: string;
+    amount: number;
+    paymentScreenshotUrl?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface ExtendedMerchOrderCreateInput {
+    name: string;
+    usn: string;
+    email: string;
+    phone: string;
+    size: string;
+    transactionId: string;
+    amount?: number;
+    paymentScreenshotUrl?: string | null;
+}

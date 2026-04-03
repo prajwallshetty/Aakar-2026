@@ -11,6 +11,7 @@ import {
     User,
     BarChart2,
     School,
+    Shirt,
     ChevronRight,
     X,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const menuItems = [
     { icon: LayoutDashboard, label: "Admin Portal", href: "/AdminPortal" },
     { icon: CalendarDays, label: "Events", href: "/EventsCRUD" },
     { icon: User, label: "Participants", href: "/Participants" },
+    { icon: Shirt, label: "Merch Orders", href: "/MerchOrders" },
     { icon: BarChart2, label: "Event Stats", href: "/EventStatistics" },
     { icon: School, label: "College Stats", href: "/CollegeStatistics" },
 ];

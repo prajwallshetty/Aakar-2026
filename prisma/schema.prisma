@@ -20,6 +20,17 @@ enum eventType {
   Team
 }
 
+enum tshirtSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+  XXXXL
+}
+
 model Participant {
   id                    Int      @id @default(autoincrement())
   uuid                  String   @unique @default(uuid())
@@ -64,4 +75,19 @@ model Admin {
   phone    String @unique
   password String
   email    String @unique
+}
+
+model MerchOrder {
+  id                    Int              @id @default(autoincrement())
+  uuid                  String           @unique @default(uuid())
+  name                  String
+  usn                   String           @unique
+  email                 String           @unique
+  phone                 String
+  size                  tshirtSize
+  transactionId         String           @unique
+  amount                Int              @default(499)
+  paymentScreenshotUrl  String?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 }
