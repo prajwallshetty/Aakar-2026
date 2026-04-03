@@ -13,8 +13,6 @@ import PopArtBackground from "@/components/(User)/PopArtBackground";
 export default function Home() {
   return (
     <>
-      <LandingPage />
-     
     </>
   );
 }
