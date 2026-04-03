@@ -235,35 +235,52 @@ const AjietRegister = () => {
         if (formErrors[id]) setFormErrors((prev) => ({ ...prev, [id]: undefined }));
     };
 
-    const handleEventSelection = (selectedOptions: any) => {
-        setSelectedEvents(selectedOptions);
-        const selectedEventIds = selectedOptions.map((o: any) => o.id);
-        const newGroupData = { ...groupEventData };
-        
-        selectedOptions.forEach((event: (typeof selectedEvents)[number]) => {
-            const eventObj = events.find((e) => e.id === event.id);
-            if (eventObj && eventObj.eventType === "Team" && !newGroupData[event.id]) {
-                newGroupData[event.id] = {
-                    participantCount: eventObj.minMembers - 1,
-                    members: Array.from({ length: eventObj.minMembers - 1 }, () => ({ name: "", usn: "", email: "" })),
-                };
-            }
-        });
+   const handleEventSelection = (selectedOptions: any) => {
+    setSelectedEvents(selectedOptions);
 
-        Object.keys(newGroupData).forEach((groupId) => {
-            if (!selectedEventIds.includes(Number(groupId))) delete newGroupData[groupId];
-        });
-        
-        setGroupEventData(newGroupData);
-        
-        // AJIET LOGIC: Solo events are completely free (fee = 0)
-        setTotalAmount(selectedOptions.reduce((sum: number, event: any) => {
-            const eventObj = events.find((e) => e.id === event.id);
-            if (eventObj?.eventType === "Solo") return sum; // Free for AJIET!
-            return sum + (eventObj?.fee || 0); // Not Solo? Normal fee.
-        }, 0));
-    };
+    const selectedEventIds = selectedOptions.map((o: any) => o.id);
+    const newGroupData = { ...groupEventData };
 
+    selectedOptions.forEach((event: any) => {
+        const eventObj = events.find((e) => e.id === event.id);
+
+        if (eventObj && eventObj.eventType === "Team" && !newGroupData[event.id]) {
+            newGroupData[event.id] = {
+                participantCount: eventObj.minMembers - 1,
+                members: Array.from(
+                    { length: eventObj.minMembers - 1 },
+                    () => ({ name: "", usn: "", email: "" })
+                ),
+            };
+        }
+    });
+
+    Object.keys(newGroupData).forEach((groupId) => {
+        if (!selectedEventIds.includes(Number(groupId))) {
+            delete newGroupData[groupId];
+        }
+    });
+
+    setGroupEventData(newGroupData);
+
+    // ✅ SOLO FREE LOGIC
+    const total = selectedOptions.reduce((sum: number, event: any) => {
+    const eventObj = events.find((e) => e.id === event.id);
+
+    // ✅ FREE ONLY if SOLO AND NOT SPECIAL
+    if (
+        eventObj?.eventType === "Solo" &&
+        eventObj?.eventCategory !== "Special"
+    ) {
+        return sum;
+    }
+
+    return sum + (eventObj?.fee || 0);
+}, 0);
+
+setTotalAmount(total);
+    setTotalAmount(total);
+};
     const handleParticipantCountChange = (groupId: string | number, count: number) => {
         const evDetail = events.find(e => e.id === Number(groupId));
         const maxLimit = evDetail ? evDetail.maxMembers - 1 : 10;
@@ -313,125 +330,127 @@ const AjietRegister = () => {
     };
 
     const generateQRCode = () => {
-        const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2026 Registration")}&am=${totalAmount}&cu=INR&tn=${encodeURIComponent("Aakar " + formData.usn)}`;
-        setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`);
-        setShowQRCode(true);
-    };
+    if (totalAmount <= 0) return; // 🔥 safety
+
+    const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}
+        &pn=${encodeURIComponent("Aakar Registration")}
+        &am=${totalAmount}
+        &cu=INR`;
+
+    setQrImageUrl(
+        `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`
+    );
+
+    setShowQRCode(true);
+};
 
     const proceedToPayment = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const errors = (await validateParticipantData(formData)) || {};
-        
-        // STRIKE-SURE AJIET STUDENT VALIDATION
-        if (!formData.usn.toUpperCase().startsWith("4JK")) {
-            errors.usn = "Only AJIET students (USN starting with 4JK) can use this portal.";
-        }
+    e.preventDefault();
 
-        if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Please fix the highlighted errors below."); return; }
-        if (selectedEvents.length === 0) { setFormErrors({ events: "Please select at least one event" }); setGeneralError("Please select at least one event."); return; }
-        
-        Object.keys(groupEventData).forEach((groupId) => {
-            if (selectedEvents.find((e) => e.value === groupId || e.id === parseInt(groupId))) {
-                groupEventData[groupId].members.forEach((member, index) => {
-                    if (!member.name) errors[`group_${groupId}_member_${index}_name`] = "Member name is required";
-                    if (!member.usn) {
-                        errors[`group_${groupId}_member_${index}_usn`] = "Member USN is required";
-                    } else if (!member.usn.toUpperCase().startsWith("4JK")) {
-                        errors[`group_${groupId}_member_${index}_usn`] = "All teammates must be from AJIET (4JK)";
-                    }
-                    if (!member.email) errors[`group_${groupId}_member_${index}_email`] = "Member Email is required";
-                });
-            }
-        });
-        
-        if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
+    const errors = (await validateParticipantData(formData)) || {};
 
-        // AJIET BYPASS PAYMENT IF IT'S 0 (Meaning only strictly Solo Events are picked)
-        if (totalAmount === 0) {
-            setPaymentStep("verification");
-            return;
-        }
+    if (!formData.usn.toUpperCase().startsWith("4JK")) {
+        errors.usn = "Only AJIET students allowed (4JK)";
+    }
 
-        setPaymentStep("payment");
-        generateQRCode();
-    };
+    if (selectedEvents.length === 0) {
+        errors.events = "Select at least one event";
+    }
+
+    if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+    }
+
+    // ✅ IMPORTANT: SKIP PAYMENT IF FREE
+    if (totalAmount === 0) {
+        setPaymentStep("verification");
+        return;
+    }
+
+    // Paid flow
+    setPaymentStep("payment");
+    generateQRCode();
+};
 
     const proceedToVerification = () => {
-        if (!formData.transactionId) { setFormErrors({ transactionId: "Transaction ID is required" }); return; }
-        if (!formData.paymentScreenshot) { setFormErrors({ paymentScreenshot: "Payment screenshot is required" }); return; }
+    if (totalAmount === 0) {
         setPaymentStep("verification");
-    };
+        return;
+    }
+
+    if (!formData.transactionId) {
+        setFormErrors({ transactionId: "Transaction ID required" });
+        return;
+    }
+
+    if (!formData.paymentScreenshot) {
+        setFormErrors({ paymentScreenshot: "Screenshot required" });
+        return;
+    }
+
+    setPaymentStep("verification");
+};
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        setIsRegistering(true);
-        setFormErrors({});
-        setGeneralError("");
+    setIsRegistering(true);
 
-        try {
-            let fileUrls: string[] = [];
+    try {
+        let fileUrls: string[] = [];
 
-            // ONLY execute screenshot upload if amount > 0
-            if (totalAmount > 0) {
-                const fileUrl = await uploadFile(
-                    formData.paymentScreenshot!,
-                    "paymentscreenshots"
-                );
-
-                if (!fileUrl) {
-                    setIsRegistering(false);
-                    setGeneralError("Payment screenshot upload failed.");
-                    return;
-                }
-                fileUrls = [fileUrl];
-            }
-
-            const participantData: ExtendedParticipantCreateInput = {
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                college: "A.J. Institute of Engineering & Technology", // Forced hardcode to prevent Payload Tampering
-                year: formData.year,
-                department: formData.department,
-                usn: formData.usn.toUpperCase(),
-                transaction_ids: totalAmount > 0 ? [formData.transactionId] : [], // Empty if free
-                paymentScreenshotUrls: fileUrls, // Empty if free
-                groupMembersData: groupEventData,
-                amount: totalAmount,
-            };
-
-            const result = await registerParticipant(
-                participantData,
-                selectedEvents.map((e) => e.id)
+        // ✅ ONLY upload if paid
+        if (totalAmount > 0) {
+            const fileUrl = await uploadFile(
+                formData.paymentScreenshot!,
+                "paymentscreenshots"
             );
 
-            if (!result || result.error) {
+            if (!fileUrl) {
+                setGeneralError("Upload failed");
                 setIsRegistering(false);
-
-                if (typeof result?.error === "object" && result.error !== null) {
-                    setFormErrors(result.error);
-                } else {
-                    setGeneralError(result?.error || "Registration failed.");
-                }
-
                 return;
             }
 
-            // success
-            setIsRegistering(false);
-
-            // redirect to success page
-            setTimeout(() => {
-                router.replace("/registration-success");
-            }, 200);
-
-        } catch (error) {
-            console.error("Registration error:", error);
-            setIsRegistering(false);
-            setGeneralError("Something went wrong. Please try again.");
+            fileUrls = [fileUrl];
         }
-    };
+
+        const { transactionId, paymentScreenshot, ...restFormData } = formData;
+
+        const participantData = {
+            ...restFormData,
+            usn: restFormData.usn.toUpperCase(),
+            transaction_ids: totalAmount > 0 && transactionId ? [transactionId] : [],
+            paymentScreenshotUrls: fileUrls,
+            groupMembersData: groupEventData,
+            amount: totalAmount,
+        };
+
+        const result = await registerParticipant(
+            participantData,
+            selectedEvents.map((e) => e.id)
+        );
+
+        if (!result || result.error) {
+            if (typeof result?.error === "object" && result.error !== null) {
+                setFormErrors(result.error as { [key: string]: string });
+                setGeneralError("Please fix the validation errors");
+            } else {
+                setGeneralError((result?.error as string) || "Registration failed");
+            }
+            setIsRegistering(false);
+            return;
+        }
+
+        router.replace("/registration-success");
+
+    } catch (err) {
+        console.error(err);
+        setGeneralError("Something went wrong");
+        setIsRegistering(false);
+    }
+};
 
     const selectStyles = {
         control: (base: any, state: any) => ({
@@ -598,7 +617,7 @@ const AjietRegister = () => {
                                         {selectedEvents.map((se) => {
                                             const ev = events.find((e) => e.id === se.id);
                                             if (!ev) return null;
-                                            const isSoloFree = ev.eventType === "Solo";
+                                            const isSoloFree = ev.eventType === "Solo" && ev.eventCategory !== "Special";
                                             return (
                                                 <div key={ev.id} style={{
                                                     background: isSoloFree ? C.cyan : C.yellow, border: `2px solid ${C.black}`,
@@ -606,7 +625,7 @@ const AjietRegister = () => {
                                                     fontFamily: monoFont, fontSize: 11, fontWeight: 700,
                                                     display: "flex", alignItems: "center", gap: 6,
                                                 }}>
-                                                    {ev.eventName} · {isSoloFree ? "FREE (AJIET)" : `₹${ev.fee || 0}`}
+                                                    {ev.eventName} · {isSoloFree ? "FREE" : `₹${ev.fee || 0}`}
                                                     <button type="button" onClick={() => {
                                                         const updated = selectedEvents.filter((s) => s.id !== ev.id);
                                                         setSelectedEvents(updated);
