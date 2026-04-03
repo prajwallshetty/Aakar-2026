@@ -264,27 +264,25 @@ const AjietRegister = () => {
         }, 0));
     };
 
-    const handleParticipantCountChange = (groupId: string | number, count: number | "") => {
+    const handleParticipantCountChange = (groupId: string | number, count: number) => {
         const evDetail = events.find(e => e.id === Number(groupId));
         const maxLimit = evDetail ? evDetail.maxMembers - 1 : 10;
         
         const currentMembers = groupEventData[groupId]?.members || [];
-        let newCount = !count ? "" : Math.max(1, count);
+        let newCount = Math.max(1, count);
         
         // Ensure they cannot bypass the event's max participant limit!
-        if (typeof newCount === "number" && newCount > maxLimit) {
+        if (newCount > maxLimit) {
             newCount = maxLimit;
         }
 
         // To prevent catastrophic data loss if a user temporarily clears the input box,
         // we will only splice down the array when `newCount` is specifically a number and lower.
         let newMembers = [...currentMembers];
-        if (typeof newCount === "number") {
-            if (newCount > currentMembers.length) {
-                for (let i = currentMembers.length; i < newCount; i++) newMembers.push({ name: "", usn: "", email: "" });
-            } else if (newCount < currentMembers.length) {
-                newMembers = newMembers.slice(0, newCount);
-            }
+        if (newCount > currentMembers.length) {
+            for (let i = currentMembers.length; i < newCount; i++) newMembers.push({ name: "", usn: "", email: "" });
+        } else if (newCount < currentMembers.length) {
+            newMembers = newMembers.slice(0, newCount);
         }
         
         setGroupEventData((prev) => ({ ...prev, [groupId]: { participantCount: newCount, members: newMembers } }));
@@ -660,8 +658,16 @@ const AjietRegister = () => {
                                         <input type="number"
                                             min={eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 : 1}
                                             max={eventDetail?.maxMembers ? eventDetail.maxMembers - 1 : 10}
-                                            step={1} value={groupData.participantCount || ""}
-                                            onChange={(e) => handleParticipantCountChange(event.id, parseInt(e.target.value) || "")}
+                                            step={1} value={groupData.participantCount}
+                                            onChange={(e) => {
+                                                const parsed = parseInt(e.target.value, 10);
+                                                handleParticipantCountChange(
+                                                    event.id,
+                                                    Number.isNaN(parsed)
+                                                        ? (eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 : 1)
+                                                        : parsed
+                                                );
+                                            }}
                                             className="pop-input" style={{ ...inputBase, maxWidth: 100 }}
                                         />
                                     </Field>
