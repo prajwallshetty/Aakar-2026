@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { cinzelFont } from "@/lib/font";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -194,27 +195,20 @@ export default function RegistrationSuccess() {
                     </div>
 
                     {/* Big heading */}
-                    <div style={{ textAlign: "center" }}>
-                        <div style={{
-                            fontFamily: displayFont,
-                            fontSize: "clamp(42px, 8vw, 80px)",
-                            letterSpacing: 6, lineHeight: 0.9,
+                    <div style={{ textAlign: "center", marginBottom: 16 }}>
+                        <div className={cinzelFont.className} style={{
+                            fontSize: "clamp(2px, 8vw, 38px)",
+                            letterSpacing: 6, lineHeight: 1.1,
                             color: ANIME_COLORS.text,
                         }}>
-                            <AnimeGlitchText text="REGISTRATION">
-                                REGISTRATION
-                            </AnimeGlitchText>
+                            REGISTRATION
                         </div>
-                        <div style={{
-                            fontFamily: displayFont,
-                            fontSize: "clamp(42px, 8vw, 80px)",
-                            letterSpacing: 6, lineHeight: 0.9,
+                        <div className={cinzelFont.className} style={{
+                            fontSize: "clamp(42px, 8vw,45px)",
+                            letterSpacing: 6, lineHeight: 1.1,
                             color: ANIME_COLORS.primary,
-                            textShadow: `0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.secondary}, 3px 3px 0 ${ANIME_COLORS.accent}`,
                         }}>
-                            <AnimeGlitchText text="CONFIRMED!">
-                                CONFIRMED!
-                            </AnimeGlitchText>
+                            CONFIRMED!
                         </div>
                     </div>
 
@@ -243,7 +237,7 @@ export default function RegistrationSuccess() {
                             Your spot at <strong>AAKAR 2026</strong> is locked in!<br />
                             Check your email for a confirmation ticket.<br />
                             <span style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>
-                                MAY 21–22, 2026 · AJIET, MANGALORE
+                                APRIL 24–25, 2026 · AJIET, MANGALORE
                             </span>
                         </p>
                     </div>

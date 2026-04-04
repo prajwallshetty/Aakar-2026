@@ -527,7 +527,6 @@ export default function HeroLanding() {
             </svg>
           </div>
         </motion.div>
-
       </section>
     </>
   );
