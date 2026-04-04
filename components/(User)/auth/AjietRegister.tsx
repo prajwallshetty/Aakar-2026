@@ -180,7 +180,7 @@ const Field: React.FC<{ label: string; error?: string; children: React.ReactNode
     <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 6 }}>
         <label style={labelStyle}>{label}</label>
         {children}
-        {error && <span style={errorStyle}>⚡ {error}</span>}
+        {error && <span style={errorStyle}>{error}</span>}
     </div>
 );
 
@@ -290,11 +290,11 @@ const AjietRegister = () => {
 
         setGroupEventData(newGroupData);
 
-        // ✅ SOLO FREE LOGIC
+        // SOLO FREE LOGIC
         const total = selectedOptions.reduce((sum: number, event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
 
-            // ✅ FREE ONLY if SOLO AND NOT SPECIAL
+            // FREE ONLY if SOLO AND NOT SPECIAL
             if (
                 eventObj?.eventType === "Solo" &&
                 eventObj?.eventCategory !== "Special"
@@ -355,12 +355,9 @@ const AjietRegister = () => {
     };
 
     const generateQRCode = () => {
-        if (totalAmount <= 0) return; // 🔥 safety
+        if (totalAmount <= 0) return; // safety
 
-        const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}
-            &pn=${encodeURIComponent("Aakar Registration")}
-            &am=${totalAmount}
-            &cu=INR`;
+        const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar Registration")}&am=${totalAmount}&cu=INR`;
 
         setQrImageUrl(
             `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`
@@ -387,7 +384,7 @@ const AjietRegister = () => {
             return;
         }
 
-        // ✅ IMPORTANT: SKIP PAYMENT IF FREE
+        // IMPORTANT: SKIP PAYMENT IF FREE
         if (totalAmount === 0) {
             setPaymentStep("verification");
             return;
@@ -425,7 +422,7 @@ const AjietRegister = () => {
         try {
             let fileUrls: string[] = [];
 
-            // ✅ ONLY upload if paid
+            // ONLY upload if paid
             if (totalAmount > 0) {
                 const fileUrl = await uploadFile(
                     formData.paymentScreenshot!,
@@ -480,35 +477,55 @@ const AjietRegister = () => {
     const selectStyles = {
         control: (base: any, state: any) => ({
             ...base, 
-            background: `${ANIME_COLORS.background}40`, 
+            background: `#080a12 !important`,
             border: state.isFocused ? `1px solid ${ANIME_COLORS.primary} !important` : `1px solid ${ANIME_COLORS.primary}40`,
             borderRadius: "6px",
             boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.primary}40 !important` : `0 0 8px ${ANIME_COLORS.primary}20`,
             fontFamily: monoFont, fontSize: 13, minHeight: 44,
-            color: ANIME_COLORS.text,
+            color: `#ffffff !important`,
             "&:hover": { borderColor: ANIME_COLORS.primary },
+        }),
+        placeholder: (base: any) => ({
+            ...base,
+            color: `#ffffffb3 !important`,
+            fontFamily: monoFont,
+            fontSize: 13,
+        }),
+        input: (base: any) => ({
+            ...base,
+            color: `#ffffff !important`,
+            fontFamily: monoFont,
+            fontSize: 13,
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: `#ffffff !important`,
+            fontFamily: monoFont,
+            fontSize: 13,
         }),
         menu: (base: any) => ({
             ...base, 
-            background: `${ANIME_COLORS.background}80`, 
+            background: `#080a12 !important`, 
             border: `1px solid ${ANIME_COLORS.primary}`, 
             borderRadius: "6px",
-            boxShadow: `0 10px 30px ${ANIME_COLORS.background}60`, 
+            boxShadow: `0 10px 30px ${ANIME_COLORS.background}60`,
+            position: "absolute",
+            zIndex: 1000,
+            backdropFilter: "blur(10px)",
         }),
         option: (base: any, state: any) => ({
             ...base,
-            background: state.isSelected ? `${ANIME_COLORS.primary}40 !important` : state.isFocused ? `${ANIME_COLORS.accent}40 !important` : `${ANIME_COLORS.background}20 !important`,
-            color: `${ANIME_COLORS.text} !important`, fontFamily: monoFont, fontSize: 12, cursor: "pointer",
+            background: state.isSelected ? `#00e5ff40 !important` : state.isFocused ? `#ffd70040 !important` : `#080a12 !important`,
+            color: `#ffffff !important`, fontFamily: monoFont, fontSize: 12, cursor: "pointer",
         }),
         multiValue: (base: any) => ({
-            ...base, background: `${ANIME_COLORS.primary}40`, border: `1px solid ${ANIME_COLORS.primary}`, borderRadius: "4px",
+            ...base, background: `#ff4d0040 !important`, border: `1px solid #ff4d00 !important`, borderRadius: "4px",
         }),
-        multiValueLabel: (base: any) => ({ ...base, color: ANIME_COLORS.text, fontFamily: monoFont, fontSize: 11 }),
-        multiValueRemove: (base: any) => ({ ...base, color: ANIME_COLORS.text, "&:hover": { background: `${ANIME_COLORS.purple}40`, color: ANIME_COLORS.text } }),
-        input: (base: any) => ({ ...base, color: `${ANIME_COLORS.text} !important` }),
-        singleValue: (base: any) => ({ ...base, color: `${ANIME_COLORS.text} !important` }),
+        multiValueLabel: (base: any) => ({ ...base, color: `#ffffff !important`, fontFamily: monoFont, fontSize: 11 }),
+        multiValueRemove: (base: any) => ({ ...base, color: `#ffffff !important`, "&:hover": { background: `#b026ff !important`, color: `#ffffff !important` } }),
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
         groupHeading: (base: any) => ({
-            ...base, fontFamily: popFont, fontSize: 14, letterSpacing: 2, color: ANIME_COLORS.primary,
+            ...base, fontFamily: popFont, fontSize: 14, letterSpacing: 2, color: `#ffffff`,
             borderBottom: `1px solid ${ANIME_COLORS.primary}40`, padding: "8px 12px",
         }),
     };
@@ -519,7 +536,79 @@ const AjietRegister = () => {
 
     return (
         <div style={{ minHeight: "100vh", position: "relative", padding: "clamp(3rem, 5vh, 6rem) clamp(1rem, 3vw, 2rem)", overflow: "hidden" }}>
-            <style>{`${ANIME_GLOBAL_STYLES}`}</style>
+            <style>{`${ANIME_GLOBAL_STYLES}
+                /* Dropdown specific overrides to prevent global styles interference */
+                div[class*="css-"][class*="control"], 
+                div[class*="css-"][class*="menu"] {
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="control"] {
+                    background: #080a12 !important;
+                    color: #ffffff !important;
+                }
+                div[class*="css-"][class*="placeholder"] {
+                    color: #ffffffb3 !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="input"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="single-value"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="option"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                    background: #080a12 !important;
+                }
+                div[class*="css-"][class*="option"]:hover {
+                    background: #ffd70040 !important;
+                    color: #ffffff !important;
+                }
+                div[class*="css-"][class*="option"][class*="selected"] {
+                    background: #00e5ff40 !important;
+                    color: #ffffff !important;
+                }
+                div[class*="css-"][class*="multi-value"] {
+                    background: #ff4d0040 !important;
+                    border: 1px solid #ff4d00 !important;
+                }
+                div[class*="css-"][class*="multi-value__label"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="multi-value__remove"] {
+                    color: #ffffff !important;
+                }
+                div[class*="css-"][class*="multi-value__remove"]:hover {
+                    background: #b026ff !important;
+                    color: #ffffff !important;
+                }
+                /* Force dropdown menu visibility */
+                div[class*="css-"][class*="menu"] {
+                    background: #080a12 !important;
+                    border: 1px solid #ff4d00 !important;
+                    z-index: 9999 !important;
+                }
+                /* Additional overrides for stubborn elements */
+                [class*="css-"] {
+                    color: #ffffff !important;
+                }
+                [class*="css-"][class*="placeholder"] {
+                    color: #ffffffb3 !important;
+                }
+                [class*="css-"][class*="option"] {
+                    color: #ffffff !important;
+                    background: #080a12 !important;
+                }
+                [class*="css-"][class*="option"]:hover,
+                [class*="css-"][class*="option"]:focus {
+                    background: #ffd70060 !important;
+                    color: #ffffff !important;
+                }
+            `}</style>
 
             <AnimeOrbField />
             <AnimeParticleField />
@@ -721,7 +810,7 @@ const AjietRegister = () => {
                             </div>
                         </AnimeCardWrapper>
 
-                        <AnimeCardWrapper accentIndex={1} style={cardStyle}>
+                        <AnimeCardWrapper accentIndex={1} style={{ ...cardStyle, marginTop: 32 }}>
                             <AnimeSectionHeading index={1}>Event Selection</AnimeSectionHeading>
                             
                             <Field label="Select Events" error={formErrors.events}>
@@ -732,6 +821,8 @@ const AjietRegister = () => {
                                     onChange={handleEventSelection}
                                     styles={selectStyles}
                                     placeholder="Choose events to participate in..."
+                                    menuPortalTarget={document.body}
+                                    menuShouldScrollIntoView={false}
                                 />
                             </Field>
 
@@ -800,9 +891,33 @@ const AjietRegister = () => {
                         </div>
 
                         {showQRCode && qrImageUrl && (
-                            <div style={{ textAlign: "center", marginBottom: 24 }}>
-                                <img src={qrImageUrl} alt="Payment QR Code" style={{ maxWidth: 200, height: 200, border: `2px solid ${ANIME_COLORS.primary}`, borderRadius: 8 }} />
-                                <p style={{ fontFamily: monoFont, fontSize: 12, color: ANIME_COLORS.subtext, marginTop: 8 }}>
+                            <div style={{ 
+                                display: "flex", 
+                                flexDirection: "column", 
+                                alignItems: "center", 
+                                justifyContent: "center", 
+                                marginBottom: 24,
+                                width: "100%"
+                            }}>
+                                <img 
+                                    src={qrImageUrl} 
+                                    alt="Payment QR Code" 
+                                    style={{ 
+                                        maxWidth: 200, 
+                                        height: 200, 
+                                        border: `2px solid ${ANIME_COLORS.primary}`, 
+                                        borderRadius: 8,
+                                        display: "block",
+                                        margin: "0 auto"
+                                    }} 
+                                />
+                                <p style={{ 
+                                    fontFamily: monoFont, 
+                                    fontSize: 12, 
+                                    color: ANIME_COLORS.subtext, 
+                                    marginTop: 8,
+                                    textAlign: "center"
+                                }}>
                                     Scan QR code to pay
                                 </p>
                             </div>

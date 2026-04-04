@@ -185,12 +185,11 @@ export default function RegistrationSuccess() {
                         borderRadius: 6,
                         backdropFilter: "blur(4px)"
                     }}>
-                        <span style={{ fontSize: 28 }}>✅</span>
                         <span style={{
                             fontFamily: popFont, fontSize: 18, fontWeight: 900,
                             letterSpacing: 4, color: ANIME_COLORS.text, textTransform: "uppercase",
                         }}>
-                            YOU&apos;RE IN!
+                            YOU'RE IN!
                         </span>
                     </div>
 
@@ -241,10 +240,10 @@ export default function RegistrationSuccess() {
                             color: ANIME_COLORS.text, lineHeight: 1.7, margin: 0,
                             textAlign: "center",
                         }}>
-                            Your spot at <strong>AAKAR 2026</strong> is locked in! 🎉<br />
+                            Your spot at <strong>AAKAR 2026</strong> is locked in!<br />
                             Check your email for a confirmation ticket.<br />
                             <span style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>
-                                📅 MAY 21–22, 2026 · AJIET, MANGALORE
+                                MAY 21–22, 2026 · AJIET, MANGALORE
                             </span>
                         </p>
                     </div>
@@ -252,9 +251,9 @@ export default function RegistrationSuccess() {
                     {/* What's next pills */}
                     <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
                         {[
-                            { icon: "📧", text: "Confirmation email sent to your inbox", color: ANIME_COLORS.secondary },
-                            { icon: "🎟️", text: "Show your ticket at the venue on event day", color: ANIME_COLORS.purple },
-                            { icon: "📱", text: "Follow us on Instagram for updates", color: ANIME_COLORS.primary },
+                            { text: "Confirmation email sent to your inbox", color: ANIME_COLORS.secondary },
+                            { text: "Show your ticket at the venue on event day", color: ANIME_COLORS.purple },
+                            { text: "Follow us on Instagram for updates", color: ANIME_COLORS.primary },
                         ].map((item, i) => (
                             <div key={i} style={{
                                 display: "flex", alignItems: "center", gap: 12,
@@ -265,7 +264,6 @@ export default function RegistrationSuccess() {
                                 borderRadius: 6,
                                 backdropFilter: "blur(4px)"
                             }}>
-                                <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
                                 <span style={{
                                     fontFamily: monoFont, fontSize: 11, fontWeight: 700,
                                     letterSpacing: 1, color: ANIME_COLORS.text, textTransform: "uppercase",
@@ -294,7 +292,7 @@ export default function RegistrationSuccess() {
                             borderRadius: 6,
                             backdropFilter: "blur(4px)"
                         }}>
-                            🏠 BACK TO HOME
+                            BACK TO HOME
                         </Link>
 
                         <Link href="/events" className="btn-pop" style={{
@@ -310,7 +308,7 @@ export default function RegistrationSuccess() {
                             borderRadius: 6,
                             backdropFilter: "blur(4px)"
                         }}>
-                            🎪 EXPLORE EVENTS
+                            EXPLORE EVENTS
                         </Link>
                     </div>
                 </div>
@@ -358,27 +356,11 @@ export default function RegistrationSuccess() {
                             boxShadow: `0 0 8px ${ANIME_COLORS.secondary}40`,
                             backdropFilter: "blur(4px)"
                         }}>
-                            ✓ CONFIRMED
+                            CONFIRMED
                         </div>
                     </div>
                 </div>
             </AnimeCardWrapper>
-
-            {/* ── Bouncing emoji row ────────────────────────────────────── */}
-            <div style={{
-                position: "relative", zIndex: 10,
-                marginTop: 28, display: "flex", gap: 18,
-            }}>
-                {["🎉", "🎊", "🏆", "🎊", "🎉"].map((e, i) => (
-                    <span key={i} className="bounce" style={{
-                        fontSize: 28,
-                        animationDelay: `${i * 0.15}s`,
-                        filter: "drop-shadow(2px 2px 0 #000)",
-                    }}>
-                        {e}
-                    </span>
-                ))}
-            </div>
         </div>
     );
 }

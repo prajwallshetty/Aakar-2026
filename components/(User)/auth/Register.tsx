@@ -169,7 +169,7 @@ const AnimeField: React.FC<{ label: string; error?: string; children: React.Reac
     <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 8 }}>
         <label style={labelStyle}>{label}</label>
         {children}
-        {error && <span style={errorMsg}>⚡ {error}</span>}
+        {error && <span style={errorMsg}>{error}</span>}
     </div>
 );
 
@@ -422,24 +422,54 @@ const Register = () => {
 
     const selectStyles = {
         control: (base: any, state: any) => ({
-            ...base, border: `1px solid ${ANIME_COLORS.primary} !important`, borderRadius: 6,
+            ...base, 
+            border: `1px solid ${ANIME_COLORS.primary} !important`, 
+            borderRadius: 6,
             boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}60 !important` : `0 0 8px ${ANIME_COLORS.primary}40 !important`,
-            fontFamily: monoFont, fontSize: 14, minHeight: 48, background: `${ANIME_COLORS.background}40 !important`,
-            color: `${ANIME_COLORS.text} !important`,
+            fontFamily: monoFont, 
+            fontSize: 14, 
+            minHeight: 48, 
+            background: `#080a12 !important`,
+            color: `#ffffff !important`,
             "&:hover": { borderColor: `${ANIME_COLORS.secondary} !important` },
             backdropFilter: "blur(4px)"
         }),
+        placeholder: (base: any) => ({
+            ...base,
+            color: `#ffffffb3 !important`,
+            fontFamily: monoFont,
+            fontSize: 14,
+        }),
+        input: (base: any) => ({
+            ...base,
+            color: `#ffffff !important`,
+            fontFamily: monoFont,
+            fontSize: 14,
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: `#ffffff !important`,
+            fontFamily: monoFont,
+            fontSize: 14,
+        }),
         menu: (base: any) => ({
-            ...base, border: `1px solid ${ANIME_COLORS.primary} !important`, borderRadius: 8,
-            boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`, fontFamily: monoFont, fontSize: 13,
-            background: `${ANIME_COLORS.background}80 !important`,
+            ...base, 
+            border: `1px solid ${ANIME_COLORS.primary} !important`, 
+            borderRadius: 8,
+            boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`, 
+            fontFamily: monoFont, 
+            fontSize: 13,
+            background: `#080a12 !important`,
             backdropFilter: "blur(8px)",
             zIndex: 50
         }),
         option: (base: any, state: any) => ({
             ...base,
-            background: state.isSelected ? `${ANIME_COLORS.secondary}40 !important` : state.isFocused ? `${ANIME_COLORS.accent}40 !important` : `${ANIME_COLORS.background}20 !important`,
-            color: `${ANIME_COLORS.text} !important`, fontFamily: monoFont, fontSize: 13, cursor: "pointer",
+            background: state.isSelected ? `#00e5ff40 !important` : state.isFocused ? `#ffd70040 !important` : `#080a12 !important`,
+            color: `#ffffff !important`, 
+            fontFamily: monoFont, 
+            fontSize: 13, 
+            cursor: "pointer",
         }),
         multiValue: (base: any) => ({
             ...base, background: `${ANIME_COLORS.primary}40 !important`, border: `1px solid ${ANIME_COLORS.primary} !important`, borderRadius: 4,
@@ -476,39 +506,86 @@ const Register = () => {
                 .anime-input::placeholder { color: ${ANIME_COLORS.text}60; font-style: italic; }
                 .anime-file-input { width:100%; padding:12px 16px; border:1px dashed ${ANIME_COLORS.primary}; background:${ANIME_COLORS.background}40; font-family:'Share Tech Mono',monospace; font-size:14px; cursor:pointer; border-radius:6px; color:${ANIME_COLORS.text}; }
                 .anime-file-input:focus { outline:none; border-style:solid; border-color:${ANIME_COLORS.secondary}; }
-                .review-row { display:flex; gap:8px; padding:8px 0; border-bottom:1px dashed ${ANIME_COLORS.primary}; font-family:'Share Tech Mono',monospace; font-size:13px; }
+                .review-row { display:flex; gap:8px; padding:8px 0; border-bottom:1px dashed ${ANIME_COLORS.primary}; font-family:'Share Tech Mono',monospace; font-size:13px; color:${ANIME_COLORS.text}; }
                 .review-row:last-child { border-bottom:none; }
                 .review-key { font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:10px; color:${ANIME_COLORS.secondary}; min-width:110px; flex-shrink:0; }
+                
+                /* Remove global text override that might interfere with dropdown */
+                /* Global text color override to prevent black text - REMOVED for dropdown compatibility */
+                /* * { color: ${ANIME_COLORS.text} !important; } */
+                input, select, textarea { color: ${ANIME_COLORS.text} !important; }
+                strong, b { color: ${ANIME_COLORS.accent} !important; }
                 
                 /* Dropdown specific overrides to prevent global styles interference */
                 div[class*="css-"][class*="control"], 
                 div[class*="css-"][class*="menu"] {
                     font-family: 'Share Tech Mono', monospace !important;
                 }
-                div[class*="css-"][class*="option"] {
-                    color: ${ANIME_COLORS.text} !important;
+                div[class*="css-"][class*="control"] {
+                    background: #080a12 !important;
+                    color: #ffffff !important;
+                }
+                div[class*="css-"][class*="placeholder"] {
+                    color: #ffffffb3 !important;
                     font-family: 'Share Tech Mono', monospace !important;
                 }
+                div[class*="css-"][class*="input"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="single-value"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="option"] {
+                    color: #ffffff !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                    background: #080a12 !important;
+                }
                 div[class*="css-"][class*="option"]:hover {
-                    background: ${ANIME_COLORS.accent}40 !important;
+                    background: #ffd70040 !important;
+                    color: #ffffff !important;
                 }
                 div[class*="css-"][class*="option"][class*="selected"] {
-                    background: ${ANIME_COLORS.secondary}40 !important;
+                    background: #00e5ff40 !important;
+                    color: #ffffff !important;
                 }
                 div[class*="css-"][class*="multi-value"] {
-                    background: ${ANIME_COLORS.primary}40 !important;
-                    border: 1px solid ${ANIME_COLORS.primary} !important;
+                    background: #ff4d0040 !important;
+                    border: 1px solid #ff4d00 !important;
                 }
                 div[class*="css-"][class*="multi-value__label"] {
-                    color: ${ANIME_COLORS.text} !important;
+                    color: #ffffff !important;
                     font-family: 'Share Tech Mono', monospace !important;
                 }
                 div[class*="css-"][class*="multi-value__remove"] {
-                    color: ${ANIME_COLORS.text} !important;
+                    color: #ffffff !important;
                 }
                 div[class*="css-"][class*="multi-value__remove"]:hover {
-                    background: ${ANIME_COLORS.purple} !important;
-                    color: ${ANIME_COLORS.text} !important;
+                    background: #b026ff !important;
+                    color: #ffffff !important;
+                }
+                /* Force dropdown menu visibility */
+                div[class*="css-"][class*="menu"] {
+                    background: #080a12 !important;
+                    border: 1px solid #ff4d00 !important;
+                    z-index: 9999 !important;
+                }
+                /* Additional overrides for stubborn elements */
+                [class*="css-"] {
+                    color: #ffffff !important;
+                }
+                [class*="css-"][class*="placeholder"] {
+                    color: #ffffffb3 !important;
+                }
+                [class*="css-"][class*="option"] {
+                    color: #ffffff !important;
+                    background: #080a12 !important;
+                }
+                [class*="css-"][class*="option"]:hover,
+                [class*="css-"][class*="option"]:focus {
+                    background: #ffd70060 !important;
+                    color: #ffffff !important;
                 }
             `}</style>
 
@@ -543,7 +620,7 @@ const Register = () => {
                 {generalError && (
                     <AnimeCardWrapper accentIndex={2} style={{ padding: "20px 32px", marginBottom: 32, background: `${ANIME_COLORS.purple}20`, border: `1px solid ${ANIME_COLORS.purple}` }}>
                         <span style={{ fontFamily: monoFont, fontSize: 13, fontWeight: 700, letterSpacing: 2, color: ANIME_COLORS.text }}>
-                            ⚡ {generalError}
+                            {generalError}
                         </span>
                     </AnimeCardWrapper>
                 )}
@@ -698,7 +775,7 @@ const Register = () => {
                                     <span style={{ fontFamily: displayFont, fontSize: 48, letterSpacing: 4, color: ANIME_COLORS.accent }}>₹{totalAmount}</span>
                                 </div>
                                 <div style={{ fontFamily: monoFont, fontSize: 14, letterSpacing: 2, color: ANIME_COLORS.text, textAlign: "center" }}>
-                                    Scan QR code to pay via UPI · <strong>ajiet@cnrb</strong>
+                                    Scan QR code to pay via UPI · <strong style={{ color: ANIME_COLORS.accent }}>ajiet@cnrb</strong>
                                 </div>
                                 {showQRCode ? (
                                     <AnimeCardWrapper accentIndex={0} style={{ padding: 16 }}>
@@ -750,7 +827,7 @@ const Register = () => {
                                 ["Year", formData.year?.toString()], ["USN", formData.usn],
                             ].map(([k, v]) => (
                                 <div key={k} className="review-row">
-                                    <span className="review-key">{k}</span><span>{v}</span>
+                                    <span className="review-key">{k}</span><span style={{ color: ANIME_COLORS.text }}>{v}</span>
                                 </div>
                             ))}
                         </AnimeSectionCard>
@@ -762,7 +839,7 @@ const Register = () => {
                                     <div key={ev.id}>
                                         <div className="review-row">
                                             <span className="review-key">{ev.eventName}</span>
-                                            <span>₹{ev.fee || 0}</span>
+                                            <span style={{ color: ANIME_COLORS.text }}>₹{ev.fee || 0}</span>
                                         </div>
                                         {ev.eventType === "Team" && groupEventData[ev.id] && (
                                             <div style={{ paddingLeft: 16, marginBottom: 8 }}>
@@ -786,7 +863,7 @@ const Register = () => {
                                 ["Screenshot", formData.paymentScreenshot?.name || "No file selected"],
                             ].map(([k, v]) => (
                                 <div key={k} className="review-row">
-                                    <span className="review-key">{k}</span><span>{v}</span>
+                                    <span className="review-key">{k}</span><span style={{ color: ANIME_COLORS.text }}>{v}</span>
                                 </div>
                             ))}
                         </AnimeSectionCard>
