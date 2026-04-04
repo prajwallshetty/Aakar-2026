@@ -76,8 +76,10 @@ const AdminPortal = () => {
   const [merchCount, setMerchCount] = useState(0);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<number | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     fetchAdmins();
     fetchStats();
   }, []);
@@ -196,6 +198,8 @@ const AdminPortal = () => {
       a.email?.toLowerCase().includes(search.toLowerCase()) ||
       a.phone?.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-zinc-50/50">
