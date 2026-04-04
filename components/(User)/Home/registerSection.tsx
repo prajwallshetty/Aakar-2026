@@ -3,17 +3,34 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: '400' })
 
 const RegisterSection = () => {
     return (
         <section className="flex items-center justify-center text-white px-6 pt-16 relative">
-            <div className="text-center max-w-3xl">
-                <h2 className="text-3xl md:text-5xl font-light pb-6">Register Now</h2>
+            <style>{ANIME_GLOBAL_STYLES}</style>
+            
+            {/* Anime Background */}
+            <AnimeOrbField />
+            <AnimeParticleField />
+            
+            <div className="text-center max-w-3xl relative z-10">
+                <AnimeCardWrapper accentIndex={0} style={{ padding: "2rem 3rem", marginBottom: "2rem" }}>
+                    <AnimeSectionHeading index={0}>Register Now</AnimeSectionHeading>
+                </AnimeCardWrapper>
 
-                <p className={`text-xl md:text-2xl py-6 ${montserrat.className}`}>
-                    Don’t miss out on the ultimate techno-cultural experience!
+                <p className={`text-xl md:text-2xl py-6 ${montserrat.className}`} style={{ color: ANIME_COLORS.text }}>
+                    Don't miss out on the ultimate techno-cultural experience!
                     <br />
                     Register now and be part of the excitement!
                     <br />
@@ -30,9 +47,23 @@ const RegisterSection = () => {
                 </p>
 
                 <Link href="/register">
-                    <Button size={"lg"} className="mt-6 bg-[#AA1F26] hover:bg-red-700 cursor-pointer transition duration-300 text-white font-light py-8 px-8 rounded-full text-xl leading-none">
-                        Register Now
-                    </Button>
+                    <AnimeCardWrapper accentIndex={1} style={{ display: "inline-block" }}>
+                        <Button 
+                            size="lg" 
+                            className="cursor-pointer transition duration-300 text-white font-light py-8 px-8 rounded-full text-xl leading-none bg-transparent hover:bg-transparent border-transparent"
+                            style={{ 
+                                background: `${ANIME_COLORS.primary}20`,
+                                border: `1px solid ${ANIME_COLORS.primary}`,
+                                boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`,
+                                color: ANIME_COLORS.text,
+                                backdropFilter: "blur(4px)"
+                            }}
+                        >
+                            <AnimeGlitchText text="Register Now">
+                                Register Now
+                            </AnimeGlitchText>
+                        </Button>
+                    </AnimeCardWrapper>
                 </Link>
             </div>
         </section>

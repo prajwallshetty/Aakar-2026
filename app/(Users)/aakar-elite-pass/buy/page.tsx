@@ -4,60 +4,54 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createElitePassOrder } from "@/backend/elite-pass";
-import PopArtBackground from "@/components/(User)/PopArtBackground";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const PASS_FEE = 999;
 
+// ─── Anime Design tokens ────────────────────────────────────────────────────────────
 const C = {
-    yellow: "#ffff00",
-    magenta: "#ff00ff",
-    cyan: "#00ffff",
-    pink: "#ff0066",
-    hot: "#ff0066",
-    black: "#000",
-    white: "#fff",
+    yellow: ANIME_COLORS.accent,
+    magenta: ANIME_COLORS.primary,
+    cyan: ANIME_COLORS.secondary,
+    pink: ANIME_COLORS.purple,
+    hot: ANIME_COLORS.purple,
+    black: ANIME_COLORS.background,
+    white: ANIME_COLORS.text,
 };
 
-const popFont = "'Arial Black', Impact, sans-serif";
-const monoFont = "'Courier New', 'Space Mono', monospace";
+const popFont = "'Bebas Neue', Impact, sans-serif";
+const monoFont = "'Share Tech Mono', monospace";
 const displayFont = "'Bebas Neue', Impact, sans-serif";
 
 function Card({ children, style, className }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
     return (
-        <div
-            className={className}
-            style={{
-                background: "rgba(255,255,255,0.96)",
-                border: `3px solid ${C.black}`,
-                boxShadow: `6px 6px 0 ${C.black}`,
-                borderRadius: 16,
-                padding: "clamp(1.4rem,3.5vw,2.5rem)",
-                position: "relative",
-                ...style,
-            }}
-        >
+        <AnimeCardWrapper accentIndex={0} className={className} style={{
+            padding: "clamp(1.4rem,3.5vw,2.5rem)",
+            position: "relative",
+            ...style,
+        }}>
             {children}
-        </div>
+        </AnimeCardWrapper>
     );
 }
 
-function SectionHeading({ children, color = C.magenta, center = false }: { children: React.ReactNode; color?: string; center?: boolean }) {
+function SectionHeading({ children, color = ANIME_COLORS.primary, center = false }: { children: React.ReactNode; color?: string; center?: boolean }) {
+    const accentIndex = color === ANIME_COLORS.primary ? 0 : color === ANIME_COLORS.secondary ? 1 : color === ANIME_COLORS.accent ? 2 : 3;
     return (
-        <h2
-            style={{
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(1.8rem,5vw,3.2rem)",
-                letterSpacing: "0.05em",
-                lineHeight: 0.95,
-                color: C.black,
-                textShadow: `0.08em 0.08em 0 ${color}`,
-                WebkitTextStroke: `0.02em ${C.black}`,
-                margin: "0 0 1.2rem",
-                textAlign: center ? "center" : "left",
-            }}
-        >
+        <AnimeSectionHeading index={accentIndex} style={{
+            textAlign: center ? "center" : "left",
+        }}>
             {children}
-        </h2>
+        </AnimeSectionHeading>
     );
 }
 
@@ -67,15 +61,16 @@ function Chip({ children, color }: { children: React.ReactNode; color: string })
             style={{
                 display: "inline-flex",
                 alignItems: "center",
-                background: color,
-                border: `2px solid ${C.black}`,
-                boxShadow: `3px 3px 0 ${C.black}`,
-                padding: "5px 18px",
-                borderRadius: 4,
+                background: `${color}40`,
+                border: `1px solid ${color}`,
+                boxShadow: `0 0 12px ${color}40`,
+                padding: "6px 16px",
+                borderRadius: 6,
                 fontFamily: "'Bebas Neue',sans-serif",
                 fontSize: "clamp(0.85rem,2vw,1.1rem)",
                 letterSpacing: "0.12em",
-                color: C.black,
+                color: ANIME_COLORS.text,
+                backdropFilter: "blur(4px)"
             }}
         >
             {children}
@@ -83,14 +78,14 @@ function Chip({ children, color }: { children: React.ReactNode; color: string })
     );
 }
 
-const PopButton: React.FC<{
+const AnimeButton: React.FC<{
     children: React.ReactNode;
     onClick?: () => void;
     type?: "button" | "submit";
     disabled?: boolean;
     bg?: string;
     fg?: string;
-}> = ({ children, onClick, type = "button", disabled, bg = C.pink, fg = C.white }) => {
+}> = ({ children, onClick, type = "button", disabled, bg = ANIME_COLORS.primary, fg = ANIME_COLORS.text }) => {
     const [hov, setHov] = useState(false);
     return (
         <button
@@ -100,10 +95,10 @@ const PopButton: React.FC<{
             onMouseEnter={() => setHov(true)}
             onMouseLeave={() => setHov(false)}
             style={{
-                background: disabled ? "#ccc" : bg,
-                color: disabled ? "#888" : fg,
-                border: `3px solid ${C.black}`,
-                boxShadow: hov && !disabled ? "0 0 0 #000" : `5px 5px 0 ${C.black}`,
+                background: disabled ? `${ANIME_COLORS.background}40` : `${bg}20`,
+                color: disabled ? `${ANIME_COLORS.text}40` : fg,
+                border: `1px solid ${bg}`,
+                boxShadow: hov && !disabled ? `0 0 20px ${bg}60` : `0 0 8px ${bg}40`,
                 fontFamily: popFont,
                 fontSize: 12,
                 fontWeight: 900,
@@ -111,13 +106,14 @@ const PopButton: React.FC<{
                 textTransform: "uppercase",
                 padding: "12px 28px",
                 cursor: disabled ? "not-allowed" : "pointer",
-                transform: hov && !disabled ? "translate(3px,3px)" : "none",
-                transition: "transform 0.1s, box-shadow 0.1s",
+                transform: hov && !disabled ? "translateY(-2px)" : "none",
+                transition: "all 0.3s ease",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
                 justifyContent: "center",
-                borderRadius: 0,
+                borderRadius: 6,
+                backdropFilter: "blur(4px)"
             }}
         >
             {children}
@@ -128,11 +124,11 @@ const PopButton: React.FC<{
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 4 }}>
-            <label style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", color: C.black, marginBottom: 4, display: "block" }}>
+            <label style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", color: ANIME_COLORS.text, marginBottom: 4, display: "block" }}>
                 {label}
             </label>
             {children}
-            {error && <span style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, color: C.pink, letterSpacing: 1, marginTop: 3 }}>⚡ {error}</span>}
+            {error && <span style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, color: ANIME_COLORS.purple, letterSpacing: 1, marginTop: 3 }}>⚡ {error}</span>}
         </div>
     );
 }
@@ -140,12 +136,17 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 function LoadingSkeleton() {
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <PopArtBackground />
-            <div style={{ background: C.white, border: `3px solid ${C.black}`, boxShadow: `6px 6px 0 ${C.black}`, padding: 32, width: "min(620px,90vw)", position: "relative", zIndex: 1 }}>
-                <div style={{ fontFamily: displayFont, fontSize: 28, letterSpacing: 4, marginBottom: 12 }}>Loading Elite Pass…</div>
-                <div style={{ height: 10, width: "45%", background: "#eee", border: `2px solid ${C.black}`, marginBottom: 10 }} />
-                <div style={{ height: 42, background: "#f5f5f5", border: `3px solid ${C.black}`, boxShadow: `3px 3px 0 ${C.black}` }} />
-            </div>
+            <AnimeOrbField />
+            <AnimeParticleField />
+            <AnimeCardWrapper accentIndex={0} style={{ padding: 32, width: "min(620px,90vw)", position: "relative", zIndex: 1 }}>
+                <div style={{ fontFamily: displayFont, fontSize: 28, letterSpacing: 4, marginBottom: 12, color: ANIME_COLORS.text }}>
+                    <AnimeGlitchText text="Loading Elite Pass…">
+                        Loading Elite Pass…
+                    </AnimeGlitchText>
+                </div>
+                <div style={{ height: 10, width: "45%", background: `${ANIME_COLORS.background}40`, border: `1px solid ${ANIME_COLORS.primary}`, marginBottom: 10 }} />
+                <div style={{ height: 42, background: `${ANIME_COLORS.background}20`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 8px ${ANIME_COLORS.primary}40` }} />
+            </AnimeCardWrapper>
         </div>
     );
 }
@@ -369,33 +370,37 @@ export default function ElitePassBuyPage() {
     return (
         <div style={{ minHeight: "100vh", position: "relative", padding: "clamp(3rem,8vh,6rem) clamp(1rem,5vw,3rem) clamp(3rem,8vh,5rem)" }}>
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+                ${ANIME_GLOBAL_STYLES}
+                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono:wght@400;700&display=swap');
                 * { box-sizing: border-box; }
                 @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
                 .fade-up { animation: fadeUp 0.5s ease both; }
-                .pop-input:focus { box-shadow: 3px 3px 0 #ff00ff !important; border-color: #ff00ff !important; outline: none; }
-                .pop-input::placeholder { color: #aaa; font-style: italic; }
+                .anime-input:focus { box-shadow: 0 0 16px ${ANIME_COLORS.secondary}60 !important; border-color: ${ANIME_COLORS.secondary} !important; outline: none; }
+                .anime-input::placeholder { color: ${ANIME_COLORS.text}60; font-style: italic; }
             `}</style>
 
-            <PopArtBackground />
+            <AnimeOrbField />
+            <AnimeParticleField />
 
             <main style={{ position: "relative", zIndex: 10 }}>
                 <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: "clamp(2rem,4vh,3rem)" }}>
                     <div className="fade-up" style={{ textAlign: "center" }}>
-                        <div style={{ display: "inline-block", background: C.black, color: C.yellow, fontFamily: displayFont, fontSize: "clamp(0.7rem,1.6vw,0.9rem)", letterSpacing: "0.4em", padding: "4px 20px", border: `2px solid ${C.black}`, boxShadow: `3px 3px 0 ${C.magenta}`, marginBottom: "0.7rem" }}>
+                        <div style={{ display: "inline-block", background: `${ANIME_COLORS.background}80`, color: ANIME_COLORS.accent, fontFamily: displayFont, fontSize: "clamp(0.7rem,1.6vw,0.9rem)", letterSpacing: "0.4em", padding: "4px 20px", border: `1px solid ${ANIME_COLORS.accent}`, boxShadow: `0 0 12px ${ANIME_COLORS.accent}40`, marginBottom: "0.7rem", backdropFilter: "blur(4px)" }}>
                             PURCHASE PASS
                         </div>
-                        <div style={{ fontFamily: displayFont, fontSize: "clamp(3rem,10vw,7rem)", lineHeight: 0.88, letterSpacing: "0.04em", color: C.black, textShadow: `0.05em 0.05em 0 ${C.magenta}, 0.1em 0.1em 0 ${C.cyan}`, WebkitTextStroke: `0.02em ${C.black}` }}>
-                            AAKAR ELITE
+                        <div style={{ fontFamily: displayFont, fontSize: "clamp(3rem,10vw,7rem)", lineHeight: 0.88, letterSpacing: "0.04em", color: ANIME_COLORS.text, textShadow: `0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.primary}, 3px 3px 0 ${ANIME_COLORS.secondary}` }}>
+                            <AnimeGlitchText text="AAKAR ELITE">
+                                AAKAR ELITE
+                            </AnimeGlitchText>
                         </div>
                         <div style={{ marginTop: 18, display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8 }}>
-                            <Chip color={C.yellow}>BUY PASS</Chip>
-                            <Chip color={C.cyan}>₹{PASS_FEE}</Chip>
+                            <Chip color={ANIME_COLORS.accent}>BUY PASS</Chip>
+                            <Chip color={ANIME_COLORS.secondary}>₹{PASS_FEE}</Chip>
                         </div>
                     </div>
 
                     {generalError && (
-                        <div style={{ background: C.pink, color: C.white, border: `3px solid ${C.black}`, boxShadow: `5px 5px 0 ${C.black}`, padding: "12px 20px", fontFamily: popFont, fontSize: 12, fontWeight: 900, letterSpacing: 2 }}>
+                        <div style={{ background: `${ANIME_COLORS.purple}40`, color: ANIME_COLORS.text, border: `1px solid ${ANIME_COLORS.purple}`, boxShadow: `0 0 12px ${ANIME_COLORS.purple}40`, padding: "12px 20px", fontFamily: popFont, fontSize: 12, fontWeight: 900, letterSpacing: 2, borderRadius: 6, backdropFilter: "blur(4px)" }}>
                             ⚡ {generalError}
                         </div>
                     )}
@@ -403,7 +408,7 @@ export default function ElitePassBuyPage() {
                     {paymentStep === "details" && (
                         <form onSubmit={proceedToPayment} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                             <Card>
-                                <SectionHeading color={C.magenta}>01 · Your Details</SectionHeading>
+                                <SectionHeading color={ANIME_COLORS.primary}>01 · Your Details</SectionHeading>
                                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16 }}>
                                     {([
                                         { id: "name", label: "Full Name", placeholder: "Enter your full name", type: "text" },
@@ -423,8 +428,8 @@ export default function ElitePassBuyPage() {
                                                 required
                                                 min={id === "year" ? 1 : undefined}
                                                 max={id === "year" ? 8 : undefined}
-                                                className="pop-input"
-                                                style={{ width: "100%", padding: "10px 12px", border: formErrors[id] ? `3px solid ${C.pink}` : `3px solid ${C.black}`, borderRadius: 0, boxShadow: formErrors[id] ? `3px 3px 0 ${C.pink}` : `3px 3px 0 ${C.black}`, fontFamily: monoFont, fontSize: 13, background: C.white, color: C.black, outline: "none" }}
+                                                className="anime-input"
+                                                style={{ width: "100%", padding: "10px 12px", border: formErrors[id] ? `1px solid ${ANIME_COLORS.purple}` : `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6, boxShadow: formErrors[id] ? `0 0 12px ${ANIME_COLORS.purple}40` : `0 0 8px ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13, background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.text, outline: "none", backdropFilter: "blur(4px)" }}
                                             />
                                         </Field>
                                     ))}
@@ -439,8 +444,8 @@ export default function ElitePassBuyPage() {
                                             onChange={handleChange}
                                             placeholder="Search or type your college"
                                             required
-                                            className="pop-input"
-                                            style={{ width: "100%", padding: "10px 12px", border: formErrors.college ? `3px solid ${C.pink}` : `3px solid ${C.black}`, borderRadius: 0, boxShadow: formErrors.college ? `3px 3px 0 ${C.pink}` : `3px 3px 0 ${C.black}`, fontFamily: monoFont, fontSize: 13, background: C.white, color: C.black, outline: "none" }}
+                                            className="anime-input"
+                                            style={{ width: "100%", padding: "10px 12px", border: formErrors.college ? `1px solid ${ANIME_COLORS.purple}` : `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6, boxShadow: formErrors.college ? `0 0 12px ${ANIME_COLORS.purple}40` : `0 0 8px ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13, background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.text, outline: "none", backdropFilter: "blur(4px)" }}
                                         />
                                         <datalist id="collegeList">
                                             {colleges.map((collegeName) => <option key={collegeName} value={collegeName} />)}
@@ -448,7 +453,7 @@ export default function ElitePassBuyPage() {
                                     </Field>
                                 </div>
                                 <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
-                                    <PopButton type="submit" bg={C.pink} fg={C.white}>PROCEED TO PAYMENT →</PopButton>
+                                    <AnimeButton type="submit" bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text}>PROCEED TO PAYMENT →</AnimeButton>
                                 </div>
                             </Card>
                         </form>
@@ -456,27 +461,27 @@ export default function ElitePassBuyPage() {
 
                     {paymentStep === "payment" && (
                         <Card>
-                            <SectionHeading color={C.yellow}>02 · Payment</SectionHeading>
+                            <SectionHeading color={ANIME_COLORS.accent}>02 · Payment</SectionHeading>
                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-                                <div style={{ background: C.black, border: `3px solid ${C.black}`, boxShadow: `6px 6px 0 ${C.magenta}`, padding: "12px 32px" }}>
-                                    <span style={{ fontFamily: displayFont, fontSize: 42, letterSpacing: 4, color: C.yellow }}>₹{PASS_FEE}</span>
+                                <div style={{ background: `${ANIME_COLORS.background}80`, border: `1px solid ${ANIME_COLORS.accent}`, boxShadow: `0 0 12px ${ANIME_COLORS.accent}40`, padding: "12px 32px", borderRadius: 6, backdropFilter: "blur(4px)" }}>
+                                    <span style={{ fontFamily: displayFont, fontSize: 42, letterSpacing: 4, color: ANIME_COLORS.accent }}>₹{PASS_FEE}</span>
                                 </div>
-                                <div style={{ fontFamily: monoFont, fontSize: 12, letterSpacing: 2, color: "#444", textAlign: "center" }}>
+                                <div style={{ fontFamily: monoFont, fontSize: 12, letterSpacing: 2, color: ANIME_COLORS.subtext, textAlign: "center" }}>
                                     Scan QR code to pay via UPI · <strong>ajiet@cnrb</strong>
                                 </div>
                                 {showQRCode ? (
-                                    <div style={{ background: C.white, border: `3px solid ${C.black}`, boxShadow: `4px 4px 0 ${C.black}`, padding: 12 }}>
+                                    <div style={{ background: `${ANIME_COLORS.background}80`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`, padding: 12, borderRadius: 6, backdropFilter: "blur(4px)" }}>
                                         <img src={qrImageUrl || "/logo.svg"} alt="UPI QR Code" style={{ width: 220, height: 220, display: "block" }} />
-                                        <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 9, fontWeight: 700, letterSpacing: 3, marginTop: 8, textTransform: "uppercase" }}>
+                                        <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 9, fontWeight: 700, letterSpacing: 3, marginTop: 8, textTransform: "uppercase", color: ANIME_COLORS.text }}>
                                             UPI · Aakar Elite Pass
                                         </div>
                                     </div>
                                 ) : (
-                                    <PopButton bg={C.cyan} fg={C.black} onClick={() => setShowQRCode(true)}>GENERATE QR CODE</PopButton>
+                                    <AnimeButton bg={ANIME_COLORS.secondary} fg={ANIME_COLORS.text} onClick={() => setShowQRCode(true)}>GENERATE QR CODE</AnimeButton>
                                 )}
                                 <div style={{ width: "100%", maxWidth: 640 }}>
-                                    <div style={{ background: C.white, border: `3px solid ${C.black}`, boxShadow: `6px 6px 0 ${C.black}`, padding: 20 }}>
-                                        <SectionHeading color={C.magenta}>After Payment</SectionHeading>
+                                    <div style={{ background: `${ANIME_COLORS.background}80`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`, padding: 20, borderRadius: 6, backdropFilter: "blur(4px)" }}>
+                                        <SectionHeading color={ANIME_COLORS.primary}>After Payment</SectionHeading>
                                         <Field label="Transaction ID / Reference Number" error={formErrors.transactionId}>
                                             <input
                                                 type="text"
@@ -484,16 +489,16 @@ export default function ElitePassBuyPage() {
                                                 value={formData.transactionId}
                                                 onChange={handleChange}
                                                 placeholder="Enter UTR / Transaction ID"
-                                                className="pop-input"
-                                                style={{ width: "100%", padding: "10px 12px", border: formErrors.transactionId ? `3px solid ${C.pink}` : `3px solid ${C.black}`, borderRadius: 0, boxShadow: formErrors.transactionId ? `3px 3px 0 ${C.pink}` : `3px 3px 0 ${C.black}`, fontFamily: monoFont, fontSize: 13, background: C.white, color: C.black, outline: "none" }}
+                                                className="anime-input"
+                                                style={{ width: "100%", padding: "10px 12px", border: formErrors.transactionId ? `1px solid ${ANIME_COLORS.purple}` : `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6, boxShadow: formErrors.transactionId ? `0 0 12px ${ANIME_COLORS.purple}40` : `0 0 8px ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13, background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.text, outline: "none", backdropFilter: "blur(4px)" }}
                                             />
                                         </Field>
                                         <div style={{ marginTop: 14 }}>
                                             <Field label="Payment Screenshot" error={formErrors.paymentScreenshot}>
-                                                <input type="file" accept="image/*" onChange={handleFileUpload} className="pop-input" style={{ width: "100%", padding: "10px 12px", border: `3px dashed ${C.black}`, background: C.yellow, fontFamily: monoFont, fontSize: 12, cursor: "pointer" }} />
+                                                <input type="file" accept="image/*" onChange={handleFileUpload} className="anime-input" style={{ width: "100%", padding: "10px 12px", border: `1px dashed ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.accent}40`, fontFamily: monoFont, fontSize: 12, cursor: "pointer", borderRadius: 6, color: ANIME_COLORS.text, backdropFilter: "blur(4px)" }} />
                                             </Field>
                                             {formData.paymentScreenshot && (
-                                                <div style={{ fontFamily: monoFont, fontSize: 10, marginTop: 6, color: "#444", letterSpacing: 1 }}>
+                                                <div style={{ fontFamily: monoFont, fontSize: 10, marginTop: 6, color: ANIME_COLORS.subtext, letterSpacing: 1 }}>
                                                     ✔ {formData.paymentScreenshot.name}
                                                 </div>
                                             )}
@@ -502,8 +507,8 @@ export default function ElitePassBuyPage() {
                                 </div>
                             </div>
                             <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap", marginTop: 20 }}>
-                                <PopButton bg="#eee" fg={C.black} onClick={() => setPaymentStep("details")}>← BACK</PopButton>
-                                <PopButton bg={C.pink} fg={C.white} onClick={proceedToConfirm}>VERIFY PAYMENT →</PopButton>
+                                <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("details")}>← BACK</AnimeButton>
+                                <AnimeButton bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} onClick={proceedToConfirm}>VERIFY PAYMENT →</AnimeButton>
                             </div>
                         </Card>
                     )}
@@ -511,7 +516,7 @@ export default function ElitePassBuyPage() {
                     {paymentStep === "confirm" && (
                         <form onSubmit={submitOrder} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                             <Card>
-                                <SectionHeading color={C.cyan}>03 · Review Details</SectionHeading>
+                                <SectionHeading color={ANIME_COLORS.secondary}>03 · Review Details</SectionHeading>
                                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                                     {[
                                         ["Name", formData.name],
@@ -524,18 +529,18 @@ export default function ElitePassBuyPage() {
                                         ["Transaction ID", formData.transactionId],
                                         ["Screenshot", formData.paymentScreenshot?.name || "No file selected"],
                                     ].map(([key, value]) => (
-                                        <div key={key} style={{ display: "flex", gap: 12, padding: "8px 0", borderBottom: `2px dashed ${C.black}`, fontFamily: monoFont, fontSize: 13 }}>
-                                            <span style={{ minWidth: 120, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", fontSize: 10 }}>{key}</span>
-                                            <span>{value}</span>
+                                        <div key={key} style={{ display: "flex", gap: 12, padding: "8px 0", borderBottom: `1px dashed ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13 }}>
+                                            <span style={{ minWidth: 120, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", fontSize: 10, color: ANIME_COLORS.secondary }}>{key}</span>
+                                            <span style={{ color: ANIME_COLORS.text }}>{value}</span>
                                         </div>
                                     ))}
                                 </div>
                             </Card>
                             <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-                                <PopButton bg="#eee" fg={C.black} onClick={() => setPaymentStep("payment")}>← BACK</PopButton>
-                                <PopButton type="submit" bg={C.pink} fg={C.white} disabled={isSubmitting}>
+                                <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("payment")}>← BACK</AnimeButton>
+                                <AnimeButton type="submit" bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} disabled={isSubmitting}>
                                     {isSubmitting ? "SUBMITTING…" : "COMPLETE PURCHASE ✓"}
-                                </PopButton>
+                                </AnimeButton>
                             </div>
                         </form>
                     )}

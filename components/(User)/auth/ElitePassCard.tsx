@@ -2,19 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-
-const C = {
-    yellow: "#ffff00",
-    magenta: "#ff00ff",
-    cyan: "#00ffff",
-    pink: "#ff0066",
-    black: "#000",
-    white: "#fff",
-};
-
-const popFont = "'Arial Black', Impact, sans-serif";
-const monoFont = "'Courier New', 'Space Mono', monospace";
-const displayFont = "'Bebas Neue', Impact, sans-serif";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 export const ElitePassCard: React.FC = () => {
     const [hov, setHov] = useState(false);
@@ -25,20 +22,15 @@ export const ElitePassCard: React.FC = () => {
                 onMouseEnter={() => setHov(true)}
                 onMouseLeave={() => setHov(false)}
                 style={{
-                    background: `linear-gradient(160deg, ${C.white} 0%, #fffef1 100%)`,
-                    border: `3px solid ${C.black}`,
-                    boxShadow: hov
-                        ? `12px 12px 0 ${C.black}, 16px 16px 0 ${C.magenta}, 20px 20px 0 ${C.cyan}`
-                        : `8px 8px 0 ${C.black}, 12px 12px 0 ${C.magenta}`,
-                    padding: "24px",
-                    borderRadius: 14,
-                    cursor: "pointer",
-                    transition: "box-shadow 0.2s, transform 0.2s",
-                    transform: hov ? "translate(-4px, -4px)" : "none",
                     position: "relative",
                     overflow: "hidden",
                 }}
             >
+                <AnimeCardWrapper accentIndex={0} style={{
+                    padding: "24px",
+                    cursor: "pointer",
+                    transform: hov ? "translate(-4px, -4px)" : "none",
+                }}>
                 <div
                     style={{
                         position: "absolute",
@@ -47,7 +39,7 @@ export const ElitePassCard: React.FC = () => {
                         width: 220,
                         height: 220,
                         borderRadius: "50%",
-                        background: `radial-gradient(circle, ${C.cyan}55 0%, ${C.yellow}30 55%, transparent 100%)`,
+                        background: `radial-gradient(circle, ${ANIME_COLORS.secondary}55 0%, ${ANIME_COLORS.accent}30 55%, transparent 100%)`,
                         zIndex: 0,
                         pointerEvents: "none",
                         transform: hov ? "scale(1.08)" : "scale(1)",
@@ -63,7 +55,7 @@ export const ElitePassCard: React.FC = () => {
                         width: 170,
                         height: 170,
                         borderRadius: "50%",
-                        background: `radial-gradient(circle, ${C.magenta}45 0%, ${C.pink}28 55%, transparent 100%)`,
+                        background: `radial-gradient(circle, ${ANIME_COLORS.primary}45 0%, ${ANIME_COLORS.purple}28 55%, transparent 100%)`,
                         zIndex: 0,
                         pointerEvents: "none",
                     }}
@@ -71,61 +63,62 @@ export const ElitePassCard: React.FC = () => {
 
                 <div style={{ position: "relative", zIndex: 1 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 12 }}>
-                        <div
-                            style={{
-                                background: C.magenta,
-                                border: `3px solid ${C.black}`,
-                                boxShadow: `3px 3px 0 ${C.black}`,
-                                padding: "7px 14px",
-                                fontFamily: popFont,
+                        <AnimeCardWrapper accentIndex={1} style={{
+                            padding: "7px 14px",
+                            display: "inline-block",
+                            background: `${ANIME_COLORS.primary}40`,
+                            border: `1px solid ${ANIME_COLORS.primary}`,
+                        }}>
+                            <span style={{
+                                fontFamily: "'Bebas Neue', sans-serif",
                                 fontSize: 10,
                                 fontWeight: 900,
                                 letterSpacing: 2,
                                 textTransform: "uppercase",
-                                color: C.white,
-                                display: "inline-block",
-                            }}
-                        >
-                            ⚡ ELITE PASS
-                        </div>
+                                color: ANIME_COLORS.text,
+                            }}>
+                                ⚡ ELITE PASS
+                            </span>
+                        </AnimeCardWrapper>
 
-                        <div
-                            style={{
-                                background: C.yellow,
-                                border: `2px solid ${C.black}`,
-                                boxShadow: `2px 2px 0 ${C.black}`,
-                                padding: "4px 10px",
-                                fontFamily: displayFont,
+                        <AnimeCardWrapper accentIndex={2} style={{
+                            padding: "4px 10px",
+                            display: "inline-block",
+                        }}>
+                            <span style={{
+                                fontFamily: "'Bebas Neue', sans-serif",
                                 fontSize: 14,
                                 letterSpacing: 1,
-                                color: C.black,
+                                color: ANIME_COLORS.text,
                                 lineHeight: 1,
-                            }}
-                        >
-                            ₹999
-                        </div>
+                            }}>
+                                ₹999
+                            </span>
+                        </AnimeCardWrapper>
                     </div>
 
                     <h3
                         style={{
-                            fontFamily: displayFont,
+                            fontFamily: "'Bebas Neue', sans-serif",
                             fontSize: "clamp(22px, 3.1vw, 30px)",
                             letterSpacing: 3,
-                            color: C.black,
+                            color: ANIME_COLORS.text,
                             margin: "0 0 6px 0",
                             lineHeight: 0.95,
-                            textShadow: `2px 2px 0 ${C.cyan}`,
+                            textShadow: `0 0 12px ${ANIME_COLORS.secondary}40`,
                         }}
                     >
-                        AAKAR ELITE
+                        <AnimeGlitchText text="AAKAR ELITE">
+                            AAKAR ELITE
+                        </AnimeGlitchText>
                     </h3>
 
                     <div
                         style={{
-                            fontFamily: monoFont,
+                            fontFamily: "'Share Tech Mono', monospace",
                             fontSize: 10,
                             fontWeight: 700,
-                            color: "#333",
+                            color: ANIME_COLORS.secondary,
                             letterSpacing: 2,
                             textTransform: "uppercase",
                             marginBottom: 10,
@@ -136,9 +129,9 @@ export const ElitePassCard: React.FC = () => {
 
                     <p
                         style={{
-                            fontFamily: monoFont,
+                            fontFamily: "'Share Tech Mono', monospace",
                             fontSize: 11,
-                            color: "#3f3f3f",
+                            color: ANIME_COLORS.text,
                             lineHeight: 1.5,
                             margin: "0 0 14px 0",
                         }}
@@ -148,43 +141,40 @@ export const ElitePassCard: React.FC = () => {
 
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
                         {["Solo Events", "Fast Entry", "One Payment"].map((chip, index) => (
-                            <span
-                                key={chip}
-                                style={{
-                                    background: [C.cyan, C.yellow, C.magenta][index],
-                                    color: index === 2 ? C.white : C.black,
-                                    border: `2px solid ${C.black}`,
-                                    padding: "3px 8px",
-                                    fontFamily: monoFont,
-                                    fontSize: 9,
-                                    fontWeight: 700,
-                                    letterSpacing: 1,
-                                    textTransform: "uppercase",
-                                }}
-                            >
-                                {chip}
-                            </span>
+                            <AnimeCardWrapper key={chip} accentIndex={index} style={{
+                                padding: "3px 8px",
+                                display: "inline-block",
+                            }}>
+                                <span
+                                    style={{
+                                        fontFamily: "'Share Tech Mono', monospace",
+                                        fontSize: 9,
+                                        fontWeight: 700,
+                                        letterSpacing: 1,
+                                        textTransform: "uppercase",
+                                        color: ANIME_COLORS.text,
+                                    }}
+                                >
+                                    {chip}
+                                </span>
+                            </AnimeCardWrapper>
                         ))}
                     </div>
 
-                    <div
-                        style={{
-                            background: hov ? C.black : C.yellow,
-                            border: `3px solid ${C.black}`,
-                            boxShadow: hov ? `0 0 0 ${C.black}` : `3px 3px 0 ${C.black}`,
-                            padding: "11px 12px",
-                            marginBottom: 12,
-                            fontFamily: monoFont,
-                            fontSize: 10,
-                            fontWeight: 900,
-                            letterSpacing: 1.3,
-                            textAlign: "center",
-                            color: hov ? C.yellow : C.black,
-                            transition: "all 0.15s",
-                        }}
-                    >
+                    <AnimeCardWrapper accentIndex={0} style={{
+                        padding: "11px 12px",
+                        marginBottom: 12,
+                        fontFamily: "'Share Tech Mono', monospace",
+                        fontSize: 10,
+                        fontWeight: 900,
+                        letterSpacing: 1.3,
+                        textAlign: "center",
+                        color: ANIME_COLORS.text,
+                        transition: "all 0.15s",
+                        cursor: "pointer",
+                    }}>
                         VIEW DETAILS & PURCHASE →
-                    </div>
+                    </AnimeCardWrapper>
 
                     <div
                         style={{
@@ -193,7 +183,7 @@ export const ElitePassCard: React.FC = () => {
                             justifyContent: "space-between",
                             alignItems: "center",
                             paddingTop: 12,
-                            borderTop: `2px dashed ${C.black}`,
+                            borderTop: `1px dashed ${ANIME_COLORS.primary}`,
                         }}
                     >
                         <div
@@ -202,24 +192,25 @@ export const ElitePassCard: React.FC = () => {
                                 gap: 4,
                             }}
                         >
-                            {[C.cyan, C.pink, C.yellow].map((color, i) => (
+                            {[ANIME_COLORS.secondary, ANIME_COLORS.purple, ANIME_COLORS.accent].map((color, i) => (
                                 <div
                                     key={i}
                                     style={{
                                         width: 8,
                                         height: 8,
                                         background: color,
-                                        border: `2px solid ${C.black}`,
+                                        border: `1px solid ${ANIME_COLORS.primary}`,
+                                        borderRadius: 2,
                                     }}
                                 />
                             ))}
                         </div>
                         <span
                             style={{
-                                fontFamily: popFont,
+                                fontFamily: "'Bebas Neue', sans-serif",
                                 fontSize: 12,
                                 fontWeight: 900,
-                                color: C.black,
+                                color: ANIME_COLORS.text,
                                 letterSpacing: 1,
                             }}
                         >
@@ -227,6 +218,7 @@ export const ElitePassCard: React.FC = () => {
                         </span>
                     </div>
                 </div>
+            </AnimeCardWrapper>
             </div>
         </Link>
     );

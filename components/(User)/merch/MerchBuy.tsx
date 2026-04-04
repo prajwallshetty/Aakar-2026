@@ -3,7 +3,16 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopArtBackground";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"] as const;
 
@@ -46,50 +55,79 @@ export default function MerchBuy() {
   return (
     <>
       <style>{`
-        ${POP_ART_KEYFRAMES}
+        ${ANIME_GLOBAL_STYLES}
         .merch-buy-shell {
-          border: 3px solid ${P.black};
-          box-shadow: 8px 8px 0 ${P.black}, 14px 14px 0 ${P.magenta};
-          background: rgba(255,255,255,0.97);
+          border: 2px solid ${ANIME_COLORS.primary};
+          box-shadow: 0 0 30px ${ANIME_COLORS.primary}60, inset 0 0 20px ${ANIME_COLORS.primary}30;
+          background: linear-gradient(135deg, ${ANIME_COLORS.background}95, ${ANIME_COLORS.background}90);
+          backdrop-filter: blur(12px);
+          position: relative;
+          overflow: hidden;
+        }
+        .merch-buy-shell::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}20, transparent);
+          animation: merchScan 3s ease-in-out infinite;
+        }
+        @keyframes merchScan {
+          0% { left: -100%; }
+          50% { left: 100%; }
+          100% { left: 100%; }
         }
         .merch-buy-heading {
           font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.08em;
-          color: ${P.black};
-          text-shadow: 0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan};
-          -webkit-text-stroke: 0.015em ${P.black};
+          color: ${ANIME_COLORS.text};
+          text-shadow: 0 0 30px ${ANIME_COLORS.primary}60, 0.05em 0.05em 0 ${ANIME_COLORS.primary}, 0.1em 0.1em 0 ${ANIME_COLORS.secondary};
         }
         .merch-buy-copy {
           font-family: 'Share Tech Mono', monospace;
           letter-spacing: 0.02em;
-          color: rgba(10,0,5,0.9);
+          color: ${ANIME_COLORS.text};
+          text-shadow: 0 0 6px ${ANIME_COLORS.text}30;
         }
         .merch-buy-label {
           font-family: 'Share Tech Mono', monospace;
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: ${P.black};
+          color: ${ANIME_COLORS.secondary};
           font-size: 10px;
           font-weight: 700;
         }
         .merch-buy-input, .merch-buy-select {
-          border: 3px solid ${P.black};
-          box-shadow: 3px 3px 0 ${P.black};
-          background: #fff;
-          color: ${P.black};
+          border: 2px solid ${ANIME_COLORS.primary};
+          box-shadow: 0 0 15px ${ANIME_COLORS.primary}30, inset 0 0 8px ${ANIME_COLORS.primary}20;
+          background: linear-gradient(135deg, ${ANIME_COLORS.background}85, ${ANIME_COLORS.background}75);
+          color: ${ANIME_COLORS.text};
           font-family: 'Share Tech Mono', monospace;
           padding: 12px 14px;
           outline: none;
+          backdrop-filter: blur(8px);
+          transition: all 0.3s ease;
+        }
+        .merch-buy-input:focus, .merch-buy-select:focus {
+          border-color: ${ANIME_COLORS.accent};
+          box-shadow: 0 0 25px ${ANIME_COLORS.accent}50, inset 0 0 12px ${ANIME_COLORS.accent}30;
         }
       `}</style>
       <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <PopArtBackground />
+        <AnimeOrbField />
+        <AnimeParticleField />
         <div className="relative z-10 mx-auto max-w-5xl">
           <div className="merch-buy-shell rounded-[2rem] overflow-hidden">
             <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="p-6 sm:p-8 lg:p-10">
                 <p className="merch-buy-copy text-xs uppercase tracking-[0.4em]">Step 1 · Add Details</p>
-                <h1 className="merch-buy-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95]">Select Size</h1>
+                <h1 className="merch-buy-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95]">
+                  <AnimeGlitchText text="Select Size">
+                    Select Size
+                  </AnimeGlitchText>
+                </h1>
                 <p className="merch-buy-copy mt-4 max-w-xl text-base leading-8">
                   Add your size, USN, email, and phone number. After this, you’ll be taken to the payment page with the scanner.
                 </p>
@@ -151,7 +189,7 @@ export default function MerchBuy() {
                   </label>
 
                   {error && (
-                    <div className="border-2 border-black bg-[#ff0066] px-4 py-3 font-bold text-white shadow-[4px_4px_0_#000]">
+                    <div className="border-2 px-4 py-3 font-bold shadow-[4px_4px_0_#000]" style={{ border: `1px solid ${ANIME_COLORS.purple}`, background: `${ANIME_COLORS.purple}40`, color: ANIME_COLORS.text, boxShadow: `0 0 12px ${ANIME_COLORS.purple}40` }}>
                       {error}
                     </div>
                   )}
@@ -159,13 +197,15 @@ export default function MerchBuy() {
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
                       type="submit"
-                      className="rounded-lg border-2 border-black bg-black px-6 py-3 font-bold uppercase tracking-[0.18em] text-white shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 hover:bg-[#1a1a1a] active:translate-y-0"
+                      className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
+                      style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}
                     >
                       Continue to Payment
                     </button>
                     <Link
                       href="/merch"
-                      className="rounded-lg border-2 border-black bg-white px-6 py-3 font-bold uppercase tracking-[0.18em] text-black shadow-[4px_4px_0_#0a0005]"
+                      className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005]"
+                      style={{ border: `2px solid ${ANIME_COLORS.secondary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}90, ${ANIME_COLORS.background}80)`, color: ANIME_COLORS.text, boxShadow: `0 0 15px ${ANIME_COLORS.secondary}50` }}
                     >
                       Back
                     </Link>
@@ -173,10 +213,14 @@ export default function MerchBuy() {
                 </form>
               </div>
 
-              <div className="border-t-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-l-2 lg:border-t-0 lg:p-10">
-                <div className="rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_#000]">
+              <div className="border-t-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-l-2 lg:border-t-0 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
+                <div className="rounded-[1.75rem] border-2 p-6 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
                   <p className="merch-buy-label">Order Summary</p>
-                  <h2 className="merch-buy-heading mt-2 text-4xl uppercase leading-none">{summary.title}</h2>
+                  <h2 className="merch-buy-heading mt-2 text-4xl uppercase leading-none">
+                    <AnimeGlitchText text={summary.title}>
+                      {summary.title}
+                    </AnimeGlitchText>
+                  </h2>
                   <div className="mt-5 space-y-3 merch-buy-copy text-sm leading-7">
                     <div className="flex justify-between gap-4 border-b border-black/15 pb-2">
                       <span>Price</span>

@@ -16,163 +16,181 @@ import {
 } from "@/types";
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
-import PopArtBackground from "@/components/(User)/PopArtBackground";
 import { ElitePassCard } from "@/components/(User)/auth/ElitePassCard";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
+// ─── Anime Design tokens ────────────────────────────────────────────────────────────
 const C = {
-    yellow: "#ffff00",
-    magenta: "#ff00ff",
-    cyan: "#00ffff",
-    pink: "#ff0066",
-    black: "#000",
-    white: "#fff",
+    yellow: ANIME_COLORS.accent,
+    magenta: ANIME_COLORS.primary,
+    cyan: ANIME_COLORS.secondary,
+    pink: ANIME_COLORS.purple,
+    black: ANIME_COLORS.background,
+    white: ANIME_COLORS.text,
 };
-const popFont = "'Arial Black', Impact, sans-serif";
-const monoFont = "'Courier New', 'Space Mono', monospace";
+const popFont = "'Bebas Neue', Impact, sans-serif";
+const monoFont = "'Share Tech Mono', monospace";
 const displayFont = "'Bebas Neue', Impact, sans-serif";
 
-// ─── Style helpers ────────────────────────────────────────────────────────────
+// ─── Anime Style helpers ────────────────────────────────────────────────────────────
 const cardStyle: React.CSSProperties = {
-    background: C.white,
-    border: `3px solid ${C.black}`,
-    boxShadow: `6px 6px 0 ${C.black}`,
-    borderRadius: 0,
+    background: `${ANIME_COLORS.background}20`,
+    border: `1px solid ${ANIME_COLORS.primary}`,
+    boxShadow: `0 0 20px ${ANIME_COLORS.primary}40, inset 0 0 8px ${ANIME_COLORS.primary}20`,
+    borderRadius: 8,
+    backdropFilter: "blur(8px)",
 };
 
 const sectionHeaderStyle = (bg: string): React.CSSProperties => ({
-    background: bg,
-    border: `3px solid ${C.black}`,
-    boxShadow: `4px 4px 0 ${C.black}`,
-    padding: "6px 18px",
+    background: `${bg}20`,
+    border: `1px solid ${bg}`,
+    boxShadow: `0 0 12px ${bg}40, inset 0 0 4px ${bg}20`,
+    padding: "8px 20px",
     fontFamily: popFont,
-    fontSize: 12, fontWeight: 900,
+    fontSize: 14, fontWeight: 900,
     letterSpacing: 4,
     textTransform: "uppercase" as const,
-    color: C.black,
+    color: ANIME_COLORS.text,
     display: "inline-block",
     marginBottom: 16,
+    borderRadius: 4,
+    backdropFilter: "blur(4px)"
 });
 
 const labelStyle: React.CSSProperties = {
-    fontFamily: monoFont, fontSize: 10, fontWeight: 700,
+    fontFamily: monoFont, fontSize: 11, fontWeight: 700,
     letterSpacing: 3, textTransform: "uppercase" as const,
-    color: C.black, marginBottom: 4, display: "block",
+    color: ANIME_COLORS.secondary, marginBottom: 6, display: "block",
 };
 
 const inputBase: React.CSSProperties = {
-    width: "100%", padding: "10px 12px",
-    border: `3px solid ${C.black}`, borderRadius: 0,
-    boxShadow: `3px 3px 0 ${C.black}`,
-    fontFamily: monoFont, fontSize: 13,
-    background: C.white, color: C.black,
-    outline: "none", transition: "box-shadow 0.1s",
+    width: "100%", padding: "12px 16px",
+    border: `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6,
+    boxShadow: `0 0 8px ${ANIME_COLORS.primary}20, inset 0 0 4px ${ANIME_COLORS.primary}10`,
+    fontFamily: monoFont, fontSize: 14,
+    background: `${ANIME_COLORS.background}40`,
+    color: ANIME_COLORS.text,
+    outline: "none", transition: "all 0.2s",
     appearance: "none" as const,
+    backdropFilter: "blur(4px)"
 };
 
 const inputError: React.CSSProperties = {
     ...inputBase,
-    border: `3px solid ${C.pink}`,
-    boxShadow: `3px 3px 0 ${C.pink}`,
+    border: `1px solid ${ANIME_COLORS.purple}`,
+    boxShadow: `0 0 12px ${ANIME_COLORS.purple}40, inset 0 0 6px ${ANIME_COLORS.purple}20`,
+    background: `${ANIME_COLORS.purple}10`
 };
 
 const errorMsg: React.CSSProperties = {
-    fontFamily: monoFont, fontSize: 10, fontWeight: 700,
-    color: C.pink, letterSpacing: 1, marginTop: 3,
+    fontFamily: monoFont, fontSize: 11, fontWeight: 700,
+    color: ANIME_COLORS.purple, letterSpacing: 1, marginTop: 4,
     display: "flex", alignItems: "center", gap: 4,
 };
 
-// ─── Inline background functions removed in favor of unified PopArtBackground
-
-// ─── Pop-Art Button ───────────────────────────────────────────────────────────
-const PopButton: React.FC<{
+// ─── Anime Button ───────────────────────────────────────────────────────────
+const AnimeButton: React.FC<{
     children: React.ReactNode;
     onClick?: () => void;
     type?: "button" | "submit";
     disabled?: boolean;
     bg?: string;
     fg?: string;
-}> = ({ children, onClick, type = "button", disabled, bg = C.pink, fg = C.white }) => {
+}> = ({ children, onClick, type = "button", disabled, bg = ANIME_COLORS.primary, fg = ANIME_COLORS.text }) => {
     const [hov, setHov] = useState(false);
     return (
         <button type={type} onClick={onClick} disabled={disabled}
             onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
             style={{
-                background: disabled ? "#ccc" : bg,
-                color: disabled ? "#888" : fg,
-                border: `3px solid ${C.black}`,
-                boxShadow: hov && !disabled ? "0 0 0 #000" : `5px 5px 0 ${C.black}`,
-                fontFamily: popFont, fontSize: 12, fontWeight: 900,
+                background: disabled ? `${ANIME_COLORS.background}40` : `${bg}20`,
+                color: disabled ? `${ANIME_COLORS.text}40` : fg,
+                border: `1px solid ${bg}`,
+                boxShadow: hov && !disabled ? `0 0 20px ${bg}60` : `0 0 8px ${bg}40`,
+                fontFamily: popFont, fontSize: 14, fontWeight: 900,
                 letterSpacing: 3, textTransform: "uppercase" as const,
-                padding: "12px 28px",
+                padding: "14px 32px",
                 cursor: disabled ? "not-allowed" : "pointer",
-                transform: hov && !disabled ? "translate(3px,3px)" : "none",
-                transition: "transform 0.1s, box-shadow 0.1s",
+                transform: hov && !disabled ? "translateY(-2px)" : "none",
+                transition: "all 0.2s",
                 display: "inline-flex", alignItems: "center", gap: 8, justifyContent: "center",
+                borderRadius: 6,
+                backdropFilter: "blur(4px)"
             }}>
             {children}
         </button>
     );
 };
 
-// ─── Step indicator ───────────────────────────────────────────────────────────
-const StepPill: React.FC<{ label: string; num: number; active: boolean; done: boolean }> = ({ label, num, active, done }) => (
+// ─── Anime Step indicator ───────────────────────────────────────────────────────────
+const AnimeStepPill: React.FC<{ label: string; num: number; active: boolean; done: boolean }> = ({ label, num, active, done }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
         <div style={{
-            width: 40, height: 40,
-            background: done ? C.cyan : active ? C.yellow : "#eee",
-            border: `3px solid ${C.black}`,
-            boxShadow: active ? `3px 3px 0 ${C.black}` : "none",
-            fontFamily: popFont, fontSize: 16, fontWeight: 900, color: C.black,
+            width: 44, height: 44,
+            background: done ? `${ANIME_COLORS.secondary}40` : active ? `${ANIME_COLORS.accent}40` : `${ANIME_COLORS.background}40`,
+            border: `1px solid ${done ? ANIME_COLORS.secondary : active ? ANIME_COLORS.accent : ANIME_COLORS.primary}`,
+            boxShadow: active ? `0 0 16px ${ANIME_COLORS.accent}60` : `0 0 8px ${ANIME_COLORS.primary}40`,
+            fontFamily: popFont, fontSize: 18, fontWeight: 900, color: ANIME_COLORS.text,
             display: "flex", alignItems: "center", justifyContent: "center",
             transform: active ? "rotate(-4deg)" : "none",
+            borderRadius: 8,
+            backdropFilter: "blur(4px)"
         }}>
             {done ? "✓" : num}
         </div>
-        <span style={{ fontFamily: monoFont, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" as const, color: C.black }}>
+        <span style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" as const, color: ANIME_COLORS.secondary }}>
             {label}
         </span>
     </div>
 );
 
-const StepConnector: React.FC<{ done: boolean }> = ({ done }) => (
-    <div style={{ flex: 1, height: 3, marginBottom: 18, borderTop: `3px dashed ${done ? C.cyan : C.black}` }} />
+const AnimeStepConnector: React.FC<{ done: boolean }> = ({ done }) => (
+    <div style={{ flex: 1, height: 2, marginBottom: 20, borderTop: `2px dashed ${done ? ANIME_COLORS.secondary : ANIME_COLORS.primary}`, opacity: done ? 0.8 : 0.4 }} />
 );
 
-// ─── Section card ─────────────────────────────────────────────────────────────
-const SectionCard: React.FC<{ title: string; color: string; children: React.ReactNode }> = ({ title, color, children }) => (
-    <div style={{ ...cardStyle, padding: 24, marginBottom: 20 }}>
-        <div style={sectionHeaderStyle(color)}>{title}</div>
+// ─── Anime Section card ─────────────────────────────────────────────────────────────
+const AnimeSectionCard: React.FC<{ title: string; color: string; children: React.ReactNode }> = ({ title, color, children }) => (
+    <AnimeCardWrapper accentIndex={0} style={{ padding: 28, marginBottom: 24 }}>
+        <AnimeSectionHeading index={0}>{title}</AnimeSectionHeading>
         {children}
-    </div>
+    </AnimeCardWrapper>
 );
 
-// ─── Field wrapper ────────────────────────────────────────────────────────────
-const Field: React.FC<{ label: string; error?: string; children: React.ReactNode }> = ({ label, error, children }) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 4 }}>
+// ─── Anime Field wrapper ────────────────────────────────────────────────────────────
+const AnimeField: React.FC<{ label: string; error?: string; children: React.ReactNode }> = ({ label, error, children }) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 8 }}>
         <label style={labelStyle}>{label}</label>
         {children}
         {error && <span style={errorMsg}>⚡ {error}</span>}
     </div>
 );
 
-// ─── Loading skeleton ─────────────────────────────────────────────────────────
-function LoadingSkeleton() {
+// ─── Anime Loading skeleton ─────────────────────────────────────────────────────────
+function AnimeLoadingSkeleton() {
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <PopArtBackground />
-            <div style={{ ...cardStyle, padding: 32, width: "min(600px,90vw)", background: C.white, position: "relative", zIndex: 1 }}>
-                <div style={{ background: C.magenta, height: 8, border: `3px solid ${C.black}`, marginBottom: 24 }} />
-                <div style={sectionHeaderStyle(C.yellow)}>Loading Events…</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 16 }}>
+            <AnimeOrbField />
+            <AnimeParticleField />
+            <AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
+                <div style={{ height: 4, background: `linear-gradient(90deg, ${ANIME_COLORS.primary}, ${ANIME_COLORS.secondary})`, marginBottom: 24, borderRadius: 2 }} />
+                <AnimeSectionHeading index={0}>Loading Events…</AnimeSectionHeading>
+                <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 20 }}>
                     {[...Array(6)].map((_, i) => (
-                        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                            <div style={{ height: 10, width: "35%", background: "#eee", border: `2px solid ${C.black}` }} />
-                            <div style={{ height: 38, background: "#f5f5f5", border: `3px solid ${C.black}`, boxShadow: `3px 3px 0 ${C.black}` }} />
+                        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                            <div style={{ height: 12, width: "35%", background: `${ANIME_COLORS.background}40`, border: `1px solid ${ANIME_COLORS.primary}`, borderRadius: 4 }} />
+                            <div style={{ height: 44, background: `${ANIME_COLORS.background}20`, border: `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6 }} />
                         </div>
                     ))}
                 </div>
-            </div>
+            </AnimeCardWrapper>
         </div>
     );
 }
@@ -326,6 +344,7 @@ const Register = () => {
         if (!formData.paymentScreenshot) { setFormErrors({ paymentScreenshot: "Payment screenshot is required" }); return; }
         setPaymentStep("verification");
     };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -391,54 +410,59 @@ const Register = () => {
             setGeneralError("Something went wrong. Please try again.");
         }
     };
-    const colleges = [...[
-        "A J Institute of Engineering and Technology, Mangalore", "Alva's Ayurveda Medical College, Moodbidri", "Srinivas institute of technology, valachill", "Alva's Homoeopathic Medical College, Moodbidri", "Alva's Institute of Engineering Technology, Moodbidri", "Alvas College of Nursing, Moodbidri", "The Oxford college of engineering", "Aloysius MBA, Mangalore", "Canara Engineering College, Mangalore", "Carmel Degree College, Modankap, BC Road", "St. Mary's College, Shirva", "adichunchanagiri institute of engineering, coorg", "CIT, chickmagalur", "Rajarajeshwari college Bangalore", "Shri Madhwa Vadiraja Institute of Technology and Management, Udupi", "Mahathma Gandhi Memorial (MGM) College, Udupi", "Vaikunta Baliga College of Law, Udupi", "Trisha Vidya College of Commerce and Management", "Upendra Pai Memorial College, Udupi", "Udupi Group of Institutions, Manipal", "Kasturba Medical College (KMC), Manipal", "Laxmi Memorial College of Nursing & Physiotherapy", "Manipal Institute of Technology, Manipal", "College of Fisheries, Mangalore", "Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi", "Govt. First Grade College, Kaup", "Government Girls Degree College, Brahmagiri, Udupi", "Govinda Dasa College, Surathkal", "GTTC Baikampady, Mangalore", "Karavali Ayurveda and Medical Research, Mangalore", "Karavali College of Hotel Management", "Karavali College of Nursing Science", "Karavali College of Pharmacy, Mangalore", "Karavali College of Pharmacy, Vamanjoor, Mangalore", "Karavali College of Physiotherapy", "Karavali Institute of Technology, Mangalore", "Karavali Institute of Technology, Moodbidri", "KMC, Manipal", "Mahatma Gandhi Memorial (MGM) College, Udupi", "MIT Hotel Management", "MIT Manipal", "MITE - Mangalore Institute of Technology & Engineering", "Moodlakatte Institute of Technology, Kundapur", "N.M.A.M. Institute of Technology, Nitte, Karkala", "NITK, Surathkal", "Nitte Institute of Pharmacy", "Padua College, Mangaluru", "Padu Thirupathi Degree College, Karkala", "Poornaprajna College, Udupi", "Pompeii College, Aikala", "Sahyadri College of Engineering and Management", "SDM College of Engineering and Technology (SDMC)", "SDM Polytechnic, Ujire", "SDPT First Grade College, Kateel", "Shirdi Sai Degree College, Karkala", "Shri Madhwa Vadiraja Institute of Technology & Management, Bantakal", "Sri Bhuvanendra College, Karkala", "Sri Devi Institute of Technology, Kenjara, Bajpe", "Sri Mahaveera College, Kodangallu, Moodbidri", "Sri Taralabalu Jagadguru Institute of Technology", "Srinivas Institute of Engineering and Technology, Mukka", "Srinivas Institute of Medical Sciences and Research Center, Mukka", "St Joseph Engineering College, Vamanjoor, Mangaluru", "St. Raymond's Degree College, Vamanjoor, Kudupu, Karnataka", "Sumedha Fashion Institute, Karkala", "S NM Polytechnic, Moodbidri", "Udupi Group of Institutions", "Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi", "Yenapoya Institute of Arts Science and Commerce", "Muniyal Ayurveda College", "Vaikunta Baliga College of Law, Kunjibettu", "Gandhinagar First Grade College", "Tejaswini Group of Institutions", "Mangala Group of Institutions", "PACE Mangalore", "Yenepoya School Of Engineering & Technology", "Bearys Institute of Technology", "Kanachur Institute of Medical Science", "NITTE Architecture", "NITTE Nursing", "St Mary's College, Shirva", "Ids college, Mangalore", "Canara Degree College", "St Agnes College(Autonomous). Bendur, Mangaluru", "Besant Women's College", "Shree Gokarnanatheshwara College", "Mahatma Gandhi Memorial College, Udupi", "Yenepoya Allied Science", "NITTE Institute of Communication", "Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore", "Trisha College of Commerce and Management, Alake Road, Kodailbail", "Narayana Guru School And College, Barke Road, Kudroli", "Athene Institute of Health Science", "Athena Institute of Nursing Science", "Indira Institute of Nursing Science", "Laxmi Memorial College of Nursing", "St. Aloysius", "Ramakrishna Degree College", "MAPS College", "NITTE MBA", "Moti Mahal", "Govt. JJJ College", "Dr. Dayananda Pai - P Sathisha Pai Govt. First Grade College, Car Street, Mangalore", "AJIM", "M. V. Shetty College of Physiotherapy, Mangalore", "Trisha College of Nursing, Mangalore", "Shree Devi Institute of Technology, Mangalore", "Manel Srinivas Nayak Institute of Management, Mangalore", "Yenepoya Institute of Technology (YIT), Moodbidri", "Sahyadri College of Nursing, Mangalore", "A.J. Institute of Management, Mangalore", "A.J. Institute of Dental Sciences, Mangalore", "A.J. Institute of Allied Health Sciences, Mangalore", "A.J. Institute of Medical Sciences, Mangalore", "Padua College of Commerce and Management, Mangalore", "A.J. Institute of Nursing, Mangalore", "A.J. Institute of Physiotherapy, Mangalore", "Yenepoya Degree College, Mangalore", "Shridevi Institute of Computer Sciences (BCA), Mangalore", "Shridevi College of Nursing, Mangalore", "Shridevi College of Commerce (B.Com), Mangalore", "SDM College of Business Management (MBA), Mangalore", "SDM Law College, Mangalore", "SDM PG College Ujire", "SDM Institute of Technology (SDMIT) Ujire", "Canara College (MCA Program), Mangalore", "Minerva College, Mangalore", "Srinivas Institute of Nursing Sciences, Mangalore", "Srinivas College of Pharmacy, Mangalore", "P.A. College of Engineering, Mangalore", "P.A. Polytechnic, Mangalore", "P.A. First Grade College, Mangalore", "Alva's College, Moodbidri", "Alva's College of Law, Moodbidri", "Alva's College of Naturopathy and Yogic Sciences, Moodbidri", "Canara Engineering College (CEC), Benjanapadavu", "Anugraha Women's College, Kalladka", "Sri Rama First Grade College, Kalladka", "Vivekananda Degree College, Puttur", "Vivekananda College of Engineering & Technology, Puttur", "St Philomena College, Puttur", "St Philomena PG and Research Centre, Puttur", "Akshaya College, Puttur", "Ambika First Grade College, Puttur", "KVG Ayurveda College, Sulya", "KVG College of Engineering, Sulya", "KVG Dental College, Sulya", "BGS Institute of Technology, Bangalore", "Shri Shirdi Sai Mandira College, Karkala", "Vijaya College, Mulki", "Srinivas Institute of Allied Health Sciences, Mangalore", "BGS Institute of Technology, Mangalore", "Acharya Institute of Technology, Bangalore", "Adi Shankara Institute of Engineering Technology, Kalady", "Amrita Vishwa Vidyapeetham, Coimbatore", "Angadi Institute of Technology, Belagavi", "Bangalore Institute of Technology, Bangalore", "BMS College of Engineering, Bangalore", "BMS Institute of Technology and Management, Bangalore", "BNM Institute of Technology, Bangalore", "CMR Institute of Technology, Bangalore", "Dayananda Sagar College of Engineering, Bangalore", "Dr. Ambedkar Institute of Technology, Bangalore", "East Point College of Engineering, Bangalore", "Global Academy of Technology, Bangalore", "Gogte Institute of Technology, Belagavi", "HKBK College of Engineering, Bangalore", "KS Institute of Technology, Bangalore", "KLE Technological University, Hubli", "LBS Institute of Technology for Women, Thiruvananthapuram", "M S Engineering College, Bangalore", "MS Ramaiah Institute of Technology, Bangalore", "New Horizon College of Engineering, Bangalore", "Nitte Meenakshi Institute of Technology, Bangalore", "PES College of Engineering, Mandya", "PES University, Bangalore", "Poojya Doddappa Appa College of Engineering, Kalaburagi", "RNS Institute of Technology, Bangalore", "RV College of Engineering, Bangalore", "Sir M Visvesvaraya Institute of Technology, Bangalore", "SJB Institute of Technology, Bangalore", "SNS College of Engineering, Coimbatore", "Sri Jayachamarajendra College of Engineering (SJCE), Mysore", "Sri Ramakrishna Engineering College, Coimbatore", "Vidyavardhaka College of Engineering, Mysore", "College of Engineering Chengannur", "College of Engineering Trivandrum", "Federal Institute of Science and Technology, Angamaly", "Government Engineering College Adoor", "Government Engineering College Alappuzha", "Government Engineering College Attingal", "Government Engineering College Barton Hill, Thiruvananthapuram", "Government Engineering College Chavara, Kollam", "Government Engineering College Ernakulam", "Government Engineering College Idukki", "Government Engineering College Kanhangad", "Government Engineering College Kannur", "Government Engineering College Karunagapally", "Government Engineering College Kasaragod", "Government Engineering College Kayamkulam", "Government Engineering College Kollam", "Government Engineering College Kottarakkara", "Government Engineering College Kottayam", "Government Engineering College Kozhikode", "Government Engineering College Kunnamkulam", "Government Engineering College Malappuram", "Yenepoya Homoeopathic Medical College and hospital", "Government Engineering College Mananthavady", "Government Engineering College Munnar", "Government Engineering College Painavu", "Government Engineering College Palakkad", "Government Engineering College Pathanamthitta", "Government Engineering College Payyannur", "Government Engineering College Sreekrishnapuram", "Government Engineering College Thalassery", "Government Engineering College Thiruvananthapuram", "Government Engineering College Thodupuzha", "Government Engineering College Thrissur", "Government Engineering College Vadakara", "Government Engineering College Vatakara", "Government Engineering College Wayanad", "Ilahia College of Engineering, Muvattupuzha", "Jyothi Engineering College, Thrissur", "Mar Baselios College of Engineering, Thiruvananthapuram", "Model Engineering College, Kochi", "Mohandas College of Engineering, Thiruvananthapuram", "Rajagiri School of Engineering and Technology, Kochi", "Saintgits College of Engineering, Kottayam", "Sree Buddha College of Engineering, Alappuzha", "TKM College of Engineering, Kollam", "Vidya Academy of Science and Technology, Thrissur", "Coimbatore Institute of Technology", "Garden City University, Bangalore", "Indian Institute of Science (IISc), Bangalore", "Jain University, Bangalore", "JSS Science and Technology University, Mysuru", "Karpagam College of Engineering, Coimbatore", "Karunya Institute of Technology and Sciences, Coimbatore", "Kumaraguru College of Technology, Coimbatore", "National Institute of Engineering (NIE), Mysuru", "PSG College of Technology, Coimbatore", "Reva University, Bangalore"
-    ]].sort((a, b) => a.localeCompare(b));
+
+    const colleges = [
+        "A J Institute of Engineering and Technology, Mangalore",
+        "Alva's Institute of Engineering Technology, Moodbidri",
+        "Canara Engineering College, Mangalore",
+        "Manipal Institute of Technology, Manipal",
+        "NITK, Surathkal",
+        "St. Mary's College, Shirva",
+    ].sort((a, b) => a.localeCompare(b));
 
     const selectStyles = {
         control: (base: any, state: any) => ({
-            ...base, border: `3px solid ${C.black}`, borderRadius: 0,
-            boxShadow: state.isFocused ? `3px 3px 0 ${C.cyan}` : `3px 3px 0 ${C.black}`,
-            fontFamily: monoFont, fontSize: 13, minHeight: 44, background: C.white,
-            "&:hover": { borderColor: C.black },
+            ...base, border: `1px solid ${ANIME_COLORS.primary} !important`, borderRadius: 6,
+            boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}60 !important` : `0 0 8px ${ANIME_COLORS.primary}40 !important`,
+            fontFamily: monoFont, fontSize: 14, minHeight: 48, background: `${ANIME_COLORS.background}40 !important`,
+            color: `${ANIME_COLORS.text} !important`,
+            "&:hover": { borderColor: `${ANIME_COLORS.secondary} !important` },
+            backdropFilter: "blur(4px)"
         }),
         menu: (base: any) => ({
-            ...base, border: `3px solid ${C.black}`, borderRadius: 0,
-            boxShadow: `5px 5px 0 ${C.black}`, fontFamily: monoFont, fontSize: 12,
+            ...base, border: `1px solid ${ANIME_COLORS.primary} !important`, borderRadius: 8,
+            boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`, fontFamily: monoFont, fontSize: 13,
+            background: `${ANIME_COLORS.background}80 !important`,
+            backdropFilter: "blur(8px)",
+            zIndex: 50
         }),
         option: (base: any, state: any) => ({
             ...base,
-            background: state.isSelected ? C.cyan : state.isFocused ? C.yellow : C.white,
-            color: C.black, fontFamily: monoFont, fontSize: 12, cursor: "pointer",
+            background: state.isSelected ? `${ANIME_COLORS.secondary}40 !important` : state.isFocused ? `${ANIME_COLORS.accent}40 !important` : `${ANIME_COLORS.background}20 !important`,
+            color: `${ANIME_COLORS.text} !important`, fontFamily: monoFont, fontSize: 13, cursor: "pointer",
         }),
         multiValue: (base: any) => ({
-            ...base, background: C.magenta, border: `2px solid ${C.black}`, borderRadius: 0,
+            ...base, background: `${ANIME_COLORS.primary}40 !important`, border: `1px solid ${ANIME_COLORS.primary} !important`, borderRadius: 4,
         }),
-        multiValueLabel: (base: any) => ({ ...base, color: C.white, fontFamily: monoFont, fontSize: 11, fontWeight: 700 }),
-        multiValueRemove: (base: any) => ({ ...base, color: C.white, "&:hover": { background: C.pink, color: C.white } }),
+        multiValueLabel: (base: any) => ({ ...base, color: `${ANIME_COLORS.text} !important`, fontFamily: monoFont, fontSize: 12, fontWeight: 700 }),
+        multiValueRemove: (base: any) => ({ ...base, color: `${ANIME_COLORS.text} !important`, "&:hover": { background: `${ANIME_COLORS.purple} !important`, color: `${ANIME_COLORS.text} !important` } }),
+        menuPortal: (base: any) => ({ ...base, zIndex: 1000 }),
         groupHeading: (base: any) => ({
-            ...base, fontFamily: popFont, fontSize: 10, letterSpacing: 3, color: C.black,
-            background: C.yellow, borderBottom: `2px solid ${C.black}`, padding: "6px 12px",
+            ...base, fontFamily: popFont, fontSize: 11, letterSpacing: 3, color: ANIME_COLORS.text,
+            background: `${ANIME_COLORS.accent}40`, borderBottom: `1px solid ${ANIME_COLORS.primary}`, padding: "8px 16px",
         }),
     };
 
-    if (isLoading) return <LoadingSkeleton />;
+    if (isLoading) return <AnimeLoadingSkeleton />;
 
     const stepNum = paymentStep === "details" ? 1 : paymentStep === "payment" ? 2 : 3;
 
     return (
         <div style={{ minHeight: "100vh", position: "relative", padding: "32px 16px 80px" }}>
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+                ${ANIME_GLOBAL_STYLES}
+                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono:wght@400;700&display=swap');
                 * { box-sizing: border-box; }
-                @keyframes floatShape {
-                    from { transform: translateY(0) rotate(0deg); }
-                    to   { transform: translateY(-14px) rotate(8deg); }
-                }
-                @keyframes wiggle {
-                    from { transform: rotate(-3deg) scale(1); }
-                    to   { transform: rotate(3deg) scale(1.06); }
-                }
                 @keyframes popIn {
                     0%   { transform: scale(0) rotate(-6deg); opacity: 0; }
                     70%  { transform: scale(1.04) rotate(1deg); opacity: 1; }
@@ -448,100 +472,126 @@ const Register = () => {
                     from { transform: rotate(0deg); }
                     to   { transform: rotate(360deg); }
                 }
-                .pop-input:focus { box-shadow: 3px 3px 0 #ff00ff !important; border-color: #ff00ff !important; outline: none; }
-                .pop-input::placeholder { color: #aaa; font-style: italic; }
-                .pop-file-input { width:100%; padding:10px 12px; border:3px dashed #000; background:#ffff00; font-family:'Courier New',monospace; font-size:12px; cursor:pointer; }
-                .pop-file-input:focus { outline:none; border-style:solid; border-color:#ff00ff; }
-                .review-row { display:flex; gap:8px; padding:8px 0; border-bottom:2px dashed #000; font-family:'Courier New',monospace; font-size:13px; }
+                .anime-input:focus { box-shadow: 0 0 16px ${ANIME_COLORS.secondary}60 !important; border-color: ${ANIME_COLORS.secondary} !important; outline: none; }
+                .anime-input::placeholder { color: ${ANIME_COLORS.text}60; font-style: italic; }
+                .anime-file-input { width:100%; padding:12px 16px; border:1px dashed ${ANIME_COLORS.primary}; background:${ANIME_COLORS.background}40; font-family:'Share Tech Mono',monospace; font-size:14px; cursor:pointer; border-radius:6px; color:${ANIME_COLORS.text}; }
+                .anime-file-input:focus { outline:none; border-style:solid; border-color:${ANIME_COLORS.secondary}; }
+                .review-row { display:flex; gap:8px; padding:8px 0; border-bottom:1px dashed ${ANIME_COLORS.primary}; font-family:'Share Tech Mono',monospace; font-size:13px; }
                 .review-row:last-child { border-bottom:none; }
-                .review-key { font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:10px; color:#000; min-width:110px; flex-shrink:0; }
+                .review-key { font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:10px; color:${ANIME_COLORS.secondary}; min-width:110px; flex-shrink:0; }
+                
+                /* Dropdown specific overrides to prevent global styles interference */
+                div[class*="css-"][class*="control"], 
+                div[class*="css-"][class*="menu"] {
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="option"] {
+                    color: ${ANIME_COLORS.text} !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="option"]:hover {
+                    background: ${ANIME_COLORS.accent}40 !important;
+                }
+                div[class*="css-"][class*="option"][class*="selected"] {
+                    background: ${ANIME_COLORS.secondary}40 !important;
+                }
+                div[class*="css-"][class*="multi-value"] {
+                    background: ${ANIME_COLORS.primary}40 !important;
+                    border: 1px solid ${ANIME_COLORS.primary} !important;
+                }
+                div[class*="css-"][class*="multi-value__label"] {
+                    color: ${ANIME_COLORS.text} !important;
+                    font-family: 'Share Tech Mono', monospace !important;
+                }
+                div[class*="css-"][class*="multi-value__remove"] {
+                    color: ${ANIME_COLORS.text} !important;
+                }
+                div[class*="css-"][class*="multi-value__remove"]:hover {
+                    background: ${ANIME_COLORS.purple} !important;
+                    color: ${ANIME_COLORS.text} !important;
+                }
             `}</style>
 
-            <PopArtBackground />
+            <AnimeOrbField />
+            <AnimeParticleField />
 
-            <div style={{ maxWidth: 780, margin: "0 auto", position: "relative", zIndex: 1 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 1, padding: "0 16px" }}>
 
                 {/* Header */}
-                <div style={{ marginBottom: 24, display: "flex", flexDirection: "column", alignItems: "center", gap: 8, animation: "popIn 0.7s cubic-bezier(.175,.885,.32,1.275) both" }}>
-                    <div style={{
-                        background: C.black, border: `4px solid ${C.black}`,
-                        boxShadow: `8px 8px 0 ${C.magenta}, 12px 12px 0 ${C.cyan}`,
-                        padding: "10px 36px",
-                    }}>
-                        <span style={{ fontFamily: displayFont, fontSize: "clamp(28px,5vw,56px)", letterSpacing: 8, color: C.yellow }}>
-                            REGISTER
+                <div style={{ marginBottom: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, animation: "popIn 0.7s cubic-bezier(.175,.885,.32,1.275) both" }}>
+                    <AnimeCardWrapper accentIndex={0} style={{ padding: "12px 48px" }}>
+                        <span style={{ fontFamily: displayFont, fontSize: "clamp(32px,6vw,64px)", letterSpacing: 8, color: ANIME_COLORS.text }}>
+                            <AnimeGlitchText text="REGISTER">
+                                REGISTER
+                            </AnimeGlitchText>
                         </span>
-                    </div>
-
+                    </AnimeCardWrapper>
                 </div>
 
                 {/* Step indicator */}
-                <div style={{ ...cardStyle, background: C.white, padding: "16px 28px", marginBottom: 24 }}>
+                <AnimeCardWrapper accentIndex={1} style={{ padding: "24px 40px", marginBottom: 40 }}>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                        <StepPill label="Details" num={1} active={stepNum === 1} done={stepNum > 1} />
-                        <StepConnector done={stepNum > 1} />
-                        <StepPill label="Payment" num={2} active={stepNum === 2} done={stepNum > 2} />
-                        <StepConnector done={stepNum > 2} />
-                        <StepPill label="Confirm" num={3} active={stepNum === 3} done={false} />
+                        <AnimeStepPill label="Details" num={1} active={stepNum === 1} done={stepNum > 1} />
+                        <AnimeStepConnector done={stepNum > 1} />
+                        <AnimeStepPill label="Payment" num={2} active={stepNum === 2} done={stepNum > 2} />
+                        <AnimeStepConnector done={stepNum > 2} />
+                        <AnimeStepPill label="Confirm" num={3} active={stepNum === 3} done={false} />
                     </div>
-                </div>
+                </AnimeCardWrapper>
 
                 {/* Error */}
                 {generalError && (
-                    <div style={{
-                        background: C.pink, color: C.white,
-                        border: `3px solid ${C.black}`, boxShadow: `5px 5px 0 ${C.black}`,
-                        padding: "12px 20px", marginBottom: 20,
-                        fontFamily: popFont, fontSize: 12, fontWeight: 900, letterSpacing: 2,
-                    }}>
-                        ⚡ {generalError}
-                    </div>
+                    <AnimeCardWrapper accentIndex={2} style={{ padding: "20px 32px", marginBottom: 32, background: `${ANIME_COLORS.purple}20`, border: `1px solid ${ANIME_COLORS.purple}` }}>
+                        <span style={{ fontFamily: monoFont, fontSize: 13, fontWeight: 700, letterSpacing: 2, color: ANIME_COLORS.text }}>
+                            ⚡ {generalError}
+                        </span>
+                    </AnimeCardWrapper>
                 )}
 
                 {/* ── STEP 1 ── */}
                 {paymentStep === "details" && (
                     <form onSubmit={proceedToPayment} style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                        <SectionCard title="01 · Personal Info" color={C.cyan}>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16 }}>
-                                {([
+                        <AnimeSectionCard title="01 · Personal Info" color={ANIME_COLORS.secondary}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20 }}>
+                                {[
                                     { id: "name", label: "Full Name", placeholder: "Enter your full name", type: "text" },
                                     { id: "email", label: "Email Address", placeholder: "your@email.com", type: "email" },
                                     { id: "phone", label: "Phone Number", placeholder: "+91 XXXXXXXXXX", type: "tel" },
                                     { id: "usn", label: "USN", placeholder: "1AJ21CS000", type: "text" },
                                     { id: "year", label: "Year of Study", placeholder: "1, 2, 3 or 4", type: "number" },
                                     { id: "department", label: "Department", placeholder: "e.g. Computer Science", type: "text" },
-                                ] as const).map(({ id, label, placeholder, type }) => (
-                                    <Field key={id} label={label} error={formErrors[id]}>
+                                ].map(({ id, label, placeholder, type }) => (
+                                    <AnimeField key={id} label={label} error={formErrors[id]}>
                                         <input type={type} id={id}
                                             value={id === "year" ? (formData.year || "") : (formData as any)[id]}
                                             onChange={handleChange} placeholder={placeholder} required
                                             min={id === "year" ? 1 : undefined} max={id === "year" ? 8 : undefined}
-                                            className="pop-input"
+                                            className="anime-input"
                                             style={formErrors[id] ? inputError : inputBase}
                                         />
-                                    </Field>
+                                    </AnimeField>
                                 ))}
                                 <div style={{ gridColumn: "1/-1" }}>
-                                    <Field label="College Name" error={formErrors.college}>
+                                    <AnimeField label="College Name" error={formErrors.college}>
                                         <input type="text" id="college" list="collegeList"
                                             value={formData.college} onChange={handleChange}
                                             placeholder="Search or type your college" required
-                                            className="pop-input"
+                                            className="anime-input"
                                             style={formErrors.college ? inputError : inputBase}
                                         />
                                         <datalist id="collegeList">
                                             {colleges.map((c) => <option key={c} value={c} />)}
                                         </datalist>
-                                    </Field>
+                                    </AnimeField>
                                 </div>
                             </div>
-                        </SectionCard>
+                        </AnimeSectionCard>
 
-                        <div style={{ marginBottom: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+                        <div style={{ marginBottom: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
                             <ElitePassCard />
                         </div>
 
-                        <SectionCard title="02 · Pick Your Events" color={C.magenta}>
+                        <AnimeSectionCard title="02 · Pick Your Events" color={ANIME_COLORS.primary}>
                             {selectedEvents.length > 0 && (
                                 <div style={{ marginBottom: 16 }}>
                                     <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
@@ -550,10 +600,10 @@ const Register = () => {
                                             if (!ev) return null;
                                             return (
                                                 <div key={ev.id} style={{
-                                                    background: C.yellow, border: `2px solid ${C.black}`,
-                                                    boxShadow: `2px 2px 0 ${C.black}`, padding: "4px 10px",
+                                                    background: `${ANIME_COLORS.accent}40`, border: `1px solid ${ANIME_COLORS.accent}`,
+                                                    boxShadow: `0 0 8px ${ANIME_COLORS.accent}40`, padding: "6px 12px",
                                                     fontFamily: monoFont, fontSize: 11, fontWeight: 700,
-                                                    display: "flex", alignItems: "center", gap: 6,
+                                                    display: "flex", alignItems: "center", gap: 6, borderRadius: 4,
                                                 }}>
                                                     {ev.eventName} · ₹{ev.fee || 0}
                                                     <button type="button" onClick={() => {
@@ -561,7 +611,7 @@ const Register = () => {
                                                         setSelectedEvents(updated);
                                                         if (groupEventData[ev.id]) setGroupEventData((prev) => { const u = { ...prev }; delete u[ev.id]; return u; });
                                                         setTotalAmount(events.filter((e) => updated.find((u) => u.id === e.id)).reduce((s, e) => s + (e.fee || 0), 0));
-                                                    }} style={{ background: "none", border: "none", cursor: "pointer", fontWeight: 900, fontSize: 14, color: C.pink, padding: 0 }}>
+                                                    }} style={{ background: "none", border: "none", cursor: "pointer", fontWeight: 900, fontSize: 14, color: ANIME_COLORS.purple, padding: 0 }}>
                                                         ×
                                                     </button>
                                                 </div>
@@ -569,23 +619,25 @@ const Register = () => {
                                         })}
                                     </div>
                                     <div style={{
-                                        background: C.black, color: C.yellow,
-                                        border: `3px solid ${C.black}`, boxShadow: `4px 4px 0 ${C.magenta}`,
-                                        padding: "8px 16px", display: "inline-block",
-                                        fontFamily: popFont, fontSize: 14, fontWeight: 900, letterSpacing: 2,
+                                        background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.accent,
+                                        border: `1px solid ${ANIME_COLORS.accent}`, boxShadow: `0 0 12px ${ANIME_COLORS.accent}40`,
+                                        padding: "10px 20px", display: "inline-block",
+                                        fontFamily: popFont, fontSize: 16, fontWeight: 900, letterSpacing: 2,
+                                        borderRadius: 6,
                                     }}>
                                         TOTAL: ₹{totalAmount}
                                     </div>
                                 </div>
                             )}
-                            <Field label="Add Events" error={formErrors.events}>
+                            <AnimeField label="Add Events" error={formErrors.events}>
                                 <Select id="events" instanceId="events-select"
                                     options={eventOptions} isMulti value={selectedEvents}
                                     onChange={handleEventSelection} placeholder="Search and select events…"
                                     styles={selectStyles}
+                                    menuPortalTarget={document.body}
                                 />
-                            </Field>
-                        </SectionCard>
+                            </AnimeField>
+                        </AnimeSectionCard>
 
                         {selectedEvents.map((event) => {
                             if (event?.type !== "Team") return null;
@@ -596,43 +648,43 @@ const Register = () => {
                             };
                             const invalid = eventDetail && (groupData.participantCount < (eventDetail.minMembers - 1) || groupData.participantCount > (eventDetail.maxMembers - 1));
                             return (
-                                <SectionCard key={event.id} title={`👥 ${event.label} — Team`} color={C.yellow}>
-                                    <Field label="Team Members (excluding leader)" error={invalid ? `Must be ${eventDetail.minMembers - 1}–${eventDetail.maxMembers - 1}` : undefined}>
+                                <AnimeSectionCard key={event.id} title={`👥 ${event.label} — Team`} color={ANIME_COLORS.accent}>
+                                    <AnimeField label="Team Members (excluding leader)" error={invalid ? `Must be ${eventDetail.minMembers - 1}–${eventDetail.maxMembers - 1}` : undefined}>
                                         <input type="number"
                                             min={eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 : 1}
                                             max={eventDetail?.maxMembers ? eventDetail.maxMembers - 1 : 10}
                                             step={1} value={groupData.participantCount || ""}
                                             onChange={(e) => handleParticipantCountChange(event.id, parseInt(e.target.value) || "")}
-                                            className="pop-input" style={{ ...inputBase, maxWidth: 100 }}
+                                            className="anime-input" style={{ ...inputBase, maxWidth: 120 }}
                                         />
-                                    </Field>
+                                    </AnimeField>
                                     {groupData.members.map((member, index) => (
-                                        <div key={index} style={{ ...cardStyle, background: "#fafafa", padding: 16, marginTop: 12 }}>
-                                            <div style={{ ...sectionHeaderStyle(C.cyan), fontSize: 10, marginBottom: 12 }}>MEMBER {index + 1}</div>
+                                        <div key={index} style={{ ...cardStyle, background: `${ANIME_COLORS.background}20`, padding: 20, marginTop: 16, borderRadius: 8 }}>
+                                            <div style={{ ...sectionHeaderStyle(ANIME_COLORS.secondary), fontSize: 10, marginBottom: 12 }}>MEMBER {index + 1}</div>
                                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
                                                 {[
                                                     { field: "name", label: "Full Name", placeholder: "Member Name" },
                                                     { field: "usn", label: "USN", placeholder: "Member USN" },
                                                     { field: "email", label: "Email", placeholder: "Member Email" },
                                                 ].map(({ field, label, placeholder }) => (
-                                                    <Field key={field} label={label} error={formErrors[`group_${event.id}_member_${index}_${field}`]}>
+                                                    <AnimeField key={field} label={label} error={formErrors[`group_${event.id}_member_${index}_${field}`]}>
                                                         <input type="text" value={(member as any)[field] || ""}
                                                             onChange={(e) => handleGroupMemberChange(event.id, index, field,
                                                                 field === "usn" ? e.target.value.toUpperCase() : field === "email" ? e.target.value.toLowerCase() : e.target.value)}
-                                                            placeholder={placeholder} className="pop-input"
+                                                            placeholder={placeholder} className="anime-input"
                                                             style={formErrors[`group_${event.id}_member_${index}_${field}`] ? inputError : inputBase}
                                                         />
-                                                    </Field>
+                                                    </AnimeField>
                                                 ))}
                                             </div>
                                         </div>
                                     ))}
-                                </SectionCard>
+                                </AnimeSectionCard>
                             );
                         })}
 
                         <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-                            <PopButton type="submit" bg={C.pink} fg={C.white}>PROCEED TO PAYMENT →</PopButton>
+                            <AnimeButton type="submit" bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text}>PROCEED TO PAYMENT →</AnimeButton>
                         </div>
                     </form>
                 )}
@@ -640,50 +692,50 @@ const Register = () => {
                 {/* ── STEP 2 ── */}
                 {paymentStep === "payment" && (
                     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                        <SectionCard title="💰 Payment" color={C.yellow}>
+                        <AnimeSectionCard title="💰 Payment" color={ANIME_COLORS.accent}>
                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-                                <div style={{ background: C.black, border: `3px solid ${C.black}`, boxShadow: `6px 6px 0 ${C.magenta}`, padding: "12px 32px" }}>
-                                    <span style={{ fontFamily: displayFont, fontSize: 42, letterSpacing: 4, color: C.yellow }}>₹{totalAmount}</span>
+                                <div style={{ background: `${ANIME_COLORS.background}40`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 16px ${ANIME_COLORS.primary}40`, padding: "16px 40px", borderRadius: 8 }}>
+                                    <span style={{ fontFamily: displayFont, fontSize: 48, letterSpacing: 4, color: ANIME_COLORS.accent }}>₹{totalAmount}</span>
                                 </div>
-                                <div style={{ fontFamily: monoFont, fontSize: 12, letterSpacing: 2, color: "#444", textAlign: "center" }}>
+                                <div style={{ fontFamily: monoFont, fontSize: 14, letterSpacing: 2, color: ANIME_COLORS.text, textAlign: "center" }}>
                                     Scan QR code to pay via UPI · <strong>ajiet@cnrb</strong>
                                 </div>
                                 {showQRCode ? (
-                                    <div style={{ ...cardStyle, padding: 12 }}>
-                                        <img src={qrImageUrl || "/logo.svg"} alt="UPI QR Code" style={{ width: 200, height: 200, display: "block" }} />
-                                        <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 9, fontWeight: 700, letterSpacing: 3, marginTop: 8, textTransform: "uppercase" }}>
+                                    <AnimeCardWrapper accentIndex={0} style={{ padding: 16 }}>
+                                        <img src={qrImageUrl || "/logo.svg"} alt="UPI QR Code" style={{ width: 200, height: 200, display: "block", margin: "0 auto" }} />
+                                        <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 3, marginTop: 12, textTransform: "uppercase", color: ANIME_COLORS.secondary }}>
                                             UPI · ajiet@cnrb
                                         </div>
-                                    </div>
+                                    </AnimeCardWrapper>
                                 ) : (
-                                    <PopButton bg={C.cyan} fg={C.black} onClick={generateQRCode}>GENERATE QR CODE</PopButton>
+                                    <AnimeButton bg={ANIME_COLORS.secondary} fg={ANIME_COLORS.text} onClick={generateQRCode}>GENERATE QR CODE</AnimeButton>
                                 )}
                                 <div style={{ width: "100%" }}>
-                                    <div style={{ ...cardStyle, padding: 20, background: C.white }}>
-                                        <div style={sectionHeaderStyle(C.magenta)}>After Payment</div>
-                                        <Field label="Transaction ID / Reference Number" error={formErrors.transactionId}>
+                                    <AnimeCardWrapper accentIndex={1} style={{ padding: 24 }}>
+                                        <AnimeSectionHeading index={1}>After Payment</AnimeSectionHeading>
+                                        <AnimeField label="Transaction ID / Reference Number" error={formErrors.transactionId}>
                                             <input type="text" id="transactionId" value={formData.transactionId} onChange={handleChange}
-                                                placeholder="Enter UTR / Transaction ID" className="pop-input"
+                                                placeholder="Enter UTR / Transaction ID" className="anime-input"
                                                 style={formErrors.transactionId ? inputError : inputBase}
                                             />
-                                        </Field>
-                                        <div style={{ marginTop: 14 }}>
-                                            <Field label="Payment Screenshot" error={formErrors.paymentScreenshot}>
-                                                <input type="file" id="paymentScreenshot" accept="image/*" onChange={handleFileUpload} className="pop-file-input" />
-                                            </Field>
+                                        </AnimeField>
+                                        <div style={{ marginTop: 16 }}>
+                                            <AnimeField label="Payment Screenshot" error={formErrors.paymentScreenshot}>
+                                                <input type="file" id="paymentScreenshot" accept="image/*" onChange={handleFileUpload} className="anime-file-input" />
+                                            </AnimeField>
                                             {formData.paymentScreenshot && (
-                                                <div style={{ fontFamily: monoFont, fontSize: 10, marginTop: 6, color: "#444", letterSpacing: 1 }}>
+                                                <div style={{ fontFamily: monoFont, fontSize: 11, marginTop: 8, color: ANIME_COLORS.text, letterSpacing: 1 }}>
                                                     ✔ {formData.paymentScreenshot.name}
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
+                                    </AnimeCardWrapper>
                                 </div>
                             </div>
-                        </SectionCard>
-                        <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-                            <PopButton bg="#eee" fg={C.black} onClick={() => setPaymentStep("details")}>← BACK</PopButton>
-                            <PopButton bg={C.pink} fg={C.white} onClick={proceedToVerification}>VERIFY PAYMENT →</PopButton>
+                        </AnimeSectionCard>
+                        <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", marginTop: 32 }}>
+                            <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("details")}>← BACK</AnimeButton>
+                            <AnimeButton bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} onClick={proceedToVerification}>VERIFY PAYMENT →</AnimeButton>
                         </div>
                     </div>
                 )}
@@ -691,7 +743,7 @@ const Register = () => {
                 {/* ── STEP 3 ── */}
                 {paymentStep === "verification" && (
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                        <SectionCard title="01 · Personal Info" color={C.cyan}>
+                        <AnimeSectionCard title="01 · Personal Info" color={ANIME_COLORS.accent}>
                             {[
                                 ["Name", formData.name], ["Email", formData.email], ["Phone", formData.phone],
                                 ["College", formData.college], ["Department", formData.department],
@@ -701,8 +753,8 @@ const Register = () => {
                                     <span className="review-key">{k}</span><span>{v}</span>
                                 </div>
                             ))}
-                        </SectionCard>
-                        <SectionCard title="02 · Selected Events" color={C.magenta}>
+                        </AnimeSectionCard>
+                        <AnimeSectionCard title="02 · Selected Events" color={ANIME_COLORS.primary}>
                             {selectedEvents.map((se) => {
                                 const ev = events.find((e) => e.id === se.id);
                                 if (!ev) return null;
@@ -715,7 +767,7 @@ const Register = () => {
                                         {ev.eventType === "Team" && groupEventData[ev.id] && (
                                             <div style={{ paddingLeft: 16, marginBottom: 8 }}>
                                                 {groupEventData[ev.id].members.map((m, i) => (
-                                                    <div key={i} style={{ fontFamily: monoFont, fontSize: 11, color: "#555", padding: "3px 0" }}>
+                                                    <div key={i} style={{ fontFamily: monoFont, fontSize: 11, color: ANIME_COLORS.text, padding: "3px 0" }}>
                                                         Member {i + 1}: {m.name} ({m.usn} · {m.email})
                                                     </div>
                                                 ))}
@@ -724,11 +776,11 @@ const Register = () => {
                                     </div>
                                 );
                             })}
-                            <div style={{ ...sectionHeaderStyle(C.black), color: C.yellow, marginTop: 12 }}>
+                            <div style={{ ...sectionHeaderStyle(ANIME_COLORS.background), color: ANIME_COLORS.accent, marginTop: 12, borderRadius: 4 }}>
                                 TOTAL: ₹{totalAmount}
                             </div>
-                        </SectionCard>
-                        <SectionCard title="03 · Payment Info" color={C.yellow}>
+                        </AnimeSectionCard>
+                        <AnimeSectionCard title="03 · Payment Details" color={ANIME_COLORS.accent}>
                             {[
                                 ["Transaction ID", formData.transactionId],
                                 ["Screenshot", formData.paymentScreenshot?.name || "No file selected"],
@@ -737,25 +789,24 @@ const Register = () => {
                                     <span className="review-key">{k}</span><span>{v}</span>
                                 </div>
                             ))}
-                        </SectionCard>
-                        <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-                            <PopButton bg="#eee" fg={C.black} onClick={() => setPaymentStep("payment")}>← BACK</PopButton>
-                            <PopButton type="submit" bg={C.pink} fg={C.white} disabled={isRegistering}>
+                        </AnimeSectionCard>
+                        <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", marginTop: 32 }}>
+                            <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("payment")}>← BACK</AnimeButton>
+                            <AnimeButton bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} type="submit" disabled={isRegistering}>
                                 {isRegistering ? (
                                     <>
                                         <svg style={{ animation: "spin 1s linear infinite", width: 16, height: 16 }} viewBox="0 0 24 24" fill="none">
-                                            <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" opacity="0.3" />
-                                            <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
+                                            <circle cx="12" cy="12" r="10" stroke={ANIME_COLORS.text} strokeWidth="3" opacity="0.3" />
+                                            <path d="M12 2a10 10 0 0 1 10 10" stroke={ANIME_COLORS.text} strokeWidth="3" strokeLinecap="round" />
                                         </svg>
                                         REGISTERING…
                                     </>
                                 ) : "COMPLETE REGISTRATION ✓"}
-                            </PopButton>
+                            </AnimeButton>
                         </div>
                     </form>
                 )}
             </div>
-
         </div>
     );
 };

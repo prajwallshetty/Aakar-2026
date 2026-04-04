@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopArtBackground";
+import { ANIME_COLORS, ANIME_GLOBAL_STYLES } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 /* ─── card data ─────────────────────────────────────────────── */
 const CARDS = [
@@ -12,8 +12,8 @@ const CARDS = [
     label: "CULTURAL",
     sub: "STAGE · DANCE · MUSIC",
     href: "/events/cultural",
-    accent: P.magenta,
-    shadow: P.cyan,
+    accent: ANIME_COLORS.accent,
+    shadow: ANIME_COLORS.secondary,
     image: "/events/9.png",
   },
   {
@@ -21,8 +21,8 @@ const CARDS = [
     label: "TECHNICAL",
     sub: "CODE · BUILD · HACK",
     href: "/events/technical",
-    accent: P.cyan,
-    shadow: P.hot,
+    accent: ANIME_COLORS.secondary,
+    shadow: ANIME_COLORS.primary,
     image: "/events/12.png",
   },
   {
@@ -30,8 +30,8 @@ const CARDS = [
     label: "GAMING",
     sub: "COMPETE · PLAY · WIN",
     href: "/events/gaming",
-    accent: P.hot,
-    shadow: P.magenta,
+    accent: ANIME_COLORS.primary,
+    shadow: ANIME_COLORS.accent,
     image: "/events/13.png",
   },
   {
@@ -39,8 +39,8 @@ const CARDS = [
     label: "SPECIAL",
     sub: "UNIQUE · RARE · EPIC",
     href: "/events/special",
-    accent: P.magenta,
-    shadow: P.cyan,
+    accent: ANIME_COLORS.accent,
+    shadow: ANIME_COLORS.secondary,
     image: "/events/11.png",
   },
 ];
@@ -105,7 +105,7 @@ export default function EventCards() {
   return (
     <>
       <style>{`
-        ${POP_ART_KEYFRAMES}
+        ${ANIME_GLOBAL_STYLES}
 
         @keyframes ecReveal {
           from { opacity:0; transform:translateY(24px) scale(0.96); }
@@ -168,7 +168,7 @@ export default function EventCards() {
           padding: "clamp(3.5rem,9vh,6rem) 0 clamp(4rem,10vh,7rem)",
         }}
       >
-        <PopArtBackground />
+        {/* Anime Background - removed PopArtBackground */}
 
         {/* ══════════ HEADING ══════════ */}
         <div style={{
@@ -179,14 +179,14 @@ export default function EventCards() {
         }}>
           {/* dashes */}
           <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:8 }}>
-            <div style={{ width:32, height:4, background:P.black, boxShadow:`2px 2px 0 ${P.magenta}` }}/>
+            <div style={{ width:32, height:4, background:ANIME_COLORS.background, boxShadow:`2px 2px 0 ${ANIME_COLORS.accent}` }}/>
             <span style={{
               fontFamily:"'Bebas Neue',sans-serif",
               fontSize:"clamp(0.6rem,1.3vw,0.75rem)",
               letterSpacing:"0.42em",
-              color:P.black,
+              color:ANIME_COLORS.text,
             }}>AAKAR 2026</span>
-            <div style={{ width:32, height:4, background:P.black, boxShadow:`2px 2px 0 ${P.cyan}` }}/>
+            <div style={{ width:32, height:4, background:ANIME_COLORS.background, boxShadow:`2px 2px 0 ${ANIME_COLORS.secondary}` }}/>
           </div>
 
           <h2 style={{
@@ -194,10 +194,10 @@ export default function EventCards() {
             fontSize:"clamp(3rem,9vw,7rem)",
             lineHeight:0.9,
             letterSpacing:"0.06em",
-            color:P.black,
-            WebkitTextStroke:`0.015em ${P.black}`,
-            /* hard offset shadow — pop-art signature */
-            textShadow:`0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
+            color:ANIME_COLORS.text,
+            WebkitTextStroke:`0.015em ${ANIME_COLORS.text}`,
+            /* hard offset shadow — anime signature */
+            textShadow:`0.05em 0.05em 0 ${ANIME_COLORS.accent}, 0.1em 0.1em 0 ${ANIME_COLORS.secondary}`,
             margin:0,
           }}>
             PICK YOUR<br/>BATTLEGROUND
@@ -265,11 +265,11 @@ export default function EventCards() {
                     style={{
                       width: "100%",
                       aspectRatio: "3/4",
-                      background: P.black,
-                      border: `3px solid ${isActive ? card.accent : P.black}`,
+                      background: ANIME_COLORS.background,
+                      border: `3px solid ${isActive ? card.accent : ANIME_COLORS.background}`,
                       boxShadow: isActive
-                        ? `6px 6px 0 ${P.black}, 10px 10px 0 ${card.shadow}`
-                        : `4px 4px 0 ${P.black}`,
+                        ? `6px 6px 0 ${ANIME_COLORS.background}, 10px 10px 0 ${card.shadow}`
+                        : `4px 4px 0 ${ANIME_COLORS.background}`,
                       position: "relative",
                       overflow: "hidden",
                       transform: isActive ? "translate(-4px,-4px)" : "translate(0,0)",
@@ -292,7 +292,7 @@ export default function EventCards() {
                     {/* bottom gradient */}
                     <div style={{
                       position: "absolute", inset: 0,
-                      background: `linear-gradient(to top, ${P.black}EE 0%, ${P.black}88 45%, transparent 100%)`,
+                      background: `linear-gradient(to top, ${ANIME_COLORS.background}EE 0%, ${ANIME_COLORS.background}88 45%, transparent 100%)`,
                     }}/>
 
                     {/* top accent stripe */}
@@ -300,7 +300,7 @@ export default function EventCards() {
                       position: "absolute", top: 0, left: 0, right: 0, height: 5,
                       background: `repeating-linear-gradient(90deg,
                         ${card.accent} 0, ${card.accent} 10px,
-                        ${P.black}     10px, ${P.black}     14px
+                        ${ANIME_COLORS.background}     10px, ${ANIME_COLORS.background}     14px
                       )`,
                       transformOrigin: "left",
                       animation: isActive ? "ecBarGrow 0.4s cubic-bezier(.25,.8,.25,1) both" : "none",
@@ -311,14 +311,14 @@ export default function EventCards() {
                       position: "absolute", bottom: 0, left: 0, right: 0,
                       padding: "16px 14px 14px",
                       background: isActive ? card.accent : "rgba(0,0,0,0.85)",
-                      borderTop: `2px solid ${isActive ? P.black : "rgba(255,255,255,0.1)"}`,
+                      borderTop: `2px solid ${isActive ? ANIME_COLORS.background : "rgba(255,255,255,0.1)"}`,
                       transition: "background 0.3s ease, border-color 0.3s ease",
                     }}>
                       <div style={{
                         fontFamily: "'Bebas Neue',sans-serif",
                         fontSize: "clamp(1.2rem,2.5vw,1.6rem)",
                         letterSpacing: "0.1em",
-                        color: isActive ? P.black : "rgba(255,255,255,0.9)",
+                        color: isActive ? ANIME_COLORS.background : "rgba(255,255,255,0.9)",
                         textShadow: isActive ? `0 0 0 transparent` : "none",
                         transition: "color 0.3s ease",
                         lineHeight: 1.1,
@@ -338,14 +338,14 @@ export default function EventCards() {
                     <div style={{
                       position: "absolute", top: 12, left: 12,
                       width: 28, height: 28,
-                      background: isActive ? card.accent : P.black,
-                      border: `2px solid ${isActive ? P.black : "rgba(255,255,255,0.2)"}`,
-                      boxShadow: isActive ? `2px 2px 0 ${P.black}` : "none",
+                      background: isActive ? card.accent : ANIME_COLORS.background,
+                      border: `2px solid ${isActive ? ANIME_COLORS.background : "rgba(255,255,255,0.2)"}`,
+                      boxShadow: isActive ? `2px 2px 0 ${ANIME_COLORS.background}` : "none",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontFamily: "'Bebas Neue',sans-serif",
                       fontSize: "0.85rem",
                       letterSpacing: "0.05em",
-                      color: isActive ? P.black : "rgba(255,255,255,0.4)",
+                      color: isActive ? ANIME_COLORS.background : "rgba(255,255,255,0.4)",
                       transition: "background 0.3s, color 0.3s, border-color 0.3s",
                     }}>0{card.id}</div>
 
@@ -379,7 +379,7 @@ export default function EventCards() {
               fontFamily: "'Bebas Neue',sans-serif",
               fontSize: "clamp(2rem,6vw,4.5rem)",
               letterSpacing: "0.12em",
-              color: P.black,
+              color: ANIME_COLORS.background,
               textShadow: `0.06em 0.06em 0 ${activeCard.accent}, 0.12em 0.12em 0 ${activeCard.shadow}`,
               transform: "skewX(-6deg)",
               display: "inline-block",
@@ -389,8 +389,8 @@ export default function EventCards() {
             <div style={{
               height: 4,
               background: activeCard.accent,
-              border: `1.5px solid ${P.black}`,
-              boxShadow: `3px 3px 0 ${P.black}`,
+              border: `1.5px solid ${ANIME_COLORS.background}`,
+              boxShadow: `3px 3px 0 ${ANIME_COLORS.background}`,
               marginTop: 4,
               animation: "ecBarGrow 0.38s cubic-bezier(.25,.8,.25,1) both",
               transformOrigin: "left",
@@ -405,10 +405,10 @@ export default function EventCards() {
               aria-label="Previous"
               style={{
                 width: 40, height: 40,
-                background: P.black,
-                border: `3px solid ${P.black}`,
+                background: ANIME_COLORS.background,
+                border: `3px solid ${ANIME_COLORS.background}`,
                 boxShadow: `3px 3px 0 ${activeCard.accent}`,
-                color: P.white,
+                color: ANIME_COLORS.text,
                 fontFamily: "'Bebas Neue',sans-serif",
                 fontSize: "1.1rem",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -436,8 +436,8 @@ export default function EventCards() {
                     padding: 0,
                     width: i === active ? 32 : 10,
                     height: 10,
-                    background: i === active ? P.black : "rgba(0,0,0,0.3)",
-                    border: `2px solid ${P.black}`,
+                    background: i === active ? ANIME_COLORS.background : "rgba(0,0,0,0.3)",
+                    border: `2px solid ${ANIME_COLORS.background}`,
                     boxShadow: i === active ? `2px 2px 0 ${card.accent}` : "none",
                     cursor: "pointer",
                     transition: "width 0.35s cubic-bezier(.25,.8,.25,1), background 0.2s, box-shadow 0.2s",
@@ -451,10 +451,10 @@ export default function EventCards() {
               aria-label="Next"
               style={{
                 width: 40, height: 40,
-                background: P.black,
-                border: `3px solid ${P.black}`,
+                background: ANIME_COLORS.background,
+                border: `3px solid ${ANIME_COLORS.background}`,
                 boxShadow: `3px 3px 0 ${activeCard.accent}`,
-                color: P.white,
+                color: ANIME_COLORS.text,
                 fontFamily: "'Bebas Neue',sans-serif",
                 fontSize: "1.1rem",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -478,10 +478,10 @@ export default function EventCards() {
             href={activeCard.href}
             style={{
               display: "inline-flex", alignItems: "center", gap: 12,
-              background: P.black,
+              background: ANIME_COLORS.background,
               color: activeCard.accent,
-              border: `3px solid ${P.black}`,
-              boxShadow: `5px 5px 0 ${P.black}, 9px 9px 0 ${activeCard.accent}`,
+              border: `3px solid ${ANIME_COLORS.background}`,
+              boxShadow: `5px 5px 0 ${ANIME_COLORS.background}, 9px 9px 0 ${activeCard.accent}`,
               padding: "11px clamp(24px,4vw,44px)",
               fontFamily: "'Bebas Neue',sans-serif",
               fontSize: "clamp(0.9rem,2vw,1.2rem)",
@@ -492,18 +492,18 @@ export default function EventCards() {
             }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.transform = "translate(-3px,-3px)";
-              (e.currentTarget as HTMLElement).style.boxShadow = `8px 8px 0 ${P.black}, 14px 14px 0 ${activeCard.accent}`;
+              (e.currentTarget as HTMLElement).style.boxShadow = `8px 8px 0 ${ANIME_COLORS.background}, 14px 14px 0 ${activeCard.accent}`;
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.transform = "";
-              (e.currentTarget as HTMLElement).style.boxShadow = `5px 5px 0 ${P.black}, 9px 9px 0 ${activeCard.accent}`;
+              (e.currentTarget as HTMLElement).style.boxShadow = `5px 5px 0 ${ANIME_COLORS.background}, 9px 9px 0 ${activeCard.accent}`;
             }}
           >
             VIEW {activeCard.label} EVENTS
             <span style={{
               display: "inline-flex", alignItems: "center", justifyContent: "center",
               background: activeCard.accent,
-              color: P.black,
+              color: ANIME_COLORS.background,
               width: "1.5em", height: "1.5em",
               fontSize: "0.85em",
             }}>→</span>

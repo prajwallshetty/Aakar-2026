@@ -2,9 +2,18 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
-import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopArtBackground";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Center, Environment, OrbitControls, useGLTF } from "@react-three/drei";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const features = [
   "100% Premium Cotton Blend",
@@ -32,14 +41,14 @@ export default function MerchPage() {
   return (
     <>
       <style>{`
-        ${POP_ART_KEYFRAMES}
+        ${ANIME_GLOBAL_STYLES}
         @keyframes merchPanelIn {
           from { opacity: 0; transform: translateY(16px) scale(0.98); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes merchPulse {
-          0%, 100% { opacity: .35; transform: translateY(0); }
-          50% { opacity: .7; transform: translateY(-6px); }
+          0%, 100% { opacity: .25; transform: translateY(0); }
+          50% { opacity: .6; transform: translateY(-8px); }
         }
         @keyframes merchSpinHint {
           0% { transform: translateX(-2px); }
@@ -50,16 +59,42 @@ export default function MerchPage() {
           from { transform: rotateY(0deg); }
           to { transform: rotateY(360deg); }
         }
+        @keyframes merchGlow {
+          0%, 100% { box-shadow: 0 0 30px ${ANIME_COLORS.primary}60, inset 0 0 20px ${ANIME_COLORS.primary}30; }
+          50% { box-shadow: 0 0 40px ${ANIME_COLORS.secondary}80, inset 0 0 25px ${ANIME_COLORS.secondary}40; }
+        }
+        @keyframes merchFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
         .merch-shell {
           animation: merchPanelIn .45s ease both;
         }
         .merch-section {
-          background: rgba(255,255,255,0.96);
-          border: 3px solid ${P.black};
-          box-shadow: 8px 8px 0 ${P.black}, 14px 14px 0 ${P.cyan};
+          background: linear-gradient(135deg, ${ANIME_COLORS.background}95, ${ANIME_COLORS.background}90);
+          border: 2px solid ${ANIME_COLORS.primary};
+          box-shadow: 0 0 30px ${ANIME_COLORS.primary}60, inset 0 0 20px ${ANIME_COLORS.primary}30;
+          backdrop-filter: blur(12px);
+          position: relative;
+          overflow: hidden;
+        }
+        .merch-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}20, transparent);
+          animation: merchScan 3s ease-in-out infinite;
+        }
+        @keyframes merchScan {
+          0% { left: -100%; }
+          50% { left: 100%; }
+          100% { left: 100%; }
         }
         .merch-spot {
-          animation: merchPulse 4s ease-in-out infinite;
+          animation: merchPulse 4s ease-in-out infinite, merchFloat 6s ease-in-out infinite;
         }
         .merch-hint {
           animation: merchSpinHint 1.6s ease-in-out infinite;
@@ -77,44 +112,46 @@ export default function MerchPage() {
         }
         .merch-theme-heading {
           font-family: 'Bebas Neue', sans-serif;
-          letter-spacing: 0.06em;
-          color: ${P.black};
-          text-shadow: 0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan};
-          -webkit-text-stroke: 0.015em ${P.black};
+          letter-spacing: 0.08em;
+          color: ${ANIME_COLORS.text};
+          text-shadow: 0 0 30px ${ANIME_COLORS.primary}60, 0.05em 0.05em 0 ${ANIME_COLORS.primary}, 0.1em 0.1em 0 ${ANIME_COLORS.secondary};
+          animation: merchGlow 3s ease-in-out infinite;
         }
         .merch-title-like-about {
           font-family: 'Bebas Neue', sans-serif;
-          letter-spacing: 0.045em;
-          color: ${P.black};
-          text-shadow: -0.02em 0 0 ${P.magenta}, 0.055em 0.055em 0 ${P.cyan};
-          -webkit-text-stroke: 0.01em ${P.black};
+          letter-spacing: 0.05em;
+          color: ${ANIME_COLORS.text};
+          text-shadow: 0 0 25px ${ANIME_COLORS.primary}50, -0.02em 0 0 ${ANIME_COLORS.primary}, 0.055em 0.055em 0 ${ANIME_COLORS.secondary};
         }
         .merch-theme-meta {
           font-family: 'Share Tech Mono', monospace;
           letter-spacing: 0.22em;
-          color: ${P.black};
+          color: ${ANIME_COLORS.secondary};
+          text-shadow: 0 0 8px ${ANIME_COLORS.secondary}40;
         }
         .merch-theme-copy {
           font-family: 'Share Tech Mono', monospace;
           letter-spacing: 0.02em;
-          color: rgba(10,0,5,0.9);
+          color: ${ANIME_COLORS.text};
+          text-shadow: 0 0 6px ${ANIME_COLORS.text}30;
         }
         .merch-shirt-text {
           font-family: 'Bebas Neue', sans-serif;
-          animation: merchNeon 2.8s ease-in-out infinite;
+          animation: merchNeon 2.8s ease-in-out infinite, merchGlow 4s ease-in-out infinite;
         }
       `}</style>
 
       <main className="relative min-h-screen overflow-hidden">
-        <PopArtBackground />
+        <AnimeOrbField />
+        <AnimeParticleField />
 
-        <div className="absolute inset-0 -z-0 bg-white/10" />
+        <div className="absolute inset-0 -z-0 bg-black/10" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <section className="merch-shell merch-section overflow-hidden rounded-[2rem]">
             <div className="grid lg:grid-cols-[1fr_1fr]">
               <div className="relative border-b-2 border-black/20 p-6 lg:border-b-0 lg:border-r-2 lg:border-black/20 lg:p-10">
-                <div className="pointer-events-none absolute inset-x-14 top-6 h-24 rounded-full bg-cyan-300/45 blur-3xl merch-spot" />
+                <div className="pointer-events-none absolute inset-x-14 top-6 h-24 rounded-full bg-cyan-300/45 blur-3xl merch-spot" style={{ background: `${ANIME_COLORS.secondary}45` }} />
 
                 <div
                   className="relative mx-auto flex h-[520px] w-full max-w-[430px] items-center justify-center [perspective:1100px]"
@@ -153,34 +190,39 @@ export default function MerchPage() {
                   <div className="pointer-events-none absolute bottom-4 h-14 w-64 rounded-full bg-black/35 blur-xl" />
                 </div>
 
-                <div className="mx-auto mt-2 flex w-fit items-center gap-3 rounded-full border-2 border-black/80 bg-white/85 px-4 py-3 text-xs uppercase tracking-[0.35em] text-black/70 shadow-[3px_3px_0_#0a0005]">
-                  <span className="merch-hint inline-block text-fuchsia-600">O</span>
+                <div className="mx-auto mt-2 flex w-fit items-center gap-3 rounded-full border-2 px-4 py-3 text-xs uppercase tracking-[0.35em] shadow-[3px_3px_0_#0a0005]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}90, ${ANIME_COLORS.background}80)`, color: ANIME_COLORS.text, boxShadow: `0 0 15px ${ANIME_COLORS.primary}50` }}>
+                  <span className="merch-hint inline-block" style={{ color: ANIME_COLORS.accent }}>O</span>
                   drag model to rotate
                 </div>
               </div>
 
               <div className="p-6 lg:p-10">
                 <p className="merch-theme-meta text-xs uppercase">DIMENSIONAL DRIFT</p>
-                <h1 className="merch-title-like-about mt-2 text-[clamp(2.3rem,6vw,4.6rem)] uppercase leading-[0.95]">AAKAR T-SHIRT</h1>
+                <h1 className="merch-title-like-about mt-2 text-[clamp(2.3rem,6vw,4.6rem)] uppercase leading-[0.95]">
+                  <AnimeGlitchText text="AAKAR T-SHIRT">
+                    AAKAR T-SHIRT
+                  </AnimeGlitchText>
+                </h1>
 
-                <p className="merch-theme-copy mt-4 max-w-xl border-l-2 border-fuchsia-500/70 pl-4 text-base leading-8">
+                <p className="merch-theme-copy mt-4 max-w-xl border-l-2 border-fuchsia-500/70 pl-4 text-base leading-8" style={{ borderLeftColor: ANIME_COLORS.accent }}>
                   Premium quality AAKAR event t-shirt. Made with comfortable cotton blend fabric. Perfect memorabilia from your event experience.
                 </p>
 
                 <div className="mt-8 space-y-2">
                   {features.map((item, index) => (
-                    <div key={item} className="flex items-center gap-4 rounded-lg border-2 border-black/80 bg-white px-3 py-3 shadow-[3px_3px_0_#00ffff]">
-                      <span className="merch-theme-meta w-8 text-xs text-fuchsia-700">{`0${index + 1}`}</span>
+                    <div key={item} className="flex items-center gap-4 rounded-lg border-2 px-3 py-3 shadow-[3px_3px_0_#00ffff]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
+                      <span className="merch-theme-meta w-8 text-xs" style={{ color: ANIME_COLORS.accent }}>{`0${index + 1}`}</span>
                       <span className="merch-theme-copy text-lg leading-none">{item}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-12 rounded-2xl border-2 border-black/85 bg-[#ffea8a] p-7 shadow-[6px_6px_0_#0a0005]">
+                <div className="mt-12 rounded-2xl border-2 border-black/85 bg-[#ffea8a] p-7 shadow-[6px_6px_0_#0a0005]" style={{ border: `2px solid ${ANIME_COLORS.accent}`, background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, boxShadow: `0 0 20px ${ANIME_COLORS.accent}50` }}>
                   <div className="flex justify-center">
                     <Link
                       href="/merch/buy"
-                      className="rounded-lg border-2 border-black bg-black px-6 py-3 font-bold uppercase tracking-[0.18em] text-white shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 hover:bg-[#1a1a1a] active:translate-y-0"
+                      className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
+                      style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}
                     >
                       Buy Now
                     </Link>
