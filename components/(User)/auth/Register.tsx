@@ -2,7 +2,6 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { cinzelFont } from "@/lib/font";
 import {
     registerParticipant,
     validateParticipantData,
@@ -38,9 +37,9 @@ const C = {
     black: ANIME_COLORS.background,
     white: ANIME_COLORS.text,
 };
-const popFont = cinzelFont.style.fontFamily;
+const popFont = "'Bebas Neue', Impact, sans-serif";
 const monoFont = "'Share Tech Mono', monospace";
-const displayFont = cinzelFont.style.fontFamily;
+const displayFont = "'Bebas Neue', Impact, sans-serif";
 
 // ─── Anime Style helpers ────────────────────────────────────────────────────────────
 const cardStyle: React.CSSProperties = {
@@ -492,7 +491,7 @@ const Register = () => {
         <div style={{ minHeight: "100vh", position: "relative", padding: "32px 16px 80px" }}>
             <style>{`
                 ${ANIME_GLOBAL_STYLES}
-                @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono:wght@400;700&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono:wght@400;700&display=swap');
                 * { box-sizing: border-box; }
                 @keyframes popIn {
                     0%   { transform: scale(0) rotate(-6deg); opacity: 0; }
@@ -599,7 +598,9 @@ const Register = () => {
                 <div style={{ marginBottom: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, animation: "popIn 0.7s cubic-bezier(.175,.885,.32,1.275) both" }}>
                     <AnimeCardWrapper accentIndex={0} style={{ padding: "12px 48px" }}>
                         <span style={{ fontFamily: displayFont, fontSize: "clamp(32px,6vw,64px)", letterSpacing: 8, color: ANIME_COLORS.text }}>
+                            <AnimeGlitchText text="REGISTER">
                                 REGISTER
+                            </AnimeGlitchText>
                         </span>
                     </AnimeCardWrapper>
                 </div>

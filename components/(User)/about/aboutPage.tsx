@@ -140,19 +140,6 @@ export default function AboutPage() {
 
           {/* ── PAGE TITLE ── */}
           <div className="fade-up" style={{textAlign:"center"}}>
-            <div style={{
-              display:"inline-block",
-              background:ANIME_COLORS.background,
-              color:ANIME_COLORS.primary,
-              fontFamily:"'Share Tech Mono',monospace",
-              fontSize:"clamp(0.6rem,1.6vw,0.8rem)",
-              letterSpacing:"0.4em",
-              padding:"4px 20px",
-              border:`1px solid ${ANIME_COLORS.primary}`,
-              boxShadow:`0 0 12px ${ANIME_COLORS.primary}40`,
-              marginBottom:"0.7rem",
-              backdropFilter:"blur(8px)"
-            }}>AAKAR 2026</div>
             <div className={cinzelFont.className} style={{
               fontSize:"clamp(3rem,10vw,7rem)",
               lineHeight:0.88,
@@ -269,7 +256,7 @@ export default function AboutPage() {
 
             {/* date + venue chips */}
             <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",marginBottom:"1.8rem"}}>
-              <AnimeChip color={ANIME_COLORS.accent}>May 20 · 21 · 22, 2025</AnimeChip>
+              <AnimeChip color={ANIME_COLORS.accent}>APRIL 24,25 2026</AnimeChip>
               <AnimeChip color={ANIME_COLORS.purple}>AJ Institute, Kottarachowki, Mangaluru</AnimeChip>
             </div>
 
@@ -291,21 +278,6 @@ export default function AboutPage() {
                     sessions.
                   </span>
                 </p>
-
-                {/* BRAINS · GUTS · GLORY strip */}
-                <div style={{
-                  marginTop:"1.4rem",
-                  display:"inline-flex",alignItems:"center",gap:10,
-                  background:ANIME_COLORS.background,
-                  color:ANIME_COLORS.accent,
-                  fontFamily:"'Share Tech Mono',monospace",
-                  fontSize:"clamp(0.7rem,1.8vw,1rem)",
-                  letterSpacing:"0.32em",
-                  padding:"6px 20px",
-                  border:`1px solid ${ANIME_COLORS.accent}`,
-                  boxShadow:`0 0 12px ${ANIME_COLORS.accent}40`,
-                  backdropFilter:"blur(8px)"
-                }}>▲ BRAINS · GUTS · GLORY ▲</div>
               </div>
 
               {/* image */}
