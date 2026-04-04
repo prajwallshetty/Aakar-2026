@@ -24,7 +24,7 @@ import type { eventCategory, eventType } from "@prisma/client"
 import type { ExtendedEvent } from "@/types"
 import { downloadParticipantDataByEvents } from "@/app/(Admin)/Participants/utils"
 import { getParticipants } from "@/backend/participant"
-import { cn } from "@/lib/utils"
+import { cn, getEventImageCandidates } from "@/lib/utils"
 
 interface Coordinator { name: string; phone: string }
 interface FormData {
@@ -35,6 +35,28 @@ interface FormData {
 }
 
 type GroupingOption = "none" | "venue" | "date" | "category"
+
+const isValidDate = (date: Date) => !Number.isNaN(date.getTime())
+
+const toSafeDate = (value: unknown, fallback: Date) => {
+  const parsed = value instanceof Date ? value : new Date(String(value ?? ""))
+  return isValidDate(parsed) ? parsed : fallback
+}
+
+const isRemoteImageUrl = (value: string) => /^https?:\/\//i.test(value.trim())
+
+const normalizeImageInput = (value: string) => {
+  const raw = value.trim()
+  if (!raw) return ""
+  if (isRemoteImageUrl(raw)) return raw
+
+  const withoutPrefix = raw
+    .replace(/^\.\//, "")
+    .replace(/^\//, "")
+    .replace(/^events\//i, "")
+
+  return withoutPrefix.replace(/\.(PNG|JPG|JPEG|WEBP|GIF|AVIF|SVG)$/, m => m.toLowerCase())
+}
 
 const CATEGORY_COLORS: Record<string, string> = {
   Technical: "bg-blue-50 text-blue-700 border-blue-100",
@@ -103,10 +125,12 @@ const EventsCRUD = () => {
   const [uploadProgress, setUploadProgress] = useState(false)
   const [selectedEvents, setSelectedEvents] = useState<number[]>([])
   const [downloading, setDownloading] = useState(false)
+  const [imagePreviewSrc, setImagePreviewSrc] = useState("")
+  const [imagePreviewStatus, setImagePreviewStatus] = useState<"idle" | "loading" | "found" | "missing">("idle")
 
   const defaultForm: FormData = {
     eventName: "", eventType: "Solo", eventCategory: "Cultural",
-    description: "", fee: 0, date: new Date("2025-05-21"), time: "", venue: "",
+    description: "", fee: 0, date: new Date("2026-04-24"), time: "", venue: "",
     studentCoordinators: [], facultyCoordinators: [], rules: [], imageUrl: "",
     minMembers: 1, maxMembers: 1,
   }
@@ -119,15 +143,70 @@ const EventsCRUD = () => {
 
   useEffect(() => { fetchEvents() }, [])
 
+  useEffect(() => {
+    const source = normalizeImageInput(formData.imageUrl)
+    if (!source) {
+      setImagePreviewSrc("")
+      setImagePreviewStatus("idle")
+      return
+    }
+
+    const candidates = getEventImageCandidates(source)
+    if (candidates.length === 0) {
+      setImagePreviewSrc("")
+      setImagePreviewStatus("missing")
+      return
+    }
+
+    let cancelled = false
+    setImagePreviewStatus("loading")
+
+    const tryNext = (index: number) => {
+      if (cancelled) return
+      if (index >= candidates.length) {
+        setImagePreviewSrc("")
+        setImagePreviewStatus("missing")
+        return
+      }
+
+      const img = new Image()
+      img.onload = () => {
+        if (cancelled) return
+        setImagePreviewSrc(candidates[index])
+        setImagePreviewStatus("found")
+      }
+      img.onerror = () => {
+        tryNext(index + 1)
+      }
+      img.src = candidates[index]
+    }
+
+    tryNext(0)
+
+    return () => {
+      cancelled = true
+    }
+  }, [formData.imageUrl])
+
+  const safeParseCoordinators = (value: any): Coordinator[] => {
+    try {
+      if (Array.isArray(value)) return value;
+      if (typeof value === "string") return JSON.parse(value) || [];
+      return [];
+    } catch {
+      return [];
+    }
+  }
+
   const fetchEvents = async () => {
     setLoading(true)
     try {
       const data = await getAllEvents()
       if (data) {
         const formatted = data.map(e => ({
-          ...e, date: new Date(e.date),
-          studentCoordinators: typeof e.studentCoordinators === "string" ? JSON.parse(e.studentCoordinators) : e.studentCoordinators,
-          facultyCoordinators: typeof e.facultyCoordinators === "string" ? JSON.parse(e.facultyCoordinators) : e.facultyCoordinators,
+          ...e, date: toSafeDate(e.date, dateOptions[0].value),
+          studentCoordinators: safeParseCoordinators(e.studentCoordinators),
+          facultyCoordinators: safeParseCoordinators(e.facultyCoordinators),
         }))
         setEvents(sortEvents(formatted, sortField, sortDirection))
       }
@@ -173,21 +252,53 @@ const EventsCRUD = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError(""); setUploadProgress(true)
     try {
-      if (isEditing && currentId) await updateEvent(currentId, formData)
-      else await createEvent(formData)
+      const studentCoordinators = [...formData.studentCoordinators]
+      if (newStudentCoord.name.trim() && newStudentCoord.phone.trim()) {
+        studentCoordinators.push({ ...newStudentCoord })
+      }
+
+      const facultyCoordinators = [...formData.facultyCoordinators]
+      if (newFacultyCoord.name.trim() && newFacultyCoord.phone.trim()) {
+        facultyCoordinators.push({ ...newFacultyCoord })
+      }
+
+      const rules = [...formData.rules]
+      if (newRule.trim()) {
+        rules.push(newRule.trim())
+      }
+
+      const payload: any = {
+        ...formData,
+        imageUrl: normalizeImageInput(formData.imageUrl),
+        studentCoordinators,
+        facultyCoordinators,
+        rules,
+      }
+
+      if (isEditing && currentId) {
+        const result = await updateEvent(currentId, payload)
+      } else {
+        const result = await createEvent(payload)
+      }
       fetchEvents(); resetForm(); setOpenDialog(false)
-    } catch { setError("Could not save event. Please try again.") }
+    } catch (err) { 
+      console.error("Submit error:", err)
+      setError("Could not save event. Please try again.") 
+    }
     finally { setUploadProgress(false) }
   }
 
   const handleEdit = (event: ExtendedEvent) => {
     setFormData({
       eventName: event.eventName, eventType: event.eventType, eventCategory: event.eventCategory,
-      description: event.description, fee: event.fee, date: new Date(event.date),
-      time: event.time, venue: event.venue, studentCoordinators: event.studentCoordinators || [],
-      facultyCoordinators: event.facultyCoordinators || [], rules: event.rules || [],
+      description: event.description, fee: event.fee, date: toSafeDate(event.date, dateOptions[0].value),
+      time: event.time, venue: event.venue, studentCoordinators: safeParseCoordinators(event.studentCoordinators) || [],
+      facultyCoordinators: safeParseCoordinators(event.facultyCoordinators) || [], rules: event.rules || [],
       imageUrl: event.imageUrl, minMembers: event.minMembers, maxMembers: event.maxMembers,
     })
+    setNewStudentCoord({ name: "", phone: "" })
+    setNewFacultyCoord({ name: "", phone: "" })
+    setNewRule("")
     setCurrentId(event.id); setIsEditing(true); setOpenDialog(true)
   }
 
@@ -195,7 +306,7 @@ const EventsCRUD = () => {
     try {
       const ev = events.find(e => e.id === id)
       await deleteEvent(id)
-      if (ev?.imageUrl) await deleteFiles([ev.imageUrl])
+      if (ev?.imageUrl && isRemoteImageUrl(ev.imageUrl)) await deleteFiles([ev.imageUrl])
       fetchEvents()
     } catch { setError("Could not delete event.") }
   }
@@ -209,6 +320,9 @@ const EventsCRUD = () => {
   }
 
   const groupedEvents = getGrouped()
+  const selectedDateValue = isValidDate(formData.date)
+    ? formData.date.toISOString()
+    : dateOptions[0].value.toISOString()
 
   const renderGroup = (groupTitle: string, groupEvents: ExtendedEvent[]) => {
     const filtered = groupEvents.filter(e => {
@@ -511,7 +625,22 @@ const EventsCRUD = () => {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-zinc-700">Image URL</Label>
-                  <Input name="imageUrl" value={formData.imageUrl} onChange={handleInput} placeholder="https://..." className="h-9 text-sm border-zinc-200" />
+                  <Input name="imageUrl" value={formData.imageUrl} onChange={handleInput} placeholder="e.g. 22 or 22.png or https://..." className="h-9 text-sm border-zinc-200" />
+                  <div className="text-[11px] text-zinc-500 min-h-4">
+                    {imagePreviewStatus === "idle" && "Enter a number like 25 or filename like 25.png"}
+                    {imagePreviewStatus === "loading" && "Checking image..."}
+                    {imagePreviewStatus === "found" && `Found: ${imagePreviewSrc}`}
+                    {imagePreviewStatus === "missing" && "No matching file found in /public/events"}
+                  </div>
+                  {imagePreviewSrc && (
+                    <div className="h-20 w-14 overflow-hidden rounded border border-zinc-200 bg-zinc-100">
+                      <img
+                        src={imagePreviewSrc}
+                        alt="Event preview"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -523,7 +652,7 @@ const EventsCRUD = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-zinc-700">Date</Label>
-                  <Select value={formData.date.toISOString()} onValueChange={v => setFormData(p => ({ ...p, date: new Date(v) }))}>
+                  <Select value={selectedDateValue} onValueChange={v => setFormData(p => ({ ...p, date: toSafeDate(v, dateOptions[0].value) }))}>
                     <SelectTrigger className="h-9 text-sm border-zinc-200"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {dateOptions.map((d, i) => <SelectItem key={i} value={d.value.toISOString()}>{d.label}</SelectItem>)}

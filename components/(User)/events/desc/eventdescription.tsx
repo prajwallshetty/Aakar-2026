@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Calendar, Clock, Wallet, Phone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedEvent } from "@/types";
 import { ANIME_COLORS } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import { getEventImageCandidates } from "@/lib/utils";
 
 // ─── Particle field ────────────────────────────────────────────
 function ParticleField() {
@@ -263,18 +264,25 @@ const EventDescription = ({
   isLoading?: boolean;
 }) => {
   const imageUrl = eventData?.imageUrl ?? "";
+  const imageCandidates = getEventImageCandidates(imageUrl, eventData?.id);
+  const [imageIndex, setImageIndex] = useState(0);
+  const imageSrc = imageCandidates[imageIndex] ?? "";
 
   useEffect(() => {
-    if (!imageUrl) return;
+    setImageIndex(0);
+  }, [imageUrl, eventData?.id]);
+
+  useEffect(() => {
+    if (!imageSrc) return;
     (async () => {
       const cache = await caches.open("event-image-cache");
-      const cached = await cache.match(imageUrl);
+      const cached = await cache.match(imageSrc);
       if (!cached) {
-        const response = await fetch(imageUrl, { mode: "no-cors" });
-        cache.put(imageUrl, response);
+        const response = await fetch(imageSrc, { mode: "no-cors" });
+        cache.put(imageSrc, response);
       }
     })();
-  }, [imageUrl]);
+  }, [imageSrc]);
 
   const studentCoordinators = eventData?.studentCoordinators
     ? Array.isArray(eventData.studentCoordinators) ? eventData.studentCoordinators : [eventData.studentCoordinators]
@@ -470,14 +478,26 @@ const EventDescription = ({
                     boxShadow: `0 20px 50px rgba(0,0,0,0.8), 0 0 30px ${ANIME_COLORS.secondary}40, inset 0 0 20px ${ANIME_COLORS.secondary}20`,
                     borderRadius: "16px", overflow: "hidden",
                   }}>
-                    {eventData.imageUrl ? (
+                    {imageSrc ? (
                       <>
                         <div style={{
                           position: "absolute", inset: 0,
-                          backgroundImage: `url('/events/${eventData.imageUrl}.png')`,
-                          backgroundSize: "cover", backgroundPosition: "center",
-                          filter: "contrast(1.1) saturate(1.1)",
-                        }} />
+                        }}>
+                          <img
+                            src={imageSrc}
+                            alt={eventData.eventName}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              objectPosition: "center",
+                              filter: "contrast(1.1) saturate(1.1)",
+                            }}
+                            onError={() => {
+                              setImageIndex((prev) => (prev < imageCandidates.length - 1 ? prev + 1 : prev));
+                            }}
+                          />
+                        </div>
                         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(rgba(0,229,255,0.1) 1px, transparent 1px)", backgroundSize: "100% 4px", pointerEvents: "none", mixBlendMode: "overlay" }} />
                         <div style={{ position: "absolute", inset: 0, boxShadow: "inset 0 0 40px rgba(0,0,0,0.8)", pointerEvents: "none" }} />
                       </>

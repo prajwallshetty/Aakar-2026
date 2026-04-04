@@ -134,11 +134,11 @@ const AnimeButton: React.FC<{
 const AnimeStepPill: React.FC<{ label: string; num: number; active: boolean; done: boolean }> = ({ label, num, active, done }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
         <div style={{
-            width: 44, height: 44,
+            width: "clamp(32px, 10vw, 44px)", height: "clamp(32px, 10vw, 44px)",
             background: done ? `${ANIME_COLORS.secondary}40` : active ? `${ANIME_COLORS.accent}40` : `${ANIME_COLORS.background}40`,
             border: `1px solid ${done ? ANIME_COLORS.secondary : active ? ANIME_COLORS.accent : ANIME_COLORS.primary}`,
             boxShadow: active ? `0 0 16px ${ANIME_COLORS.accent}60` : `0 0 8px ${ANIME_COLORS.primary}40`,
-            fontFamily: popFont, fontSize: 18, fontWeight: 900, color: ANIME_COLORS.text,
+            fontFamily: popFont, fontSize: "clamp(12px, 4vw, 18px)", fontWeight: 900, color: ANIME_COLORS.text,
             display: "flex", alignItems: "center", justifyContent: "center",
             transform: active ? "rotate(-4deg)" : "none",
             borderRadius: 8,
@@ -158,7 +158,7 @@ const AnimeStepConnector: React.FC<{ done: boolean }> = ({ done }) => (
 
 // ─── Anime Section card ─────────────────────────────────────────────────────────────
 const AnimeSectionCard: React.FC<{ title: string; color: string; children: React.ReactNode }> = ({ title, color, children }) => (
-    <AnimeCardWrapper accentIndex={0} style={{ padding: 28, marginBottom: 24 }}>
+    <AnimeCardWrapper accentIndex={0} style={{ padding: "min(28px, 6vw)", marginBottom: 24 }}>
         <AnimeSectionHeading index={0}>{title}</AnimeSectionHeading>
         {children}
     </AnimeCardWrapper>
@@ -606,7 +606,7 @@ const Register = () => {
                 </div>
 
                 {/* Step indicator */}
-                <AnimeCardWrapper accentIndex={1} style={{ padding: "24px 40px", marginBottom: 40 }}>
+                <AnimeCardWrapper accentIndex={1} style={{ padding: "24px min(40px, 4vw)", marginBottom: 40 }}>
                     <div style={{ display: "flex", alignItems: "center" }}>
                         <AnimeStepPill label="Details" num={1} active={stepNum === 1} done={stepNum > 1} />
                         <AnimeStepConnector done={stepNum > 1} />
@@ -629,7 +629,7 @@ const Register = () => {
                 {paymentStep === "details" && (
                     <form onSubmit={proceedToPayment} style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                         <AnimeSectionCard title="01 · Personal Info" color={ANIME_COLORS.secondary}>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20 }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 280px),1fr))", gap: 20 }}>
                                 {[
                                     { id: "name", label: "Full Name", placeholder: "Enter your full name", type: "text" },
                                     { id: "email", label: "Email Address", placeholder: "your@email.com", type: "email" },
@@ -664,7 +664,7 @@ const Register = () => {
                             </div>
                         </AnimeSectionCard>
 
-                        <div style={{ marginBottom: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+                        <div style={{ marginBottom: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: 24 }}>
                             <ElitePassCard />
                         </div>
 
@@ -736,9 +736,9 @@ const Register = () => {
                                         />
                                     </AnimeField>
                                     {groupData.members.map((member, index) => (
-                                        <div key={index} style={{ ...cardStyle, background: `${ANIME_COLORS.background}20`, padding: 20, marginTop: 16, borderRadius: 8 }}>
+                                        <div key={index} style={{ ...cardStyle, background: `${ANIME_COLORS.background}20`, padding: "min(20px, 4vw)", marginTop: 16, borderRadius: 8 }}>
                                             <div style={{ ...sectionHeaderStyle(ANIME_COLORS.secondary), fontSize: 10, marginBottom: 12 }}>MEMBER {index + 1}</div>
-                                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
+                                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px),1fr))", gap: 12 }}>
                                                 {[
                                                     { field: "name", label: "Full Name", placeholder: "Member Name" },
                                                     { field: "usn", label: "USN", placeholder: "Member USN" },
@@ -827,7 +827,7 @@ const Register = () => {
                                 ["Year", formData.year?.toString()], ["USN", formData.usn],
                             ].map(([k, v]) => (
                                 <div key={k} className="review-row">
-                                    <span className="review-key">{k}</span><span style={{ color: ANIME_COLORS.text }}>{v}</span>
+                                    <span className="review-key">{k}</span><span style={{ color: ANIME_COLORS.text, wordBreak: "break-word" }}>{v}</span>
                                 </div>
                             ))}
                         </AnimeSectionCard>
@@ -863,7 +863,7 @@ const Register = () => {
                                 ["Screenshot", formData.paymentScreenshot?.name || "No file selected"],
                             ].map(([k, v]) => (
                                 <div key={k} className="review-row">
-                                    <span className="review-key">{k}</span><span style={{ color: ANIME_COLORS.text }}>{v}</span>
+                                    <span className="review-key">{k}</span><span style={{ color: ANIME_COLORS.text, wordBreak: "break-word" }}>{v}</span>
                                 </div>
                             ))}
                         </AnimeSectionCard>
