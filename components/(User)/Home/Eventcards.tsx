@@ -1,7 +1,7 @@
 "use client";
 
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from "ogl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ANIME_COLORS } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
@@ -69,7 +69,7 @@ class Title {
     });
     this.mesh = new Mesh(gl, { geometry: geo, program: prog });
     const aspect = width / height;
-    const th = plane.scale.y * 0.18; /* bigger label */
+    const th = plane.scale.y * 0.18;
     this.mesh.scale.set(th * aspect, th, 1);
     this.mesh.position.y = -plane.scale.y * 0.5 - th * 0.5 - 0.08;
     this.mesh.setParent(plane);
@@ -84,6 +84,9 @@ interface MediaProps {
   text: string;
   viewport: { width: number; height: number };
   bend: number; textColor: string; borderRadius: number; font: string;
+  /* mobile sizing overrides */
+  cardHeightUnits: number;
+  cardWidthUnits:  number;
 }
 
 class Media {
@@ -208,9 +211,8 @@ class Media {
 
     this.scale = this.p.screen.height / 1500;
 
-    /* ── BIG cards: 1300 height × 900 width units ── */
-    this.plane.scale.y = (this.p.viewport.height * (1300 * this.scale)) / this.p.screen.height;
-    this.plane.scale.x = (this.p.viewport.width  * (900  * this.scale)) / this.p.screen.width;
+    this.plane.scale.y = (this.p.viewport.height * (this.p.cardHeightUnits * this.scale)) / this.p.screen.height;
+    this.plane.scale.x = (this.p.viewport.width  * (this.p.cardWidthUnits  * this.scale)) / this.p.screen.width;
 
     this.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
 
@@ -222,6 +224,17 @@ class Media {
 }
 
 /* ─── App ───────────────────────────────────────────────────────── */
+interface AppOptions {
+  bend:            number;
+  textColor:       string;
+  borderRadius:    number;
+  font:            string;
+  scrollSpeed:     number;
+  autoScrollSpeed: number;
+  cardHeightUnits: number;
+  cardWidthUnits:  number;
+}
+
 class App {
   scroll = { ease: 0.03, current: 0, target: 0, last: 0, position: 0 };
   medias: Media[] = [];
@@ -232,11 +245,8 @@ class App {
   planeGeometry!: Plane;
   raf = 0;
 
-  /* drag */
   isDown = false; start = 0; dragDelta = 0;
 
-  /* auto-scroll: tiny increment per frame = very slow */
-  autoScrollSpeed = 0.003;
   userInteracting = false;
   resumeTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -255,11 +265,7 @@ class App {
   constructor(
     private container: HTMLElement,
     private items: { image: string; text: string; href: string }[],
-    private bend: number,
-    private textColor: string,
-    private borderRadius: number,
-    private font: string,
-    private scrollSpeed: number,
+    private opts: AppOptions,
     private onNavigate: (href: string) => void,
   ) {
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
@@ -309,9 +315,13 @@ class App {
         image: item.image, index, length: list.length,
         renderer: this.renderer, scene: this.scene,
         screen: this.screen, text: item.text,
-        viewport: this.viewport, bend: this.bend,
-        textColor: this.textColor, borderRadius: this.borderRadius,
-        font: this.font,
+        viewport: this.viewport,
+        bend:            this.opts.bend,
+        textColor:       this.opts.textColor,
+        borderRadius:    this.opts.borderRadius,
+        font:            this.opts.font,
+        cardHeightUnits: this.opts.cardHeightUnits,
+        cardWidthUnits:  this.opts.cardWidthUnits,
       })
     );
   }
@@ -322,7 +332,6 @@ class App {
     this.resumeTimer = setTimeout(() => { this.userInteracting = false; }, 2500);
   }
 
-  /* ── Mouse ── */
   onMouseDown(e: MouseEvent) {
     this.isDown = true; this.dragDelta = 0;
     this.scroll.position = this.scroll.current;
@@ -332,19 +341,14 @@ class App {
   onMouseMove(e: MouseEvent) {
     if (!this.isDown) return;
     this.dragDelta = this.start - e.clientX;
-    this.scroll.target = this.scroll.position + this.dragDelta * (this.scrollSpeed * 0.025);
+    this.scroll.target = this.scroll.position + this.dragDelta * (this.opts.scrollSpeed * 0.025);
   }
-  onMouseUp(_e: MouseEvent) {
-    this.isDown = false;
-    this.onCheck();
-  }
+  onMouseUp(_e: MouseEvent) { this.isDown = false; this.onCheck(); }
   onClick(e: MouseEvent) {
-    /* only navigate when it was a tap, not a drag */
     if (Math.abs(this.dragDelta) > 6) return;
     this.handleClick(e.clientX, e.clientY);
   }
 
-  /* ── Touch ── */
   onTouchStart(e: TouchEvent) {
     this.isDown = true; this.dragDelta = 0;
     this.scroll.position = this.scroll.current;
@@ -354,7 +358,7 @@ class App {
   onTouchMove(e: TouchEvent) {
     if (!this.isDown) return;
     this.dragDelta = this.start - e.touches[0].clientX;
-    this.scroll.target = this.scroll.position + this.dragDelta * (this.scrollSpeed * 0.025);
+    this.scroll.target = this.scroll.position + this.dragDelta * (this.opts.scrollSpeed * 0.025);
   }
   onTouchEnd(e: TouchEvent) {
     this.isDown = false;
@@ -364,7 +368,6 @@ class App {
     }
   }
 
-  /* ── Find the card closest to canvas center and navigate ── */
   handleClick(_cx: number, _cy: number) {
     let closest: { idx: number; dist: number } | null = null;
     this.medias.forEach((media, i) => {
@@ -380,7 +383,7 @@ class App {
   onWheel(e: Event) {
     const we = e as WheelEvent;
     const d  = we.deltaY || (we as any).wheelDelta;
-    this.scroll.target += (d > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
+    this.scroll.target += (d > 0 ? this.opts.scrollSpeed : -this.opts.scrollSpeed) * 0.2;
     this.onCheckDebounce();
     this.pauseAuto();
   }
@@ -403,11 +406,9 @@ class App {
   }
 
   update() {
-    /* slow continuous auto-scroll when idle */
     if (!this.userInteracting) {
-      this.scroll.target += this.autoScrollSpeed;
+      this.scroll.target += this.opts.autoScrollSpeed;
     }
-
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const dir = this.scroll.current > this.scroll.last ? "right" : "left";
     this.medias.forEach((m) => m.update(this.scroll, dir));
@@ -442,10 +443,8 @@ class App {
   destroy() {
     cancelAnimationFrame(this.raf);
     if (this.resumeTimer) clearTimeout(this.resumeTimer);
-
     window.removeEventListener("resize", this._onResize);
     window.removeEventListener("wheel",  this._onWheel);
-
     this.container.removeEventListener("mousedown",  this._onMouseDown);
     this.container.removeEventListener("mousemove",  this._onMouseMove);
     this.container.removeEventListener("mouseup",    this._onMouseUp);
@@ -453,7 +452,6 @@ class App {
     this.container.removeEventListener("touchstart", this._onTouchStart as EventListener);
     this.container.removeEventListener("touchmove",  this._onTouchMove  as EventListener);
     this.container.removeEventListener("touchend",   this._onTouchEnd   as EventListener);
-
     const canvas = this.renderer.gl.canvas as HTMLCanvasElement;
     canvas.parentNode?.removeChild(canvas);
   }
@@ -463,21 +461,43 @@ class App {
 export default function EventCircularGallery() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
+
+    const mobile = window.innerWidth < 768;
+
     const app = new App(
       containerRef.current,
       EVENT_ITEMS,
-      /* bend         */ 3,
-      /* textColor    */ ANIME_COLORS.text,
-      /* borderRadius */ 0.06,
-      /* font         */ `bold 52px 'Cinzel', serif`,
-      /* scrollSpeed  */ 2,
-      /* onNavigate   */ (href: string) => router.push(href),
+      {
+        bend:            mobile ? 0.5 : 0.9,
+        textColor:       ANIME_COLORS.text,
+        borderRadius:    0.06,
+        /* smaller font on mobile so labels don't overflow the card */
+        font:            mobile
+          ? `bold 32px 'Cinzel', serif`
+          : `bold 52px 'Cinzel', serif`,
+        scrollSpeed:     mobile ? 1.4 : 2,
+        autoScrollSpeed: mobile ? 0.002 : 0.003,
+        /* mobile cards: narrower & shorter to fit the reduced canvas height */
+        cardHeightUnits: mobile ? 900  : 1300,
+        cardWidthUnits:  mobile ? 600  : 900,
+      },
+      (href: string) => router.push(href),
     );
+
     return () => app.destroy();
-  }, [router]);
+    // re-initialise if isMobile flips (orientation change / resize crosses 768)
+  }, [router, isMobile]);
 
   return (
     <section
@@ -485,15 +505,17 @@ export default function EventCircularGallery() {
         position: "relative",
         width: "100%",
         overflow: "hidden",
-        padding: "clamp(3.5rem,9vh,6rem) 0 clamp(4rem,10vh,7rem)",
+        /* less top/bottom breathing room on mobile */
+        padding: "clamp(2rem,6vh,6rem) 0 clamp(2.5rem,7vh,7rem)",
       }}
     >
       {/* Heading */}
-      <div style={{ position: "relative", zIndex: 6, textAlign: "center", marginBottom: "clamp(1.5rem,4vh,2.5rem)" }}>
+      <div style={{ position: "relative", zIndex: 6, textAlign: "center", marginBottom: "clamp(1rem,3vh,2.5rem)" }}>
         <h2
           style={{
             fontFamily: "'Cinzel', serif",
-            fontSize: "clamp(3rem,9vw,7rem)",
+            /* smaller floor on mobile: 1.8rem instead of 3rem */
+            fontSize: "clamp(1.8rem,7vw,7rem)",
             lineHeight: 0.9,
             letterSpacing: "0.06em",
             color: ANIME_COLORS.text,
@@ -504,11 +526,18 @@ export default function EventCircularGallery() {
         </h2>
       </div>
 
-      {/* OGL canvas — tall for big cards */}
+      {/* OGL canvas — shorter on mobile so cards don't overflow the viewport */}
       <div
         ref={containerRef}
         className="w-full cursor-pointer"
-        style={{ height: "clamp(420px,65vh,680px)", position: "relative", zIndex: 6 }}
+        style={{
+          /* mobile: 300-380 px; desktop: 420-680 px */
+          height: isMobile
+            ? "clamp(300px, 52vh, 380px)"
+            : "clamp(420px, 65vh, 680px)",
+          position: "relative",
+          zIndex: 6,
+        }}
       />
 
       {/* hint */}
@@ -522,7 +551,7 @@ export default function EventCircularGallery() {
         marginTop: "1rem",
         textTransform: "uppercase",
       }}>
-        Click a card to explore · Drag to browse
+        {isMobile ? "Tap a card to explore · Swipe to browse" : "Click a card to explore · Drag to browse"}
       </p>
     </section>
   );

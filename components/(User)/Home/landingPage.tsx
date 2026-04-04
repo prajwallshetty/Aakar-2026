@@ -29,11 +29,8 @@ export default function HeroLanding() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
 
   const bgScrollY   = useTransform(scrollYProgress, [0, 1], ["0%",  "30%"]);
-  // char scrolls UP more slowly than page → feels pinned deep in scene
   const charScrollY = useTransform(scrollYProgress, [0, 1], ["0%",  "10%"]);
-  // char drifts slightly RIGHT as we scroll → parallax separation
   const charScrollX = useTransform(scrollYProgress, [0, 1], ["0px", "50px"]);
-  // char fades as it exits viewport
   const charOpacity = useTransform(scrollYProgress, [0, 0.5, 0.8], [1, 0.9, 0]);
   const charScale   = useTransform(scrollYProgress, [0, 1], [1, 0.90]);
   const logoY       = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
@@ -41,45 +38,61 @@ export default function HeroLanding() {
   const overlayOp   = useTransform(scrollYProgress, [0, 0.6], [0.52, 0.80]);
 
   // ── Mouse motion values ───────────────────────────────────────────────────
-  // Background — very sluggish, wide lazy arc
-  const bgMX = useSpring(useMotionValue(0), { stiffness: 10, damping: 26, mass: 1.6 });
-  const bgMY = useSpring(useMotionValue(0), { stiffness: 10, damping: 26, mass: 1.6 });
+  // FIX: tighter stiffness/damping to prevent runaway oscillation
+  const bgMX = useSpring(useMotionValue(0), { stiffness: 8, damping: 30, mass: 1.8 });
+  const bgMY = useSpring(useMotionValue(0), { stiffness: 8, damping: 30, mass: 1.8 });
 
-  // Character translate — medium momentum, MORE travel than BG (depth illusion)
-  const chTX = useSpring(useMotionValue(0), { stiffness: 24, damping: 18, mass: 1.1 });
-  const chTY = useSpring(useMotionValue(0), { stiffness: 24, damping: 18, mass: 1.1 });
+  const chTX = useSpring(useMotionValue(0), { stiffness: 20, damping: 25, mass: 1.2 });
+  const chTY = useSpring(useMotionValue(0), { stiffness: 20, damping: 25, mass: 1.2 });
 
-  // Character 3-D tilt — snappier so it feels physical
-  const chRX = useSpring(useMotionValue(0), { stiffness: 60, damping: 16, mass: 0.6 });
-  const chRY = useSpring(useMotionValue(0), { stiffness: 60, damping: 16, mass: 0.6 });
+  const chRX = useSpring(useMotionValue(0), { stiffness: 45, damping: 22, mass: 0.7 });
+  const chRY = useSpring(useMotionValue(0), { stiffness: 45, damping: 22, mass: 0.7 });
 
-  // Text subtle follow — opposite to char (stereoscopic push)
-  const textMX = useSpring(useMotionValue(0), { stiffness: 36, damping: 22, mass: 0.9 });
+  const textMX = useSpring(useMotionValue(0), { stiffness: 30, damping: 28, mass: 1.0 });
 
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile) {
+      // Reset all springs to 0 on mobile so nothing is stuck mid-animation
+      bgMX.set(0); bgMY.set(0);
+      chTX.set(0); chTY.set(0);
+      chRX.set(0); chRY.set(0);
+      textMX.set(0);
+      return;
+    }
+
     const handler = (e: MouseEvent) => {
       const cx = window.innerWidth  / 2;
       const cy = window.innerHeight / 2;
-      const nx = (e.clientX - cx) / cx;  // -1 … +1
-      const ny = (e.clientY - cy) / cy;
+      // Clamp nx/ny to [-1, 1] to prevent values going wild on rapid movement
+      const nx = Math.max(-1, Math.min(1, (e.clientX - cx) / cx));
+      const ny = Math.max(-1, Math.min(1, (e.clientY - cy) / cy));
 
       bgMX.set(nx * -20);
       bgMY.set(ny * -11);
 
-      // Character moves in SAME direction as mouse but more — looks like it's on a closer layer
       chTX.set(nx * -36);
       chTY.set(ny * -20);
 
-      // Tilt toward mouse: rotateY leans left/right, rotateX leans up/down
       chRY.set(nx *  9);
       chRX.set(ny * -5);
 
-      // Text moves slightly opposite to char → stereo depth
       textMX.set(nx * 12);
     };
-    window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
+
+    // FIX: use passive listener and throttle with rAF to prevent runaway on fast movement
+    let ticking = false;
+    const throttledHandler = (e: MouseEvent) => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handler(e);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("mousemove", throttledHandler, { passive: true });
+    return () => window.removeEventListener("mousemove", throttledHandler);
   }, [isMobile, bgMX, bgMY, chTX, chTY, chRX, chRY, textMX]);
 
   // ── Ember canvas ──────────────────────────────────────────────────────────
@@ -131,7 +144,6 @@ export default function HeroLanding() {
         .hl-scan { background-image:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px); }
         .hl-grain { background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E"); background-repeat:repeat; background-size:180px 180px; mix-blend-mode:overlay; }
 
-        /* ── Smooth vertical float ── */
         @keyframes hl-float {
           0%,100%{ transform:translateY(0px);   }
           35%    { transform:translateY(-11px);  }
@@ -139,7 +151,14 @@ export default function HeroLanding() {
         }
         .hl-float { animation:hl-float 7s ease-in-out infinite; }
 
-        /* ── Secondary sway on char body — slightly faster, offset phase ── */
+        /* Mobile float — gentler, slower */
+        @keyframes hl-float-mobile {
+          0%,100%{ transform:translateY(0px) translateX(0px); }
+          30%    { transform:translateY(-8px) translateX(3px); }
+          65%    { transform:translateY(-4px) translateX(-2px); }
+        }
+        .hl-float-mobile { animation:hl-float-mobile 9s ease-in-out infinite; }
+
         @keyframes hl-sway {
           0%,100%{ transform:rotate(0deg) skewX(0deg);    }
           25%    { transform:rotate(0.45deg) skewX(0.3deg);  }
@@ -147,7 +166,6 @@ export default function HeroLanding() {
         }
         .hl-sway { animation:hl-sway 4.8s ease-in-out infinite; transform-origin:bottom center; }
 
-        /* ── Ground shadow stretches with tilt ── */
         @keyframes hl-glow-breathe {
           0%,100%{ opacity:0.5; transform:scaleX(1);    }
           50%    { opacity:0.7; transform:scaleX(1.10); }
@@ -159,6 +177,13 @@ export default function HeroLanding() {
           50%    { filter:drop-shadow(0 0 40px rgba(255,160,50,.75)) drop-shadow(0 0 90px rgba(255,80,10,.38)); }
         }
         .hl-logo-glow { animation:hl-logo-glow 3.5s ease-in-out infinite; }
+
+        /* Mobile logo glow — behind character */
+        @keyframes hl-logo-glow-mobile {
+          0%,100%{ filter:invert(1) drop-shadow(0 0 30px rgba(255,120,30,.55)) drop-shadow(0 0 70px rgba(255,60,10,.30)); }
+          50%    { filter:invert(1) drop-shadow(0 0 55px rgba(255,160,50,.85)) drop-shadow(0 0 110px rgba(255,80,10,.50)); }
+        }
+        .hl-logo-glow-mobile { animation:hl-logo-glow-mobile 3.5s ease-in-out infinite; }
 
         @keyframes hl-badge { 0%{background-position:-200% center} 100%{background-position:200% center} }
         .hl-badge { background:linear-gradient(105deg,rgba(255,255,255,.03) 0%,rgba(255,200,100,.18) 40%,rgba(255,255,255,.03) 60%,rgba(255,255,255,.01) 100%); background-size:200% auto; animation:hl-badge 4s linear infinite; }
@@ -177,15 +202,14 @@ export default function HeroLanding() {
 
         .hl-side { writing-mode:vertical-rl; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.55em; text-transform:uppercase; color:rgba(255,200,120,.22); }
 
-        /* perspective for 3-D tilt */
         .hl-persp { perspective:1000px; perspective-origin:50% 40%; }
       `}</style>
 
       <section ref={sectionRef} className="hl relative w-full h-screen min-h-[640px] overflow-hidden bg-black" style={{fontFamily:"'Cinzel',serif"}}>
 
         {/* BG */}
-        <motion.div className="absolute z-0" style={{inset:!isMobile?"-90px":"-30px", y:bgScrollY, x:bgMX}}>
-          <motion.div className="absolute inset-0" style={{y:bgMY}}>
+        <motion.div className="absolute z-0" style={{inset:!isMobile?"-90px":"-30px", y:bgScrollY, x:!isMobile ? bgMX : undefined}}>
+          <motion.div className="absolute inset-0" style={{y:!isMobile ? bgMY : undefined}}>
             <Image src="/landingbg.jpg" alt="" fill priority quality={95} sizes="130vw" style={{objectFit:"cover",objectPosition:"center 40%"}}/>
           </motion.div>
         </motion.div>
@@ -200,109 +224,283 @@ export default function HeroLanding() {
 
         <div className="hl-flicker absolute top-0 left-0 z-20 pointer-events-none" style={{width:"35vw",height:"35vw",maxWidth:320,maxHeight:320,background:"radial-gradient(ellipse at 0% 0%, rgba(180,30,0,.28) 0%, transparent 65%)"}}/>
 
-        {/* ════════════════ CHARACTER — 5-layer parallax system ══ */}
-        {/*
-          Depth order back → front
-          ① bgScrollY+bgMX/Y   — world BG (~0 depth)
-          ② charScrollY/X      — scroll: char rises slower than camera, drifts right
-          ③ chTX / chTY        — mouse translate: most travel = closest layer
-          ④ chRX / chRY        — 3-D tilt toward cursor
-          ⑤ hl-float           — sinusoidal float, phase-staggered
-          ⑥ hl-sway            — secondary micro-sway (faster, different phase)
-        */}
-        <motion.div
-          className="hl-persp absolute"
-          style={!isMobile ? {
-            right: "10vw", bottom: "-8vh", zIndex: 25,
-            y: charScrollY,
-            x: charScrollX,
-            opacity: charOpacity,
-            scale: charScale,
-          } : {
-            right: "-3vw", bottom: "-3vh", zIndex: 25, opacity: .32,
-          }}
-        >
-          {/* ③ mouse translate */}
-          <motion.div style={!isMobile ? {x:chTX, y:chTY} : undefined}>
-            {/* ④ 3-D tilt */}
-            <motion.div style={!isMobile ? {rotateX:chRX, rotateY:chRY, transformStyle:"preserve-3d"} : undefined}>
-              {/* ⑤ float */}
-              <div className={!isMobile ? "hl-float" : ""}>
-
-                {/* Ambient glow behind char — moves with tilt */}
-                <div style={{
-                  position:"absolute", inset:"-15% -20%",
-                  background:"radial-gradient(ellipse 55% 70% at 55% 75%, rgba(220,75,10,.48) 0%, rgba(160,30,0,.20) 40%, transparent 70%)",
-                  filter:"blur(28px)", zIndex:-1, pointerEvents:"none",
-                  borderRadius:"50%",
-                }}/>
-
-                {/* Ground shadow ellipse */}
-                <div className="hl-glow-breathe" style={{
-                  position:"absolute", bottom:"1%", left:"10%", right:"10%", height:"6%",
-                  background:"radial-gradient(ellipse 100% 100% at 50% 100%, rgba(190,45,0,.60) 0%, transparent 70%)",
-                  filter:"blur(16px)", zIndex:-1,
-                }}/>
-
-                {/* ⑥ secondary sway on the image */}
-                <div className={!isMobile ? "hl-sway" : ""}>
-                  <motion.div
-                    initial={{opacity:0, x:100, filter:"blur(20px)", scale:.96}}
-                    animate={{opacity:1, x:0,   filter:"blur(0px)",  scale:1  }}
-                    transition={{duration:1.6, delay:.5, ease:[.22,1,.36,1]}}
-                  >
-                    <img src="/kuko.png" alt="AAKAR character" style={{
-                      display:"block", objectFit:"contain",
-                      height:"clamp(440px, 92vh, 870px)", width:"auto",
-                      filter:"drop-shadow(-8px 0 40px rgba(235,95,10,.65)) drop-shadow(0 24px 55px rgba(180,40,0,.38)) drop-shadow(0 0 90px rgba(140,25,0,.22))",
-                    }}/>
-                  </motion.div>
+        {/* ════════════ DESKTOP CHARACTER ════════════ */}
+        {!isMobile && (
+          <motion.div
+            className="hl-persp absolute"
+            style={{
+              right: "10vw", bottom: "-8vh", zIndex: 25,
+              y: charScrollY,
+              x: charScrollX,
+              opacity: charOpacity,
+              scale: charScale,
+            }}
+          >
+            <motion.div style={{x:chTX, y:chTY}}>
+              <motion.div style={{rotateX:chRX, rotateY:chRY, transformStyle:"preserve-3d"}}>
+                <div className="hl-float">
+                  <div style={{
+                    position:"absolute", inset:"-15% -20%",
+                    background:"radial-gradient(ellipse 55% 70% at 55% 75%, rgba(220,75,10,.48) 0%, rgba(160,30,0,.20) 40%, transparent 70%)",
+                    filter:"blur(28px)", zIndex:-1, pointerEvents:"none",
+                    borderRadius:"50%",
+                  }}/>
+                  <div className="hl-glow-breathe" style={{
+                    position:"absolute", bottom:"1%", left:"10%", right:"10%", height:"6%",
+                    background:"radial-gradient(ellipse 100% 100% at 50% 100%, rgba(190,45,0,.60) 0%, transparent 70%)",
+                    filter:"blur(16px)", zIndex:-1,
+                  }}/>
+                  <div className="hl-sway">
+                    <motion.div
+                      initial={{opacity:0, x:100, filter:"blur(20px)", scale:.96}}
+                      animate={{opacity:1, x:0,   filter:"blur(0px)",  scale:1  }}
+                      transition={{duration:1.6, delay:.5, ease:[.22,1,.36,1]}}
+                    >
+                      <img src="/kuko.png" alt="AAKAR character" style={{
+                        display:"block", objectFit:"contain",
+                        height:"clamp(440px, 92vh, 870px)", width:"auto",
+                        filter:"drop-shadow(-8px 0 40px rgba(235,95,10,.65)) drop-shadow(0 24px 55px rgba(180,40,0,.38)) drop-shadow(0 0 90px rgba(140,25,0,.22))",
+                      }}/>
+                    </motion.div>
+                  </div>
                 </div>
-
-              </div>
+              </motion.div>
             </motion.div>
           </motion.div>
-        </motion.div>
+        )}
+
+        {/* ════════════ MOBILE CHARACTER + LOGO BEHIND HEAD ════════════ */}
+        {isMobile && (
+          <div style={{
+            position:"absolute",
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 25,
+            width: "100vw",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            pointerEvents: "none",
+          }}>
+            {/* Ambient glow behind char */}
+            <div style={{
+              position:"absolute", bottom:"0", left:"50%", transform:"translateX(-50%)",
+              width:"80vw", height:"80vw",
+              background:"radial-gradient(ellipse 60% 70% at 50% 75%, rgba(220,75,10,.40) 0%, rgba(160,30,0,.15) 45%, transparent 70%)",
+              filter:"blur(32px)", zIndex:0, borderRadius:"50%",
+            }}/>
+
+            {/* Logo BEHIND the character (z-index 1, char is z-index 2) */}
+            <motion.div
+              initial={{opacity:0, scale:.82, filter:"blur(18px)"}}
+              animate={{opacity:1, scale:1, filter:"blur(0px)"}}
+              transition={{duration:1.4, delay:.6, ease:[.22,1,.36,1]}}
+              style={{
+                position:"absolute",
+                // Position logo so it appears behind the character's head area
+                // Bottom of logo aligns ~70% up from bottom of container
+                bottom: "52%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 1,
+                width: "72vw",
+                maxWidth: 320,
+              }}
+            >
+              <Image
+                src="/aklogo.png"
+                alt="AAKAR 2026"
+                width={320}
+                height={124}
+                priority
+                className="hl-logo-glow-mobile"
+                style={{
+                  objectFit:"contain",
+                  width:"100%",
+                  height:"auto",
+                  opacity: 0.72,
+                }}
+              />
+            </motion.div>
+
+            {/* Character — floats slowly, centered */}
+            <div className="hl-float-mobile" style={{position:"relative", zIndex:2}}>
+              {/* Ground shadow */}
+              <div className="hl-glow-breathe" style={{
+                position:"absolute", bottom:"2%", left:"10%", right:"10%", height:"5%",
+                background:"radial-gradient(ellipse 100% 100% at 50% 100%, rgba(190,45,0,.50) 0%, transparent 70%)",
+                filter:"blur(14px)", zIndex:-1,
+              }}/>
+              <motion.div
+                initial={{opacity:0, y:40, filter:"blur(16px)", scale:.95}}
+                animate={{opacity:1, y:0,  filter:"blur(0px)",  scale:1  }}
+                transition={{duration:1.5, delay:.4, ease:[.22,1,.36,1]}}
+              >
+                <img
+                  src="/kuko.png"
+                  alt="AAKAR character"
+                  style={{
+                    display:"block",
+                    objectFit:"contain",
+                    height:"clamp(380px, 78vh, 620px)",
+                    width:"auto",
+                    maxWidth:"90vw",
+                    filter:"drop-shadow(-6px 0 28px rgba(235,95,10,.60)) drop-shadow(0 18px 44px rgba(180,40,0,.35)) drop-shadow(0 0 70px rgba(140,25,0,.20))",
+                  }}
+                />
+              </motion.div>
+            </div>
+          </div>
+        )}
 
         {/* ── Content ───────────────────────────────────────────────── */}
-        <motion.div className="absolute inset-0 z-30 flex flex-col items-start justify-center"
-          style={!isMobile ? {paddingLeft:"clamp(28px,7vw,100px)", y:textY, x:textMX} : {paddingLeft:"24px"}}>
+        <motion.div
+          className="absolute inset-0 z-30 flex flex-col justify-end md:justify-center"
+          style={!isMobile ? {
+            paddingLeft:"clamp(28px,7vw,100px)",
+            y:textY,
+            x:textMX,
+          } : {
+            // Mobile: content at top area, character takes bottom
+            paddingLeft:"20px",
+            paddingRight:"20px",
+            paddingTop:"clamp(48px, 10vh, 80px)",
+            justifyContent:"flex-start",
+            alignItems:"center",
+          }}
+        >
+          {/* Desktop logo */}
+          {!isMobile && (
+            <motion.div
+              style={{y:logoY, marginLeft:"-7vw"}}
+              initial={{opacity:0,scale:.88,filter:"blur(22px)"}}
+              animate={{opacity:1,scale:1,filter:"blur(0px)"}}
+              transition={{duration:1.5,delay:.45,ease:[.22,1,.36,1]}}
+            >
+              <Image src="/aklogo.png" alt="AAKAR 2026" width={620} height={240} priority className="hl-logo-glow"
+                style={{objectFit:"contain",width:"clamp(240px,52vw,620px)",height:"auto",filter:"invert(1) drop-shadow(0 0 30px rgba(255,120,30,.5))"}}/>
+            </motion.div>
+          )}
 
-          <motion.div style={!isMobile?{y:logoY,marginLeft:"-7vw"}:{marginLeft:"-15px"}}
-            initial={{opacity:0,scale:.88,filter:"blur(22px)"}} animate={{opacity:1,scale:1,filter:"blur(0px)"}}
-            transition={{duration:1.5,delay:.45,ease:[.22,1,.36,1]}}>
-            <Image src="/aklogo.png" alt="AAKAR 2026" width={620} height={240} priority className="hl-logo-glow"
-              style={{objectFit:"contain",width:"clamp(240px,52vw,620px)",height:"auto",filter:"invert(1) drop-shadow(0 0 30px rgba(255,120,30,.5))"}}/>
-          </motion.div>
+          {/* Mobile: tagline + buttons at top, centered */}
+          {isMobile && (
+            <motion.div
+              initial={{opacity:0, y:-16}}
+              animate={{opacity:1, y:0}}
+              transition={{delay:0.9, duration:1.0, ease:[.22,1,.36,1]}}
+              style={{display:"flex", flexDirection:"column", alignItems:"center", width:"100%"}}
+            >
+              {/* Subtitle text */}
+              <div className="overflow-hidden" style={{marginBottom:"6px"}}>
+                <p style={{
+                  fontFamily:"'Cinzel',serif", fontWeight:300,
+                  fontSize:"clamp(.65rem,3.8vw,1rem)",
+                  letterSpacing:"clamp(.18em,1.4vw,.32em)",
+                  color:"#fff",
+                  whiteSpace:"nowrap",
+                  textAlign:"center",
+                }}>
+                  {chars.map((ch,i)=>(
+                    <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
+                  ))}
+                </p>
+              </div>
 
-          <div className="overflow-hidden -mt-4 md:-mt-10">
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:300,fontSize:"clamp(.75rem,2.6vw,1.5rem)",letterSpacing:"clamp(.2em,1.2vw,.38em)",color:"#fff",whiteSpace:"nowrap"}}>
-              {chars.map((ch,i)=>(
-                <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
-              ))}
-            </p>
-          </div>
+              <motion.p
+                initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2, duration:1.2}}
+                style={{
+                  fontFamily:"'Noto Serif JP',serif", fontWeight:200,
+                  fontSize:"clamp(8px,2.2vw,11px)",
+                  letterSpacing:".42em",
+                  color:"rgba(255,180,100,.38)",
+                  marginTop:"6px",
+                  textAlign:"center",
+                }}
+              >
+                新たな時代の幕開け
+              </motion.p>
 
-          <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2,duration:1.2}}
-            style={{fontFamily:"'Noto Serif JP',serif",fontWeight:200,fontSize:"clamp(9px,1.2vw,13px)",letterSpacing:".48em",color:"rgba(255,180,100,.38)",marginTop:"10px"}}>
-            新たな時代の幕開け
-          </motion.p>
+              {/* Divider */}
+              <div style={{
+                width:"clamp(100px,45vw,200px)", height:1,
+                background:"linear-gradient(to right, transparent, rgba(255,100,30,.7), rgba(255,200,100,.4), transparent)",
+                margin:"14px auto",
+              }}/>
 
-          <div className="mt-6 md:mt-8" style={{width:"clamp(140px,30vw,280px)",height:1,background:"linear-gradient(to right, rgba(255,100,30,.7), rgba(255,200,100,.4), transparent)"}}/>
+              {/* Buttons */}
+              <motion.div
+                className="flex items-center gap-3"
+                initial={{opacity:0,y:14}} animate={{opacity:1,y:0}}
+                transition={{delay:1.6, duration:.9, ease:[.22,1,.36,1]}}
+                style={{justifyContent:"center"}}
+              >
+                <span className="hl-badge border border-white/15 uppercase" style={{
+                  backdropFilter:"blur(8px)", borderRadius:"2px",
+                  padding:"5px 11px",
+                  fontFamily:"'Cinzel',serif",
+                  fontSize:"clamp(6px,2.4vw,8px)",
+                  letterSpacing:".35em",
+                  color:"rgba(255,200,120,.72)",
+                  whiteSpace:"nowrap",
+                }}>
+                  Techno-Cultural Fest
+                </span>
+                <motion.button
+                  whileTap={{scale:.95}}
+                  style={{
+                    fontFamily:"'Cinzel',serif",
+                    fontSize:"clamp(6px,2.4vw,8px)",
+                    letterSpacing:".35em",
+                    textTransform:"uppercase",
+                    color:"#fff",
+                    background:"linear-gradient(135deg,rgba(200,50,0,.88) 0%,rgba(255,90,10,.78) 100%)",
+                    border:"1px solid rgba(255,120,40,.48)",
+                    borderRadius:"2px",
+                    padding:"5px 14px",
+                    cursor:"pointer",
+                    backdropFilter:"blur(8px)",
+                  }}
+                >
+                  Explore ›
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          )}
 
-          <motion.div className="flex items-center gap-4 md:gap-6 mt-6 md:mt-7"
-            initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:1.6,duration:.9,ease:[.22,1,.36,1]}}>
-            <span className="hl-badge border border-white/15 uppercase" style={{backdropFilter:"blur(8px)",borderRadius:"2px",padding:"6px 14px",fontFamily:"'Cinzel',serif",fontSize:"clamp(7px,1vw,9.5px)",letterSpacing:".40em",color:"rgba(255,200,120,.72)",whiteSpace:"nowrap"}}>
-              Techno-Cultural Fest
-            </span>
-            <motion.button whileHover={{scale:1.05,boxShadow:"0 0 28px rgba(255,80,10,.55)"}} whileTap={{scale:.97}}
-              style={{fontFamily:"'Cinzel',serif",fontSize:"clamp(7px,1vw,9.5px)",letterSpacing:".40em",textTransform:"uppercase",color:"#fff",background:"linear-gradient(135deg,rgba(200,50,0,.88) 0%,rgba(255,90,10,.78) 100%)",border:"1px solid rgba(255,120,40,.48)",borderRadius:"2px",padding:"6px 18px",cursor:"pointer",backdropFilter:"blur(8px)",transition:"box-shadow .3s"}}>
-              Explore ›
-            </motion.button>
-          </motion.div>
+          {/* Desktop tagline + buttons */}
+          {!isMobile && (
+            <>
+              <div className="overflow-hidden -mt-4 md:-mt-10">
+                <p style={{fontFamily:"'Cinzel',serif",fontWeight:300,fontSize:"clamp(.75rem,2.6vw,1.5rem)",letterSpacing:"clamp(.2em,1.2vw,.38em)",color:"#fff",whiteSpace:"nowrap"}}>
+                  {chars.map((ch,i)=>(
+                    <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
+                  ))}
+                </p>
+              </div>
+
+              <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2,duration:1.2}}
+                style={{fontFamily:"'Noto Serif JP',serif",fontWeight:200,fontSize:"clamp(9px,1.2vw,13px)",letterSpacing:".48em",color:"rgba(255,180,100,.38)",marginTop:"10px"}}>
+                新たな時代の幕開け
+              </motion.p>
+
+              <div className="mt-6 md:mt-8" style={{width:"clamp(140px,30vw,280px)",height:1,background:"linear-gradient(to right, rgba(255,100,30,.7), rgba(255,200,100,.4), transparent)"}}/>
+
+              <motion.div className="flex items-center gap-4 md:gap-6 mt-6 md:mt-7"
+                initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:1.6,duration:.9,ease:[.22,1,.36,1]}}>
+                <span className="hl-badge border border-white/15 uppercase" style={{backdropFilter:"blur(8px)",borderRadius:"2px",padding:"6px 14px",fontFamily:"'Cinzel',serif",fontSize:"clamp(7px,1vw,9.5px)",letterSpacing:".40em",color:"rgba(255,200,120,.72)",whiteSpace:"nowrap"}}>
+                  Techno-Cultural Fest
+                </span>
+                <motion.button whileHover={{scale:1.05,boxShadow:"0 0 28px rgba(255,80,10,.55)"}} whileTap={{scale:.97}}
+                  style={{fontFamily:"'Cinzel',serif",fontSize:"clamp(7px,1vw,9.5px)",letterSpacing:".40em",textTransform:"uppercase",color:"#fff",background:"linear-gradient(135deg,rgba(200,50,0,.88) 0%,rgba(255,90,10,.78) 100%)",border:"1px solid rgba(255,120,40,.48)",borderRadius:"2px",padding:"6px 18px",cursor:"pointer",backdropFilter:"blur(8px)",transition:"box-shadow .3s"}}>
+                  Explore ›
+                </motion.button>
+              </motion.div>
+            </>
+          )}
         </motion.div>
 
-        {/* Side labels */}
+        {/* Side labels — desktop only */}
         <motion.div className="absolute left-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
           initial={{opacity:0,x:-14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}>
           <div className="h-14 w-px" style={{background:"rgba(255,160,80,.12)"}}/>
