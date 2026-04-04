@@ -6,7 +6,7 @@ import { eventCategory } from "@prisma/client";
 import { getEventsByCategory } from "@/backend/events";
 import { ExtendedEvent } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { generateEventSlug } from "@/lib/utils";
+import { generateEventSlug, getEventImageCandidates } from "@/lib/utils";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -32,6 +32,14 @@ const P = {
 /* ─── Anime Event Card ─────────────────────────────────────────── */
 function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number }) {
   const accent = ACCENTS[index % ACCENTS.length];
+  const imageCandidates = getEventImageCandidates(event.imageUrl, event.id);
+  const [imageIndex, setImageIndex] = useState(0);
+
+  useEffect(() => {
+    setImageIndex(0);
+  }, [event.imageUrl, event.id]);
+
+  const imageSrc = imageCandidates[imageIndex] ?? "";
   
   return (
     <AnimeCardWrapper 
@@ -50,13 +58,22 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: `url('${event.id}.png')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            background: "#12030d",
             borderRadius: "inherit",
             zIndex: 1
           }}
-        />
+        >
+          {imageSrc && (
+            <img
+              src={imageSrc}
+              alt={event.eventName}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+              onError={() => {
+                setImageIndex((prev) => (prev < imageCandidates.length - 1 ? prev + 1 : prev));
+              }}
+            />
+          )}
+        </div>
         
         {/* Overlay Gradient */}
         <div 
@@ -179,10 +196,13 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         // Cache event images
         const cache = await caches.open("event-image-cache");
         data.forEach(async (event) => {
-          const cached = await cache.match(event.imageUrl);
+          const imageSrc = getEventImageCandidates(event.imageUrl, event.id)[0] ?? "";
+          if (!imageSrc) return;
+
+          const cached = await cache.match(imageSrc);
           if (!cached) {
-            const response = await fetch(event.imageUrl, { mode: "no-cors" });
-            cache.put(event.imageUrl, response);
+            const response = await fetch(imageSrc, { mode: "no-cors" });
+            cache.put(imageSrc, response);
           }
         });
       } catch (err) {
