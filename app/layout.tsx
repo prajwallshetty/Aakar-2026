@@ -276,7 +276,7 @@ export default async function RootLayout({
 }>) {
     const session = await auth();
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM"></script>
                 <script>
@@ -289,7 +289,7 @@ export default async function RootLayout({
                         }
                 </script>
             </head>
-            <body className={`${baseFont.className} antialiased`}>
+            <body suppressHydrationWarning className={`${baseFont.className} antialiased`}>
                 <SessionProvider session={session}>{children}</SessionProvider>
                 <Analytics />
                 <SpeedInsights />

@@ -20,8 +20,33 @@ function isCacheValid(cacheDate: Date | null) {
 
 export async function createEvent(event: ExtendedEventCreateInput) {
     try {
+        const processedEvent: any = {
+            eventName: event.eventName,
+            eventCategory: event.eventCategory,
+            eventType: event.eventType,
+            minMembers: event.minMembers,
+            maxMembers: event.maxMembers,
+            description: event.description,
+            fee: event.fee,
+            date: event.date,
+            time: event.time,
+            venue: event.venue,
+            imageUrl: event.imageUrl || "",
+            rules: event.rules || [],
+            studentCoordinators: Array.isArray(event.studentCoordinators)
+                ? event.studentCoordinators
+                : typeof event.studentCoordinators === "string"
+                    ? JSON.parse(event.studentCoordinators)
+                    : [],
+            facultyCoordinators: Array.isArray(event.facultyCoordinators)
+                ? event.facultyCoordinators
+                : typeof event.facultyCoordinators === "string"
+                    ? JSON.parse(event.facultyCoordinators)
+                    : [],
+        };
+        
         const newEvent = await db.event.create({
-            data: event
+            data: processedEvent
         }) as ExtendedEvent | null;
 
         eventsCache.date = null;
@@ -31,26 +56,39 @@ export async function createEvent(event: ExtendedEventCreateInput) {
 
         return newEvent;
     } catch (e) {
-        console.error("Create Event Error:", e);
+        console.error("❌ Create Event Error:", e);
         return null;
     }
 }
 
 export async function getEventById(id: number) {
     try {
-        if (eventsCache.eventById[id] && isCacheValid(eventsCache.eventById[id].date)) {
-            return eventsCache.eventById[id].event;
-        }
-
         const event = await db.event.findUnique({
             where: { id }
         }) as ExtendedEvent | null;
 
         if (event) {
+            const normalizedEvent: ExtendedEvent = {
+                ...event,
+                rules: Array.isArray(event.rules) ? event.rules : [],
+                studentCoordinators: Array.isArray(event.studentCoordinators)
+                    ? event.studentCoordinators
+                    : typeof event.studentCoordinators === "string"
+                        ? JSON.parse(event.studentCoordinators)
+                        : [],
+                facultyCoordinators: Array.isArray(event.facultyCoordinators)
+                    ? event.facultyCoordinators
+                    : typeof event.facultyCoordinators === "string"
+                        ? JSON.parse(event.facultyCoordinators)
+                        : [],
+            };
+
             eventsCache.eventById[id] = {
                 date: new Date(),
-                event
+                event: normalizedEvent
             };
+
+            return normalizedEvent;
         }
 
         return event;
@@ -211,9 +249,34 @@ export async function getTotalEvents() {
 
 export async function updateEvent(id: number, data: ExtendedEventCreateInput) {
     try {
+        const processedEvent: any = {
+            eventName: data.eventName,
+            eventCategory: data.eventCategory,
+            eventType: data.eventType,
+            minMembers: data.minMembers,
+            maxMembers: data.maxMembers,
+            description: data.description,
+            fee: data.fee,
+            date: data.date,
+            time: data.time,
+            venue: data.venue,
+            imageUrl: data.imageUrl || "",
+            rules: data.rules || [],
+            studentCoordinators: Array.isArray(data.studentCoordinators)
+                ? data.studentCoordinators
+                : typeof data.studentCoordinators === "string"
+                    ? JSON.parse(data.studentCoordinators)
+                    : [],
+            facultyCoordinators: Array.isArray(data.facultyCoordinators)
+                ? data.facultyCoordinators
+                : typeof data.facultyCoordinators === "string"
+                    ? JSON.parse(data.facultyCoordinators)
+                    : [],
+        };
+        
         const updatedEvent = await db.event.update({
             where: { id },
-            data
+            data: processedEvent
         }) as ExtendedEvent | null;
 
         eventsCache.date = null;
