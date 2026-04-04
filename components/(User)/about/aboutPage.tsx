@@ -5,62 +5,84 @@ import { Montserrat } from "next/font/google";
 import { useState } from "react";
 import { FaPlay } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import PopArtBackground, { P, POP_ART_KEYFRAMES } from "@/components/(User)/PopArtBackground";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
 /* ─── palette ─────────────────────────────────────────────────── */
-/* ─── white card panel ────────────────────────────────────────── */
-function Card({ children, style, className }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
-  return (
-    <div className={className} style={{
-      background:"rgba(255,255,255,0.96)",
-      border:`3px solid ${P.black}`,
-      boxShadow:`6px 6px 0 ${P.black}`,
-      borderRadius:16,
-      padding:"clamp(1.4rem,3.5vw,2.5rem)",
-      position:"relative",
-      ...style,
-    }}>
-      {children}
-    </div>
-  );
-}
-
-/* ─── pop-art section heading ─────────────────────────────────── */
-function SectionHeading({ children, color = P.magenta, center = false }: {
-  children: React.ReactNode; color?: string; center?: boolean;
+/* ─── Anime Card Component ─────────────────────────────────── */
+function AnimeAboutCard({ children, accentIndex = 0, style, className }: { 
+  children: React.ReactNode; 
+  accentIndex?: number;
+  style?: React.CSSProperties; 
+  className?: string;
 }) {
   return (
-    <h2 style={{
-      fontFamily:"'Bebas Neue',sans-serif",
-      fontSize:"clamp(1.8rem,5vw,3.2rem)",
-      letterSpacing:"0.05em",
-      lineHeight:0.95,
-      color:P.black,
-      textShadow:`0.08em 0.08em 0 ${color}`,
-      WebkitTextStroke:`0.02em ${P.black}`,
-      margin:"0 0 1.2rem",
-      textAlign:center?"center":"left",
-    }}>{children}</h2>
+    <AnimeCardWrapper 
+      accentIndex={accentIndex} 
+      className={`anime-about-card ${className || ''}`}
+      style={{
+        padding: "clamp(1.4rem,3.5vw,2.5rem)",
+        margin: "0",
+        ...style
+      }}
+    >
+      <div style={{
+        position: "relative",
+        zIndex: 10,
+        color: ANIME_COLORS.text
+      }}>
+        {children}
+      </div>
+    </AnimeCardWrapper>
   );
 }
 
-/* ─── stat chip ───────────────────────────────────────────────── */
-function Chip({ children, color }: { children: React.ReactNode; color: string }) {
+/* ─── Anime Section Heading ─────────────────────────────────── */
+function AnimeAboutSectionHeading({ children, center = false, index = 0 }: {
+  children: React.ReactNode; center?: boolean; index?: number;
+}) {
+  return (
+    <AnimeSectionHeading index={index}>
+      {children}
+    </AnimeSectionHeading>
+  );
+}
+
+/* ─── Anime Stat Chip ──────────────────────────────────────────── */
+function AnimeChip({ children, color }: { children: React.ReactNode; color: string }) {
   return (
     <div style={{
       display:"inline-flex",alignItems:"center",
-      background:color,
-      border:`2px solid ${P.black}`,
-      boxShadow:`3px 3px 0 ${P.black}`,
-      padding:"5px 18px",
-      borderRadius:4,
-      fontFamily:"'Bebas Neue',sans-serif",
-      fontSize:"clamp(0.85rem,2vw,1.1rem)",
-      letterSpacing:"0.12em",
-      color:P.black,
-    }}>{children}</div>
+      background:color + "20",
+      border:`1px solid ${color}`,
+      boxShadow:`0 0 12px ${color}40, inset 0 0 8px ${color}20`,
+      padding:"4px 16px",
+      borderRadius:6,
+      fontFamily:"'Share Tech Mono',monospace",
+      fontSize:"clamp(0.75rem,1.8vw,0.9rem)",
+      letterSpacing:"0.1em",
+      color:color,
+      textTransform:"uppercase",
+      backdropFilter:"blur(4px)"
+    }}>
+      <span style={{
+        width:"4px",height:"4px",borderRadius:"50%",
+        background:color,
+        marginRight:"8px",
+        boxShadow:`0 0 6px ${color}`
+      }} />
+      {children}
+    </div>
   );
 }
 
@@ -71,7 +93,7 @@ export default function AboutPage() {
   return (
     <>
       <style>{`
-        ${POP_ART_KEYFRAMES}
+        ${ANIME_GLOBAL_STYLES}
         @keyframes fadeUp {
           from { opacity:0; transform:translateY(28px); }
           to   { opacity:1; transform:translateY(0); }
@@ -88,41 +110,65 @@ export default function AboutPage() {
         .pop-in   { animation:popIn  0.55s cubic-bezier(.23,1.5,.7,1) both; }
         .play-icon{ animation:playPulse 1.8s ease-in-out infinite; }
         .img-hover{ transition:transform 0.25s ease, box-shadow 0.25s ease; }
-        .img-hover:hover{ transform:translate(-3px,-3px); box-shadow:11px 11px 0 ${P.black}, 15px 15px 0 ${P.cyan} !important; }
+        .img-hover:hover{ transform:translate(-3px,-3px); box-shadow:0 0 20px ${ANIME_COLORS.primary}60, 0 0 40px ${ANIME_COLORS.primary}30 !important; }
+        
+        /* Anime about page specific styles */
+        .anime-about-card {
+          margin-bottom: 2rem;
+        }
+        .anime-about-text {
+          color: rgba(255,255,255,0.85);
+          font-family: 'Rajdhani', sans-serif;
+        }
+        .anime-about-text strong {
+          color: ${ANIME_COLORS.primary};
+        }
       `}</style>
 
-      <PopArtBackground />
+      {/* Anime Background Layers */}
+      <AnimeOrbField />
+      <AnimeParticleField />
 
-      <main style={{position:"relative",zIndex:10,padding:"clamp(3rem,8vh,6rem) clamp(1rem,5vw,3rem) clamp(3rem,8vh,5rem)"}}>
+      <main style={{
+        position:"relative", 
+        zIndex:10, 
+        padding:"clamp(3rem,8vh,6rem) clamp(1rem,5vw,3rem) clamp(3rem,8vh,5rem)",
+        minHeight: "100vh"
+      }}>
         <div style={{maxWidth:1100,margin:"0 auto",display:"flex",flexDirection:"column",gap:"clamp(2rem,4vh,3rem)"}}>
 
           {/* ── PAGE TITLE ── */}
           <div className="fade-up" style={{textAlign:"center"}}>
             <div style={{
               display:"inline-block",
-              background:P.black,color:P.yellow,
-              fontFamily:"'Bebas Neue',sans-serif",
+              background:ANIME_COLORS.background,
+              color:ANIME_COLORS.primary,
+              fontFamily:"'Share Tech Mono',monospace",
               fontSize:"clamp(0.6rem,1.6vw,0.8rem)",
               letterSpacing:"0.4em",
               padding:"4px 20px",
-              border:`2px solid ${P.black}`,
-              boxShadow:`3px 3px 0 ${P.magenta}`,
+              border:`1px solid ${ANIME_COLORS.primary}`,
+              boxShadow:`0 0 12px ${ANIME_COLORS.primary}40`,
               marginBottom:"0.7rem",
+              backdropFilter:"blur(8px)"
             }}>AAKAR 2026</div>
             <div style={{
               fontFamily:"'Bebas Neue',sans-serif",
               fontSize:"clamp(3rem,10vw,7rem)",
               lineHeight:0.88,
               letterSpacing:"0.04em",
-              color:P.black,
-              textShadow:`0.05em 0.05em 0 ${P.magenta}, 0.1em 0.1em 0 ${P.cyan}`,
-              WebkitTextStroke:`0.02em ${P.black}`,
-            }}>ABOUT</div>
+              color:ANIME_COLORS.text,
+              textShadow:`0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.primary}, 3px 3px 0 ${ANIME_COLORS.secondary}`,
+            }}>
+              <AnimeGlitchText text="ABOUT">
+                <span>ABOUT</span>
+              </AnimeGlitchText>
+            </div>
           </div>
 
           {/* ── INSTITUTION CARD ── */}
-          <Card style={{animationDelay:"0.05s"}} className="fade-up" >
-            <SectionHeading color={P.hot}>About Our Institution</SectionHeading>
+          <AnimeAboutCard accentIndex={0} style={{animationDelay:"0.05s"}} className="fade-up">
+            <AnimeAboutSectionHeading index={0}>About Our Institution</AnimeAboutSectionHeading>
 
             <div style={{display:"flex",flexWrap:"wrap",gap:"clamp(1.2rem,3vw,2.5rem)",alignItems:"flex-start"}}>
 
@@ -134,8 +180,8 @@ export default function AboutPage() {
                   position:"relative",
                   borderRadius:12,
                   overflow:"hidden",
-                  border:`3px solid ${P.black}`,
-                  boxShadow:`8px 8px 0 ${P.black}, 12px 12px 0 ${P.hot}`,
+                  border:`3px solid ${ANIME_COLORS.primary}`,
+                  boxShadow:`8px 8px 0 ${ANIME_COLORS.primary}, 12px 12px 0 ${ANIME_COLORS.secondary}`,
                   cursor:"pointer",
                   animationDelay:"0.15s",
                 }}
@@ -159,12 +205,12 @@ export default function AboutPage() {
                 >
                   <div className="play-icon" style={{
                     width:60,height:60,borderRadius:"50%",
-                    background:P.yellow,
-                    border:`3px solid ${P.black}`,
-                    boxShadow:`4px 4px 0 ${P.black}`,
+                    background:ANIME_COLORS.accent,
+                    border:`3px solid ${ANIME_COLORS.primary}`,
+                    boxShadow:`4px 4px 0 ${ANIME_COLORS.primary}`,
                     display:"flex",alignItems:"center",justifyContent:"center",
                   }}>
-                    <FaPlay style={{color:P.black,fontSize:22,marginLeft:3}}/>
+                    <FaPlay style={{color:ANIME_COLORS.primary,fontSize:22,marginLeft:3}}/>
                   </div>
                 </div>
               </div>
@@ -175,15 +221,15 @@ export default function AboutPage() {
                   fontFamily:"'Bebas Neue',sans-serif",
                   fontSize:"clamp(1.2rem,3vw,1.8rem)",
                   letterSpacing:"0.04em",
-                  color:P.black,
+                  color:ANIME_COLORS.text,
                   lineHeight:1.1,
                 }}>AJ Institute of Engineering and Technology</div>
 
                 <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-                  <Chip color={P.yellow}>Est. 2016</Chip>
-                  <Chip color={P.cyan}>Kottara, Mangaluru</Chip>
-                  <Chip color={P.magenta}>VTU Affiliated</Chip>
-                  <Chip color={P.hot}>AICTE Recognised</Chip>
+                  <AnimeChip color={ANIME_COLORS.accent}>Est. 2016</AnimeChip>
+                  <AnimeChip color={ANIME_COLORS.secondary}>Kottara, Mangaluru</AnimeChip>
+                  <AnimeChip color={ANIME_COLORS.purple}>VTU Affiliated</AnimeChip>
+                  <AnimeChip color={ANIME_COLORS.primary}>AICTE Recognised</AnimeChip>
                 </div>
 
                 <div className={montserrat.className} style={{display:"flex",flexDirection:"column",gap:10}}>
@@ -192,13 +238,12 @@ export default function AboutPage() {
                     "Promoted by Laxmi Memorial Education Trust, registered 1991",
                     "Students are at the heart of our institution — every staff member aligns their activities to meet their needs.",
                   ].map((line,i)=>(
-                    <p key={i} style={{
+                    <p key={i} className="anime-about-text" style={{
                       fontSize:"clamp(0.82rem,1.5vw,0.95rem)",
-                      color:"#1a1a2e",
                       lineHeight:1.7,
                       margin:0,
                       paddingLeft:12,
-                      borderLeft:`3px solid ${[P.magenta,P.cyan,P.hot][i]}`,
+                      borderLeft:`3px solid ${[ANIME_COLORS.purple,ANIME_COLORS.secondary,ANIME_COLORS.primary][i]}`,
                     }}>{line}</p>
                   ))}
                 </div>
@@ -209,26 +254,26 @@ export default function AboutPage() {
             <div className={montserrat.className} style={{
               marginTop:"1.8rem",
               paddingTop:"1.5rem",
-              borderTop:`2px dashed rgba(0,0,0,0.12)`,
+              borderTop:`1px solid rgba(255,255,255,0.12)`,
               display:"flex",flexDirection:"column",gap:14,
             }}>
               {[
                 "A J Institute of Engineering & Technology is promoted by Laxmi Memorial Education Trust which was registered in the year 1991 in memory of Late Laxmi Shetty, mother of Dr. A. J. Shetty.",
                 "The main objective is to impart high quality theoretical knowledge supported by practical experience to shape students into highly competent professionals and exemplary human beings.",
               ].map((para,i)=>(
-                <p key={i} style={{fontSize:"clamp(0.85rem,1.5vw,1rem)",color:"#1a1a2e",lineHeight:1.75,margin:0}}>{para}</p>
+                <p key={i} className="anime-about-text" style={{fontSize:"clamp(0.85rem,1.5vw,1rem)",lineHeight:1.75,margin:0}}>{para}</p>
               ))}
             </div>
-          </Card>
+          </AnimeAboutCard>
 
           {/* ── ABOUT AAKAR CARD ── */}
-          <Card className="fade-up" style={{animationDelay:"0.12s"}}>
-            <SectionHeading color={P.cyan} center>About AAKAR</SectionHeading>
+          <AnimeAboutCard accentIndex={1} className="fade-up" style={{animationDelay:"0.12s"}}>
+            <AnimeAboutSectionHeading index={1} center>About AAKAR</AnimeAboutSectionHeading>
 
             {/* date + venue chips */}
             <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",marginBottom:"1.8rem"}}>
-              <Chip color={P.yellow}>May 20 · 21 · 22, 2025</Chip>
-              <Chip color={P.magenta}>AJ Institute, Kottarachowki, Mangaluru</Chip>
+              <AnimeChip color={ANIME_COLORS.accent}>May 20 · 21 · 22, 2025</AnimeChip>
+              <AnimeChip color={ANIME_COLORS.purple}>AJ Institute, Kottarachowki, Mangaluru</AnimeChip>
             </div>
 
             <div style={{display:"flex",flexWrap:"wrap",gap:"clamp(1.2rem,3vw,2.5rem)",alignItems:"center"}}>
@@ -237,29 +282,32 @@ export default function AboutPage() {
               <div style={{flex:"1 1 300px"}}>
                 <p className={montserrat.className} style={{
                   fontSize:"clamp(0.85rem,1.5vw,1rem)",
-                  color:"#1a1a2e",
                   lineHeight:1.8,
                   margin:0,
                 }}>
-                  Aakar is a state-level techno-cultural fest that brings together innovation,
-                  creativity, and entertainment under one roof. The event aims to push the
-                  boundaries of technology and culture, providing a platform for students,
-                  professionals, and enthusiasts to showcase their skills and talent. With an
-                  exciting mix of technical competitions, cultural performances and interactive
-                  sessions.
+                  <span className="anime-about-text">
+                    Aakar is a <strong>state-level techno-cultural fest</strong> that brings together innovation,
+                    creativity, and entertainment under one roof. The event aims to push the
+                    boundaries of technology and culture, providing a platform for students,
+                    professionals, and enthusiasts to showcase their skills and talent. With an
+                    exciting mix of technical competitions, cultural performances and interactive
+                    sessions.
+                  </span>
                 </p>
 
                 {/* BRAINS · GUTS · GLORY strip */}
                 <div style={{
                   marginTop:"1.4rem",
                   display:"inline-flex",alignItems:"center",gap:10,
-                  background:P.black,color:P.yellow,
-                  fontFamily:"'Bebas Neue',sans-serif",
+                  background:ANIME_COLORS.background,
+                  color:ANIME_COLORS.accent,
+                  fontFamily:"'Share Tech Mono',monospace",
                   fontSize:"clamp(0.7rem,1.8vw,1rem)",
                   letterSpacing:"0.32em",
                   padding:"6px 20px",
-                  border:`2px solid ${P.black}`,
-                  boxShadow:`4px 4px 0 ${P.magenta}`,
+                  border:`1px solid ${ANIME_COLORS.accent}`,
+                  boxShadow:`0 0 12px ${ANIME_COLORS.accent}40`,
+                  backdropFilter:"blur(8px)"
                 }}>▲ BRAINS · GUTS · GLORY ▲</div>
               </div>
 
@@ -270,8 +318,8 @@ export default function AboutPage() {
                   flex:"0 0 clamp(200px,38%,400px)",
                   borderRadius:12,
                   overflow:"hidden",
-                  border:`3px solid ${P.black}`,
-                  boxShadow:`8px 8px 0 ${P.black}, 12px 12px 0 ${P.magenta}`,
+                  border:`2px solid ${ANIME_COLORS.purple}`,
+                  boxShadow:`0 0 20px ${ANIME_COLORS.purple}40`,
                   animationDelay:"0.2s",
                 }}
               >
@@ -283,7 +331,7 @@ export default function AboutPage() {
                 />
               </div>
             </div>
-          </Card>
+          </AnimeAboutCard>
 
         </div>
       </main>
@@ -300,49 +348,49 @@ export default function AboutPage() {
           }}
           onClick={()=>setIsModalOpen(false)}
         >
-          <div
-            style={{
-              background:P.black,
-              border:`4px solid ${P.black}`,
-              boxShadow:`10px 10px 0 ${P.magenta}`,
-              borderRadius:16,
-              overflow:"hidden",
-              width:"100%",
-              maxWidth:860,
-            }}
-            onClick={e=>e.stopPropagation()}
-          >
-            {/* modal top bar */}
-            <div style={{
-              background:P.yellow,
-              borderBottom:`3px solid ${P.black}`,
-              padding:"6px 16px",
-              display:"flex",justifyContent:"space-between",alignItems:"center",
-            }}>
-              <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"1rem",letterSpacing:"0.12em",color:P.black}}>
-                AJ INSTITUTE — CAMPUS TOUR
-              </span>
-              <button
-                onClick={()=>setIsModalOpen(false)}
-                style={{
-                  fontFamily:"'Bebas Neue',sans-serif",
-                  fontSize:"0.9rem",letterSpacing:"0.1em",
-                  background:"transparent",border:"none",
-                  color:P.black,cursor:"pointer",padding:"2px 8px",
-                }}
-              >CLOSE ✖</button>
+            <div
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              style={{
+                borderRadius:16,
+                overflow:"hidden",
+                width:"100%",
+                maxWidth:860,
+                background: `${ANIME_COLORS.background}40`,
+                border: `1px solid ${ANIME_COLORS.primary}`,
+                boxShadow: `0 0 20px ${ANIME_COLORS.primary}40`,
+              }}
+            >
+              {/* modal top bar */}
+              <div style={{
+                background:`${ANIME_COLORS.accent}20`,
+                borderBottom:`1px solid ${ANIME_COLORS.primary}`,
+                padding:"6px 16px",
+                display:"flex",justifyContent:"space-between",alignItems:"center",
+              }}>
+                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"1rem",letterSpacing:"0.12em",color:ANIME_COLORS.text}}>
+                  AJ INSTITUTE — CAMPUS TOUR
+                </span>
+                <button
+                  onClick={()=>setIsModalOpen(false)}
+                  style={{
+                    fontFamily:"'Bebas Neue',sans-serif",
+                    fontSize:"0.9rem",letterSpacing:"0.1em",
+                    background:"transparent",border:"none",
+                    color:ANIME_COLORS.text,cursor:"pointer",padding:"2px 8px",
+                  }}
+                >CLOSE ✖</button>
+              </div>
+              <div style={{aspectRatio:"16/9",width:"100%"}}>
+                <iframe
+                  style={{width:"100%",height:"100%",display:"block",border:"none"}}
+                  src="https://www.youtube.com/embed/3rVNKn6h-Hk?autoplay=1"
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
             </div>
-            <div style={{aspectRatio:"16/9",width:"100%"}}>
-              <iframe
-                style={{width:"100%",height:"100%",display:"block",border:"none"}}
-                src="https://www.youtube.com/embed/3rVNKn6h-Hk?autoplay=1"
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
-            </div>
-          </div>
         </div>
       )}
     </>

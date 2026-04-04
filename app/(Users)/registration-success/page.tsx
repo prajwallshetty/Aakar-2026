@@ -2,19 +2,28 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import PopArtBackground from "@/components/(User)/PopArtBackground";
+import { 
+  AnimeParticleField, 
+  AnimeOrbField, 
+  AnimeCardWrapper, 
+  AnimeSectionHeading, 
+  AnimeGlitchText,
+  ANIME_GLOBAL_STYLES,
+  ANIME_COLORS,
+  ACCENTS 
+} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
+// ─── Anime Design tokens ────────────────────────────────────────────────────────────
 const C = {
-    yellow: "#ffff00",
-    magenta: "#ff00ff",
-    cyan: "#00ffff",
-    pink: "#ff0066",
-    black: "#000",
-    white: "#fff",
+    yellow: ANIME_COLORS.accent,
+    magenta: ANIME_COLORS.primary,
+    cyan: ANIME_COLORS.secondary,
+    pink: ANIME_COLORS.purple,
+    black: ANIME_COLORS.background,
+    white: ANIME_COLORS.text,
 };
-const popFont = "'Arial Black', Impact, sans-serif";
-const monoFont = "'Courier New', 'Space Mono', monospace";
+const popFont = "'Bebas Neue', Impact, sans-serif";
+const monoFont = "'Share Tech Mono', monospace";
 const displayFont = "'Bebas Neue', Impact, sans-serif";
 
 // ─── Confetti pieces (static positions, CSS animates them) ────────────────────
@@ -56,24 +65,9 @@ export default function RegistrationSuccess() {
             padding: "48px 16px 80px",
         }}>
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+                ${ANIME_GLOBAL_STYLES}
+                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono:wght@400;700&display=swap');
                 * { box-sizing: border-box; }
-
-                /* ── background ── */
-                .sr-bg {
-                    position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-                    background: repeating-linear-gradient(45deg,
-                        #ffff00 0px, #ffff00 18px, #fff500 18px, #fff500 20px);
-                }
-                .sr-dots {
-                    position: absolute; inset: 0;
-                    background-image: radial-gradient(circle, #00000020 1.8px, transparent 1.8px);
-                    background-size: 18px 18px;
-                }
-                .sr-tri-tl { position:absolute; top:0; left:0;  width:180px; height:180px; background:#ff00ff; opacity:.16; clip-path:polygon(0 0,100% 0,0 100%); }
-                .sr-tri-tr { position:absolute; top:0; right:0; width:180px; height:180px; background:#00ffff; opacity:.16; clip-path:polygon(0 0,100% 0,100% 100%); }
-                .sr-tri-bl { position:absolute; bottom:0; left:0;  width:180px; height:180px; background:#ff0066; opacity:.16; clip-path:polygon(0 0,0 100%,100% 100%); }
-                .sr-tri-br { position:absolute; bottom:0; right:0; width:180px; height:180px; background:#ff00ff; opacity:.16; clip-path:polygon(100% 0,100% 100%,0 100%); }
 
                 /* ── confetti drop ── */
                 @keyframes confettiFall {
@@ -84,12 +78,6 @@ export default function RegistrationSuccess() {
                 .confetti-piece {
                     position: fixed; top: -20px; z-index: 50;
                     animation: confettiFall 3.2s ease-in forwards;
-                }
-
-                /* ── floaters ── */
-                @keyframes floatShape {
-                    from { transform: translateY(0) rotate(0deg); }
-                    to   { transform: translateY(-16px) rotate(10deg); }
                 }
 
                 /* ── card pop-in ── */
@@ -126,20 +114,18 @@ export default function RegistrationSuccess() {
 
                 /* ── button pop ── */
                 .btn-pop {
-                    transition: transform 0.1s, box-shadow 0.1s;
+                    transition: all 0.3s ease;
                     cursor: pointer;
                 }
                 .btn-pop:hover {
-                    transform: translate(3px, 3px);
-                    box-shadow: 0 0 0 #000 !important;
-                }
-                .btn-pop:active {
-                    transform: translate(5px, 5px);
+                    transform: translateY(-2px);
+                    box-shadow: 0 0 20px ${ANIME_COLORS.primary}60;
                 }
             `}</style>
 
             {/* ── Background ────────────────────────────────────────────── */}
-            <PopArtBackground />
+            <AnimeOrbField />
+            <AnimeParticleField />
 
             {/* ── Confetti (only after mount to avoid hydration diff) ────── */}
             {mounted && CONFETTI.map((c, i) => (
@@ -147,21 +133,20 @@ export default function RegistrationSuccess() {
                     style={{
                         left: c.left,
                         width: c.size, height: c.size,
-                        background: c.color,
-                        border: `2px solid ${C.black}`,
+                        background: `${c.color}80`,
+                        border: `1px solid ${c.color}`,
+                        boxShadow: `0 0 12px ${c.color}40`,
                         transform: `rotate(${c.rotate}deg)`,
                         animationDelay: c.delay,
-                        borderRadius: i % 3 === 0 ? "50%" : 0,
+                        borderRadius: i % 3 === 0 ? "50%" : 6,
+                        backdropFilter: "blur(4px)"
                     }}
                 />
             ))}
 
             {/* ── Main card ─────────────────────────────────────────────── */}
-            <div className="card-popin" style={{
+            <AnimeCardWrapper accentIndex={0} className="card-popin" style={{
                 position: "relative", zIndex: 10,
-                background: C.white,
-                border: `4px solid ${C.black}`,
-                boxShadow: `10px 10px 0 ${C.black}, 14px 14px 0 ${C.magenta}`,
                 maxWidth: 560,
                 width: "100%",
                 overflow: "hidden",
@@ -169,16 +154,17 @@ export default function RegistrationSuccess() {
 
                 {/* Top colour bar */}
                 <div style={{
-                    background: C.magenta,
-                    borderBottom: `4px solid ${C.black}`,
+                    background: `${ANIME_COLORS.primary}80`,
+                    borderBottom: `1px solid ${ANIME_COLORS.primary}`,
                     padding: "6px 0",
                     display: "flex",
                     overflow: "hidden",
+                    backdropFilter: "blur(4px)"
                 }}>
                     <div style={{
                         whiteSpace: "nowrap",
                         fontFamily: popFont,
-                        fontSize: 10, fontWeight: 900, letterSpacing: 5, color: C.black,
+                        fontSize: 10, fontWeight: 900, letterSpacing: 5, color: ANIME_COLORS.text,
                         animation: "marquee 10s linear infinite",
                     }}>
                         {Array(12).fill("★ REGISTRATION SUCCESS ★ AAKAR 2026 ★ AJIET ★ ").join("")}
@@ -191,18 +177,19 @@ export default function RegistrationSuccess() {
 
                     {/* REGISTERED stamp */}
                     <div className="stamp" style={{
-                        background: C.cyan,
-                        border: `4px solid ${C.black}`,
-                        boxShadow: `6px 6px 0 ${C.black}`,
+                        background: `${ANIME_COLORS.secondary}80`,
+                        border: `1px solid ${ANIME_COLORS.secondary}`,
+                        boxShadow: `0 0 12px ${ANIME_COLORS.secondary}40`,
                         padding: "10px 28px",
                         display: "inline-flex", alignItems: "center", gap: 10,
+                        borderRadius: 6,
+                        backdropFilter: "blur(4px)"
                     }}>
-                        <span style={{ fontSize: 28 }}>✅</span>
                         <span style={{
                             fontFamily: popFont, fontSize: 18, fontWeight: 900,
-                            letterSpacing: 4, color: C.black, textTransform: "uppercase",
+                            letterSpacing: 4, color: ANIME_COLORS.text, textTransform: "uppercase",
                         }}>
-                            YOU&apos;RE IN!
+                            YOU'RE IN!
                         </span>
                     </div>
 
@@ -212,44 +199,51 @@ export default function RegistrationSuccess() {
                             fontFamily: displayFont,
                             fontSize: "clamp(42px, 8vw, 80px)",
                             letterSpacing: 6, lineHeight: 0.9,
-                            color: C.black,
+                            color: ANIME_COLORS.text,
                         }}>
-                            REGISTRATION
+                            <AnimeGlitchText text="REGISTRATION">
+                                REGISTRATION
+                            </AnimeGlitchText>
                         </div>
                         <div style={{
                             fontFamily: displayFont,
                             fontSize: "clamp(42px, 8vw, 80px)",
                             letterSpacing: 6, lineHeight: 0.9,
-                            color: C.magenta,
-                            WebkitTextStroke: `0.05em ${C.black}`,
+                            color: ANIME_COLORS.primary,
+                            textShadow: `0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.secondary}, 3px 3px 0 ${ANIME_COLORS.accent}`,
                         }}>
-                            CONFIRMED!
+                            <AnimeGlitchText text="CONFIRMED!">
+                                CONFIRMED!
+                            </AnimeGlitchText>
                         </div>
                     </div>
 
                     {/* Divider */}
                     <div style={{
                         width: "100%", height: 4,
-                        background: "repeating-linear-gradient(90deg,#ff00ff 0,#ff00ff 14px,#00ffff 14px,#00ffff 28px,#ff0066 28px,#ff0066 42px,#000 42px,#000 56px)",
+                        background: `linear-gradient(90deg, ${ANIME_COLORS.primary} 0%, ${ANIME_COLORS.secondary} 50%, ${ANIME_COLORS.accent} 100%)`,
+                        borderRadius: 2,
                     }} />
 
                     {/* Message */}
                     <div style={{
-                        background: C.yellow,
-                        border: `3px solid ${C.black}`,
-                        boxShadow: `4px 4px 0 ${C.black}`,
+                        background: `${ANIME_COLORS.accent}40`,
+                        border: `1px solid ${ANIME_COLORS.accent}`,
+                        boxShadow: `0 0 12px ${ANIME_COLORS.accent}40`,
                         padding: "16px 20px",
                         width: "100%",
+                        borderRadius: 6,
+                        backdropFilter: "blur(4px)"
                     }}>
                         <p style={{
                             fontFamily: monoFont, fontSize: 13, fontWeight: 700,
-                            color: C.black, lineHeight: 1.7, margin: 0,
+                            color: ANIME_COLORS.text, lineHeight: 1.7, margin: 0,
                             textAlign: "center",
                         }}>
-                            Your spot at <strong>AAKAR 2026</strong> is locked in! 🎉<br />
+                            Your spot at <strong>AAKAR 2026</strong> is locked in!<br />
                             Check your email for a confirmation ticket.<br />
                             <span style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>
-                                📅 MAY 21–22, 2026 · AJIET, MANGALORE
+                                MAY 21–22, 2026 · AJIET, MANGALORE
                             </span>
                         </p>
                     </div>
@@ -257,21 +251,22 @@ export default function RegistrationSuccess() {
                     {/* What's next pills */}
                     <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
                         {[
-                            { icon: "📧", text: "Confirmation email sent to your inbox", color: C.cyan },
-                            { icon: "🎟️", text: "Show your ticket at the venue on event day", color: C.pink },
-                            { icon: "📱", text: "Follow us on Instagram for updates", color: C.magenta },
+                            { text: "Confirmation email sent to your inbox", color: ANIME_COLORS.secondary },
+                            { text: "Show your ticket at the venue on event day", color: ANIME_COLORS.purple },
+                            { text: "Follow us on Instagram for updates", color: ANIME_COLORS.primary },
                         ].map((item, i) => (
                             <div key={i} style={{
                                 display: "flex", alignItems: "center", gap: 12,
-                                background: item.color,
-                                border: `3px solid ${C.black}`,
-                                boxShadow: `3px 3px 0 ${C.black}`,
+                                background: `${item.color}40`,
+                                border: `1px solid ${item.color}`,
+                                boxShadow: `0 0 12px ${item.color}40`,
                                 padding: "10px 14px",
+                                borderRadius: 6,
+                                backdropFilter: "blur(4px)"
                             }}>
-                                <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
                                 <span style={{
                                     fontFamily: monoFont, fontSize: 11, fontWeight: 700,
-                                    letterSpacing: 1, color: C.black, textTransform: "uppercase",
+                                    letterSpacing: 1, color: ANIME_COLORS.text, textTransform: "uppercase",
                                 }}>
                                     {item.text}
                                 </span>
@@ -286,51 +281,58 @@ export default function RegistrationSuccess() {
                     }}>
                         <Link href="/" className="btn-pop" style={{
                             display: "inline-block",
-                            background: C.black, color: C.yellow,
-                            border: `3px solid ${C.black}`,
-                            boxShadow: `5px 5px 0 ${C.magenta}`,
+                            background: `${ANIME_COLORS.background}40`,
+                            color: ANIME_COLORS.accent,
+                            border: `1px solid ${ANIME_COLORS.accent}`,
+                            boxShadow: `0 0 8px ${ANIME_COLORS.accent}40`,
                             padding: "12px 24px",
                             fontFamily: popFont, fontSize: 12, fontWeight: 900,
                             letterSpacing: 3, textTransform: "uppercase",
                             textDecoration: "none",
+                            borderRadius: 6,
+                            backdropFilter: "blur(4px)"
                         }}>
-                            🏠 BACK TO HOME
+                            BACK TO HOME
                         </Link>
 
                         <Link href="/events" className="btn-pop" style={{
                             display: "inline-block",
-                            background: C.pink, color: C.white,
-                            border: `3px solid ${C.black}`,
-                            boxShadow: `5px 5px 0 ${C.black}`,
+                            background: `${ANIME_COLORS.purple}40`,
+                            color: ANIME_COLORS.text,
+                            border: `1px solid ${ANIME_COLORS.purple}`,
+                            boxShadow: `0 0 8px ${ANIME_COLORS.purple}40`,
                             padding: "12px 24px",
                             fontFamily: popFont, fontSize: 12, fontWeight: 900,
                             letterSpacing: 3, textTransform: "uppercase",
                             textDecoration: "none",
+                            borderRadius: 6,
+                            backdropFilter: "blur(4px)"
                         }}>
-                            🎪 EXPLORE EVENTS
+                            EXPLORE EVENTS
                         </Link>
                     </div>
                 </div>
 
                 {/* Bottom ticket stub */}
                 <div style={{
-                    background: C.black,
-                    borderTop: `4px dashed ${C.magenta}`,
+                    background: `${ANIME_COLORS.background}80`,
+                    borderTop: `1px dashed ${ANIME_COLORS.primary}`,
                     padding: "12px 24px",
                     display: "flex", justifyContent: "space-between", alignItems: "center",
                     flexWrap: "wrap", gap: 8,
+                    backdropFilter: "blur(4px)"
                 }}>
                     <div>
                         <div style={{
                             fontFamily: monoFont, fontSize: 9, fontWeight: 700,
-                            letterSpacing: 4, color: "#666", textTransform: "uppercase",
+                            letterSpacing: 4, color: ANIME_COLORS.subtext, textTransform: "uppercase",
                             marginBottom: 2,
                         }}>
                             EVENT
                         </div>
                         <div style={{
                             fontFamily: popFont, fontSize: 14, fontWeight: 900,
-                            letterSpacing: 3, color: C.yellow,
+                            letterSpacing: 3, color: ANIME_COLORS.accent,
                         }}>
                             AAKAR 2026
                         </div>
@@ -338,40 +340,27 @@ export default function RegistrationSuccess() {
                     <div style={{ textAlign: "right" }}>
                         <div style={{
                             fontFamily: monoFont, fontSize: 9, fontWeight: 700,
-                            letterSpacing: 4, color: "#666", textTransform: "uppercase",
+                            letterSpacing: 4, color: ANIME_COLORS.subtext, textTransform: "uppercase",
                             marginBottom: 2,
                         }}>
                             STATUS
                         </div>
                         <div className="wiggle" style={{
                             display: "inline-block",
-                            background: C.cyan,
-                            border: `2px solid ${C.black}`,
+                            background: `${ANIME_COLORS.secondary}80`,
+                            border: `1px solid ${ANIME_COLORS.secondary}`,
                             padding: "3px 12px",
                             fontFamily: popFont, fontSize: 11, fontWeight: 900,
-                            letterSpacing: 3, color: C.black,
+                            letterSpacing: 3, color: ANIME_COLORS.text,
+                            borderRadius: 4,
+                            boxShadow: `0 0 8px ${ANIME_COLORS.secondary}40`,
+                            backdropFilter: "blur(4px)"
                         }}>
-                            ✓ CONFIRMED
+                            CONFIRMED
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {/* ── Bouncing emoji row ────────────────────────────────────── */}
-            <div style={{
-                position: "relative", zIndex: 10,
-                marginTop: 28, display: "flex", gap: 18,
-            }}>
-                {["🎉", "🎊", "🏆", "🎊", "🎉"].map((e, i) => (
-                    <span key={i} className="bounce" style={{
-                        fontSize: 28,
-                        animationDelay: `${i * 0.15}s`,
-                        filter: "drop-shadow(2px 2px 0 #000)",
-                    }}>
-                        {e}
-                    </span>
-                ))}
-            </div>
+            </AnimeCardWrapper>
         </div>
     );
 }

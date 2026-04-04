@@ -5,16 +5,7 @@ import Link from "next/link";
 import { Calendar, Clock, Wallet, Phone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedEvent } from "@/types";
-
-const P = {
-  cyan: "#00E5FF",
-  hot: "#FF4D00",
-  magenta: "#B026FF",
-  yellow: "#FFD700",
-  green: "#00FF9D",
-  black: "#080A12",
-  white: "#FFFFFF"
-};
+import { ANIME_COLORS } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 // ─── Particle field ────────────────────────────────────────────
 function ParticleField() {
@@ -32,7 +23,7 @@ function ParticleField() {
     resize();
     window.addEventListener("resize", resize);
     const particles: { x: number; y: number; vx: number; vy: number; r: number; alpha: number; color: string }[] = [];
-    const COLORS = [P.hot, P.cyan, P.yellow, P.magenta, P.green];
+    const COLORS = [ANIME_COLORS.primary, ANIME_COLORS.secondary, ANIME_COLORS.accent, ANIME_COLORS.purple, ANIME_COLORS.mint];
     for (let i = 0; i < 80; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -107,8 +98,8 @@ function Card({ children, style, className = "" }: { children: React.ReactNode; 
       ...style,
     }}>
       {/* Decorative corners */}
-      <div style={{ position: "absolute", top: 0, left: 0, width: 15, height: 15, borderTop: `2px solid ${P.cyan}`, borderLeft: `2px solid ${P.cyan}` }} />
-      <div style={{ position: "absolute", bottom: 0, right: 0, width: 15, height: 15, borderBottom: `2px solid ${P.hot}`, borderRight: `2px solid ${P.hot}` }} />
+      <div style={{ position: "absolute", top: 0, left: 0, width: 15, height: 15, borderTop: `2px solid ${ANIME_COLORS.secondary}`, borderLeft: `2px solid ${ANIME_COLORS.secondary}` }} />
+      <div style={{ position: "absolute", bottom: 0, right: 0, width: 15, height: 15, borderBottom: `2px solid ${ANIME_COLORS.primary}`, borderRight: `2px solid ${ANIME_COLORS.primary}` }} />
       {/* Subtle scanline overlay */}
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)", backgroundSize: "100% 4px", pointerEvents: "none", mixBlendMode: "overlay" }} />
       <div style={{ position: "relative", zIndex: 1 }}>
@@ -118,7 +109,7 @@ function Card({ children, style, className = "" }: { children: React.ReactNode; 
   );
 }
 
-function SectionHeading({ children, color = P.cyan }: { children: React.ReactNode; color?: string }) {
+function SectionHeading({ children, color = ANIME_COLORS.secondary }: { children: React.ReactNode; color?: string }) {
   return (
     <div className="section-head" style={{ marginBottom: "1.5rem" }}>
       <div className="head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${color})` }} />
@@ -126,7 +117,7 @@ function SectionHeading({ children, color = P.cyan }: { children: React.ReactNod
         fontFamily: "'Bebas Neue', sans-serif",
         fontSize: "clamp(1.4rem, 3.5vw, 2rem)",
         letterSpacing: "0.1em",
-        color: P.white,
+        color: ANIME_COLORS.text,
         textShadow: `0 0 15px ${color}80, 0 0 30px ${color}40`,
         margin: "0 15px",
         whiteSpace: "nowrap"
@@ -165,7 +156,7 @@ function InfoRow({ icon, label, color }: { icon: React.ReactNode; label: string;
       <span style={{
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: "clamp(0.9rem, 1.8vw, 1.1rem)",
-        color: P.white, fontWeight: 400,
+        color: ANIME_COLORS.text, fontWeight: 400,
         letterSpacing: "0.05em"
       }}>{label}</span>
     </div>
@@ -198,7 +189,7 @@ function CoordinatorCard({ coordinator, accent }: { coordinator: { name: string;
       <p style={{
         fontFamily: "'Rajdhani', sans-serif",
         fontSize: "clamp(1.1rem, 2vw, 1.3rem)", fontWeight: 700,
-        color: P.white, marginBottom: "0.5rem",
+        color: ANIME_COLORS.text, marginBottom: "0.5rem",
         letterSpacing: "0.05em",
         textShadow: `0 0 10px rgba(255,255,255,0.3)`
       }}>{coordinator.name}</p>
@@ -412,7 +403,7 @@ const EventDescription = ({
 
           {isLoading ? <EventDescriptionSkeleton /> : !eventData ? (
             <Card>
-              <p style={{ textAlign: "center", fontFamily: "'Share Tech Mono', monospace", fontSize: "1.2rem", color: P.cyan }}>
+              <p style={{ textAlign: "center", fontFamily: "'Share Tech Mono', monospace", fontSize: "1.2rem", color: ANIME_COLORS.secondary }}>
                 [ ERROR: EVENT_DATA_NOT_FOUND ]
               </p>
             </Card>
@@ -425,7 +416,7 @@ const EventDescription = ({
                 <div className="anim-in" style={{ flex: "1 1 320px", display: "flex", flexDirection: "column", gap: 20 }}>
                   {/* Title */}
                   <div style={{ marginBottom: "0.5rem" }}>
-                    <div style={{ fontFamily: "'Share Tech Mono', monospace", color: P.cyan, fontSize: "0.9rem", letterSpacing: "0.2em", marginBottom: 8 }}>
+                    <div style={{ fontFamily: "'Share Tech Mono', monospace", color: ANIME_COLORS.secondary, fontSize: "0.9rem", letterSpacing: "0.2em", marginBottom: 8 }}>
                       &gt; SYSTEM_OP // EVENT_ARCHIVE
                     </div>
                     <h1 style={{
@@ -456,9 +447,9 @@ const EventDescription = ({
 
                   {/* Quick Info */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <InfoRow icon={<Calendar size={18} />} label={eventData.date ? new Date(eventData.date).toDateString() : "TBA"} color={P.cyan} />
-                    <InfoRow icon={<Clock size={18} />} label={eventData.time || "TBA"} color={P.hot} />
-                    <InfoRow icon={<Wallet size={18} />} label={eventData.fee ? `₹${eventData.fee}` : "TBA"} color={P.magenta} />
+                    <InfoRow icon={<Calendar size={18} />} label={eventData.date ? new Date(eventData.date).toDateString() : "TBA"} color={ANIME_COLORS.secondary} />
+                    <InfoRow icon={<Clock size={18} />} label={eventData.time || "TBA"} color={ANIME_COLORS.primary} />
+                    <InfoRow icon={<Wallet size={18} />} label={eventData.fee ? `₹${eventData.fee}` : "TBA"} color={ANIME_COLORS.accent} />
                   </div>
 
                   {/* CTA */}
@@ -475,8 +466,8 @@ const EventDescription = ({
                 <div className="anim-img" style={{ flex: "0 0 clamp(260px, 35vw, 360px)", margin: "0 auto" }}>
                   <div style={{
                     width: "100%", aspectRatio: "4/5", position: "relative",
-                    background: "rgba(0,0,0,0.5)", border: `1px solid ${P.cyan}`,
-                    boxShadow: `0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,229,255,0.2), inset 0 0 20px rgba(0,229,255,0.1)`,
+                    background: "rgba(0,0,0,0.5)", border: `1px solid ${ANIME_COLORS.secondary}`,
+                    boxShadow: `0 20px 50px rgba(0,0,0,0.8), 0 0 30px ${ANIME_COLORS.secondary}40, inset 0 0 20px ${ANIME_COLORS.secondary}20`,
                     borderRadius: "16px", overflow: "hidden",
                   }}>
                     {eventData.imageUrl ? (
@@ -492,18 +483,17 @@ const EventDescription = ({
                       </>
                     ) : (
                       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
-                        <div style={{ width: 40, height: 40, border: `2px solid ${P.cyan}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
-                        <span style={{ fontFamily: "'Share Tech Mono', monospace", color: P.cyan, fontSize: "0.9rem", letterSpacing: "0.2em" }}>AWAITING_IMAGE</span>
+                        <div style={{ width: 40, height: 40, border: `2px solid ${ANIME_COLORS.secondary}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                        <span style={{ fontFamily: "'Share Tech Mono', monospace", color: ANIME_COLORS.secondary, fontSize: "0.9rem", letterSpacing: "0.2em" }}>AWAITING_IMAGE</span>
                       </div>
                     )}
                   </div>
                 </div>
 
               </div>
-
               {/* ── RULES ── */}
               <Card className="anim-in" style={{ animationDelay: "0.15s" }}>
-                <SectionHeading color={P.hot}>SYSTEM DIRECTIVES_</SectionHeading>
+                <SectionHeading color={ANIME_COLORS.primary}>SYSTEM DIRECTIVES_</SectionHeading>
                 {hasRules ? (
                   <ul style={{ display: "flex", flexDirection: "column", gap: 12, margin: 0, padding: 0, listStyle: "none" }}>
                     {eventData.rules.map((rule, i) => (
@@ -519,7 +509,7 @@ const EventDescription = ({
                       >
                         <span style={{
                           fontFamily: "'Share Tech Mono', monospace", fontSize: "1.1rem",
-                          color: P.hot, textShadow: `0 0 10px ${P.hot}80`, flexShrink: 0, minWidth: 28,
+                          color: ANIME_COLORS.primary, textShadow: `0 0 10px ${ANIME_COLORS.primary}80`, flexShrink: 0, minWidth: 28,
                         }}>
                           [{String(i+1).padStart(2, "0")}]
                         </span>
@@ -539,11 +529,11 @@ const EventDescription = ({
 
               {/* ── COORDINATORS ── */}
               <Card className="anim-in" style={{ animationDelay: "0.3s" }}>
-                <SectionHeading color={P.magenta}>OPERATORS_</SectionHeading>
+                <SectionHeading color={ANIME_COLORS.accent}>OPERATORS_</SectionHeading>
                 {hasCoordinators ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: 24, marginTop: 10 }}>
-                    <CoordinatorSection title="STUDENT_LEADS" coordinators={studentCoordinators} accent={P.cyan} />
-                    <CoordinatorSection title="FACULTY_OVERSEERS" coordinators={facultyCoordinators} accent={P.yellow} />
+                    <CoordinatorSection title="STUDENT_LEADS" coordinators={studentCoordinators} accent={ANIME_COLORS.secondary} />
+                    <CoordinatorSection title="FACULTY_OVERSEERS" coordinators={facultyCoordinators} accent={ANIME_COLORS.accent} />
                   </div>
                 ) : (
                   <p style={{ fontFamily: "'Share Tech Mono', monospace", color: "rgba(255,255,255,0.5)", textAlign: "center", fontStyle: "italic", padding: "2rem 0" }}>
