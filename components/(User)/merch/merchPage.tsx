@@ -27,7 +27,7 @@ function TshirtModel({ modelUrl }: { modelUrl: string }) {
   return (
     <group rotation={[0.02, -0.32, 0]}>
       <Center>
-        <primitive object={centeredScene} scale={1} position={[0, 0, 0]} />
+        <primitive object={centeredScene} scale={0.9} position={[0, 0, 0]} />
       </Center>
     </group>
   );
@@ -145,17 +145,17 @@ export default function MerchPage() {
                 <div className="pointer-events-none absolute inset-x-14 top-6 h-24 rounded-full bg-cyan-300/45 blur-3xl merch-spot" style={{ background: `${ANIME_COLORS.secondary}45` }} />
 
                 <div
-                  className="relative mx-auto flex h-[520px] w-full max-w-[430px] items-center justify-center [perspective:1100px]"
+                  className="relative mx-auto flex h-[520px] w-full max-w-[520px] items-center justify-center [perspective:1100px]"
                 >
                   <div>
                     {merchModelUrl ? (
-                      <div className="h-[450px] w-[320px] overflow-hidden">
-                        <Canvas camera={{ position: [0, 0, 5.8], fov: 30 }} dpr={[1, 2]}>
+                      <div className="h-[470px] w-[420px] max-w-[90vw] overflow-hidden">
+                        <Canvas camera={{ position: [0, 0, 6.6], fov: 34 }} dpr={[1, 2]}>
                           <ambientLight intensity={0.9} />
                           <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
                           <directionalLight position={[4, 8, 5]} intensity={1.35} />
                           <Suspense fallback={null}>
-                            <Bounds fit clip observe margin={3.5}>
+                            <Bounds fit clip observe margin={5.8}>
                               <TshirtModel modelUrl={merchModelUrl} />
                             </Bounds>
                             <Environment preset="studio" />
