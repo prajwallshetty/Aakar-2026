@@ -3,8 +3,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { cinzelFont } from "@/lib/font";
+import { useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Center, Environment, OrbitControls, useGLTF } from "@react-three/drei";
+import { defaultMerchVariantKey, getMerchVariant, merchVariants } from "@/lib/merchVariants";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -16,13 +18,6 @@ import {
   ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const features = [
-  "100% Premium Cotton Blend",
-  "Comfortable fit and durable",
-  "Available in 8 sizes (XS - 4XL)",
-  "Vibrant AAKAR branding",
-];
-
 const merchModelUrl ="/merch-tshirt.glb";
 
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
@@ -32,13 +27,16 @@ function TshirtModel({ modelUrl }: { modelUrl: string }) {
   return (
     <group rotation={[0.02, -0.32, 0]}>
       <Center>
-        <primitive object={centeredScene} scale={1} position={[0, 0, 0]} />
+        <primitive object={centeredScene} scale={0.9} position={[0, 0, 0]} />
       </Center>
     </group>
   );
 }
 
 export default function MerchPage() {
+  const [selectedVariantKey, setSelectedVariantKey] = useState(defaultMerchVariantKey);
+  const selectedVariant = useMemo(() => getMerchVariant(selectedVariantKey), [selectedVariantKey]);
+
   return (
     <>
       <style>{`
@@ -147,17 +145,17 @@ export default function MerchPage() {
                 <div className="pointer-events-none absolute inset-x-14 top-6 h-24 rounded-full bg-cyan-300/45 blur-3xl merch-spot" style={{ background: `${ANIME_COLORS.secondary}45` }} />
 
                 <div
-                  className="relative mx-auto flex h-[520px] w-full max-w-[430px] items-center justify-center [perspective:1100px]"
+                  className="relative mx-auto flex h-[520px] w-full max-w-[520px] items-center justify-center [perspective:1100px]"
                 >
                   <div>
                     {merchModelUrl ? (
-                      <div className="h-[450px] w-[320px] overflow-hidden">
-                        <Canvas camera={{ position: [0, 0, 5.8], fov: 30 }} dpr={[1, 2]}>
+                      <div className="h-[470px] w-[420px] max-w-[90vw] overflow-hidden">
+                        <Canvas camera={{ position: [0, 0, 6.6], fov: 34 }} dpr={[1, 2]}>
                           <ambientLight intensity={0.9} />
                           <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
                           <directionalLight position={[4, 8, 5]} intensity={1.35} />
                           <Suspense fallback={null}>
-                            <Bounds fit clip observe margin={3.5}>
+                            <Bounds fit clip observe margin={5.8}>
                               <TshirtModel modelUrl={merchModelUrl} />
                             </Bounds>
                             <Environment preset="studio" />
@@ -187,20 +185,46 @@ export default function MerchPage() {
                   <span className="merch-hint inline-block" style={{ color: ANIME_COLORS.accent }}>O</span>
                   drag model to rotate
                 </div>
+
+                <div className="mx-auto mt-5 flex max-w-[520px] flex-wrap justify-center gap-3">
+                  {merchVariants.map((variant) => {
+                    const active = variant.key === selectedVariantKey;
+                    return (
+                      <button
+                        key={variant.key}
+                        type="button"
+                        onClick={() => setSelectedVariantKey(variant.key)}
+                        className="rounded-lg border-2 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] transition-transform duration-150 hover:-translate-y-0.5"
+                        style={{
+                          borderColor: active ? ANIME_COLORS.accent : ANIME_COLORS.primary,
+                          background: active
+                            ? `linear-gradient(135deg, ${ANIME_COLORS.accent}35, ${ANIME_COLORS.accent}20)`
+                            : `linear-gradient(135deg, ${ANIME_COLORS.background}90, ${ANIME_COLORS.background}80)`,
+                          color: ANIME_COLORS.text,
+                          boxShadow: active
+                            ? `0 0 18px ${ANIME_COLORS.accent}55`
+                            : `0 0 12px ${ANIME_COLORS.primary}40`,
+                        }}
+                      >
+                        {variant.title}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="p-6 lg:p-10">
-                <p className="merch-theme-meta text-xs uppercase">DIMENSIONAL DRIFT</p>
+                <p className="merch-theme-meta text-xs uppercase">{selectedVariant.tag}</p>
                 <h1 className={`merch-title-like-about mt-2 text-[clamp(2.3rem,6vw,4.6rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
-                    AAKAR T-SHIRT
+                    {selectedVariant.title}
                 </h1>
 
                 <p className="merch-theme-copy mt-4 max-w-xl border-l-2 border-fuchsia-500/70 pl-4 text-base leading-8" style={{ borderLeftColor: ANIME_COLORS.accent }}>
-                  Premium quality AAKAR event t-shirt. Made with comfortable cotton blend fabric. Perfect memorabilia from your event experience.
+                  {selectedVariant.description}
                 </p>
 
                 <div className="mt-8 space-y-2">
-                  {features.map((item, index) => (
+                  {selectedVariant.features.map((item, index) => (
                     <div key={item} className="flex items-center gap-4 rounded-lg border-2 px-3 py-3 shadow-[3px_3px_0_#00ffff]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
                       <span className="merch-theme-meta w-8 text-xs" style={{ color: ANIME_COLORS.accent }}>{`0${index + 1}`}</span>
                       <span className="merch-theme-copy text-lg leading-none">{item}</span>
@@ -209,9 +233,13 @@ export default function MerchPage() {
                 </div>
 
                 <div className="mt-12 rounded-2xl border-2 border-black/85 bg-[#ffea8a] p-7 shadow-[6px_6px_0_#0a0005]" style={{ border: `2px solid ${ANIME_COLORS.accent}`, background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, boxShadow: `0 0 20px ${ANIME_COLORS.accent}50` }}>
+                  <div className="mb-5 text-center">
+                    <p className="merch-theme-meta text-[10px] uppercase">Selected Price</p>
+                    <p className="mt-1 text-3xl font-bold" style={{ color: ANIME_COLORS.text }}>₹{selectedVariant.price}</p>
+                  </div>
                   <div className="flex justify-center">
                     <Link
-                      href="/merch/buy"
+                      href={`/merch/buy?variant=${selectedVariant.key}`}
                       className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
                       style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}
                     >

@@ -2,8 +2,10 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { cinzelFont } from "@/lib/font";
+import { getMerchVariant } from "@/lib/merchVariants";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -19,6 +21,11 @@ const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"] as const
 
 export default function MerchBuy() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedVariant = useMemo(
+    () => getMerchVariant(searchParams.get("variant")),
+    [searchParams]
+  );
   const [formData, setFormData] = useState({
     name: "",
     usn: "",
@@ -29,9 +36,10 @@ export default function MerchBuy() {
   const [error, setError] = useState("");
 
   const summary = useMemo(() => ({
-    title: "AAKAR T-SHIRT",
-    price: "₹499",
-  }), []);
+    title: selectedVariant.title,
+    price: `₹${selectedVariant.price}`,
+    tag: selectedVariant.tag,
+  }), [selectedVariant]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,6 +56,7 @@ export default function MerchBuy() {
       email: formData.email.trim(),
       phone: formData.phone.trim(),
       size: formData.size,
+      variant: selectedVariant.key,
     });
 
     router.push(`/merch/payment?${params.toString()}`);
@@ -112,6 +121,14 @@ export default function MerchBuy() {
         .merch-buy-input:focus, .merch-buy-select:focus {
           border-color: ${ANIME_COLORS.accent};
           box-shadow: 0 0 25px ${ANIME_COLORS.accent}50, inset 0 0 12px ${ANIME_COLORS.accent}30;
+        }
+        .merch-buy-select option {
+          background: ${ANIME_COLORS.background};
+          color: ${ANIME_COLORS.text};
+        }
+        .merch-buy-select option:checked {
+          background: ${ANIME_COLORS.primary};
+          color: ${ANIME_COLORS.background};
         }
       `}</style>
       <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -213,6 +230,7 @@ export default function MerchBuy() {
               <div className="border-t-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-l-2 lg:border-t-0 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
                 <div className="rounded-[1.75rem] border-2 p-6 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
                   <p className="merch-buy-label">Order Summary</p>
+                    <p className="merch-buy-copy mt-1 text-xs uppercase tracking-[0.22em]">{summary.tag}</p>
                   <h2 className={`merch-buy-heading mt-2 text-4xl uppercase leading-none ${cinzelFont.className}`}>
                       {summary.title}
                   </h2>
