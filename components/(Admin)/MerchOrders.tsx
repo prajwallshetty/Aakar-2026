@@ -17,15 +17,21 @@ type MerchOrderRow = {
   usn: string;
   email: string;
   phone: string;
+  merchVariant: string;
   size: string;
   transactionId: string;
   paymentScreenshotUrl?: string | null;
 };
 
+type GroupingOption = "none" | "variant" | "size";
+
+const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"];
+
 export default function MerchOrders() {
   const [orders, setOrders] = useState<MerchOrderRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [groupingOption, setGroupingOption] = useState<GroupingOption>("none");
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [loadedScreenshots, setLoadedScreenshots] = useState<Record<number, boolean>>({});
 
@@ -46,9 +52,28 @@ export default function MerchOrders() {
       order.email.toLowerCase().includes(query) ||
       order.phone.toLowerCase().includes(query) ||
       order.transactionId.toLowerCase().includes(query) ||
+      order.merchVariant.toLowerCase().includes(query) ||
       order.size.toLowerCase().includes(query)
     );
   }, [orders, search]);
+
+  const groupedOrders = useMemo(() => {
+    if (groupingOption === "none") {
+      return { "All Orders": filteredOrders };
+    }
+
+    const grouped: Record<string, MerchOrderRow[]> = {};
+    filteredOrders.forEach((order) => {
+      const key = groupingOption === "variant"
+        ? (order.merchVariant || "classic").toUpperCase()
+        : (order.size || "UNKNOWN").toUpperCase();
+
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(order);
+    });
+
+    return grouped;
+  }, [filteredOrders, groupingOption]);
 
   const toggleOrderScreenshots = (orderId: number) => {
     setExpandedOrderId((current) => (current === orderId ? null : orderId));
@@ -62,6 +87,7 @@ export default function MerchOrders() {
     const rows = filteredOrders.map((order) => ({
       Name: order.name,
       USN: order.usn,
+      Variant: order.merchVariant,
       Size: order.size,
       Email: order.email,
       Phone: order.phone,
@@ -71,6 +97,57 @@ export default function MerchOrders() {
 
     downloadCsv(rows, "merch_orders.csv");
   };
+
+  const renderOrderRows = (rows: MerchOrderRow[]) =>
+    rows.map((order) => (
+      <React.Fragment key={order.id}>
+        <TableRow>
+          <TableCell className="font-medium text-zinc-900">{order.name}</TableCell>
+          <TableCell>{order.usn}</TableCell>
+          <TableCell className="uppercase">{order.merchVariant || "classic"}</TableCell>
+          <TableCell>{order.size}</TableCell>
+          <TableCell>{order.email}</TableCell>
+          <TableCell>{order.phone}</TableCell>
+          <TableCell className="font-mono text-xs">{order.transactionId}</TableCell>
+          <TableCell>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs"
+              onClick={() => toggleOrderScreenshots(order.id)}
+              disabled={!order.paymentScreenshotUrl}
+            >
+              {expandedOrderId === order.id ? "Hide Screenshot" : "Load Screenshot"}
+            </Button>
+          </TableCell>
+        </TableRow>
+
+        {expandedOrderId === order.id && (
+          <TableRow>
+            <TableCell colSpan={8} className="bg-zinc-50/70 p-4">
+              <div className="space-y-3">
+                <p className="text-xs font-medium text-zinc-700">
+                  Payment screenshot loads only when requested.
+                </p>
+                {loadedScreenshots[order.id] && order.paymentScreenshotUrl ? (
+                  <div className="max-w-md overflow-hidden rounded-md border border-zinc-200 bg-white">
+                    <img
+                      src={order.paymentScreenshotUrl}
+                      alt={`Payment screenshot for ${order.name}`}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-sm text-zinc-500">
+                    No screenshot available for this order.
+                  </div>
+                )}
+              </div>
+            </TableCell>
+          </TableRow>
+        )}
+      </React.Fragment>
+    ));
 
   return (
     <div className="min-h-screen bg-zinc-50/50">
@@ -95,7 +172,26 @@ export default function MerchOrders() {
                   Orders are saved after the transaction ID is submitted.
                 </CardDescription>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1.5 border border-zinc-200 rounded-md p-0.5 bg-white">
+                  {([
+                    { val: "none", label: "All" },
+                    { val: "variant", label: "Variant" },
+                    { val: "size", label: "Size" },
+                  ] as const).map(({ val, label }) => (
+                    <button
+                      key={val}
+                      onClick={() => setGroupingOption(val)}
+                      className={
+                        groupingOption === val
+                          ? "px-2.5 py-1 rounded text-xs font-medium bg-zinc-900 text-white"
+                          : "px-2.5 py-1 rounded text-xs font-medium text-zinc-500 hover:text-zinc-800"
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
                 <Button
                   size="sm"
                   variant="outline"
@@ -131,70 +227,68 @@ export default function MerchOrders() {
             ) : filteredOrders.length === 0 ? (
               <div className="p-10 text-center text-sm text-zinc-500">No merch orders found.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>USN</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Transaction ID</TableHead>
-                      <TableHead>Screenshot</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredOrders.map((order) => (
-                      <React.Fragment key={order.id}>
-                        <TableRow>
-                          <TableCell className="font-medium text-zinc-900">{order.name}</TableCell>
-                          <TableCell>{order.usn}</TableCell>
-                          <TableCell>{order.size}</TableCell>
-                          <TableCell>{order.email}</TableCell>
-                          <TableCell>{order.phone}</TableCell>
-                          <TableCell className="font-mono text-xs">{order.transactionId}</TableCell>
-                          <TableCell>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 text-xs"
-                              onClick={() => toggleOrderScreenshots(order.id)}
-                              disabled={!order.paymentScreenshotUrl}
-                            >
-                              {expandedOrderId === order.id ? "Hide Screenshot" : "Load Screenshot"}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-
-                        {expandedOrderId === order.id && (
+              <div className="space-y-5 p-4">
+                {Object.entries(groupedOrders).map(([groupName, groupRows]) => (
+                  <div key={groupName} className="border border-zinc-200 rounded-md overflow-hidden bg-white">
+                    <div className="px-4 py-2 border-b border-zinc-100 bg-zinc-50">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-zinc-600">
+                        {groupName} ({groupRows.length})
+                      </p>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
                           <TableRow>
-                            <TableCell colSpan={7} className="bg-zinc-50/70 p-4">
-                              <div className="space-y-3">
-                                <p className="text-xs font-medium text-zinc-700">
-                                  Payment screenshot loads only when requested.
-                                </p>
-                                {loadedScreenshots[order.id] && order.paymentScreenshotUrl ? (
-                                  <div className="max-w-md overflow-hidden rounded-md border border-zinc-200 bg-white">
-                                    <img
-                                      src={order.paymentScreenshotUrl}
-                                      alt={`Payment screenshot for ${order.name}`}
-                                      className="w-full h-auto"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="text-sm text-zinc-500">
-                                    No screenshot available for this order.
-                                  </div>
-                                )}
-                              </div>
-                            </TableCell>
+                            <TableHead>Name</TableHead>
+                            <TableHead>USN</TableHead>
+                            <TableHead>Variant</TableHead>
+                            <TableHead>Size</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Phone</TableHead>
+                            <TableHead>Transaction ID</TableHead>
+                            <TableHead>Screenshot</TableHead>
                           </TableRow>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {groupingOption === "variant" ? (
+                            (() => {
+                              const sizeBuckets = groupRows.reduce((acc, order) => {
+                                const sizeKey = (order.size || "UNKNOWN").toUpperCase();
+                                if (!acc[sizeKey]) acc[sizeKey] = [];
+                                acc[sizeKey].push(order);
+                                return acc;
+                              }, {} as Record<string, MerchOrderRow[]>);
+
+                              const orderedSizeKeys = Object.keys(sizeBuckets).sort((a, b) => {
+                                const ai = sizeOrder.indexOf(a);
+                                const bi = sizeOrder.indexOf(b);
+                                if (ai === -1 && bi === -1) return a.localeCompare(b);
+                                if (ai === -1) return 1;
+                                if (bi === -1) return -1;
+                                return ai - bi;
+                              });
+
+                              return orderedSizeKeys.map((sizeKey) => (
+                                <React.Fragment key={`${groupName}-${sizeKey}`}>
+                                  <TableRow className="bg-zinc-50/70">
+                                    <TableCell colSpan={8} className="py-2">
+                                      <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
+                                        Size {sizeKey} ({sizeBuckets[sizeKey].length})
+                                      </span>
+                                    </TableCell>
+                                  </TableRow>
+                                  {renderOrderRows(sizeBuckets[sizeKey])}
+                                </React.Fragment>
+                              ));
+                            })()
+                          ) : (
+                            renderOrderRows(groupRows)
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </CardContent>

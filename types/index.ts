@@ -37,6 +37,7 @@ export interface ExtendedMerchOrder {
     usn: string;
     email: string;
     phone: string;
+    merchVariant: string;
     size: string;
     transactionId: string;
     amount: number;
@@ -50,6 +51,7 @@ export interface ExtendedMerchOrderCreateInput {
     usn: string;
     email: string;
     phone: string;
+    merchVariant?: string;
     size: string;
     transactionId: string;
     amount?: number;

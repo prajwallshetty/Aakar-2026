@@ -82,9 +82,10 @@ model MerchOrder {
   id                    Int              @id @default(autoincrement())
   uuid                  String           @unique @default(uuid())
   name                  String
-  usn                   String           @unique
-  email                 String           @unique
+  usn                   String
+  email                 String
   phone                 String
+  merchVariant          String           @default("classic")
   size                  tshirtSize
   transactionId         String           @unique
   amount                Int              @default(499)

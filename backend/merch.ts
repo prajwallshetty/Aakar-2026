@@ -4,7 +4,22 @@ import { Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 
-const MERCH_PRICE = 499;
+const variantPriceMap = {
+  classic: 499,
+  neon: 549,
+  pro: 599,
+} as const;
+
+function normalizeMerchVariant(variant: string | undefined) {
+  if (!variant) return "classic";
+  return variant in variantPriceMap ? (variant as keyof typeof variantPriceMap) : "classic";
+}
+
+function inferVariantFromAmount(amount: number | null | undefined): keyof typeof variantPriceMap {
+  if (amount === 549) return "neon";
+  if (amount === 599) return "pro";
+  return "classic";
+}
 
 
 type MerchOrderInput = {
@@ -12,6 +27,7 @@ type MerchOrderInput = {
   usn: string;
   email: string;
   phone: string;
+  merchVariant?: string;
   size: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL";
   transactionId: string;
   paymentScreenshotUrl?: string;
@@ -21,6 +37,25 @@ type ServiceResponse<T> = {
   data: T | null;
   error: { [key: string]: string } | string | null;
 };
+
+let ensuredMerchOrderIndexes = false;
+
+async function ensureMerchOrderIndexes(client: any) {
+  if (ensuredMerchOrderIndexes) return;
+
+  // Keep transactionId unique; allow repeat orders by same USN/email for different variants.
+  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_usn_key";`);
+  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_email_key";`);
+
+  ensuredMerchOrderIndexes = true;
+}
+
+function getUniqueConstraintField(error: Prisma.PrismaClientKnownRequestError): string {
+  const target = (error.meta as { target?: string[] | string } | undefined)?.target;
+  if (Array.isArray(target)) return target.join(" ").toLowerCase();
+  if (typeof target === "string") return target.toLowerCase();
+  return "";
+}
 
 function normalizePhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
@@ -92,33 +127,73 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
 export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceResponse<any>> {
   try {
     const merchDb = db as any;
+    await ensureMerchOrderIndexes(merchDb);
+
     const validationErrors = await validateMerchOrderData(data);
     if (validationErrors) {
       return { data: null, error: validationErrors };
     }
 
-    const order = await merchDb.merchOrder.create({
-      data: {
-        name: data.name.trim(),
-        usn: data.usn.toUpperCase().trim(),
-        email: data.email.toLowerCase().trim(),
-        phone: normalizePhone(data.phone),
-        size: data.size,
-        transactionId: data.transactionId.trim(),
-        amount: MERCH_PRICE,
-        paymentScreenshotUrl: data.paymentScreenshotUrl || null,
-      },
-    });
+    const merchVariant = normalizeMerchVariant(data.merchVariant);
+    const merchAmount = variantPriceMap[merchVariant];
+
+    const baseData = {
+      name: data.name.trim(),
+      usn: data.usn.toUpperCase().trim(),
+      email: data.email.toLowerCase().trim(),
+      phone: normalizePhone(data.phone),
+      size: data.size,
+      transactionId: data.transactionId.trim(),
+      amount: merchAmount,
+      paymentScreenshotUrl: data.paymentScreenshotUrl || null,
+    };
+
+    let order;
+    try {
+      order = await merchDb.merchOrder.create({
+        data: {
+          ...baseData,
+          merchVariant,
+        },
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (!message.includes("Unknown argument `merchVariant`")) {
+        throw error;
+      }
+
+      // Backward compatibility for databases not migrated yet.
+      order = await merchDb.merchOrder.create({
+        data: baseData,
+      });
+    }
 
     return { data: order, error: null };
   } catch (error) {
     console.error("Error creating merch order:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      const target = getUniqueConstraintField(error);
+
+      if (target.includes("transactionid")) {
+        return { data: null, error: { transactionId: "This transaction ID already exists" } };
+      }
+      if (target.includes("usn")) {
+        return { data: null, error: { usn: "A merch order already exists for this USN" } };
+      }
+      if (target.includes("email")) {
+        return { data: null, error: { email: "A merch order already exists for this email" } };
+      }
+
+      return {
+        data: null,
+        error: "A merch order already exists with one of these details",
+      };
+    }
+
     return {
       data: null,
-      error:
-        error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
-          ? "A merch order with this transaction ID already exists"
-          : "Failed to create merch order",
+      error: "Failed to create merch order",
     };
   }
 }
@@ -131,7 +206,11 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
 
     const merchDb = db as any;
     const orders = await merchDb.merchOrder.findMany({ orderBy: { createdAt: "desc" } });
-    return { data: orders, error: null };
+    const normalizedOrders = (orders || []).map((order: any) => ({
+      ...order,
+      merchVariant: order.merchVariant || inferVariantFromAmount(order.amount),
+    }));
+    return { data: normalizedOrders, error: null };
   } catch (error) {
     console.error("Error fetching merch orders:", error);
     return { data: null, error: "Failed to fetch merch orders" };

@@ -21,6 +21,13 @@ function getSupabaseAdminClient() {
 }
 
 export async function uploadElitePassPayment(file: File) {
+  return uploadWithServiceRole(file, "elitepasspayments");
+}
+
+async function uploadWithServiceRole(
+  file: File,
+  bucketName: "elitepasspayments" | "paymentscreenshots"
+) {
   const supabase = getSupabaseAdminClient();
 
   if (!file) {
@@ -35,7 +42,7 @@ export async function uploadElitePassPayment(file: File) {
   const filePath = `public/${Date.now()}-${sanitizedName}`;
 
   const { data, error } = await supabase.storage
-    .from("elitepasspayments")
+    .from(bucketName)
     .upload(filePath, file, {
       cacheControl: "3600",
       upsert: false,
@@ -46,8 +53,12 @@ export async function uploadElitePassPayment(file: File) {
   }
 
   const { data: publicUrlData } = supabase.storage
-    .from("elitepasspayments")
+    .from(bucketName)
     .getPublicUrl(data.path);
 
   return publicUrlData.publicUrl;
+}
+
+export async function uploadMerchPaymentScreenshot(file: File) {
+  return uploadWithServiceRole(file, "paymentscreenshots");
 }

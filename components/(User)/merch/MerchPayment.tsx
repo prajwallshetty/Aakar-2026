@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createMerchOrder } from "@/backend/merch";
-import { uploadFile } from "@/backend/supabase";
 import { cinzelFont } from "@/lib/font";
+import { getMerchVariant } from "@/lib/merchVariants";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -35,6 +35,7 @@ export default function MerchPayment() {
     email: params.get("email") || "",
     phone: params.get("phone") || "",
     size: params.get("size") || "M",
+    variant: getMerchVariant(params.get("variant")),
   }), [params]);
 
   const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +68,23 @@ export default function MerchPayment() {
 
     let screenshotUrl: string | null = null;
     try {
-      screenshotUrl = await uploadFile(screenshotFile, "paymentscreenshots");
+      const formData = new FormData();
+      formData.append("file", screenshotFile);
+
+      const uploadResponse = await fetch("/api/merch/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const uploadResult = await uploadResponse.json();
+
+      if (!uploadResponse.ok || !uploadResult?.url) {
+        setError(uploadResult?.error || "Failed to upload screenshot. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      screenshotUrl = uploadResult.url;
       if (!screenshotUrl) {
         setError("Failed to upload screenshot. Please try again.");
         setLoading(false);
@@ -80,7 +97,11 @@ export default function MerchPayment() {
     }
 
     const response = await createMerchOrder({
-      ...order,
+      name: order.name,
+      usn: order.usn,
+      email: order.email,
+      phone: order.phone,
+      merchVariant: order.variant.key,
       transactionId: transactionId.trim(),
       size: order.size as "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL",
       paymentScreenshotUrl: screenshotUrl,
@@ -203,12 +224,15 @@ export default function MerchPayment() {
                     <div className="space-y-1">
                       <p className="merch-pay-label">UPI ID</p>
                       <p className="merch-pay-copy text-sm font-bold">{merchUpiId}</p>
-                      <p className="merch-pay-copy text-sm">Amount: ₹499</p>
+                      <p className="merch-pay-copy text-sm">Amount: ₹{order.variant.price}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6 rounded-2xl border-2 px-5 py-4 shadow-[4px_4px_0_#000] text-left" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
+                  <p className="merch-pay-copy text-sm">
+                    Variant: <span className="font-bold uppercase">{order.variant.title}</span>
+                  </p>
                   <p className="merch-pay-copy text-sm">
                     Order for <span className="font-bold uppercase">{order.name || "—"}</span>, USN <span className="font-bold uppercase">{order.usn || "—"}</span>, size <span className="font-bold uppercase">{order.size}</span>.
                   </p>
