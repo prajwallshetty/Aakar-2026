@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
+import { cinzelFont } from "@/lib/font";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Center, Environment, OrbitControls, useGLTF } from "@react-three/drei";
 import { 
@@ -111,32 +112,24 @@ export default function MerchPage() {
           50% { text-shadow: 0 0 6px rgba(255,0,255,0.4), 0 0 22px rgba(0,245,255,0.28); }
         }
         .merch-theme-heading {
-          font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.08em;
           color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 30px ${ANIME_COLORS.primary}60, 0.05em 0.05em 0 ${ANIME_COLORS.primary}, 0.1em 0.1em 0 ${ANIME_COLORS.secondary};
-          animation: merchGlow 3s ease-in-out infinite;
         }
         .merch-title-like-about {
-          font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.05em;
           color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 25px ${ANIME_COLORS.primary}50, -0.02em 0 0 ${ANIME_COLORS.primary}, 0.055em 0.055em 0 ${ANIME_COLORS.secondary};
         }
         .merch-theme-meta {
           font-family: 'Share Tech Mono', monospace;
           letter-spacing: 0.22em;
           color: ${ANIME_COLORS.secondary};
-          text-shadow: 0 0 8px ${ANIME_COLORS.secondary}40;
         }
         .merch-theme-copy {
           font-family: 'Share Tech Mono', monospace;
           letter-spacing: 0.02em;
           color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 6px ${ANIME_COLORS.text}30;
         }
         .merch-shirt-text {
-          font-family: 'Bebas Neue', sans-serif;
           animation: merchNeon 2.8s ease-in-out infinite, merchGlow 4s ease-in-out infinite;
         }
       `}</style>
@@ -198,10 +191,8 @@ export default function MerchPage() {
 
               <div className="p-6 lg:p-10">
                 <p className="merch-theme-meta text-xs uppercase">DIMENSIONAL DRIFT</p>
-                <h1 className="merch-title-like-about mt-2 text-[clamp(2.3rem,6vw,4.6rem)] uppercase leading-[0.95]">
-                  <AnimeGlitchText text="AAKAR T-SHIRT">
+                <h1 className={`merch-title-like-about mt-2 text-[clamp(2.3rem,6vw,4.6rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
                     AAKAR T-SHIRT
-                  </AnimeGlitchText>
                 </h1>
 
                 <p className="merch-theme-copy mt-4 max-w-xl border-l-2 border-fuchsia-500/70 pl-4 text-base leading-8" style={{ borderLeftColor: ANIME_COLORS.accent }}>

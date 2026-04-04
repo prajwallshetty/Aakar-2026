@@ -16,6 +16,7 @@ import {
   ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
+import { cinzelFont } from "@/lib/font";
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
 /* ─── palette ─────────────────────────────────────────────────── */
@@ -152,17 +153,13 @@ export default function AboutPage() {
               marginBottom:"0.7rem",
               backdropFilter:"blur(8px)"
             }}>AAKAR 2026</div>
-            <div style={{
-              fontFamily:"'Bebas Neue',sans-serif",
+            <div className={cinzelFont.className} style={{
               fontSize:"clamp(3rem,10vw,7rem)",
               lineHeight:0.88,
               letterSpacing:"0.04em",
               color:ANIME_COLORS.text,
-              textShadow:`0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.primary}, 3px 3px 0 ${ANIME_COLORS.secondary}`,
             }}>
-              <AnimeGlitchText text="ABOUT">
-                <span>ABOUT</span>
-              </AnimeGlitchText>
+              ABOUT
             </div>
           </div>
 

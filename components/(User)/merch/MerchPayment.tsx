@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createMerchOrder } from "@/backend/merch";
 import { uploadFile } from "@/backend/supabase";
+import { cinzelFont } from "@/lib/font";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -122,10 +123,8 @@ export default function MerchPayment() {
           100% { left: 100%; }
         }
         .merch-pay-heading {
-          font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.08em;
           color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 30px ${ANIME_COLORS.primary}60, 0.05em 0.05em 0 ${ANIME_COLORS.primary}, 0.1em 0.1em 0 ${ANIME_COLORS.secondary};
         }
         .merch-pay-copy {
           font-family: 'Share Tech Mono', monospace;
@@ -185,10 +184,8 @@ export default function MerchPayment() {
             <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
               <div className="border-b-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-b-0 lg:border-r-2 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
                 <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Step 2 · Payment</p>
-                <h1 className="merch-pay-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95]">
-                  <AnimeGlitchText text="Scan QR">
+                <h1 className={`merch-pay-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
                     Scan QR
-                  </AnimeGlitchText>
                 </h1>
                 <p className="merch-pay-copy mt-4 text-base leading-8">
                   Pay the merch amount using the scanner, then enter the transaction ID below to confirm your order.
@@ -237,10 +234,8 @@ export default function MerchPayment() {
                 {submitted ? (
                   <div className="flex h-full min-h-[520px] flex-col justify-center rounded-[1.75rem] border-2 border-black bg-[#00ffff] p-8 text-center shadow-[6px_6px_0_#000]" style={{ border: `1px solid ${ANIME_COLORS.secondary}`, background: `${ANIME_COLORS.secondary}40`, boxShadow: `0 0 16px ${ANIME_COLORS.secondary}40` }}>
                     <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Order Submitted</p>
-                    <h2 className="merch-pay-heading mt-2 text-[clamp(2.2rem,5vw,4rem)] uppercase leading-none">
-                      <AnimeGlitchText text="Order placed successfully">
+                    <h2 className={`merch-pay-heading mt-2 text-[clamp(2.2rem,5vw,4rem)] uppercase leading-none ${cinzelFont.className}`}>
                         Order placed successfully
-                      </AnimeGlitchText>
                     </h2>
                     <div className="mt-6 rounded-2xl border-2 px-5 py-4 shadow-[4px_4px_0_#000] text-left" style={{ border: `1px solid ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.background}40`, boxShadow: `0 0 8px ${ANIME_COLORS.primary}40` }}>
                       <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">USN:</span> {order.usn}</p>
@@ -251,10 +246,8 @@ export default function MerchPayment() {
                 ) : (
                   <div className="rounded-[1.75rem] border-2 p-5 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
                     <p className="merch-pay-label">Confirm Payment</p>
-                    <h2 className="merch-pay-heading mt-2 text-4xl uppercase leading-none">
-                      <AnimeGlitchText text="Transaction ID">
+                    <h2 className={`merch-pay-heading mt-2 text-4xl uppercase leading-none ${cinzelFont.className}`}>
                         Transaction ID
-                      </AnimeGlitchText>
                     </h2>
                     <p className="merch-pay-copy mt-3 text-base leading-8">
                       Enter the UPI transaction ID after payment. This will be sent to the admin panel for verification.

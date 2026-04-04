@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useCallback, useEffect, useState } from "react";
+import { cinzelFont } from "@/lib/font";
 
 /* ─── data ────────────────────────────────────────────────────── */
 interface TeamMember { name: string; role: string; image: string; }
@@ -204,7 +205,7 @@ function SectionHeading({ children, index }: { children: React.ReactNode; index:
   return (
     <div className="section-head">
       <div className="head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${c})` }} />
-      <h2 className="head-title" style={{ textShadow: `0 0 20px ${c}80, 0 0 40px ${c}30` }}>
+      <h2 className={`head-title ${cinzelFont.className}`}>
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}>[ </span>
         {children}
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}> ]</span>
@@ -505,7 +506,6 @@ const Team = () => (
         flex: 1; max-width: 130px; height: 2px; border-radius: 2px;
       }
       .head-title {
-        font-family: 'Bebas Neue', sans-serif;
         font-size: clamp(1.8rem, 5vw, 3rem);
         letter-spacing: 0.15em;
         color: #fff;
@@ -539,20 +539,16 @@ const Team = () => (
         flex-shrink: 0;
       }
       .main-title {
-        font-family: 'Bebas Neue', sans-serif;
         font-size: clamp(3rem, 10vw, 6.5rem);
         line-height: 0.85;
         letter-spacing: 0.05em;
         color: #fff;
-        text-shadow: 0 0 30px rgba(255,77,0,0.45), -3px -3px 0 #FF4D00, 3px 3px 0 #00E5FF;
         transform: skewX(-6deg);
         margin: 0;
         animation: titleReveal 1s cubic-bezier(0.2,0.8,0.2,1) 0.1s both;
       }
       .main-title-accent {
         color: #ffffff;
-        -webkit-text-stroke: 0;
-        text-shadow: 0 0 35px rgba(255,255,255,0.4);
       }
       .main-subtitle {
         font-family: 'Share Tech Mono', monospace;
@@ -599,11 +595,9 @@ const Team = () => (
             SYSTEM_OP // AAKAR_2026
           </div>
 
-          <h1 className="main-title">
+          <h1 className={`main-title ${cinzelFont.className}`}>
             MEET THE{" "}
-            <GlitchText text="SQUAD">
               <span className="main-title-accent">SQUAD</span>
-            </GlitchText>
           </h1>
 
           <p className="main-subtitle">

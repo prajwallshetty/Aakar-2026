@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { cinzelFont } from "@/lib/font";
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -80,10 +81,8 @@ export default function MerchBuy() {
           100% { left: 100%; }
         }
         .merch-buy-heading {
-          font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.08em;
           color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 30px ${ANIME_COLORS.primary}60, 0.05em 0.05em 0 ${ANIME_COLORS.primary}, 0.1em 0.1em 0 ${ANIME_COLORS.secondary};
         }
         .merch-buy-copy {
           font-family: 'Share Tech Mono', monospace;
@@ -123,10 +122,8 @@ export default function MerchBuy() {
             <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="p-6 sm:p-8 lg:p-10">
                 <p className="merch-buy-copy text-xs uppercase tracking-[0.4em]">Step 1 · Add Details</p>
-                <h1 className="merch-buy-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95]">
-                  <AnimeGlitchText text="Select Size">
+                <h1 className={`merch-buy-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
                     Select Size
-                  </AnimeGlitchText>
                 </h1>
                 <p className="merch-buy-copy mt-4 max-w-xl text-base leading-8">
                   Add your size, USN, email, and phone number. After this, you’ll be taken to the payment page with the scanner.
@@ -216,10 +213,8 @@ export default function MerchBuy() {
               <div className="border-t-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-l-2 lg:border-t-0 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
                 <div className="rounded-[1.75rem] border-2 p-6 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
                   <p className="merch-buy-label">Order Summary</p>
-                  <h2 className="merch-buy-heading mt-2 text-4xl uppercase leading-none">
-                    <AnimeGlitchText text={summary.title}>
+                  <h2 className={`merch-buy-heading mt-2 text-4xl uppercase leading-none ${cinzelFont.className}`}>
                       {summary.title}
-                    </AnimeGlitchText>
                   </h2>
                   <div className="mt-5 space-y-3 merch-buy-copy text-sm leading-7">
                     <div className="flex justify-between gap-4 border-b border-black/15 pb-2">

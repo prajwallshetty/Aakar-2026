@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useEffect, useState } from "react";
+import { cinzelFont } from "@/lib/font";
 
 /* ─── Anime Theme Color Palette ─────────────────────────────────── */
 export const ANIME_COLORS = {
@@ -125,7 +126,7 @@ export function AnimeSectionHeading({ children, index }: { children: React.React
   return (
     <div className="anime-section-head">
       <div className="anime-head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${c})` }} />
-      <h2 className="anime-head-title" style={{ textShadow: `0 0 20px ${c}80, 0 0 40px ${c}30` }}>
+      <h2 className={`anime-head-title ${cinzelFont.className}`}>
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}>[ </span>
         {children}
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}> ]</span>
@@ -345,7 +346,6 @@ export const ANIME_GLOBAL_STYLES = `
     flex: 1; max-width: 120px; height: 2px; border-radius: 2px;
   }
   .anime-head-title {
-    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(1.5rem, 4vw, 2.5rem);
     letter-spacing: 0.15em;
     color: #fff;
