@@ -16,14 +16,48 @@ export default function HeroLanding() {
   const rafRef = useRef<number | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.45;
+    }
+  }, []);
+
+  const toggleMute = () => {
+    if (!audioRef.current) return;
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    audioRef.current.muted = nextMuted;
+    if (!nextMuted) {
+      audioRef.current.play().catch(e => console.log("Autoplay blocked", e));
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+
+    // Document click to start audio if blocked
+    const startAudio = () => {
+      if (audioRef.current && isMuted) {
+        audioRef.current.play().catch(() => {});
+      }
+      window.removeEventListener("click", startAudio);
+      window.removeEventListener("touchstart", startAudio);
+    };
+    window.addEventListener("click", startAudio);
+    window.addEventListener("touchstart", startAudio);
+
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("click", startAudio);
+      window.removeEventListener("touchstart", startAudio);
+    };
+  }, [isMuted]);
 
   // ── Scroll parallax ───────────────────────────────────────────────────────
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
@@ -252,7 +286,25 @@ export default function HeroLanding() {
         .hl-side { writing-mode:vertical-rl; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.55em; text-transform:uppercase; color:rgba(255,255,255,.22); }
 
         .hl-persp { perspective:1000px; perspective-origin:50% 40%; }
+        
+        .music-pulse {
+          position: relative;
+        }
+        .music-pulse::after {
+          content: "";
+          position: absolute;
+          inset: -4px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.4);
+          animation: music-pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes music-pulse {
+          0% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
       `}</style>
+
+      <audio ref={audioRef} src="/landing.mp3" loop muted={isMuted} playsInline autoPlay />
 
       <section ref={sectionRef} className="hl relative w-full h-screen min-h-[640px] overflow-hidden bg-black" style={{ fontFamily: "'Cinzel',serif" }}>
 
@@ -675,6 +727,40 @@ export default function HeroLanding() {
               <path d="M5 1v12M1 9l4 4 4-4" stroke="rgba(255,255,255,.45)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
+        </motion.div>
+        {/* Audio Toggle - Fixed Position */}
+        <motion.div 
+          className="fixed bottom-6 right-6 z-[100]"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2.2, duration: 0.8 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleMute}
+            className={`p-3 rounded-full backdrop-blur-xl border border-white/20 flex items-center justify-center transition-all shadow-2xl ${!isMuted ? 'music-pulse bg-white/20' : 'bg-black/40'}`}
+            style={{
+              width: "48px",
+              height: "48px",
+              cursor: "pointer",
+              pointerEvents: "all",
+            }}
+          >
+            {isMuted ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/70">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <line x1="23" y1="9" x2="17" y2="15"/>
+                <line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              </svg>
+            )}
+          </motion.button>
         </motion.div>
       </section>
     </>
