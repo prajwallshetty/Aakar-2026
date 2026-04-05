@@ -1,32 +1,30 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient, SupabaseClient } from "@supabase/supabase-js"
 
 type StorageBucketName = "eventimages" | "paymentscreenshots"
 
-function getSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// ── Supabase Singleton ──────────────────────────────────────────
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!supabaseUrl) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_URL is missing")
-  }
+if (!supabaseUrl || !supabaseKey) {
+  // We log error but don't throw immediately to avoid crashing build-time imports if Env vars are missing
+  console.warn("Supabase credentials missing. Client initialization may fail.")
+}
 
-  if (!supabaseKey) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY is missing")
-  }
-
-  return createClient(supabaseUrl, supabaseKey, {
+export const supabase: SupabaseClient = createClient(
+  supabaseUrl || "", 
+  supabaseKey || "", 
+  {
     auth: {
       persistSession: false,
     },
-  })
-}
+  }
+)
 
 export async function uploadFile(
   file: File,
   bucketName: StorageBucketName = "eventimages"
 ) {
-  const supabase = getSupabaseClient()
-
   if (!file) {
     console.error("No file provided")
     return null
@@ -76,14 +74,11 @@ export async function uploadFiles(
   files: File[],
   bucketName: StorageBucketName = "eventimages"
 ) {
-
   const urls: string[] = []
-
   for (const file of files) {
     const url = await uploadFile(file, bucketName)
     if (url) urls.push(url)
   }
-
   return urls
 }
 
@@ -91,8 +86,6 @@ export async function deleteFiles(
   fileUrls: string[],
   bucketName: StorageBucketName = "eventimages"
 ) {
-  const supabase = getSupabaseClient()
-
   for (const fileUrl of fileUrls) {
     const pathMarker = `/public/${bucketName}/`
     const markerIndex = fileUrl.indexOf(pathMarker)
@@ -115,8 +108,6 @@ export function getPublicFileUrl(
   filePath: string,
   bucketName: string = "eventimages"
 ) {
-  const supabase = getSupabaseClient()
-
   if (!filePath) return null
 
   const { data } = supabase.storage

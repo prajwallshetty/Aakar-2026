@@ -101,36 +101,94 @@ export default function HeroLanding() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
     resize();
     window.addEventListener("resize", resize);
 
-    type E = { x:number;y:number;vx:number;vy:number;r:number;op:number;life:number;max:number;hue:number };
-    const spawn = (w:number,h:number):E => ({
-      x: Math.random()*w, y: h+Math.random()*60,
-      vx: (Math.random()-0.5)*0.9, vy: -(Math.random()*1.8+0.5),
-      r: Math.random()*2.2+0.4, op: Math.random()*0.65+0.2,
-      life:0, max:140+Math.random()*120, hue:10+Math.random()*40,
+    // Pre-render particle gradient to improve performance
+    const spriteCanvas = document.createElement("canvas");
+    const spriteSize = 20; // Max radius * 6 approx
+    spriteCanvas.width = spriteSize;
+    spriteCanvas.height = spriteSize;
+    const sCtx = spriteCanvas.getContext("2d");
+
+    const createParticleSprite = (hue: number) => {
+      if (!sCtx) return spriteCanvas;
+      sCtx.clearRect(0, 0, spriteSize, spriteSize);
+      const g = sCtx.createRadialGradient(
+        spriteSize / 2, spriteSize / 2, 0,
+        spriteSize / 2, spriteSize / 2, spriteSize / 2
+      );
+      g.addColorStop(0, `hsla(${hue},100%,82%,1)`);
+      g.addColorStop(0.4, `hsla(${hue},100%,55%,0.7)`);
+      g.addColorStop(1, `hsla(${hue},100%,40%,0)`);
+      sCtx.fillStyle = g;
+      sCtx.beginPath();
+      sCtx.arc(spriteSize / 2, spriteSize / 2, spriteSize / 2, 0, Math.PI * 2);
+      sCtx.fill();
+      return spriteCanvas;
+    };
+
+    // Since hues are similar (10-50), we can just use one or a few sprites.
+    // For simplicity and max speed, let's use one "average" sprite.
+    const particleSprite = createParticleSprite(30);
+
+    type E = {
+      x: number; y: number; vx: number; vy: number;
+      r: number; op: number; life: number; max: number;
+    };
+    const spawn = (w: number, h: number): E => ({
+      x: Math.random() * w,
+      y: h + Math.random() * 60,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: -(Math.random() * 1.5 + 0.4),
+      r: Math.random() * 2.0 + 0.4,
+      op: Math.random() * 0.6 + 0.2,
+      life: 0,
+      max: 140 + Math.random() * 120,
     });
-    const em:E[] = Array.from({length:120},()=>spawn(canvas.width,canvas.height));
+
+    // Reduce particle count from 120 to 60
+    const em: E[] = Array.from({ length: 60 }, () => spawn(canvas.width, canvas.height));
 
     const draw = () => {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      em.forEach((e,i)=>{
-        e.x+=e.vx+Math.sin(e.life*0.04)*0.35; e.y+=e.vy; e.life++;
-        if(e.life>e.max||e.y<-10){em[i]=spawn(canvas.width,canvas.height);return;}
-        const fade=Math.sin((e.life/e.max)*Math.PI);
-        ctx.save(); ctx.globalAlpha=e.op*fade;
-        const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.r*3);
-        g.addColorStop(0,`hsla(${e.hue},100%,82%,1)`);
-        g.addColorStop(0.4,`hsla(${e.hue},100%,55%,0.7)`);
-        g.addColorStop(1,`hsla(${e.hue},100%,40%,0)`);
-        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(e.x,e.y,e.r*3,0,Math.PI*2); ctx.fill(); ctx.restore();
-      });
-      rafRef.current=requestAnimationFrame(draw);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < em.length; i++) {
+        const e = em[i];
+        e.x += e.vx + Math.sin(e.life * 0.04) * 0.3;
+        e.y += e.vy;
+        e.life++;
+
+        if (e.life > e.max || e.y < -20) {
+          em[i] = spawn(canvas.width, canvas.height);
+          continue;
+        }
+
+        const fade = Math.sin((e.life / e.max) * Math.PI);
+        const size = e.r * 6 * fade; // Scale the pre-rendered sprite
+
+        ctx.globalAlpha = e.op;
+        ctx.drawImage(
+          particleSprite,
+          e.x - size / 2,
+          e.y - size / 2,
+          size,
+          size
+        );
+      }
+      rafRef.current = requestAnimationFrame(draw);
     };
+
     draw();
-    return ()=>{ window.removeEventListener("resize",resize); if(rafRef.current)cancelAnimationFrame(rafRef.current); };
+    return () => {
+      window.removeEventListener("resize", resize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   const chars = "A NEW ERA BEGINS".split("");

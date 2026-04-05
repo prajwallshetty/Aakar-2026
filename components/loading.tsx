@@ -1,15 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo, memo } from "react";
 import Image from "next/image";
 import { 
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 /* ─── types ───────────────────────────────────────────────────── */
-interface Dot { id: number; x: number; y: number; size: number; color: string; delay: number; }
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+  life: number;
+  maxLife: number;
+  vx: number;
+  vy: number;
+}
 
 /* ─── helpers ─────────────────────────────────────────────────── */
 const rand = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -23,15 +32,48 @@ const LINES = [
   "ACTIVATING INTERFACE…",
 ];
 
+/* ─── Static Components ────────────────────────────────────────── */
+const DecorativeRings = memo(() => (
+  <svg style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:"min(90vw,700px)",height:"min(90vw,700px)",zIndex:2,pointerEvents:"none",opacity:0.12,animation:"rotateSlow 30s linear infinite"}}>
+    <circle cx="50%" cy="50%" r="47%" fill="none" stroke={ANIME_COLORS.primary} strokeWidth="1" strokeDasharray="4 12"/>
+    <circle cx="50%" cy="50%" r="42%" fill="none" stroke={ANIME_COLORS.secondary} strokeWidth="1" strokeDasharray="8 6"/>
+    <circle cx="50%" cy="50%" r="37%" fill="none" stroke={ANIME_COLORS.accent} strokeWidth="1" strokeDasharray="2 18"/>
+  </svg>
+));
+DecorativeRings.displayName = "DecorativeRings";
+
+const RegistrationMarks = memo(() => (
+  <>
+    {([
+      {top:20,left:20},  {top:20,right:20},
+      {bottom:20,left:20},{bottom:20,right:20}
+    ] as React.CSSProperties[]).map((pos,i)=>(
+      <svg key={i} style={{position:"absolute",width:24,height:24,zIndex:9,...pos,opacity:0.5}}>
+        <circle cx="12" cy="12" r="5" fill="none" stroke={ANIME_COLORS.text} strokeWidth="1"/>
+        <line x1="12" y1="0" x2="12" y2="8" stroke={ANIME_COLORS.text} strokeWidth="1"/>
+        <line x1="12" y1="16" x2="12" y2="24" stroke={ANIME_COLORS.text} strokeWidth="1"/>
+        <line x1="0" y1="12" x2="8" y2="12" stroke={ANIME_COLORS.text} strokeWidth="1"/>
+        <line x1="16" y1="12" x2="24" y2="12" stroke={ANIME_COLORS.text} strokeWidth="1"/>
+      </svg>
+    ))}
+  </>
+));
+RegistrationMarks.displayName = "RegistrationMarks";
+
 /* ═══════════════════════════════════════════════════════════════ */
 export default function AakarLoader({ onComplete }: { onComplete?: () => void }) {
   const [progress, setProgress]   = useState(0);
-  const [dots, setDots]           = useState<Dot[]>([]);
   const [lineIdx, setLineIdx]     = useState(0);
   const [phase, setPhase]         = useState<"loading" | "done" | "exit">("loading");
   const [glitch, setGlitch]       = useState(false);
   const [logoLoaded, setLogoLoaded] = useState(false);
-  const raf = useRef<number>(0);
+  
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const tickerRaf = useRef<number>(0);
+  const particlesRaf = useRef<number>(0);
+
+  /* Progress calculation memoized */
+  const pct = useMemo(() => Math.floor(progress), [progress]);
 
   /* progress ticker */
   useEffect(() => {
@@ -39,33 +81,89 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
     const tick = () => {
       val = Math.min(val + rand(0.4, 1.8), 100);
       setProgress(val);
-      if (val < 100) raf.current = requestAnimationFrame(tick);
+      if (val < 100) tickerRaf.current = requestAnimationFrame(tick);
       else {
         setPhase("done");
-        setTimeout(() => { setPhase("exit"); setTimeout(() => onComplete?.(), 700); }, 1100);
+        const t1 = setTimeout(() => { 
+          setPhase("exit"); 
+          const t2 = setTimeout(() => onComplete?.(), 700);
+          return () => clearTimeout(t2);
+        }, 1100);
+        return () => clearTimeout(t1);
       }
     };
-    raf.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf.current);
+    tickerRaf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(tickerRaf.current);
   }, [onComplete]);
 
-  /* particle dot spawner */
+  /* Canvas Particle system */
   useEffect(() => {
-    const id = setInterval(() => {
-      setDots(prev => {
-        if (prev.length > 120) return prev.slice(-110);
-        const n: Dot = {
-          id: Date.now() + Math.random(),
-          x: rand(0, 100),
-          y: rand(0, 100),
-          size: rand(4, 22),
-          color: pick([ANIME_COLORS.primary, ANIME_COLORS.secondary, ANIME_COLORS.accent, ANIME_COLORS.purple, ANIME_COLORS.mint]),
-          delay: rand(0, 0.3),
-        };
-        return [...prev, n];
-      });
-    }, 60);
-    return () => clearInterval(id);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", resize);
+    resize();
+
+    let particles: Particle[] = [];
+    const colors = [ANIME_COLORS.primary, ANIME_COLORS.secondary, ANIME_COLORS.accent, ANIME_COLORS.purple, ANIME_COLORS.mint];
+
+    const createParticle = (): Particle => ({
+      id: Math.random(),
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: rand(4, 20),
+      color: pick(colors),
+      life: 0,
+      maxLife: rand(60, 100),
+      vx: rand(-0.5, 0.5),
+      vy: rand(-0.5, 0.5),
+    });
+
+    // Initial particles
+    particles = Array.from({ length: 40 }, createParticle);
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Spawn new particles occasionally
+      if (particles.length < 80 && Math.random() < 0.1) {
+        particles.push(createParticle());
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life++;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        const opacity = Math.sin((p.life / p.maxLife) * Math.PI) * 0.3;
+        
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.life >= p.maxLife) {
+          particles.splice(i, 1);
+        }
+      }
+      
+      particlesRaf.current = requestAnimationFrame(animate);
+    };
+
+    particlesRaf.current = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(particlesRaf.current);
+    };
   }, []);
 
   /* line cycling */
@@ -83,19 +181,12 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
     return () => clearInterval(id);
   }, []);
 
-  const pct = Math.floor(progress);
-
   return (
     <>
       <style>{`
         ${ANIME_GLOBAL_STYLES}
 
         /* ── keyframes ── */
-        @keyframes dotPrint {
-          0%   { opacity:0; transform:scale(0); }
-          60%  { opacity:0.9; transform:scale(1.3); }
-          100% { opacity:0.18; transform:scale(1); }
-        }
         @keyframes chromaTitle {
           0%,100% { text-shadow:
             0 0 20px ${ANIME_COLORS.primary}45,
@@ -139,9 +230,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
           0%   { opacity:0; transform:translateY(12px) skewX(-4deg); }
           20%,80% { opacity:1; transform:translateY(0)  skewX(-4deg); }
           100% { opacity:0; transform:translateY(-12px) skewX(-4deg); }
-        }
-        @keyframes fillBar {
-          from { transform: scaleX(0); }
         }
         @keyframes barGlow {
           0%,100% { box-shadow: 0 0 20px ${ANIME_COLORS.primary}40; }
@@ -190,21 +278,14 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
         }}
       >
 
-        {/* ── particle dot field ── */}
-        <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:1 }}>
-          {dots.map(d => (
-            <div key={d.id} style={{
-              position: "absolute",
-              left: `${d.x}%`, top: `${d.y}%`,
-              width: d.size, height: d.size,
-              borderRadius: "50%",
-              background: d.color,
-              opacity: 0,
-              mixBlendMode: "screen",
-              animation: `dotPrint 1.4s ${d.delay}s ease-out forwards`,
-            }} />
-          ))}
-        </div>
+        {/* ── particle canvas field ── */}
+        <canvas
+          ref={canvasRef}
+          style={{ 
+            position:"absolute", inset:0, pointerEvents:"none", 
+            zIndex:1, mixBlendMode: "screen"
+          }} 
+        />
 
         {/* ── scan line ── */}
         <div style={{
@@ -224,26 +305,8 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
           <rect width="100%" height="100%" fill="url(#grid)"/>
         </svg>
 
-        {/* ── rotating ring decoration ── */}
-        <svg style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:"min(90vw,700px)",height:"min(90vw,700px)",zIndex:2,pointerEvents:"none",opacity:0.12,animation:"rotateSlow 30s linear infinite"}}>
-          <circle cx="50%" cy="50%" r="47%" fill="none" stroke={ANIME_COLORS.primary} strokeWidth="1" strokeDasharray="4 12"/>
-          <circle cx="50%" cy="50%" r="42%" fill="none" stroke={ANIME_COLORS.secondary} strokeWidth="1" strokeDasharray="8 6"/>
-          <circle cx="50%" cy="50%" r="37%" fill="none" stroke={ANIME_COLORS.accent} strokeWidth="1" strokeDasharray="2 18"/>
-        </svg>
-
-        {/* ── corner registration marks ── */}
-        {([
-          {top:20,left:20},  {top:20,right:20},
-          {bottom:20,left:20},{bottom:20,right:20}
-        ] as React.CSSProperties[]).map((pos,i)=>(
-          <svg key={i} style={{position:"absolute",width:24,height:24,zIndex:9,...pos,opacity:0.5}}>
-            <circle cx="12" cy="12" r="5" fill="none" stroke={ANIME_COLORS.text} strokeWidth="1"/>
-            <line x1="12" y1="0" x2="12" y2="8" stroke={ANIME_COLORS.text} strokeWidth="1"/>
-            <line x1="12" y1="16" x2="12" y2="24" stroke={ANIME_COLORS.text} strokeWidth="1"/>
-            <line x1="0" y1="12" x2="8" y2="12" stroke={ANIME_COLORS.text} strokeWidth="1"/>
-            <line x1="16" y1="12" x2="24" y2="12" stroke={ANIME_COLORS.text} strokeWidth="1"/>
-          </svg>
-        ))}
+        <DecorativeRings />
+        <RegistrationMarks />
 
         {/* ── main stage ── */}
         <div style={{
@@ -260,7 +323,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             width: "clamp(90px,18vw,180px)",
             height: "clamp(90px,18vw,180px)",
           }}>
-            {/* placeholder ring shown until logo loads */}
             {!logoLoaded && (
               <div style={{
                 position:"absolute",inset:0,borderRadius:"50%",
@@ -280,9 +342,7 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             />
           </div>
 
-          {/* AAKAR title — color-separated layers */}
           <div style={{ position:"relative", lineHeight:1, userSelect:"none" }}>
-            {/* layer 1 — secondary offset */}
             <div style={{
               position:"absolute",
               fontFamily:"'Bebas Neue',sans-serif",
@@ -295,7 +355,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               mixBlendMode:"screen",
               pointerEvents:"none",
             }}>AAKAR</div>
-            {/* layer 2 — accent offset */}
             <div style={{
               position:"absolute",
               fontFamily:"'Bebas Neue',sans-serif",
@@ -308,7 +367,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               mixBlendMode:"screen",
               pointerEvents:"none",
             }}>AAKAR</div>
-            {/* primary */}
             <h1 className="title-chroma" style={{
               fontFamily:"'Bebas Neue',sans-serif",
               fontSize:"clamp(4.5rem,16vw,11rem)",
@@ -318,7 +376,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               position:"relative", zIndex:2,
             }}>AAKAR</h1>
 
-            {/* glitch duplicate */}
             {glitch && (
               <h1 className="glitch-layer" style={{
                 fontFamily:"'Bebas Neue',sans-serif",
@@ -332,7 +389,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             )}
           </div>
 
-          {/* 2026 — accent stamp */}
           <div style={{
             fontFamily:"'Bebas Neue',sans-serif",
             fontSize:"clamp(2rem,7vw,5rem)",
@@ -346,7 +402,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             animationFillMode:"forwards",
           }}>2026</div>
 
-          {/* subtitle strip */}
           <div style={{
             fontSize:"clamp(0.5rem,1.6vw,0.72rem)",
             letterSpacing:"0.3em",
@@ -360,19 +415,16 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             animationFillMode:"forwards",
           }}>BRAINS · GUTS · GLORY</div>
 
-          {/* progress bar */}
           <div style={{
             width:"min(380px,82vw)", marginTop:"0.5rem",
             display:"flex", flexDirection:"column", gap:"6px",
           }}>
-            {/* track */}
             <div style={{
               width:"100%", height:"10px",
               background:"rgba(255,255,255,0.06)",
               border:`1px solid ${ANIME_COLORS.primary}30`,
               overflow:"hidden", position:"relative",
             }}>
-              {/* fill — segmented anime style */}
               <div style={{
                 position:"absolute",top:0,left:0,bottom:0,
                 width:`${pct}%`,
@@ -388,7 +440,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
               }}/>
             </div>
 
-            {/* labels */}
             <div style={{
               display:"flex", justifyContent:"space-between",
               fontSize:"clamp(0.42rem,1.2vw,0.6rem)",
@@ -401,7 +452,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
             </div>
           </div>
 
-          {/* status line */}
           <div style={{
             fontSize:"clamp(0.48rem,1.4vw,0.65rem)",
             letterSpacing:"0.28em",
@@ -417,7 +467,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
 
         </div>
 
-        {/* ── bottom ticker tape ── */}
         <div style={{
           position:"absolute", bottom:0, left:0, right:0, zIndex:12,
           height:"clamp(22px,3.5vh,34px)",
@@ -442,7 +491,6 @@ export default function AakarLoader({ onComplete }: { onComplete?: () => void })
           </div>
         </div>
 
-        {/* ── done flash overlay ── */}
         {phase === "done" && (
           <div style={{
             position:"absolute",inset:0,zIndex:20,

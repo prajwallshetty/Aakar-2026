@@ -304,7 +304,7 @@ class App {
   createScene() { this.scene = new Transform(); }
 
   createGeometry() {
-    this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
+    this.planeGeometry = new Plane(this.gl, { heightSegments: 10, widthSegments: 20 });
   }
 
   createMedias() {
@@ -405,7 +405,7 @@ class App {
     this.medias.forEach((m) => m.onResize({ screen: this.screen, viewport: this.viewport }));
   }
 
-  update() {
+  update = () => {
     if (!this.userInteracting) {
       this.scroll.target += this.opts.autoScrollSpeed;
     }
@@ -414,8 +414,8 @@ class App {
     this.medias.forEach((m) => m.update(this.scroll, dir));
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
-    this.raf = requestAnimationFrame(this.update.bind(this));
-  }
+    this.raf = requestAnimationFrame(this.update);
+  };
 
   addListeners() {
     this._onResize    = this.onResize.bind(this);
