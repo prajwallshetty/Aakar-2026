@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import { useRef, useCallback, useEffect, useState } from "react";
-import { cinzelFont } from "@/lib/font";
 
 /* ─── data ────────────────────────────────────────────────────── */
-interface TeamMember { name: string; role: string; image: string; }
+interface TeamMember { name: string; role: string; image: string; github?: string;}
 interface TeamCategory { name: string; members: TeamMember[]; }
 
 const teamData: TeamCategory[] = [
@@ -27,15 +26,38 @@ const teamData: TeamCategory[] = [
       { name: "Ayisha", role: "Designs & Creatives Head", image: "/Team/Core-Committee/Ayisha.jpg" },
       { name: "Pratham", role: "Operations Manager", image: "/Team/Core-Committee/pratham.png" },
       { name: "Rahul", role: "Social Media Manager", image: "/Team/Core-Committee/rahul.PNG" },
-      { name: "Monith", role: "Event Coordinator", image: "/Team/Core-Committee/monith.png" },
+      { name: "Monith", role: "Event Coordinator", image: "/Team/Core-Committee/Monith.png" },
       { name: "Dhyan", role: "Content & Media Head", image: "/Team/Core-Committee/dhyan.jpeg" },
       { name: "Rithvik", role: "Merchandise Lead", image: "/Team/Core-Committee/rithvik.jpg" },
-      { name: "Pooja", role: "Marketing & Promotions Head", image: "/Team/Core-Committee/pooja.jpg" },
+      { name: "Pooja", role: "Marketing & Promotions Head", image: "/Team/Core-Committee/Pooja.jpg" },
       { name: "Niresh", role: "Technical Head", image: "/Team/Core-Committee/niresh.png" },
       { name: "Sudheeksha", role: "Registration & Help Desk Head", image: "/Team/Core-Committee/sudeeksha.jpg" },
-      { name: "Surakshith", role: "Logistics & Venue Head", image: "/Team/Core-Committee/surakshith.jpg" },
+      { name: "Surakshith", role: "Logistics & Venue Head", image: "/Team/Core-Committee/Surakshith.jpg" },
     ],
   },
+  {
+  name: "Website Team",
+  members: [
+    {
+      name: "Prajwal Shetty",
+      role: "Full Stack Developer",
+      image: "/Team/Web/prajwal.png",
+      github: "https://github.com/prajwallshetty"
+    },
+    {
+      name: "Kishan Bhandary",
+      role: "Full Stack Developer",
+      image: "/Team/Web/kishan.jpg",
+      github: "https://github.com/kishanBhandary"
+    },
+    {
+      name: "Pahima Uchil",
+      role: "Full Stack Developer",
+      image: "/Team/Web/pahima.jpeg",
+      github: "https://github.com/pahimauchil"
+    }
+  ]
+}
 ];
 
 /* ─── accent palette per card — iridescent cycle ─────────────── */
@@ -130,7 +152,7 @@ function GlitchText({ text, children }: { text: string; children: React.ReactNod
 }
 
 /* ─── Member card ─────────────────────────────────────────────── */
-function MemberCard({ member, index }: { member: TeamMember; index: number }) {
+function MemberCard({ member, index, category }: { member: TeamMember; index: number; category: string }) {
   const { ref, onMove, onLeave } = useTilt();
   const accent = ACCENTS[index % ACCENTS.length];
   const [loaded, setLoaded] = useState(false);
@@ -183,14 +205,50 @@ function MemberCard({ member, index }: { member: TeamMember; index: number }) {
 
       {/* Info section */}
       <div className="card-info" style={{ transform: "translateZ(30px)" }}>
-        <div className="name-line">
-          {member.name}
-        </div>
-        <div className="role-badge" style={{ borderColor: accent.primary, color: accent.primary, boxShadow: `0 0 12px ${accent.glow}, inset 0 0 8px ${accent.glow}` }}>
-          <span className="role-dot" style={{ background: accent.primary, boxShadow: `0 0 6px ${accent.primary}` }} />
-          {member.role}
-        </div>
-      </div>
+  <div className="name-line">
+    {member.name}
+  </div>
+
+  <div
+    className="role-badge"
+    style={{
+      borderColor: accent.primary,
+      color: accent.primary,
+      boxShadow: `0 0 12px ${accent.glow}, inset 0 0 8px ${accent.glow}`,
+    }}
+  >
+    <span
+      className="role-dot"
+      style={{
+        background: accent.primary,
+        boxShadow: `0 0 6px ${accent.primary}`,
+      }}
+    />
+    {member.role}
+  </div>
+
+  {/* 🔥 GITHUB LINK */}
+  {category === "Website Team" && member.github && (
+  <a
+    href={member.github}
+    target="_blank"
+    className="github-btn"
+  >
+    <span className="github-glow" />
+    
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="github-icon"
+    >
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.73-4.04-1.6-4.04-1.6-.54-1.37-1.32-1.74-1.32-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.83 2.8 1.3 3.48.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.3.47-2.36 1.23-3.2-.12-.3-.54-1.5.12-3.13 0 0 1-.32 3.3 1.22a11.5 11.5 0 013 0c2.3-1.54 3.3-1.22 3.3-1.22.66 1.63.24 2.83.12 3.13.77.84 1.23 1.9 1.23 3.2 0 4.6-2.8 5.63-5.47 5.93.43.37.82 1.1.82 2.22v3.3c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z" />
+    </svg>
+
+    <span className="github-text">GITHUB</span>
+  </a>
+)}
+</div>
 
       {/* Cursor-tracking shine */}
       <div className="shine" />
@@ -205,7 +263,7 @@ function SectionHeading({ children, index }: { children: React.ReactNode; index:
   return (
     <div className="section-head">
       <div className="head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${c})` }} />
-      <h2 className={`head-title ${cinzelFont.className}`}>
+      <h2 className="head-title" style={{ textShadow: `0 0 20px ${c}80, 0 0 40px ${c}30` }}>
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}>[ </span>
         {children}
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}> ]</span>
@@ -506,6 +564,7 @@ const Team = () => (
         flex: 1; max-width: 130px; height: 2px; border-radius: 2px;
       }
       .head-title {
+        font-family: 'Bebas Neue', sans-serif;
         font-size: clamp(1.8rem, 5vw, 3rem);
         letter-spacing: 0.15em;
         color: #fff;
@@ -539,16 +598,20 @@ const Team = () => (
         flex-shrink: 0;
       }
       .main-title {
+        font-family: 'Bebas Neue', sans-serif;
         font-size: clamp(3rem, 10vw, 6.5rem);
         line-height: 0.85;
         letter-spacing: 0.05em;
         color: #fff;
+        text-shadow: 0 0 30px rgba(255,77,0,0.45), -3px -3px 0 #FF4D00, 3px 3px 0 #00E5FF;
         transform: skewX(-6deg);
         margin: 0;
         animation: titleReveal 1s cubic-bezier(0.2,0.8,0.2,1) 0.1s both;
       }
       .main-title-accent {
         color: #ffffff;
+        -webkit-text-stroke: 0;
+        text-shadow: 0 0 35px rgba(255,255,255,0.4);
       }
       .main-subtitle {
         font-family: 'Share Tech Mono', monospace;
@@ -569,6 +632,7 @@ const Team = () => (
         display: none;
       }
 
+
       /* ── Card hover slide shine (::before) ── */
       .team-card::before {
         content: '';
@@ -579,6 +643,83 @@ const Team = () => (
         z-index: 28; pointer-events: none;
       }
       .team-card:hover::before { left: 160%; }
+      .github-btn {
+  position: relative;
+  margin-top: 10px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #00E5FF;
+  border: 1px solid rgba(0,229,255,0.4);
+  border-radius: 6px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.github-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.github-text {
+  position: relative;
+  z-index: 2;
+}
+
+/* 🔥 glow layer */
+.github-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,229,255,0.3), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ✨ hover effects */
+.github-btn:hover {
+  color: #fff;
+  border-color: #00E5FF;
+  box-shadow:
+    0 0 10px #00E5FF,
+    0 0 25px #00E5FF,
+    inset 0 0 10px rgba(0,229,255,0.3);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.github-btn:hover .github-glow {
+  opacity: 1;
+}
+
+/* ⚡ scanline flicker */
+.github-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.15),
+    transparent
+  );
+  transform: translateX(-100%);
+}
+
+.github-btn:hover::after {
+  animation: github-scan 0.8s linear;
+}
+
+@keyframes github-scan {
+  to {
+    transform: translateX(100%);
+  }
+}
     `}</style>
 
     {/* Background layers */}
@@ -595,9 +736,11 @@ const Team = () => (
             SYSTEM_OP // AAKAR_2026
           </div>
 
-          <h1 className={`main-title ${cinzelFont.className}`}>
+          <h1 className="main-title">
             MEET THE{" "}
+            <GlitchText text="SQUAD">
               <span className="main-title-accent">SQUAD</span>
+            </GlitchText>
           </h1>
 
           <p className="main-subtitle">
@@ -628,7 +771,7 @@ const Team = () => (
               perspective: "1400px",
             }}>
               {category.members.map((member, i) => (
-                <MemberCard key={i} member={member} index={i} />
+                <MemberCard key={i} member={member} index={i} category={category.name}/>
               ))}
             </div>
           </div>
