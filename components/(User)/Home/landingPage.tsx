@@ -12,9 +12,9 @@ import Image from "next/image";
 
 export default function HeroLanding() {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
-  const rafRef     = useRef<number | null>(null);
-  const [mounted,  setMounted]  = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -28,14 +28,14 @@ export default function HeroLanding() {
   // ── Scroll parallax ───────────────────────────────────────────────────────
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
 
-  const bgScrollY   = useTransform(scrollYProgress, [0, 1], ["0%",  "30%"]);
-  const charScrollY = useTransform(scrollYProgress, [0, 1], ["0%",  "10%"]);
+  const bgScrollY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const charScrollY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
   const charScrollX = useTransform(scrollYProgress, [0, 1], ["0px", "50px"]);
   const charOpacity = useTransform(scrollYProgress, [0, 0.5, 0.8], [1, 0.9, 0]);
-  const charScale   = useTransform(scrollYProgress, [0, 1], [1, 0.90]);
-  const logoY       = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
-  const textY       = useTransform(scrollYProgress, [0, 1], ["0%",  "24%"]);
-  const overlayOp   = useTransform(scrollYProgress, [0, 0.6], [0.52, 0.80]);
+  const charScale = useTransform(scrollYProgress, [0, 1], [1, 0.90]);
+  const logoY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "24%"]);
+  const overlayOp = useTransform(scrollYProgress, [0, 0.6], [0.52, 0.80]);
 
   // ── Mouse motion values ───────────────────────────────────────────────────
   const bgMX = useSpring(useMotionValue(0), { stiffness: 8, damping: 30, mass: 1.8 });
@@ -59,7 +59,7 @@ export default function HeroLanding() {
     }
 
     const handler = (e: MouseEvent) => {
-      const cx = window.innerWidth  / 2;
+      const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
       const nx = Math.max(-1, Math.min(1, (e.clientX - cx) / cx));
       const ny = Math.max(-1, Math.min(1, (e.clientY - cy) / cy));
@@ -70,7 +70,7 @@ export default function HeroLanding() {
       chTX.set(nx * -36);
       chTY.set(ny * -20);
 
-      chRY.set(nx *  9);
+      chRY.set(nx * 9);
       chRX.set(ny * -5);
 
       textMX.set(nx * 12);
@@ -254,24 +254,24 @@ export default function HeroLanding() {
         .hl-persp { perspective:1000px; perspective-origin:50% 40%; }
       `}</style>
 
-      <section ref={sectionRef} className="hl relative w-full h-screen min-h-[640px] overflow-hidden bg-black" style={{fontFamily:"'Cinzel',serif"}}>
+      <section ref={sectionRef} className="hl relative w-full h-screen min-h-[640px] overflow-hidden bg-black" style={{ fontFamily: "'Cinzel',serif" }}>
 
         {/* BG */}
-        <motion.div className="absolute z-0" style={{inset:!isMobile?"-90px":"-30px", y:bgScrollY, x:!isMobile ? bgMX : undefined}}>
-          <motion.div className="absolute inset-0" style={{y:!isMobile ? bgMY : undefined}}>
-            <Image src="/landingbg.jpg" alt="" fill priority quality={95} sizes="130vw" style={{objectFit:"cover",objectPosition:"center 40%"}}/>
+        <motion.div className="absolute z-0" style={{ inset: !isMobile ? "-90px" : "-30px", y: bgScrollY, x: !isMobile ? bgMX : undefined }}>
+          <motion.div className="absolute inset-0" style={{ y: !isMobile ? bgMY : undefined }}>
+            <Image src="/landingbg.jpg" alt="" fill priority quality={95} sizes="130vw" style={{ objectFit: "cover", objectPosition: "center 40%" }} />
           </motion.div>
         </motion.div>
 
-        <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none" style={{mixBlendMode:"screen",opacity:.75}}/>
-        <div className="hl-scan absolute inset-0 z-10 pointer-events-none"/>
-        <div className="hl-grain absolute inset-0 z-10 pointer-events-none"/>
+        <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none" style={{ mixBlendMode: "screen", opacity: .75 }} />
+        <div className="hl-scan absolute inset-0 z-10 pointer-events-none" />
+        <div className="hl-grain absolute inset-0 z-10 pointer-events-none" />
 
-        <motion.div className="hl-vp absolute inset-0 z-10 pointer-events-none" style={{opacity:overlayOp}}>
-          <div style={{position:"absolute",inset:0,background:["radial-gradient(ellipse 120% 80% at 50% 115%, #0a0000 0%, transparent 55%)","linear-gradient(to top, rgba(5,0,0,.97) 0%, rgba(8,2,0,.65) 30%, rgba(10,2,0,.15) 60%, transparent 100%)","linear-gradient(to bottom, rgba(4,0,0,.60) 0%, transparent 30%)","linear-gradient(to right, rgba(3,0,0,.60) 0%, transparent 45%)"].join(", ")}}/>
+        <motion.div className="hl-vp absolute inset-0 z-10 pointer-events-none" style={{ opacity: overlayOp }}>
+          <div style={{ position: "absolute", inset: 0, background: ["radial-gradient(ellipse 120% 80% at 50% 115%, #0a0000 0%, transparent 55%)", "linear-gradient(to top, rgba(5,0,0,.97) 0%, rgba(8,2,0,.65) 30%, rgba(10,2,0,.15) 60%, transparent 100%)", "linear-gradient(to bottom, rgba(4,0,0,.60) 0%, transparent 30%)", "linear-gradient(to right, rgba(3,0,0,.60) 0%, transparent 45%)"].join(", ") }} />
         </motion.div>
 
-        <div className="hl-flicker absolute top-0 left-0 z-20 pointer-events-none" style={{width:"35vw",height:"35vw",maxWidth:320,maxHeight:320,background:"radial-gradient(ellipse at 0% 0%, rgba(180,30,0,.28) 0%, transparent 65%)"}}/>
+        <div className="hl-flicker absolute top-0 left-0 z-20 pointer-events-none" style={{ width: "35vw", height: "35vw", maxWidth: 320, maxHeight: 320, background: "radial-gradient(ellipse at 0% 0%, rgba(180,30,0,.28) 0%, transparent 65%)" }} />
 
         {/* ════════════ DESKTOP CHARACTER ════════════ */}
         {!isMobile && (
@@ -285,31 +285,31 @@ export default function HeroLanding() {
               scale: charScale,
             }}
           >
-            <motion.div style={{x:chTX, y:chTY}}>
-              <motion.div style={{rotateX:chRX, rotateY:chRY, transformStyle:"preserve-3d"}}>
+            <motion.div style={{ x: chTX, y: chTY }}>
+              <motion.div style={{ rotateX: chRX, rotateY: chRY, transformStyle: "preserve-3d" }}>
                 <div className="hl-float">
                   <div style={{
-                    position:"absolute", inset:"-15% -20%",
-                    background:"radial-gradient(ellipse 55% 70% at 55% 75%, rgba(220,75,10,.48) 0%, rgba(160,30,0,.20) 40%, transparent 70%)",
-                    filter:"blur(28px)", zIndex:-1, pointerEvents:"none",
-                    borderRadius:"50%",
-                  }}/>
+                    position: "absolute", inset: "-15% -20%",
+                    background: "radial-gradient(ellipse 55% 70% at 55% 75%, rgba(220,75,10,.48) 0%, rgba(160,30,0,.20) 40%, transparent 70%)",
+                    filter: "blur(28px)", zIndex: -1, pointerEvents: "none",
+                    borderRadius: "50%",
+                  }} />
                   <div className="hl-glow-breathe" style={{
-                    position:"absolute", bottom:"1%", left:"10%", right:"10%", height:"6%",
-                    background:"radial-gradient(ellipse 100% 100% at 50% 100%, rgba(190,45,0,.60) 0%, transparent 70%)",
-                    filter:"blur(16px)", zIndex:-1,
-                  }}/>
+                    position: "absolute", bottom: "1%", left: "10%", right: "10%", height: "6%",
+                    background: "radial-gradient(ellipse 100% 100% at 50% 100%, rgba(190,45,0,.60) 0%, transparent 70%)",
+                    filter: "blur(16px)", zIndex: -1,
+                  }} />
                   <div className="hl-sway">
                     <motion.div
-                      initial={{opacity:0, x:100, filter:"blur(20px)", scale:.96}}
-                      animate={{opacity:1, x:0,   filter:"blur(0px)",  scale:1  }}
-                      transition={{duration:1.6, delay:.5, ease:[.22,1,.36,1]}}
+                      initial={{ opacity: 0, x: 100, filter: "blur(20px)", scale: .96 }}
+                      animate={{ opacity: 1, x: 0, filter: "blur(0px)", scale: 1 }}
+                      transition={{ duration: 1.6, delay: .5, ease: [.22, 1, .36, 1] }}
                     >
                       <img src="/kuko.png" alt="AAKAR character" style={{
-                        display:"block", objectFit:"contain",
-                        height:"clamp(440px, 92vh, 870px)", width:"auto",
-                        filter:"drop-shadow(-8px 0 40px rgba(235,95,10,.65)) drop-shadow(0 24px 55px rgba(180,40,0,.38)) drop-shadow(0 0 90px rgba(140,25,0,.22))",
-                      }}/>
+                        display: "block", objectFit: "contain",
+                        height: "clamp(440px, 92vh, 870px)", width: "auto",
+                        filter: "drop-shadow(-8px 0 40px rgba(235,95,10,.65)) drop-shadow(0 24px 55px rgba(180,40,0,.38)) drop-shadow(0 0 90px rgba(140,25,0,.22))",
+                      }} />
                     </motion.div>
                   </div>
                 </div>
@@ -333,36 +333,36 @@ export default function HeroLanding() {
           }}>
             {/* Ambient ground glow */}
             <div style={{
-              position:"absolute",
+              position: "absolute",
               bottom: 0,
-              left:"50%",
-              transform:"translateX(-50%)",
-              width:"90vw",
-              height:"60vw",
-              background:"radial-gradient(ellipse 60% 70% at 50% 85%, rgba(220,75,10,.35) 0%, rgba(160,30,0,.12) 50%, transparent 70%)",
-              filter:"blur(32px)",
-              zIndex:0,
-              borderRadius:"50%",
-            }}/>
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "90vw",
+              height: "60vw",
+              background: "radial-gradient(ellipse 60% 70% at 50% 85%, rgba(220,75,10,.35) 0%, rgba(160,30,0,.12) 50%, transparent 70%)",
+              filter: "blur(32px)",
+              zIndex: 0,
+              borderRadius: "50%",
+            }} />
 
             {/* Character — centered horizontally, sits in lower 65% */}
             <div
               className="hl-float-mobile"
               style={{
-                position:"absolute",
+                position: "absolute",
                 bottom: "-120px",
-                left:"0%",
-                transform:"translateX(-50%)",
+                left: "0%",
+                transform: "translateX(-50%)",
                 zIndex: 1,
-                display:"flex",
-                alignItems:"flex-end",
-                justifyContent:"center",
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "center",
               }}
             >
               {/* Ground shadow */}
               <div className="hl-glow-breathe" style={{
-                position:"absolute", bottom:"2%", left:"10%", right:"10%", height:"5%",
-                background:"rgba(0,0,0,0.45)", borderRadius:"50%", filter:"blur(8px)",
+                position: "absolute", bottom: "2%", left: "10%", right: "10%", height: "5%",
+                background: "rgba(0,0,0,0.45)", borderRadius: "50%", filter: "blur(8px)",
               }} />
 
               <div style={{ position: "relative" }}>
@@ -373,12 +373,12 @@ export default function HeroLanding() {
                   height={800}
                   priority
                   style={{
-                    display:"block",
-                    objectFit:"contain",
-                    height:"clamp(340px, 70vh, 560px)",
-                    width:"auto",
-                    maxWidth:"88vw",
-                    filter:"drop-shadow(-6px 0 28px rgba(235,95,10,.60)) drop-shadow(0 18px 44px rgba(180,40,0,.35)) drop-shadow(0 0 70px rgba(140,25,0,.20))",
+                    display: "block",
+                    objectFit: "contain",
+                    height: "clamp(340px, 70vh, 560px)",
+                    width: "auto",
+                    maxWidth: "88vw",
+                    filter: "drop-shadow(-6px 0 28px rgba(235,95,10,.60)) drop-shadow(0 18px 44px rgba(180,40,0,.35)) drop-shadow(0 0 70px rgba(140,25,0,.20))",
                   }}
                 />
               </div>
@@ -386,16 +386,16 @@ export default function HeroLanding() {
 
             {/* Logo — above character's head area, original colors, no tint */}
             <motion.div
-              initial={{opacity:0, scale:.85, filter:"blur(18px)"}}
-              animate={{opacity:1, scale:1, filter:"blur(0px)"}}
-              transition={{duration:1.4, delay:.7, ease:[.22,1,.36,1]}}
+              initial={{ opacity: 0, scale: .85, filter: "blur(18px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              transition={{ duration: 1.4, delay: .7, ease: [.22, 1, .36, 1] }}
               style={{
-                position:"absolute",
-                top: "clamp(120px, 26vh, 210px)",
-                left:"2%",
-                transform:"translateX(-50%)",
+                position: "absolute",
+                top: "clamp(200px, 26vh, 410px)",
+                left: "-10%",
+                transform: "translateX(-50%)",
                 zIndex: 2,
-                width:"clamp(180px, 120vw, 810px)",
+                width: "clamp(180px, 120vw, 810px)",
               }}
             >
               <Image
@@ -406,9 +406,9 @@ export default function HeroLanding() {
                 priority
                 className="hl-logo-glow-mobile"
                 style={{
-                  objectFit:"contain",
-                  width:"100%",
-                  height:"auto",
+                  objectFit: "contain",
+                  width: "100%",
+                  height: "auto",
                   /* No invert — keep logo's original colors */
                 }}
               />
@@ -420,72 +420,72 @@ export default function HeroLanding() {
         <motion.div
           className="absolute inset-0 z-30 flex flex-col justify-end md:justify-center"
           style={!isMobile ? {
-            paddingLeft:"clamp(28px,7vw,100px)",
-            y:textY,
-            x:textMX,
+            paddingLeft: "clamp(28px,7vw,100px)",
+            y: textY,
+            x: textMX,
           } : {
             /* Mobile: text+CTA pinned to top, above everything */
-            paddingLeft:"20px",
-            paddingRight:"20px",
-            paddingTop:"clamp(32px, 6vh, 56px)",
-            justifyContent:"flex-start",
-            alignItems:"center",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+            paddingTop: "clamp(170px, 12vh, 90px)",
+            justifyContent: "flex-start",
+            alignItems: "center",
           }}
         >
 
           {/* ── Desktop logo ─────────────────────────────────────── */}
           {!isMobile && (
             <motion.div
-              style={{y:logoY, marginLeft:"-7vw"}}
-              initial={{opacity:0,scale:.88,filter:"blur(22px)"}}
-              animate={{opacity:1,scale:1,filter:"blur(0px)"}}
-              transition={{duration:1.5,delay:.45,ease:[.22,1,.36,1]}}
+              style={{ y: logoY, marginLeft: "-7vw" }}
+              initial={{ opacity: 0, scale: .88, filter: "blur(22px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              transition={{ duration: 1.5, delay: .45, ease: [.22, 1, .36, 1] }}
             >
               <Image src="/aklogo.png" alt="AAKAR 2026" width={620} height={240} priority className="hl-logo-glow"
-                style={{objectFit:"contain",width:"clamp(240px,52vw,620px)",height:"auto",filter:"invert(1) drop-shadow(0 0 30px rgba(255,120,30,.5))"}}/>
+                style={{ objectFit: "contain", width: "clamp(240px,52vw,620px)", height: "auto", filter: "invert(1) drop-shadow(0 0 30px rgba(255,120,30,.5))" }} />
             </motion.div>
           )}
 
           {/* ── Mobile: CTA + text at the very top ──────────────── */}
           {isMobile && (
             <motion.div
-              initial={{opacity:0, y:-14}}
-              animate={{opacity:1, y:0}}
-              transition={{delay:0.9, duration:1.0, ease:[.22,1,.36,1]}}
-              style={{display:"flex", flexDirection:"column", alignItems:"center", width:"100%"}}
+              initial={{ opacity: 0, y: -14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 1.0, ease: [.22, 1, .36, 1] }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}
             >
               {/* Tagline */}
-              <div className="overflow-hidden" style={{marginBottom:"4px"}}>
+              <div className="overflow-hidden" style={{ marginBottom: "4px" }}>
                 <p style={{
-                  fontFamily:"'Cinzel',serif",
-                  fontWeight:300,
-                  fontSize:"clamp(.65rem,3.8vw,.95rem)",
-                  letterSpacing:"clamp(.18em,1.4vw,.30em)",
+                  fontFamily: "'Cinzel',serif",
+                  fontWeight: 300,
+                  fontSize: "clamp(.65rem,3.8vw,.95rem)",
+                  letterSpacing: "clamp(.18em,1.4vw,.30em)",
                   /* White text — high contrast against orange bg */
-                  color:"rgba(255,255,255,0.95)",
-                  whiteSpace:"nowrap",
-                  textAlign:"center",
-                  textShadow:"0 1px 12px rgba(0,0,0,0.6)",
+                  color: "rgba(255,255,255,0.95)",
+                  whiteSpace: "nowrap",
+                  textAlign: "center",
+                  textShadow: "0 1px 12px rgba(0,0,0,0.6)",
                 }}>
-                  {chars.map((ch,i)=>(
-                    <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
+                  {chars.map((ch, i) => (
+                    <span key={i} className="hl-tc" style={{ animationDelay: `${1.0 + i * .04}s`, whiteSpace: ch === " " ? "pre" : undefined }}>{ch}</span>
                   ))}
                 </p>
               </div>
 
               {/* Japanese subtitle */}
               <motion.p
-                initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2, duration:1.2}}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 1.2 }}
                 style={{
-                  fontFamily:"'Noto Serif JP',serif",
-                  fontWeight:200,
-                  fontSize:"clamp(8px,2.2vw,10px)",
-                  letterSpacing:".42em",
+                  fontFamily: "'Noto Serif JP',serif",
+                  fontWeight: 200,
+                  fontSize: "clamp(8px,2.2vw,10px)",
+                  letterSpacing: ".42em",
                   /* Soft white-cream — readable on orange without blending */
-                  color:"rgba(255,255,255,.50)",
-                  marginTop:"5px",
-                  textAlign:"center",
-                  textShadow:"0 1px 8px rgba(0,0,0,0.4)",
+                  color: "rgba(255,255,255,.50)",
+                  marginTop: "5px",
+                  textAlign: "center",
+                  textShadow: "0 1px 8px rgba(0,0,0,0.4)",
                 }}
               >
                 新たな時代の幕開け
@@ -493,52 +493,52 @@ export default function HeroLanding() {
 
               {/* Divider */}
               <div style={{
-                width:"clamp(90px,40vw,180px)",
-                height:1,
-                background:"linear-gradient(to right, transparent, rgba(255,255,255,.55), rgba(255,255,255,.30), transparent)",
-                margin:"12px auto",
-              }}/>
+                width: "clamp(90px,40vw,180px)",
+                height: 1,
+                background: "linear-gradient(to right, transparent, rgba(255,255,255,.55), rgba(255,255,255,.30), transparent)",
+                margin: "12px auto",
+              }} />
 
               {/* Buttons */}
               <motion.div
                 className="flex items-center gap-3"
-                initial={{opacity:0,y:14}} animate={{opacity:1,y:0}}
-                transition={{delay:1.6, duration:.9, ease:[.22,1,.36,1]}}
-                style={{justifyContent:"center"}}
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6, duration: .9, ease: [.22, 1, .36, 1] }}
+                style={{ justifyContent: "center" }}
               >
                 {/* Badge — white border/text on orange bg */}
                 <span className="hl-badge" style={{
-                  border:"1px solid rgba(255,255,255,0.28)",
-                  backdropFilter:"blur(8px)",
-                  borderRadius:"2px",
-                  padding:"5px 11px",
-                  fontFamily:"'Cinzel',serif",
-                  fontSize:"clamp(6px,2.4vw,8px)",
-                  letterSpacing:".35em",
-                  color:"rgba(255,255,255,.85)",
-                  whiteSpace:"nowrap",
-                  textTransform:"uppercase",
-                  textShadow:"0 1px 6px rgba(0,0,0,0.3)",
+                  border: "1px solid rgba(255,255,255,0.28)",
+                  backdropFilter: "blur(8px)",
+                  borderRadius: "2px",
+                  padding: "5px 11px",
+                  fontFamily: "'Cinzel',serif",
+                  fontSize: "clamp(6px,2.4vw,8px)",
+                  letterSpacing: ".35em",
+                  color: "rgba(255,255,255,.85)",
+                  whiteSpace: "nowrap",
+                  textTransform: "uppercase",
+                  textShadow: "0 1px 6px rgba(0,0,0,0.3)",
                 }}>
                   Techno-Cultural Fest
                 </span>
 
                 {/* CTA button — deep dark on orange for maximum contrast */}
                 <motion.button
-                  whileTap={{scale:.95}}
+                  whileTap={{ scale: .95 }}
                   style={{
-                    fontFamily:"'Cinzel',serif",
-                    fontSize:"clamp(6px,2.4vw,8px)",
-                    letterSpacing:".35em",
-                    textTransform:"uppercase",
-                    color:"#fff",
-                    background:"linear-gradient(135deg, rgba(10,4,0,.90) 0%, rgba(40,12,0,.85) 100%)",
-                    border:"1px solid rgba(255,255,255,.30)",
-                    borderRadius:"2px",
-                    padding:"5px 14px",
-                    cursor:"pointer",
-                    backdropFilter:"blur(8px)",
-                    pointerEvents:"all",
+                    fontFamily: "'Cinzel',serif",
+                    fontSize: "clamp(6px,2.4vw,8px)",
+                    letterSpacing: ".35em",
+                    textTransform: "uppercase",
+                    color: "#fff",
+                    background: "linear-gradient(135deg, rgba(10,4,0,.90) 0%, rgba(40,12,0,.85) 100%)",
+                    border: "1px solid rgba(255,255,255,.30)",
+                    borderRadius: "2px",
+                    padding: "5px 14px",
+                    cursor: "pointer",
+                    backdropFilter: "blur(8px)",
+                    pointerEvents: "all",
                   }}
                 >
                   Explore ›
@@ -552,82 +552,82 @@ export default function HeroLanding() {
             <>
               <div className="overflow-hidden -mt-4 md:-mt-10">
                 <p style={{
-                  fontFamily:"'Cinzel',serif",
-                  fontWeight:300,
-                  fontSize:"clamp(.75rem,2.6vw,1.5rem)",
-                  letterSpacing:"clamp(.2em,1.2vw,.38em)",
+                  fontFamily: "'Cinzel',serif",
+                  fontWeight: 300,
+                  fontSize: "clamp(.75rem,2.6vw,1.5rem)",
+                  letterSpacing: "clamp(.2em,1.2vw,.38em)",
                   /* White for desktop — pops against dark overlay on orange bg */
-                  color:"rgba(255,255,255,0.95)",
-                  whiteSpace:"nowrap",
-                  textShadow:"0 2px 18px rgba(0,0,0,0.5)",
+                  color: "rgba(255,255,255,0.95)",
+                  whiteSpace: "nowrap",
+                  textShadow: "0 2px 18px rgba(0,0,0,0.5)",
                 }}>
-                  {chars.map((ch,i)=>(
-                    <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
+                  {chars.map((ch, i) => (
+                    <span key={i} className="hl-tc" style={{ animationDelay: `${1.0 + i * .04}s`, whiteSpace: ch === " " ? "pre" : undefined }}>{ch}</span>
                   ))}
                 </p>
               </div>
 
               <motion.p
-                initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2,duration:1.2}}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 1.2 }}
                 style={{
-                  fontFamily:"'Noto Serif JP',serif",
-                  fontWeight:200,
-                  fontSize:"clamp(9px,1.2vw,13px)",
-                  letterSpacing:".48em",
+                  fontFamily: "'Noto Serif JP',serif",
+                  fontWeight: 200,
+                  fontSize: "clamp(9px,1.2vw,13px)",
+                  letterSpacing: ".48em",
                   /* Soft white-cream instead of orange/amber */
-                  color:"rgba(255,255,255,.42)",
-                  marginTop:"10px",
-                  textShadow:"0 1px 10px rgba(0,0,0,0.4)",
+                  color: "rgba(255,255,255,.42)",
+                  marginTop: "10px",
+                  textShadow: "0 1px 10px rgba(0,0,0,0.4)",
                 }}
               >
                 新たな時代の幕開け
               </motion.p>
 
               <div className="mt-6 md:mt-8" style={{
-                width:"clamp(140px,30vw,280px)",
-                height:1,
+                width: "clamp(140px,30vw,280px)",
+                height: 1,
                 /* White divider instead of orange */
-                background:"linear-gradient(to right, rgba(255,255,255,.65), rgba(255,255,255,.35), transparent)",
-              }}/>
+                background: "linear-gradient(to right, rgba(255,255,255,.65), rgba(255,255,255,.35), transparent)",
+              }} />
 
               <motion.div
                 className="flex items-center gap-4 md:gap-6 mt-6 md:mt-7"
-                initial={{opacity:0,y:18}} animate={{opacity:1,y:0}}
-                transition={{delay:1.6,duration:.9,ease:[.22,1,.36,1]}}
+                initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6, duration: .9, ease: [.22, 1, .36, 1] }}
               >
                 {/* Badge — white shimmer border */}
                 <span className="hl-badge" style={{
-                  border:"1px solid rgba(255,255,255,0.22)",
-                  backdropFilter:"blur(8px)",
-                  borderRadius:"2px",
-                  padding:"6px 14px",
-                  fontFamily:"'Cinzel',serif",
-                  fontSize:"clamp(7px,1vw,9.5px)",
-                  letterSpacing:".40em",
-                  color:"rgba(255,255,255,.80)",
-                  whiteSpace:"nowrap",
-                  textTransform:"uppercase",
+                  border: "1px solid rgba(255,255,255,0.22)",
+                  backdropFilter: "blur(8px)",
+                  borderRadius: "2px",
+                  padding: "6px 14px",
+                  fontFamily: "'Cinzel',serif",
+                  fontSize: "clamp(7px,1vw,9.5px)",
+                  letterSpacing: ".40em",
+                  color: "rgba(255,255,255,.80)",
+                  whiteSpace: "nowrap",
+                  textTransform: "uppercase",
                 }}>
                   Techno-Cultural Fest
                 </span>
 
                 {/* CTA — dark background for max contrast on orange */}
                 <motion.button
-                  whileHover={{scale:1.05, boxShadow:"0 0 28px rgba(255,255,255,.25)"}}
-                  whileTap={{scale:.97}}
+                  whileHover={{ scale: 1.05, boxShadow: "0 0 28px rgba(255,255,255,.25)" }}
+                  whileTap={{ scale: .97 }}
                   style={{
-                    fontFamily:"'Cinzel',serif",
-                    fontSize:"clamp(7px,1vw,9.5px)",
-                    letterSpacing:".40em",
-                    textTransform:"uppercase",
-                    color:"#fff",
-                    background:"linear-gradient(135deg, rgba(10,4,0,.92) 0%, rgba(45,14,0,.88) 100%)",
-                    border:"1px solid rgba(255,255,255,.28)",
-                    borderRadius:"2px",
-                    padding:"6px 18px",
-                    cursor:"pointer",
-                    backdropFilter:"blur(8px)",
-                    transition:"box-shadow .3s",
+                    fontFamily: "'Cinzel',serif",
+                    fontSize: "clamp(7px,1vw,9.5px)",
+                    letterSpacing: ".40em",
+                    textTransform: "uppercase",
+                    color: "#fff",
+                    background: "linear-gradient(135deg, rgba(10,4,0,.92) 0%, rgba(45,14,0,.88) 100%)",
+                    border: "1px solid rgba(255,255,255,.28)",
+                    borderRadius: "2px",
+                    padding: "6px 18px",
+                    cursor: "pointer",
+                    backdropFilter: "blur(8px)",
+                    transition: "box-shadow .3s",
                   }}
                 >
                   Explore ›
@@ -640,39 +640,39 @@ export default function HeroLanding() {
         {/* Side labels — desktop only */}
         <motion.div
           className="absolute left-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
-          initial={{opacity:0,x:-14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}
+          initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.8, duration: .9 }}
         >
-          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
+          <div className="h-14 w-px" style={{ background: "rgba(255,255,255,.12)" }} />
           <span className="hl-side">Aakar 2026</span>
-          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
+          <div className="h-14 w-px" style={{ background: "rgba(255,255,255,.12)" }} />
         </motion.div>
         <motion.div
           className="absolute right-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
-          initial={{opacity:0,x:14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}
+          initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.8, duration: .9 }}
         >
-          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
-          <span className="hl-side" style={{transform:"rotate(180deg)"}}>AJIET · Mangaluru</span>
-          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
+          <div className="h-14 w-px" style={{ background: "rgba(255,255,255,.12)" }} />
+          <span className="hl-side" style={{ transform: "rotate(180deg)" }}>AJIET · Mangaluru</span>
+          <div className="h-14 w-px" style={{ background: "rgba(255,255,255,.12)" }} />
         </motion.div>
 
         {/* Bottom bar */}
         <motion.div
           className="absolute bottom-0 left-0 right-0 z-40 flex items-end justify-between px-6 md:px-12 pb-5 md:pb-7"
-          initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.4,duration:1}}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }}
         >
           <span className="hidden md:block" style={{
-            fontFamily:"'Cinzel',serif",
-            fontSize:"9px",
-            letterSpacing:".35em",
-            textTransform:"uppercase",
-            color:"rgba(255,255,255,.18)",
+            fontFamily: "'Cinzel',serif",
+            fontSize: "9px",
+            letterSpacing: ".35em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,.18)",
           }}>
             Where Technology Meets Culture
           </span>
           <div className="flex flex-col items-center gap-1 absolute left-1/2 -translate-x-1/2 bottom-5">
-            <span style={{fontFamily:"'Cinzel',serif",fontSize:"8px",letterSpacing:".4em",color:"rgba(255,255,255,.22)",textTransform:"uppercase"}}>Scroll</span>
+            <span style={{ fontFamily: "'Cinzel',serif", fontSize: "8px", letterSpacing: ".4em", color: "rgba(255,255,255,.22)", textTransform: "uppercase" }}>Scroll</span>
             <svg className="hl-bounce" width="10" height="14" viewBox="0 0 10 14" fill="none">
-              <path d="M5 1v12M1 9l4 4 4-4" stroke="rgba(255,255,255,.45)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 1v12M1 9l4 4 4-4" stroke="rgba(255,255,255,.45)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </motion.div>
