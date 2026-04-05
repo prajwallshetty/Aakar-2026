@@ -21,12 +21,12 @@ function getSupabaseAdminClient() {
 }
 
 export async function uploadElitePassPayment(file: File) {
-  return uploadWithServiceRole(file, "elitepasspayments");
+  return uploadWithServiceRole(file, "paymentscreenshots");
 }
 
 async function uploadWithServiceRole(
   file: File,
-  bucketName: "elitepasspayments" | "paymentscreenshots"
+  bucketName: "paymentscreenshots"
 ) {
   const supabase = getSupabaseAdminClient();
 

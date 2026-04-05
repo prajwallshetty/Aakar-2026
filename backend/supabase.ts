@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js"
 
-type StorageBucketName = "eventimages" | "paymentscreenshots" | "merchqr" | "elitepasspayments"
+type StorageBucketName = "eventimages" | "paymentscreenshots"
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
