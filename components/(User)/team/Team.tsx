@@ -47,13 +47,13 @@ const teamData: TeamCategory[] = [
     {
       name: "Kishan Bhandary",
       role: "Full Stack Developer",
-      image: "/Team/web/kishan.jpg",
+      image: "/Team/web/pahima.png",
       github: "https://github.com/kishanBhandary"
     },
     {
       name: "Pahima Uchil",
       role: "Full Stack Developer",
-      image: "/Team/web/pahima.jpeg",
+      image: "/Team/web/pahima.png",
       github: "https://github.com/pahimauchil"
     }
   ]
