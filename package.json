@@ -7,7 +7,7 @@
     "db:generate": "prisma generate",
     "dev": "next dev",
     "build": "next build",
-    "postinstall": "prisma generate",
+    "postinstall": "npx prisma generate",
     "start": "next start",
     "lint": "next lint"
   },
