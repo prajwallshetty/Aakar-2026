@@ -486,8 +486,8 @@ export default function EventCircularGallery() {
         font:            mobile
           ? `bold 32px 'Cinzel', serif`
           : `bold 52px 'Cinzel', serif`,
-        scrollSpeed:     mobile ? 1.4 : 2,
-        autoScrollSpeed: mobile ? 0.002 : 0.003,
+        scrollSpeed:     mobile ? 2.8 : 2,
+        autoScrollSpeed: mobile ? 0.004 : 0.003,
         /* mobile cards: narrower & shorter to fit the reduced canvas height */
         cardHeightUnits: mobile ? 900  : 1300,
         cardWidthUnits:  mobile ? 600  : 900,
