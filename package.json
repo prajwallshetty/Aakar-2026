@@ -6,14 +6,14 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx prisma generate && next build",
     "postinstall": "npx prisma generate",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.6.0",
-    "@prisma/client": "^7.6.0",
+
+    "@prisma/client": "^6.6.0",
     "@radix-ui/react-alert-dialog": "^1.1.11",
     "@radix-ui/react-avatar": "^1.1.7",
     "@radix-ui/react-checkbox": "^1.2.3",
@@ -66,7 +66,7 @@
     "@types/pg": "^8.15.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "prisma": "^7.6.0",
+    "prisma": "^6.6.0",
     "tailwindcss": "^4.1.4",
     "typescript": "^5"
   },
