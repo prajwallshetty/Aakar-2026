@@ -120,11 +120,11 @@ export function AnimeGlitchText({ text, children }: { text: string; children: Re
 }
 
 /* ─── Section Heading Component ─────────────────────────────────── */
-export function AnimeSectionHeading({ children, index }: { children: React.ReactNode; index: number }) {
+export function AnimeSectionHeading({ children, index, style, className }: { children: React.ReactNode; index: number; style?: React.CSSProperties; className?: string }) {
   const colors = [ANIME_COLORS.primary, ANIME_COLORS.secondary];
   const c = colors[index % colors.length];
   return (
-    <div className="anime-section-head">
+    <div className={`anime-section-head ${className || ""}`} style={style}>
       <div className="anime-head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${c})` }} />
       <h2 className={`anime-head-title ${cinzelFont.className}`}>
         <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}>[ </span>
