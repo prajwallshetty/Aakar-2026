@@ -17,15 +17,15 @@ import {
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 import { ElitePassCard } from "@/components/(User)/auth/ElitePassCard";
-import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
-  AnimeCardWrapper, 
-  AnimeSectionHeading, 
-  AnimeGlitchText,
-  ANIME_GLOBAL_STYLES,
-  ANIME_COLORS,
-  ACCENTS 
+import {
+    AnimeParticleField,
+    AnimeOrbField,
+    AnimeCardWrapper,
+    AnimeSectionHeading,
+    AnimeGlitchText,
+    ANIME_GLOBAL_STYLES,
+    ANIME_COLORS,
+    ACCENTS
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 // ─── Anime Design tokens ────────────────────────────────────────────────────────────
@@ -422,13 +422,13 @@ const Register = () => {
 
     const selectStyles = {
         control: (base: any, state: any) => ({
-            ...base, 
-            border: `1px solid ${ANIME_COLORS.primary} !important`, 
+            ...base,
+            border: `1px solid ${ANIME_COLORS.primary} !important`,
             borderRadius: 6,
             boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}60 !important` : `0 0 8px ${ANIME_COLORS.primary}40 !important`,
-            fontFamily: monoFont, 
-            fontSize: 14, 
-            minHeight: 48, 
+            fontFamily: monoFont,
+            fontSize: 14,
+            minHeight: 48,
             background: `#080a12 !important`,
             color: `#ffffff !important`,
             "&:hover": { borderColor: `${ANIME_COLORS.secondary} !important` },
@@ -453,11 +453,11 @@ const Register = () => {
             fontSize: 14,
         }),
         menu: (base: any) => ({
-            ...base, 
-            border: `1px solid ${ANIME_COLORS.primary} !important`, 
+            ...base,
+            border: `1px solid ${ANIME_COLORS.primary} !important`,
             borderRadius: 8,
-            boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`, 
-            fontFamily: monoFont, 
+            boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`,
+            fontFamily: monoFont,
             fontSize: 13,
             background: `#080a12 !important`,
             backdropFilter: "blur(8px)",
@@ -466,9 +466,9 @@ const Register = () => {
         option: (base: any, state: any) => ({
             ...base,
             background: state.isSelected ? `#00e5ff40 !important` : state.isFocused ? `#ffd70040 !important` : `#080a12 !important`,
-            color: `#ffffff !important`, 
-            fontFamily: monoFont, 
-            fontSize: 13, 
+            color: `#ffffff !important`,
+            fontFamily: monoFont,
+            fontSize: 13,
             cursor: "pointer",
         }),
         multiValue: (base: any) => ({
@@ -596,9 +596,9 @@ const Register = () => {
 
                 {/* Header */}
                 <div style={{ marginBottom: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, animation: "popIn 0.7s cubic-bezier(.175,.885,.32,1.275) both" }}>
-                    <AnimeCardWrapper accentIndex={0} style={{ padding: "12px 48px" }}>
-                        <span style={{ fontFamily: displayFont, fontSize: "clamp(32px,6vw,64px)", letterSpacing: 8, color: ANIME_COLORS.text }}>
-                                REGISTER
+                    <AnimeCardWrapper accentIndex={0} style={{ padding: "clamp(8px, 2vw, 12px) clamp(16px, 5vw, 48px)" }}>
+                        <span style={{ fontFamily: displayFont, fontSize: "clamp(24px,5vw,56px)", letterSpacing: "clamp(2px, 1vw, 8px)", color: ANIME_COLORS.text }}>
+                            REGISTER
                         </span>
                     </AnimeCardWrapper>
                 </div>

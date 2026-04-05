@@ -6,7 +6,7 @@ import { cinzelFont } from "@/lib/font";
 /* ─── Anime Theme Color Palette ─────────────────────────────────── */
 export const ANIME_COLORS = {
   primary: "#FF4D00",
-  secondary: "#00E5FF", 
+  secondary: "#00E5FF",
   accent: "#FFD700",
   purple: "#B026FF",
   mint: "#00FF9D",
@@ -127,9 +127,7 @@ export function AnimeSectionHeading({ children, index, style, className }: { chi
     <div className={`anime-section-head ${className || ""}`} style={style}>
       <div className="anime-head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${c})` }} />
       <h2 className={`anime-head-title ${cinzelFont.className}`}>
-        <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}>[ </span>
         {children}
-        <span style={{ color: c, opacity: 0.7, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.7em" }}> ]</span>
       </h2>
       <div className="anime-head-line-right" style={{ background: `linear-gradient(-90deg, transparent, ${c})` }} />
     </div>
@@ -137,13 +135,13 @@ export function AnimeSectionHeading({ children, index, style, className }: { chi
 }
 
 /* ─── Anime Card Wrapper Component ───────────────────────────────── */
-export function AnimeCardWrapper({ 
-  children, 
+export function AnimeCardWrapper({
+  children,
   accentIndex = 0,
   className = "",
   style = {}
-}: { 
-  children: React.ReactNode; 
+}: {
+  children: React.ReactNode;
   accentIndex?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -166,7 +164,7 @@ export function AnimeCardWrapper({
     >
       {/* Holographic foil border overlay */}
       <div className="anime-holo-border" />
-      
+
       {/* Corner brackets */}
       <div className="anime-bracket tl" />
       <div className="anime-bracket tr" />
@@ -175,7 +173,7 @@ export function AnimeCardWrapper({
 
       {/* Cursor-tracking shine */}
       <div className="anime-shine" />
-      
+
       {children}
     </div>
   );
@@ -346,12 +344,13 @@ export const ANIME_GLOBAL_STYLES = `
     flex: 1; max-width: 120px; height: 2px; border-radius: 2px;
   }
   .anime-head-title {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-size: clamp(1.1rem, 3.5vw, 2.5rem);
     letter-spacing: 0.15em;
     color: #fff;
     margin: 0;
     text-transform: uppercase;
-    white-space: nowrap;
-    display: flex; align-items: center; gap: 8px;
+    white-space: normal;
+    text-align: center;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px;
   }
 `;

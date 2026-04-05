@@ -640,7 +640,7 @@ const AjietRegister = () => {
                     </AnimeCardWrapper>
                     
                     <h1 style={{ 
-                        fontFamily: displayFont, fontSize: "clamp(3rem, 8vw, 5.5rem)", 
+                        fontFamily: displayFont, fontSize: "clamp(1.8rem, 6vw, 4rem)", 
                         letterSpacing: "0.05em", color: ANIME_COLORS.text, margin: 0, lineHeight: 1,
                         textShadow: `0 0 30px ${ANIME_COLORS.primary}45`
                     }}>

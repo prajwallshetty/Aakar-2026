@@ -141,7 +141,7 @@ export default function AboutPage() {
           {/* ── PAGE TITLE ── */}
           <div className="fade-up" style={{textAlign:"center"}}>
             <div className={cinzelFont.className} style={{
-              fontSize:"clamp(3rem,10vw,7rem)",
+              fontSize:"clamp(2rem,8vw,5.5rem)",
               lineHeight:0.88,
               letterSpacing:"0.04em",
               color:ANIME_COLORS.text,
