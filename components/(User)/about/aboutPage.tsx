@@ -202,7 +202,7 @@ export default function AboutPage() {
               {/* text */}
               <div style={{flex:"1 1 280px",display:"flex",flexDirection:"column",gap:16}}>
                 <div style={{
-                  fontFamily:"'Bebas Neue',sans-serif",
+                  fontFamily:"'Cinzel',serif",
                   fontSize:"clamp(1.2rem,3vw,1.8rem)",
                   letterSpacing:"0.04em",
                   color:ANIME_COLORS.text,
@@ -336,13 +336,13 @@ export default function AboutPage() {
                 padding:"6px 16px",
                 display:"flex",justifyContent:"space-between",alignItems:"center",
               }}>
-                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"1rem",letterSpacing:"0.12em",color:ANIME_COLORS.text}}>
+                <span style={{fontFamily:"'Cinzel',serif",fontSize:"1rem",letterSpacing:"0.12em",color:ANIME_COLORS.text}}>
                   AJ INSTITUTE — CAMPUS TOUR
                 </span>
                 <button
                   onClick={()=>setIsModalOpen(false)}
                   style={{
-                    fontFamily:"'Bebas Neue',sans-serif",
+                    fontFamily:"'Cinzel',serif",
                     fontSize:"0.9rem",letterSpacing:"0.1em",
                     background:"transparent",border:"none",
                     color:ANIME_COLORS.text,cursor:"pointer",padding:"2px 8px",

@@ -38,9 +38,9 @@ const C = {
     black: ANIME_COLORS.background,
     white: ANIME_COLORS.text,
 };
-const popFont = "'Bebas Neue', Impact, sans-serif";
+const popFont = "'Cinzel', Impact, serif";
 const monoFont = "'Share Tech Mono', monospace";
-const displayFont = "'Bebas Neue', Impact, sans-serif";
+const displayFont = "'Cinzel', Impact, serif";
 
 // ─── Anime Style helpers ────────────────────────────────────────────────────────────
 const cardStyle: React.CSSProperties = {
@@ -644,7 +644,7 @@ const AjietRegister = () => {
                         letterSpacing: "0.05em", color: ANIME_COLORS.text, margin: 0, lineHeight: 1,
                         textShadow: `0 0 30px ${ANIME_COLORS.primary}45`
                     }}>
-                        AJIET <AnimeGlitchText text="PORTAL">PORTAL</AnimeGlitchText>
+                        AJIET PORTAL
                     </h1>
                     
                     <p style={{

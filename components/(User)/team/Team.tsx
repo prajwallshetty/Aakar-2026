@@ -142,14 +142,7 @@ function useTilt() {
   return { ref, onMove, onLeave };
 }
 
-/* ─── Glitch text ─────────────────────────────────────────────── */
-function GlitchText({ text, children }: { text: string; children: React.ReactNode }) {
-  return (
-    <span className="glitch-root" data-text={text}>
-      {children}
-    </span>
-  );
-}
+/* ─── Glitch text removed ─────────────────────────────────────────────── */
 
 /* ─── Member card ─────────────────────────────────────────────── */
 function MemberCard({ member, index, category }: { member: TeamMember; index: number; category: string }) {
@@ -290,27 +283,14 @@ const Team = () => (
   <>
     {/* ── Global styles ─────────────────────────────────────── */}
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
 
       /* ── Keyframes ── */
       @keyframes cardEnter {
         from { opacity:0; transform: translateY(50px) scale(0.88) rotateX(8deg); filter: blur(4px); }
         to   { opacity:1; transform: translateY(0) scale(1) rotateX(0deg); filter: blur(0px); }
       }
-      @keyframes glitchA {
-        0%,100%  { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 1px); }
-        20%      { clip-path: inset(92% 0 1% 0);  transform: translate(1px, -2px); }
-        40%      { clip-path: inset(43% 0 1% 0);  transform: translate(2px, 1px); }
-        60%      { clip-path: inset(25% 0 58% 0); transform: translate(-1px, 2px); }
-        80%      { clip-path: inset(54% 0 7% 0);  transform: translate(1px, 1px); }
-      }
-      @keyframes glitchB {
-        0%,100%  { clip-path: inset(50% 0 30% 0); transform: translate(2px, -1px); }
-        20%      { clip-path: inset(10% 0 85% 0); transform: translate(-2px, 1px); }
-        40%      { clip-path: inset(75% 0 5% 0);  transform: translate(1px, -2px); }
-        60%      { clip-path: inset(5% 0 70% 0);  transform: translate(-1px, 1px); }
-        80%      { clip-path: inset(30% 0 40% 0); transform: translate(2px, -1px); }
-      }
+      /* ── Glitch text styles removed ── */
       @keyframes ledPulse {
         0%,100% { opacity:1; }
         50%     { opacity:0.5; }
@@ -343,29 +323,6 @@ const Team = () => (
       @keyframes subtitleReveal {
         from { opacity:0; letter-spacing: 0.5em; }
         to   { opacity:1; letter-spacing: 0.3em; }
-      }
-
-      /* ── Glitch text ── */
-      .glitch-root {
-        position: relative;
-        display: inline-block;
-      }
-      .glitch-root::before,
-      .glitch-root::after {
-        content: attr(data-text);
-        position: absolute;
-        inset: 0;
-        display: inline-block;
-      }
-      .glitch-root:hover::before {
-        animation: glitchA 0.4s steps(2, end) infinite;
-        color: #00E5FF;
-        text-shadow: 2px 0 #00E5FF;
-      }
-      .glitch-root:hover::after {
-        animation: glitchB 0.4s steps(2, end) infinite;
-        color: #FF4D00;
-        text-shadow: -2px 0 #FF4D00;
       }
 
       /* ── Orbs ── */
@@ -512,7 +469,7 @@ const Team = () => (
 
       /* ── Name ── */
       .name-line {
-        font-family: 'Bebas Neue', sans-serif;
+        font-family: 'Cinzel', serif;
         font-size: clamp(1.05rem, 5cqw, 1.5rem);
         letter-spacing: 0.07em;
         color: #fff;
@@ -564,7 +521,7 @@ const Team = () => (
         flex: 1; max-width: 130px; height: 2px; border-radius: 2px;
       }
       .head-title {
-        font-family: 'Bebas Neue', sans-serif;
+        font-family: 'Cinzel', serif;
         font-size: clamp(1.8rem, 5vw, 3rem);
         letter-spacing: 0.15em;
         color: #fff;
@@ -598,7 +555,7 @@ const Team = () => (
         flex-shrink: 0;
       }
       .main-title {
-        font-family: 'Bebas Neue', sans-serif;
+        font-family: 'Cinzel', serif;
         font-size: clamp(3rem, 10vw, 6.5rem);
         line-height: 0.85;
         letter-spacing: 0.05em;
@@ -738,9 +695,7 @@ const Team = () => (
 
           <h1 className="main-title">
             MEET THE{" "}
-            <GlitchText text="SQUAD">
-              <span className="main-title-accent">SQUAD</span>
-            </GlitchText>
+            <span className="main-title-accent">SQUAD</span>
           </h1>
 
           <p className="main-subtitle">

@@ -145,11 +145,11 @@ export default function MerchPage() {
                 <div className="pointer-events-none absolute inset-x-14 top-6 h-24 rounded-full bg-cyan-300/45 blur-3xl merch-spot" style={{ background: `${ANIME_COLORS.secondary}45` }} />
 
                 <div
-                  className="relative mx-auto flex h-[520px] w-full max-w-[520px] items-center justify-center [perspective:1100px]"
+                  className="relative mx-auto flex h-[400px] md:h-[520px] w-full max-w-[520px] items-center justify-center [perspective:1100px]"
                 >
-                  <div>
+                  <div className="w-full flex justify-center">
                     {merchModelUrl ? (
-                      <div className="h-[470px] w-[420px] max-w-[90vw] overflow-hidden">
+                      <div className="h-[360px] md:h-[470px] w-full max-w-[420px] overflow-hidden">
                         <Canvas camera={{ position: [0, 0, 6.6], fov: 34 }} dpr={[1, 2]}>
                           <ambientLight intensity={0.9} />
                           <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />

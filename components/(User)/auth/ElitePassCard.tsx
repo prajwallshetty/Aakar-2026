@@ -70,7 +70,7 @@ export const ElitePassCard: React.FC = () => {
                             border: `1px solid ${ANIME_COLORS.primary}`,
                         }}>
                             <span style={{
-                                fontFamily: "'Bebas Neue', sans-serif",
+                                fontFamily: "'Cinzel', serif",
                                 fontSize: 10,
                                 fontWeight: 900,
                                 letterSpacing: 2,
@@ -86,7 +86,7 @@ export const ElitePassCard: React.FC = () => {
                             display: "inline-block",
                         }}>
                             <span style={{
-                                fontFamily: "'Bebas Neue', sans-serif",
+                                fontFamily: "'Cinzel', serif",
                                 fontSize: 14,
                                 letterSpacing: 1,
                                 color: ANIME_COLORS.text,
@@ -99,7 +99,7 @@ export const ElitePassCard: React.FC = () => {
 
                     <h3
                         style={{
-                            fontFamily: "'Bebas Neue', sans-serif",
+                            fontFamily: "'Cinzel', serif",
                             fontSize: "clamp(22px, 3.1vw, 30px)",
                             letterSpacing: 3,
                             color: ANIME_COLORS.text,
@@ -108,9 +108,7 @@ export const ElitePassCard: React.FC = () => {
                             textShadow: `0 0 12px ${ANIME_COLORS.secondary}40`,
                         }}
                     >
-                        <AnimeGlitchText text="AAKAR ELITE">
-                            AAKAR ELITE
-                        </AnimeGlitchText>
+                        AAKAR ELITE
                     </h3>
 
                     <div
@@ -207,7 +205,7 @@ export const ElitePassCard: React.FC = () => {
                         </div>
                         <span
                             style={{
-                                fontFamily: "'Bebas Neue', sans-serif",
+                                fontFamily: "'Cinzel', serif",
                                 fontSize: 12,
                                 fontWeight: 900,
                                 color: ANIME_COLORS.text,

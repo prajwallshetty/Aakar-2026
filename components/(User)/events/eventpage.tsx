@@ -99,16 +99,14 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
         >
           <h3 
             style={{
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "'Cinzel', serif",
               fontSize: "clamp(1.2rem, 3vw, 1.8rem)",
               letterSpacing: "0.05em",
               margin: "0 0 0.5rem 0",
               textShadow: `0 0 12px ${accent.primary}40`
             }}
           >
-            <AnimeGlitchText text={event.eventName}>
-              {event.eventName}
-            </AnimeGlitchText>
+            {event.eventName}
           </h3>
           
           <div 
@@ -240,7 +238,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         }
         .stamp-text {
           animation: stampWiggle 3s ease-in-out infinite;
-          font-family: 'Bebas Neue', sans-serif;
+          font-family: 'Cinzel', serif;
           -webkit-text-stroke: 2px ${ANIME_COLORS.background};
           font-size: clamp(1.6rem, 4vw, 2.8rem);
           letter-spacing: 0.06em;
@@ -318,7 +316,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
             </div>
 
             <h1 style={{
-              fontFamily: "'Bebas Neue',sans-serif",
+              fontFamily: "'Cinzel',serif",
               fontSize: "clamp(2.8rem,9vw,7rem)",
               lineHeight: 0.92,
               letterSpacing: "0.04em",
@@ -328,9 +326,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
               animation: "titleIn 0.5s ease both",
               textShadow: `0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.primary}, 3px 3px 0 ${ANIME_COLORS.secondary}`,
             }}>
-              <AnimeGlitchText text={eventCategory}>
-                {eventCategory}
-              </AnimeGlitchText>
+              {eventCategory}
             </h1>
 
             <div style={{

@@ -115,7 +115,7 @@ function SectionHeading({ children, color = ANIME_COLORS.secondary }: { children
     <div className="section-head" style={{ marginBottom: "1.5rem" }}>
       <div className="head-line-left" style={{ background: `linear-gradient(90deg, transparent, ${color})` }} />
       <h2 style={{
-        fontFamily: "'Bebas Neue', sans-serif",
+        fontFamily: "'Cinzel', serif",
         fontSize: "clamp(1.4rem, 3.5vw, 2rem)",
         letterSpacing: "0.1em",
         color: ANIME_COLORS.text,
@@ -428,7 +428,7 @@ const EventDescription = ({
                       &gt; SYSTEM_OP // EVENT_ARCHIVE
                     </div>
                     <h1 style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontFamily: "'Cinzel', serif",
                       fontSize: "clamp(2.5rem, 7vw, 4.5rem)",
                       lineHeight: 0.9,
                       letterSpacing: "0.05em",

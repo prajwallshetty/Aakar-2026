@@ -183,7 +183,7 @@ export function AnimeCardWrapper({
 
 /* ─── Global Styles ───────────────────────────────────────────────── */
 export const ANIME_GLOBAL_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
 
   /* ── Keyframes ── */
   @keyframes animeCardEnter {

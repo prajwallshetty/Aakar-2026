@@ -44,7 +44,7 @@ export const SPEED_LINES = Array.from({ length: 48 }, (_, i) => {
 
 /* ─── keyframes (import once in your global CSS instead if preferred) ── */
 export const POP_ART_KEYFRAMES = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
   @keyframes floatShape {
     0%,100% { transform:translateY(0) rotate(0deg); }
     33%     { transform:translateY(-14px) rotate(6deg); }
