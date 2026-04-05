@@ -73,7 +73,7 @@ export default function MerchPage() {
           background: linear-gradient(135deg, ${ANIME_COLORS.background}95, ${ANIME_COLORS.background}90);
           border: 2px solid ${ANIME_COLORS.primary};
           box-shadow: 0 0 30px ${ANIME_COLORS.primary}60, inset 0 0 20px ${ANIME_COLORS.primary}30;
-          backdrop-filter: blur(12px);
+          backdrop-filter: blur(10px);
           position: relative;
           overflow: hidden;
         }
@@ -150,7 +150,7 @@ export default function MerchPage() {
                   <div className="w-full flex justify-center">
                     {merchModelUrl ? (
                       <div className="h-[360px] md:h-[470px] w-full max-w-[420px] overflow-hidden">
-                        <Canvas camera={{ position: [0, 0, 6.6], fov: 34 }} dpr={[1, 2]}>
+                        <Canvas camera={{ position: [0, 0, 6.6], fov: 34 }} dpr={[1, 1.5]}>
                           <ambientLight intensity={0.9} />
                           <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
                           <directionalLight position={[4, 8, 5]} intensity={1.35} />
@@ -158,7 +158,7 @@ export default function MerchPage() {
                             <Bounds fit clip observe margin={5.8}>
                               <TshirtModel modelUrl={merchModelUrl} />
                             </Bounds>
-                            <Environment preset="studio" />
+                            <Environment preset="studio" frames={1} />
                           </Suspense>
                           <OrbitControls
                             enablePan={false}

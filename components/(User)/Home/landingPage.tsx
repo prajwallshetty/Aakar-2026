@@ -350,8 +350,8 @@ export default function HeroLanding() {
               className="hl-float-mobile"
               style={{
                 position:"absolute",
-                bottom: 0,
-                left:"50%",
+                bottom: "-120px",
+                left:"0%",
                 transform:"translateX(-50%)",
                 zIndex: 1,
                 display:"flex",
@@ -362,17 +362,16 @@ export default function HeroLanding() {
               {/* Ground shadow */}
               <div className="hl-glow-breathe" style={{
                 position:"absolute", bottom:"2%", left:"10%", right:"10%", height:"5%",
-                background:"radial-gradient(ellipse 100% 100% at 50% 100%, rgba(190,45,0,.50) 0%, transparent 70%)",
-                filter:"blur(14px)", zIndex:-1,
-              }}/>
-              <motion.div
-                initial={{opacity:0, y:40, filter:"blur(16px)", scale:.95}}
-                animate={{opacity:1, y:0,  filter:"blur(0px)",  scale:1  }}
-                transition={{duration:1.5, delay:.4, ease:[.22,1,.36,1]}}
-              >
-                <img
+                background:"rgba(0,0,0,0.45)", borderRadius:"50%", filter:"blur(8px)",
+              }} />
+
+              <div style={{ position: "relative" }}>
+                <Image
                   src="/kuko.png"
-                  alt="AAKAR character"
+                  alt="Aakar Character"
+                  width={600}
+                  height={800}
+                  priority
                   style={{
                     display:"block",
                     objectFit:"contain",
@@ -382,7 +381,7 @@ export default function HeroLanding() {
                     filter:"drop-shadow(-6px 0 28px rgba(235,95,10,.60)) drop-shadow(0 18px 44px rgba(180,40,0,.35)) drop-shadow(0 0 70px rgba(140,25,0,.20))",
                   }}
                 />
-              </motion.div>
+              </div>
             </div>
 
             {/* Logo — above character's head area, original colors, no tint */}
@@ -393,17 +392,17 @@ export default function HeroLanding() {
               style={{
                 position:"absolute",
                 top: "clamp(120px, 26vh, 210px)",
-                left:"50%",
+                left:"2%",
                 transform:"translateX(-50%)",
                 zIndex: 2,
-                width:"clamp(180px, 58vw, 280px)",
+                width:"clamp(180px, 120vw, 810px)",
               }}
             >
               <Image
                 src="/aklogo.png"
                 alt="AAKAR 2026"
-                width={280}
-                height={109}
+                width={610}
+                height={220}
                 priority
                 className="hl-logo-glow-mobile"
                 style={{

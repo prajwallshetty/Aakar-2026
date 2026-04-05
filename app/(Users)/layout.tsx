@@ -22,8 +22,8 @@ export default function RootLayout({
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url(/bg.jpg)", transform: "scale(1.02)" }}
         />
-        {/* Dark gradient mapping overlay for cinematic feel */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 backdrop-blur-[4px]" />
+        {/* Dark gradient mapping overlay for cinematic feel — better performance than backdrop-blur */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
 
         {/* Cyber/Anime Tech grid overlay */}
         <div

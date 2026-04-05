@@ -242,7 +242,8 @@ export const ANIME_GLOBAL_STYLES = `
     position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
   }
   .anime-orb {
-    position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.08;
+    position: absolute; border-radius: 50%; filter: blur(40px); opacity: 0.08;
+    will-change: transform;
   }
   .anime-orb.orb-1 {
     width: 500px; height: 500px; top: -120px; left: -120px;
