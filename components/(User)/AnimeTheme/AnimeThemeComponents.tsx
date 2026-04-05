@@ -165,12 +165,6 @@ export function AnimeCardWrapper({
       {/* Holographic foil border overlay */}
       <div className="anime-holo-border" />
 
-      {/* Corner brackets */}
-      <div className="anime-bracket tl" />
-      <div className="anime-bracket tr" />
-      <div className="anime-bracket bl" />
-      <div className="anime-bracket br" />
-
       {/* Cursor-tracking shine */}
       <div className="anime-shine" />
 
@@ -314,17 +308,7 @@ export const ANIME_GLOBAL_STYLES = `
     animation: animeHoloShift 2s ease infinite;
   }
 
-  /* ── Corner brackets ── */
-  .anime-bracket {
-    position: absolute; width: 12px; height: 12px; z-index: 20;
-    transition: border-color 0.3s, width 0.3s, height 0.3s;
-    opacity: 0.5;
-  }
-  .anime-bracket.tl { top: 8px; left: 8px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); border-radius: 2px 0 0 0; }
-  .anime-bracket.tr { top: 8px; right: 8px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); border-radius: 0 2px 0 0; }
-  .anime-bracket.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); border-radius: 0 0 0 2px; }
-  .anime-bracket.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); border-radius: 0 0 2px 0; }
-  .anime-card:hover .anime-bracket { width: 16px; height: 16px; opacity: 1; }
+
 
   /* ── Hover shine ── */
   .anime-shine {
