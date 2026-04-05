@@ -172,7 +172,7 @@ export default function AboutPage() {
                 onClick={()=>setIsModalOpen(true)}
               >
                 <Image
-                  src="/college2.png"
+                  src="/about.jpg"
                   width={600} height={400}
                   alt="AJ Institute of Engineering and Technology"
                   style={{width:"100%",height:"auto",display:"block"}}
