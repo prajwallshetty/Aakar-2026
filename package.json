@@ -6,8 +6,8 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "dev": "next dev",
-    "build": "npx prisma generate && next build",
-    "postinstall": "npx prisma generate",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint"
   },
@@ -66,6 +66,7 @@
     "@types/pg": "^8.15.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+
     "prisma": "^6.6.0",
     "tailwindcss": "^4.1.4",
     "typescript": "^5"
