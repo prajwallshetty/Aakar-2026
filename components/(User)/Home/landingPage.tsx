@@ -38,7 +38,6 @@ export default function HeroLanding() {
   const overlayOp   = useTransform(scrollYProgress, [0, 0.6], [0.52, 0.80]);
 
   // ── Mouse motion values ───────────────────────────────────────────────────
-  // FIX: tighter stiffness/damping to prevent runaway oscillation
   const bgMX = useSpring(useMotionValue(0), { stiffness: 8, damping: 30, mass: 1.8 });
   const bgMY = useSpring(useMotionValue(0), { stiffness: 8, damping: 30, mass: 1.8 });
 
@@ -52,7 +51,6 @@ export default function HeroLanding() {
 
   useEffect(() => {
     if (isMobile) {
-      // Reset all springs to 0 on mobile so nothing is stuck mid-animation
       bgMX.set(0); bgMY.set(0);
       chTX.set(0); chTY.set(0);
       chRX.set(0); chRY.set(0);
@@ -63,7 +61,6 @@ export default function HeroLanding() {
     const handler = (e: MouseEvent) => {
       const cx = window.innerWidth  / 2;
       const cy = window.innerHeight / 2;
-      // Clamp nx/ny to [-1, 1] to prevent values going wild on rapid movement
       const nx = Math.max(-1, Math.min(1, (e.clientX - cx) / cx));
       const ny = Math.max(-1, Math.min(1, (e.clientY - cy) / cy));
 
@@ -79,7 +76,6 @@ export default function HeroLanding() {
       textMX.set(nx * 12);
     };
 
-    // FIX: use passive listener and throttle with rAF to prevent runaway on fast movement
     let ticking = false;
     const throttledHandler = (e: MouseEvent) => {
       if (!ticking) {
@@ -109,9 +105,8 @@ export default function HeroLanding() {
     resize();
     window.addEventListener("resize", resize);
 
-    // Pre-render particle gradient to improve performance
     const spriteCanvas = document.createElement("canvas");
-    const spriteSize = 20; // Max radius * 6 approx
+    const spriteSize = 20;
     spriteCanvas.width = spriteSize;
     spriteCanvas.height = spriteSize;
     const sCtx = spriteCanvas.getContext("2d");
@@ -133,8 +128,6 @@ export default function HeroLanding() {
       return spriteCanvas;
     };
 
-    // Since hues are similar (10-50), we can just use one or a few sprites.
-    // For simplicity and max speed, let's use one "average" sprite.
     const particleSprite = createParticleSprite(30);
 
     type E = {
@@ -152,7 +145,6 @@ export default function HeroLanding() {
       max: 140 + Math.random() * 120,
     });
 
-    // Reduce particle count from 120 to 60
     const em: E[] = Array.from({ length: 60 }, () => spawn(canvas.width, canvas.height));
 
     const draw = () => {
@@ -170,16 +162,10 @@ export default function HeroLanding() {
         }
 
         const fade = Math.sin((e.life / e.max) * Math.PI);
-        const size = e.r * 6 * fade; // Scale the pre-rendered sprite
+        const size = e.r * 6 * fade;
 
         ctx.globalAlpha = e.op;
-        ctx.drawImage(
-          particleSprite,
-          e.x - size / 2,
-          e.y - size / 2,
-          size,
-          size
-        );
+        ctx.drawImage(particleSprite, e.x - size / 2, e.y - size / 2, size, size);
       }
       rafRef.current = requestAnimationFrame(draw);
     };
@@ -209,7 +195,6 @@ export default function HeroLanding() {
         }
         .hl-float { animation:hl-float 7s ease-in-out infinite; }
 
-        /* Mobile float — gentler, slower */
         @keyframes hl-float-mobile {
           0%,100%{ transform:translateY(0px) translateX(0px); }
           30%    { transform:translateY(-8px) translateX(3px); }
@@ -236,15 +221,21 @@ export default function HeroLanding() {
         }
         .hl-logo-glow { animation:hl-logo-glow 3.5s ease-in-out infinite; }
 
-        /* Mobile logo glow — behind character */
+        /* Mobile logo — original colors, no invert, subtle glow only */
         @keyframes hl-logo-glow-mobile {
-          0%,100%{ filter:invert(1) drop-shadow(0 0 30px rgba(255,120,30,.55)) drop-shadow(0 0 70px rgba(255,60,10,.30)); }
-          50%    { filter:invert(1) drop-shadow(0 0 55px rgba(255,160,50,.85)) drop-shadow(0 0 110px rgba(255,80,10,.50)); }
+          0%,100%{ filter:drop-shadow(0 0 18px rgba(255,255,255,.20)) drop-shadow(0 0 40px rgba(255,200,100,.15)); }
+          50%    { filter:drop-shadow(0 0 30px rgba(255,255,255,.35)) drop-shadow(0 0 65px rgba(255,200,100,.25)); }
         }
         .hl-logo-glow-mobile { animation:hl-logo-glow-mobile 3.5s ease-in-out infinite; }
 
         @keyframes hl-badge { 0%{background-position:-200% center} 100%{background-position:200% center} }
-        .hl-badge { background:linear-gradient(105deg,rgba(255,255,255,.03) 0%,rgba(255,200,100,.18) 40%,rgba(255,255,255,.03) 60%,rgba(255,255,255,.01) 100%); background-size:200% auto; animation:hl-badge 4s linear infinite; }
+
+        /* Badge — white shimmer since bg is already orange */
+        .hl-badge {
+          background:linear-gradient(105deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.22) 40%,rgba(255,255,255,.05) 60%,rgba(255,255,255,.02) 100%);
+          background-size:200% auto;
+          animation:hl-badge 4s linear infinite;
+        }
 
         .hl-tc { display:inline-block; opacity:0; transform:translateY(22px) rotate(2deg); animation:hl-cu .7s cubic-bezier(.22,1,.36,1) forwards; }
         @keyframes hl-cu { to{ opacity:1; transform:translateY(0) rotate(0deg); } }
@@ -258,7 +249,7 @@ export default function HeroLanding() {
         @keyframes hl-bounce { 0%,100%{transform:translateY(0);opacity:.4} 50%{transform:translateY(7px);opacity:.9} }
         .hl-bounce { animation:hl-bounce 2s ease-in-out infinite; }
 
-        .hl-side { writing-mode:vertical-rl; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.55em; text-transform:uppercase; color:rgba(255,200,120,.22); }
+        .hl-side { writing-mode:vertical-rl; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.55em; text-transform:uppercase; color:rgba(255,255,255,.22); }
 
         .hl-persp { perspective:1000px; perspective-origin:50% 40%; }
       `}</style>
@@ -327,63 +318,47 @@ export default function HeroLanding() {
           </motion.div>
         )}
 
-        {/* ════════════ MOBILE CHARACTER + LOGO BEHIND HEAD ════════════ */}
+        {/* ════════════ MOBILE: stacked layout ════════════
+            Stack order (bottom → top):
+              z-0  ambient glow
+              z-1  character (centered, takes lower ~65% of screen)
+              z-2  logo (above character head, ~35% from top)
+        */}
         {isMobile && (
           <div style={{
-            position:"absolute",
-            bottom: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
+            position: "absolute",
+            inset: 0,
             zIndex: 25,
-            width: "100vw",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
             pointerEvents: "none",
           }}>
-            {/* Ambient glow behind char */}
+            {/* Ambient ground glow */}
             <div style={{
-              position:"absolute", bottom:"0", left:"50%", transform:"translateX(-50%)",
-              width:"80vw", height:"80vw",
-              background:"radial-gradient(ellipse 60% 70% at 50% 75%, rgba(220,75,10,.40) 0%, rgba(160,30,0,.15) 45%, transparent 70%)",
-              filter:"blur(32px)", zIndex:0, borderRadius:"50%",
+              position:"absolute",
+              bottom: 0,
+              left:"50%",
+              transform:"translateX(-50%)",
+              width:"90vw",
+              height:"60vw",
+              background:"radial-gradient(ellipse 60% 70% at 50% 85%, rgba(220,75,10,.35) 0%, rgba(160,30,0,.12) 50%, transparent 70%)",
+              filter:"blur(32px)",
+              zIndex:0,
+              borderRadius:"50%",
             }}/>
 
-            {/* Logo BEHIND the character (z-index 1, char is z-index 2) */}
-            <motion.div
-              initial={{opacity:0, scale:.82, filter:"blur(18px)"}}
-              animate={{opacity:1, scale:1, filter:"blur(0px)"}}
-              transition={{duration:1.4, delay:.6, ease:[.22,1,.36,1]}}
+            {/* Character — centered horizontally, sits in lower 65% */}
+            <div
+              className="hl-float-mobile"
               style={{
                 position:"absolute",
-                // Position logo so it appears behind the character's head area
-                // Bottom of logo aligns ~70% up from bottom of container
-                bottom: "52%",
-                left: "50%",
-                transform: "translateX(-50%)",
+                bottom: 0,
+                left:"50%",
+                transform:"translateX(-50%)",
                 zIndex: 1,
-                width: "72vw",
-                maxWidth: 320,
+                display:"flex",
+                alignItems:"flex-end",
+                justifyContent:"center",
               }}
             >
-              <Image
-                src="/aklogo.png"
-                alt="AAKAR 2026"
-                width={320}
-                height={124}
-                priority
-                className="hl-logo-glow-mobile"
-                style={{
-                  objectFit:"contain",
-                  width:"100%",
-                  height:"auto",
-                  opacity: 0.72,
-                }}
-              />
-            </motion.div>
-
-            {/* Character — floats slowly, centered */}
-            <div className="hl-float-mobile" style={{position:"relative", zIndex:2}}>
               {/* Ground shadow */}
               <div className="hl-glow-breathe" style={{
                 position:"absolute", bottom:"2%", left:"10%", right:"10%", height:"5%",
@@ -401,14 +376,44 @@ export default function HeroLanding() {
                   style={{
                     display:"block",
                     objectFit:"contain",
-                    height:"clamp(380px, 78vh, 620px)",
+                    height:"clamp(340px, 70vh, 560px)",
                     width:"auto",
-                    maxWidth:"90vw",
+                    maxWidth:"88vw",
                     filter:"drop-shadow(-6px 0 28px rgba(235,95,10,.60)) drop-shadow(0 18px 44px rgba(180,40,0,.35)) drop-shadow(0 0 70px rgba(140,25,0,.20))",
                   }}
                 />
               </motion.div>
             </div>
+
+            {/* Logo — above character's head area, original colors, no tint */}
+            <motion.div
+              initial={{opacity:0, scale:.85, filter:"blur(18px)"}}
+              animate={{opacity:1, scale:1, filter:"blur(0px)"}}
+              transition={{duration:1.4, delay:.7, ease:[.22,1,.36,1]}}
+              style={{
+                position:"absolute",
+                top: "clamp(120px, 26vh, 210px)",
+                left:"50%",
+                transform:"translateX(-50%)",
+                zIndex: 2,
+                width:"clamp(180px, 58vw, 280px)",
+              }}
+            >
+              <Image
+                src="/aklogo.png"
+                alt="AAKAR 2026"
+                width={280}
+                height={109}
+                priority
+                className="hl-logo-glow-mobile"
+                style={{
+                  objectFit:"contain",
+                  width:"100%",
+                  height:"auto",
+                  /* No invert — keep logo's original colors */
+                }}
+              />
+            </motion.div>
           </div>
         )}
 
@@ -420,15 +425,16 @@ export default function HeroLanding() {
             y:textY,
             x:textMX,
           } : {
-            // Mobile: content at top area, character takes bottom
+            /* Mobile: text+CTA pinned to top, above everything */
             paddingLeft:"20px",
             paddingRight:"20px",
-            paddingTop:"clamp(48px, 10vh, 80px)",
+            paddingTop:"clamp(32px, 6vh, 56px)",
             justifyContent:"flex-start",
             alignItems:"center",
           }}
         >
-          {/* Desktop logo */}
+
+          {/* ── Desktop logo ─────────────────────────────────────── */}
           {!isMobile && (
             <motion.div
               style={{y:logoY, marginLeft:"-7vw"}}
@@ -441,23 +447,26 @@ export default function HeroLanding() {
             </motion.div>
           )}
 
-          {/* Mobile: tagline + buttons at top, centered */}
+          {/* ── Mobile: CTA + text at the very top ──────────────── */}
           {isMobile && (
             <motion.div
-              initial={{opacity:0, y:-16}}
+              initial={{opacity:0, y:-14}}
               animate={{opacity:1, y:0}}
               transition={{delay:0.9, duration:1.0, ease:[.22,1,.36,1]}}
               style={{display:"flex", flexDirection:"column", alignItems:"center", width:"100%"}}
             >
-              {/* Subtitle text */}
-              <div className="overflow-hidden" style={{marginBottom:"6px"}}>
+              {/* Tagline */}
+              <div className="overflow-hidden" style={{marginBottom:"4px"}}>
                 <p style={{
-                  fontFamily:"'Cinzel',serif", fontWeight:300,
-                  fontSize:"clamp(.65rem,3.8vw,1rem)",
-                  letterSpacing:"clamp(.18em,1.4vw,.32em)",
-                  color:"#fff",
+                  fontFamily:"'Cinzel',serif",
+                  fontWeight:300,
+                  fontSize:"clamp(.65rem,3.8vw,.95rem)",
+                  letterSpacing:"clamp(.18em,1.4vw,.30em)",
+                  /* White text — high contrast against orange bg */
+                  color:"rgba(255,255,255,0.95)",
                   whiteSpace:"nowrap",
                   textAlign:"center",
+                  textShadow:"0 1px 12px rgba(0,0,0,0.6)",
                 }}>
                   {chars.map((ch,i)=>(
                     <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
@@ -465,15 +474,19 @@ export default function HeroLanding() {
                 </p>
               </div>
 
+              {/* Japanese subtitle */}
               <motion.p
                 initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2, duration:1.2}}
                 style={{
-                  fontFamily:"'Noto Serif JP',serif", fontWeight:200,
-                  fontSize:"clamp(8px,2.2vw,11px)",
+                  fontFamily:"'Noto Serif JP',serif",
+                  fontWeight:200,
+                  fontSize:"clamp(8px,2.2vw,10px)",
                   letterSpacing:".42em",
-                  color:"rgba(255,180,100,.38)",
-                  marginTop:"6px",
+                  /* Soft white-cream — readable on orange without blending */
+                  color:"rgba(255,255,255,.50)",
+                  marginTop:"5px",
                   textAlign:"center",
+                  textShadow:"0 1px 8px rgba(0,0,0,0.4)",
                 }}
               >
                 新たな時代の幕開け
@@ -481,9 +494,10 @@ export default function HeroLanding() {
 
               {/* Divider */}
               <div style={{
-                width:"clamp(100px,45vw,200px)", height:1,
-                background:"linear-gradient(to right, transparent, rgba(255,100,30,.7), rgba(255,200,100,.4), transparent)",
-                margin:"14px auto",
+                width:"clamp(90px,40vw,180px)",
+                height:1,
+                background:"linear-gradient(to right, transparent, rgba(255,255,255,.55), rgba(255,255,255,.30), transparent)",
+                margin:"12px auto",
               }}/>
 
               {/* Buttons */}
@@ -493,17 +507,24 @@ export default function HeroLanding() {
                 transition={{delay:1.6, duration:.9, ease:[.22,1,.36,1]}}
                 style={{justifyContent:"center"}}
               >
-                <span className="hl-badge border border-white/15 uppercase" style={{
-                  backdropFilter:"blur(8px)", borderRadius:"2px",
+                {/* Badge — white border/text on orange bg */}
+                <span className="hl-badge" style={{
+                  border:"1px solid rgba(255,255,255,0.28)",
+                  backdropFilter:"blur(8px)",
+                  borderRadius:"2px",
                   padding:"5px 11px",
                   fontFamily:"'Cinzel',serif",
                   fontSize:"clamp(6px,2.4vw,8px)",
                   letterSpacing:".35em",
-                  color:"rgba(255,200,120,.72)",
+                  color:"rgba(255,255,255,.85)",
                   whiteSpace:"nowrap",
+                  textTransform:"uppercase",
+                  textShadow:"0 1px 6px rgba(0,0,0,0.3)",
                 }}>
                   Techno-Cultural Fest
                 </span>
+
+                {/* CTA button — deep dark on orange for maximum contrast */}
                 <motion.button
                   whileTap={{scale:.95}}
                   style={{
@@ -512,12 +533,13 @@ export default function HeroLanding() {
                     letterSpacing:".35em",
                     textTransform:"uppercase",
                     color:"#fff",
-                    background:"linear-gradient(135deg,rgba(200,50,0,.88) 0%,rgba(255,90,10,.78) 100%)",
-                    border:"1px solid rgba(255,120,40,.48)",
+                    background:"linear-gradient(135deg, rgba(10,4,0,.90) 0%, rgba(40,12,0,.85) 100%)",
+                    border:"1px solid rgba(255,255,255,.30)",
                     borderRadius:"2px",
                     padding:"5px 14px",
                     cursor:"pointer",
                     backdropFilter:"blur(8px)",
+                    pointerEvents:"all",
                   }}
                 >
                   Explore ›
@@ -526,31 +548,89 @@ export default function HeroLanding() {
             </motion.div>
           )}
 
-          {/* Desktop tagline + buttons */}
+          {/* ── Desktop tagline + buttons ────────────────────────── */}
           {!isMobile && (
             <>
               <div className="overflow-hidden -mt-4 md:-mt-10">
-                <p style={{fontFamily:"'Cinzel',serif",fontWeight:300,fontSize:"clamp(.75rem,2.6vw,1.5rem)",letterSpacing:"clamp(.2em,1.2vw,.38em)",color:"#fff",whiteSpace:"nowrap"}}>
+                <p style={{
+                  fontFamily:"'Cinzel',serif",
+                  fontWeight:300,
+                  fontSize:"clamp(.75rem,2.6vw,1.5rem)",
+                  letterSpacing:"clamp(.2em,1.2vw,.38em)",
+                  /* White for desktop — pops against dark overlay on orange bg */
+                  color:"rgba(255,255,255,0.95)",
+                  whiteSpace:"nowrap",
+                  textShadow:"0 2px 18px rgba(0,0,0,0.5)",
+                }}>
                   {chars.map((ch,i)=>(
                     <span key={i} className="hl-tc" style={{animationDelay:`${1.0+i*.04}s`,whiteSpace:ch===" "?"pre":undefined}}>{ch}</span>
                   ))}
                 </p>
               </div>
 
-              <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2,duration:1.2}}
-                style={{fontFamily:"'Noto Serif JP',serif",fontWeight:200,fontSize:"clamp(9px,1.2vw,13px)",letterSpacing:".48em",color:"rgba(255,180,100,.38)",marginTop:"10px"}}>
+              <motion.p
+                initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2,duration:1.2}}
+                style={{
+                  fontFamily:"'Noto Serif JP',serif",
+                  fontWeight:200,
+                  fontSize:"clamp(9px,1.2vw,13px)",
+                  letterSpacing:".48em",
+                  /* Soft white-cream instead of orange/amber */
+                  color:"rgba(255,255,255,.42)",
+                  marginTop:"10px",
+                  textShadow:"0 1px 10px rgba(0,0,0,0.4)",
+                }}
+              >
                 新たな時代の幕開け
               </motion.p>
 
-              <div className="mt-6 md:mt-8" style={{width:"clamp(140px,30vw,280px)",height:1,background:"linear-gradient(to right, rgba(255,100,30,.7), rgba(255,200,100,.4), transparent)"}}/>
+              <div className="mt-6 md:mt-8" style={{
+                width:"clamp(140px,30vw,280px)",
+                height:1,
+                /* White divider instead of orange */
+                background:"linear-gradient(to right, rgba(255,255,255,.65), rgba(255,255,255,.35), transparent)",
+              }}/>
 
-              <motion.div className="flex items-center gap-4 md:gap-6 mt-6 md:mt-7"
-                initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:1.6,duration:.9,ease:[.22,1,.36,1]}}>
-                <span className="hl-badge border border-white/15 uppercase" style={{backdropFilter:"blur(8px)",borderRadius:"2px",padding:"6px 14px",fontFamily:"'Cinzel',serif",fontSize:"clamp(7px,1vw,9.5px)",letterSpacing:".40em",color:"rgba(255,200,120,.72)",whiteSpace:"nowrap"}}>
+              <motion.div
+                className="flex items-center gap-4 md:gap-6 mt-6 md:mt-7"
+                initial={{opacity:0,y:18}} animate={{opacity:1,y:0}}
+                transition={{delay:1.6,duration:.9,ease:[.22,1,.36,1]}}
+              >
+                {/* Badge — white shimmer border */}
+                <span className="hl-badge" style={{
+                  border:"1px solid rgba(255,255,255,0.22)",
+                  backdropFilter:"blur(8px)",
+                  borderRadius:"2px",
+                  padding:"6px 14px",
+                  fontFamily:"'Cinzel',serif",
+                  fontSize:"clamp(7px,1vw,9.5px)",
+                  letterSpacing:".40em",
+                  color:"rgba(255,255,255,.80)",
+                  whiteSpace:"nowrap",
+                  textTransform:"uppercase",
+                }}>
                   Techno-Cultural Fest
                 </span>
-                <motion.button whileHover={{scale:1.05,boxShadow:"0 0 28px rgba(255,80,10,.55)"}} whileTap={{scale:.97}}
-                  style={{fontFamily:"'Cinzel',serif",fontSize:"clamp(7px,1vw,9.5px)",letterSpacing:".40em",textTransform:"uppercase",color:"#fff",background:"linear-gradient(135deg,rgba(200,50,0,.88) 0%,rgba(255,90,10,.78) 100%)",border:"1px solid rgba(255,120,40,.48)",borderRadius:"2px",padding:"6px 18px",cursor:"pointer",backdropFilter:"blur(8px)",transition:"box-shadow .3s"}}>
+
+                {/* CTA — dark background for max contrast on orange */}
+                <motion.button
+                  whileHover={{scale:1.05, boxShadow:"0 0 28px rgba(255,255,255,.25)"}}
+                  whileTap={{scale:.97}}
+                  style={{
+                    fontFamily:"'Cinzel',serif",
+                    fontSize:"clamp(7px,1vw,9.5px)",
+                    letterSpacing:".40em",
+                    textTransform:"uppercase",
+                    color:"#fff",
+                    background:"linear-gradient(135deg, rgba(10,4,0,.92) 0%, rgba(45,14,0,.88) 100%)",
+                    border:"1px solid rgba(255,255,255,.28)",
+                    borderRadius:"2px",
+                    padding:"6px 18px",
+                    cursor:"pointer",
+                    backdropFilter:"blur(8px)",
+                    transition:"box-shadow .3s",
+                  }}
+                >
                   Explore ›
                 </motion.button>
               </motion.div>
@@ -559,29 +639,41 @@ export default function HeroLanding() {
         </motion.div>
 
         {/* Side labels — desktop only */}
-        <motion.div className="absolute left-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
-          initial={{opacity:0,x:-14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}>
-          <div className="h-14 w-px" style={{background:"rgba(255,160,80,.12)"}}/>
+        <motion.div
+          className="absolute left-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
+          initial={{opacity:0,x:-14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}
+        >
+          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
           <span className="hl-side">Aakar 2026</span>
-          <div className="h-14 w-px" style={{background:"rgba(255,160,80,.12)"}}/>
+          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
         </motion.div>
-        <motion.div className="absolute right-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
-          initial={{opacity:0,x:14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}>
-          <div className="h-14 w-px" style={{background:"rgba(255,160,80,.12)"}}/>
+        <motion.div
+          className="absolute right-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3"
+          initial={{opacity:0,x:14}} animate={{opacity:1,x:0}} transition={{delay:1.8,duration:.9}}
+        >
+          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
           <span className="hl-side" style={{transform:"rotate(180deg)"}}>AJIET · Mangaluru</span>
-          <div className="h-14 w-px" style={{background:"rgba(255,160,80,.12)"}}/>
+          <div className="h-14 w-px" style={{background:"rgba(255,255,255,.12)"}}/>
         </motion.div>
 
         {/* Bottom bar */}
-        <motion.div className="absolute bottom-0 left-0 right-0 z-40 flex items-end justify-between px-6 md:px-12 pb-5 md:pb-7"
-          initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.4,duration:1}}>
-          <span className="hidden md:block" style={{fontFamily:"'Cinzel',serif",fontSize:"9px",letterSpacing:".35em",textTransform:"uppercase",color:"rgba(255,255,255,.14)"}}>
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 z-40 flex items-end justify-between px-6 md:px-12 pb-5 md:pb-7"
+          initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.4,duration:1}}
+        >
+          <span className="hidden md:block" style={{
+            fontFamily:"'Cinzel',serif",
+            fontSize:"9px",
+            letterSpacing:".35em",
+            textTransform:"uppercase",
+            color:"rgba(255,255,255,.18)",
+          }}>
             Where Technology Meets Culture
           </span>
           <div className="flex flex-col items-center gap-1 absolute left-1/2 -translate-x-1/2 bottom-5">
-            <span style={{fontFamily:"'Cinzel',serif",fontSize:"8px",letterSpacing:".4em",color:"rgba(255,255,255,.18)",textTransform:"uppercase"}}>Scroll</span>
+            <span style={{fontFamily:"'Cinzel',serif",fontSize:"8px",letterSpacing:".4em",color:"rgba(255,255,255,.22)",textTransform:"uppercase"}}>Scroll</span>
             <svg className="hl-bounce" width="10" height="14" viewBox="0 0 10 14" fill="none">
-              <path d="M5 1v12M1 9l4 4 4-4" stroke="rgba(255,160,80,.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 1v12M1 9l4 4 4-4" stroke="rgba(255,255,255,.45)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
         </motion.div>

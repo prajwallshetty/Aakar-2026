@@ -18,7 +18,7 @@ import {
   ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const merchModelUrl ="/aakar1.glb";
+const merchModelUrl ="/model/aakarmodel3.glb";
 
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
