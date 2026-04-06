@@ -4,6 +4,8 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { db } from ".";
 import { isAdmin } from "./admin";
+import { sendEmail } from "./nodemailer";
+import { buildElitePassEmail } from "./email-templates";
 
 const ELITE_PASS_PRICE = 999;
 
@@ -173,6 +175,14 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
       amount: ELITE_PASS_PRICE,
       paymentScreenshotUrl: data.paymentScreenshotUrl || null,
     });
+
+    if (order) {
+      await sendEmail(
+        order.email,
+        "Elite Pass Confirmed – Aakar 2025! ⚡",
+        buildElitePassEmail(order.name, order.usn, order.transactionId)
+      );
+    }
 
     return { data: order, error: null };
   } catch (error: any) {

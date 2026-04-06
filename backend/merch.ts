@@ -3,6 +3,8 @@
 import { Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
+import { sendEmail } from "./nodemailer";
+import { buildMerchEmail } from "./email-templates";
 
 const variantPriceMap = {
   classic: 499,
@@ -147,6 +149,14 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
       order = await merchDb.merchOrder.create({
         data: baseData,
       });
+    }
+
+    if (order) {
+      await sendEmail(
+        order.email,
+        `Merch Order Confirmed – Aakar 2025! 👕`,
+        buildMerchEmail(order.name, order.merchVariant || "Classic", order.size, order.transactionId)
+      );
     }
 
     return { data: order, error: null };
