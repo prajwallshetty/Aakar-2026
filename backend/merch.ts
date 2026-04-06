@@ -24,7 +24,6 @@ function inferVariantFromAmount(amount: number | null | undefined): keyof typeof
 
 type MerchOrderInput = {
   name: string;
-  usn?: string;
   email: string;
   phone: string;
   merchVariant?: string;
@@ -95,21 +94,12 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
   const normalizedEmail = data.email.toLowerCase();
   const normalizedTransactionId = data.transactionId.trim();
 
-  const existingOrders = await merchDb.merchOrder.findMany({
-    where: {
-      transactionId: normalizedTransactionId,
-    },
-    select: {
-      email: true,
-      transactionId: true,
-    },
+  const existingOrder = await merchDb.merchOrder.findFirst({
+    where: { transactionId: normalizedTransactionId },
+    select: { transactionId: true },
   });
 
-  const hasTransactionId = existingOrders.some(
-    (order: { transactionId: string }) => order.transactionId === normalizedTransactionId,
-  );
-
-  if (hasTransactionId) {
+  if (existingOrder) {
     errors.transactionId = "This transaction ID already exists";
   }
 
@@ -131,7 +121,6 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
 
     const baseData = {
       name: data.name.trim(),
-      usn: data.usn?.trim().toUpperCase() || "",
       email: data.email.toLowerCase().trim(),
       phone: normalizePhone(data.phone),
       size: data.size,
@@ -171,7 +160,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
         return { data: null, error: { transactionId: "This transaction ID already exists" } };
       }
       if (target.includes("usn")) {
-        return { data: null, error: { usn: "A merch order already exists for this USN" } };
+        return { data: null, error: { transactionId: "A merch order already exists" } };
       }
       if (target.includes("email")) {
         return { data: null, error: { email: "A merch order already exists for this email" } };

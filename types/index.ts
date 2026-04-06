@@ -34,7 +34,6 @@ export interface ExtendedMerchOrder {
     id: number;
     uuid: string;
     name: string;
-    usn: string;
     email: string;
     phone: string;
     merchVariant: string;
@@ -48,7 +47,6 @@ export interface ExtendedMerchOrder {
 
 export interface ExtendedMerchOrderCreateInput {
     name: string;
-    usn: string;
     email: string;
     phone: string;
     merchVariant?: string;
