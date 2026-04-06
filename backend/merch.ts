@@ -24,7 +24,7 @@ function inferVariantFromAmount(amount: number | null | undefined): keyof typeof
 
 type MerchOrderInput = {
   name: string;
-  usn: string;
+  usn?: string;
   email: string;
   phone: string;
   merchVariant?: string;
@@ -43,9 +43,7 @@ let ensuredMerchOrderIndexes = false;
 async function ensureMerchOrderIndexes(client: any) {
   if (ensuredMerchOrderIndexes) return;
 
-  // Keep transactionId unique; allow repeat orders by same USN/email for different variants.
-  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_usn_key";`);
-  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_email_key";`);
+  // Keep transactionId unique for merch payments.
 
   ensuredMerchOrderIndexes = true;
 }
@@ -72,10 +70,6 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
     errors.name = "Name is required";
   }
 
-  if (!data.usn || data.usn.trim().length < 4) {
-    errors.usn = "USN is required";
-  }
-
   if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.email = "Valid email is required";
   }
@@ -98,7 +92,6 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
     return errors;
   }
 
-  const normalizedUsn = data.usn.toUpperCase();
   const normalizedEmail = data.email.toLowerCase();
   const normalizedTransactionId = data.transactionId.trim();
 
@@ -107,7 +100,6 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
       transactionId: normalizedTransactionId,
     },
     select: {
-      usn: true,
       email: true,
       transactionId: true,
     },
@@ -139,7 +131,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
 
     const baseData = {
       name: data.name.trim(),
-      usn: data.usn.toUpperCase().trim(),
+      usn: data.usn?.trim().toUpperCase() || "",
       email: data.email.toLowerCase().trim(),
       phone: normalizePhone(data.phone),
       size: data.size,

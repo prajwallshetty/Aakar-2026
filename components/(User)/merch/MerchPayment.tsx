@@ -31,7 +31,6 @@ export default function MerchPayment() {
 
   const order = useMemo(() => ({
     name: params.get("name") || "",
-    usn: params.get("usn") || "",
     email: params.get("email") || "",
     phone: params.get("phone") || "",
     size: params.get("size") || "M",
@@ -98,7 +97,6 @@ export default function MerchPayment() {
 
     const response = await createMerchOrder({
       name: order.name,
-      usn: order.usn,
       email: order.email,
       phone: order.phone,
       merchVariant: order.variant.key,
@@ -234,7 +232,7 @@ export default function MerchPayment() {
                     Variant: <span className="font-bold uppercase">{order.variant.title}</span>
                   </p>
                   <p className="merch-pay-copy text-sm">
-                    Order for <span className="font-bold uppercase">{order.name || "—"}</span>, USN <span className="font-bold uppercase">{order.usn || "—"}</span>, size <span className="font-bold uppercase">{order.size}</span>.
+                    Order for <span className="font-bold uppercase">{order.name || "—"}</span>, size <span className="font-bold uppercase">{order.size}</span>.
                   </p>
                   <p className="merch-pay-copy text-sm">
                     Email: <span className="font-bold uppercase">{order.email || "—"}</span>
@@ -262,7 +260,6 @@ export default function MerchPayment() {
                         Order placed successfully
                     </h2>
                     <div className="mt-6 rounded-2xl border-2 px-5 py-4 shadow-[4px_4px_0_#000] text-left" style={{ border: `1px solid ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.background}40`, boxShadow: `0 0 8px ${ANIME_COLORS.primary}40` }}>
-                      <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">USN:</span> {order.usn}</p>
                       <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">Size:</span> {order.size}</p>
                       <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">Transaction ID:</span> {transactionId}</p>
                     </div>
