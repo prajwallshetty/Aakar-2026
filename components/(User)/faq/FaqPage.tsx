@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { 
   AnimeParticleField, 
@@ -51,6 +52,23 @@ export default function FAQPage() {
         overflow: "hidden",
         background: "#050505", // deep dark base
       }}>
+        <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+          <Image
+            src="/bg.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center", opacity: 0.35 }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(180deg, rgba(5, 5, 5, 0.55) 0%, rgba(5, 5, 5, 0.72) 100%)",
+            }}
+          />
+        </div>
         <AnimeOrbField />
         <AnimeParticleField />
 
