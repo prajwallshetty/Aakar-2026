@@ -18,8 +18,6 @@ import {
   ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const merchModelUrl ="/model/aakarmodel3.glb";
-
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
   const centeredScene = scene.clone(true);
@@ -36,6 +34,7 @@ function TshirtModel({ modelUrl }: { modelUrl: string }) {
 export default function MerchPage() {
   const [selectedVariantKey, setSelectedVariantKey] = useState(defaultMerchVariantKey);
   const selectedVariant = useMemo(() => getMerchVariant(selectedVariantKey), [selectedVariantKey]);
+  const merchModelUrl = selectedVariant.modelUrl;
 
   return (
     <>

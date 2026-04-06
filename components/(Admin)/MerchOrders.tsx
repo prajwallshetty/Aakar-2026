@@ -14,7 +14,6 @@ import { downloadCsv } from "@/lib/downloadCsv";
 type MerchOrderRow = {
   id: number;
   name: string;
-  usn: string;
   email: string;
   phone: string;
   merchVariant: string;
@@ -24,8 +23,6 @@ type MerchOrderRow = {
 };
 
 type GroupingOption = "none" | "variant" | "size";
-
-const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"];
 
 export default function MerchOrders() {
   const [orders, setOrders] = useState<MerchOrderRow[]>([]);
@@ -48,7 +45,6 @@ export default function MerchOrders() {
     const query = search.toLowerCase();
     return orders.filter((order) =>
       order.name.toLowerCase().includes(query) ||
-      order.usn.toLowerCase().includes(query) ||
       order.email.toLowerCase().includes(query) ||
       order.phone.toLowerCase().includes(query) ||
       order.transactionId.toLowerCase().includes(query) ||
@@ -86,7 +82,6 @@ export default function MerchOrders() {
   const handleDownload = () => {
     const rows = filteredOrders.map((order) => ({
       Name: order.name,
-      USN: order.usn,
       Variant: order.merchVariant,
       Size: order.size,
       Email: order.email,
@@ -103,7 +98,6 @@ export default function MerchOrders() {
       <React.Fragment key={order.id}>
         <TableRow>
           <TableCell className="font-medium text-zinc-900">{order.name}</TableCell>
-          <TableCell>{order.usn}</TableCell>
           <TableCell className="uppercase">{order.merchVariant || "classic"}</TableCell>
           <TableCell>{order.size}</TableCell>
           <TableCell>{order.email}</TableCell>
@@ -124,7 +118,7 @@ export default function MerchOrders() {
 
         {expandedOrderId === order.id && (
           <TableRow>
-            <TableCell colSpan={8} className="bg-zinc-50/70 p-4">
+            <TableCell colSpan={7} className="bg-zinc-50/70 p-4">
               <div className="space-y-3">
                 <p className="text-xs font-medium text-zinc-700">
                   Payment screenshot loads only when requested.
@@ -155,7 +149,7 @@ export default function MerchOrders() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Merch Orders</h1>
-            <p className="text-sm text-zinc-500 mt-1">Track shirt sizes, USNs, and transaction IDs from the merch flow.</p>
+            <p className="text-sm text-zinc-500 mt-1">Track shirt sizes and transaction IDs from the merch flow.</p>
           </div>
           <Badge variant="outline" className="text-xs text-zinc-500 border-zinc-200 bg-white">
             <Shirt size={12} className="mr-1" />
@@ -181,6 +175,7 @@ export default function MerchOrders() {
                   ] as const).map(({ val, label }) => (
                     <button
                       key={val}
+                      type="button"
                       onClick={() => setGroupingOption(val)}
                       className={
                         groupingOption === val
@@ -240,7 +235,6 @@ export default function MerchOrders() {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Name</TableHead>
-                            <TableHead>USN</TableHead>
                             <TableHead>Variant</TableHead>
                             <TableHead>Size</TableHead>
                             <TableHead>Email</TableHead>
@@ -249,42 +243,7 @@ export default function MerchOrders() {
                             <TableHead>Screenshot</TableHead>
                           </TableRow>
                         </TableHeader>
-                        <TableBody>
-                          {groupingOption === "variant" ? (
-                            (() => {
-                              const sizeBuckets = groupRows.reduce((acc, order) => {
-                                const sizeKey = (order.size || "UNKNOWN").toUpperCase();
-                                if (!acc[sizeKey]) acc[sizeKey] = [];
-                                acc[sizeKey].push(order);
-                                return acc;
-                              }, {} as Record<string, MerchOrderRow[]>);
-
-                              const orderedSizeKeys = Object.keys(sizeBuckets).sort((a, b) => {
-                                const ai = sizeOrder.indexOf(a);
-                                const bi = sizeOrder.indexOf(b);
-                                if (ai === -1 && bi === -1) return a.localeCompare(b);
-                                if (ai === -1) return 1;
-                                if (bi === -1) return -1;
-                                return ai - bi;
-                              });
-
-                              return orderedSizeKeys.map((sizeKey) => (
-                                <React.Fragment key={`${groupName}-${sizeKey}`}>
-                                  <TableRow className="bg-zinc-50/70">
-                                    <TableCell colSpan={8} className="py-2">
-                                      <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                                        Size {sizeKey} ({sizeBuckets[sizeKey].length})
-                                      </span>
-                                    </TableCell>
-                                  </TableRow>
-                                  {renderOrderRows(sizeBuckets[sizeKey])}
-                                </React.Fragment>
-                              ));
-                            })()
-                          ) : (
-                            renderOrderRows(groupRows)
-                          )}
-                        </TableBody>
+                        <TableBody>{renderOrderRows(groupRows)}</TableBody>
                       </Table>
                     </div>
                   </div>

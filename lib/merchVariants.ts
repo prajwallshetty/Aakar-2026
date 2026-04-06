@@ -5,6 +5,7 @@ export interface MerchVariant {
   title: string;
   tag: string;
   price: number;
+  modelUrl: string;
   description: string;
   features: string[];
 }
@@ -15,6 +16,7 @@ export const merchVariants: MerchVariant[] = [
     title: "AAKAR CLASSIC",
     tag: "CORE DROP",
     price: 499,
+    modelUrl: "/model/aakarmodel1.glb",
     description:
       "The original fest tee with clean front branding and everyday comfort. Built for full-day campus wear.",
     features: [
@@ -29,6 +31,7 @@ export const merchVariants: MerchVariant[] = [
     title: "AAKAR NEON STRIKE",
     tag: "NIGHT EDIT",
     price: 549,
+    modelUrl: "/model/aakarmodel2.glb",
     description:
       "High-contrast neon graphics with bolder placement for evening events and stage-heavy moments.",
     features: [
@@ -43,6 +46,7 @@ export const merchVariants: MerchVariant[] = [
     title: "AAKAR PRO GRID",
     tag: "LIMITED CUT",
     price: 599,
+    modelUrl: "/model/aakarmodel3.glb",
     description:
       "Premium variant with denser fabric feel and sharper graphic blocks for a collector-grade look.",
     features: [

@@ -24,7 +24,6 @@ function inferVariantFromAmount(amount: number | null | undefined): keyof typeof
 
 type MerchOrderInput = {
   name: string;
-  usn: string;
   email: string;
   phone: string;
   merchVariant?: string;
@@ -43,9 +42,7 @@ let ensuredMerchOrderIndexes = false;
 async function ensureMerchOrderIndexes(client: any) {
   if (ensuredMerchOrderIndexes) return;
 
-  // Keep transactionId unique; allow repeat orders by same USN/email for different variants.
-  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_usn_key";`);
-  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_email_key";`);
+  // Keep transactionId unique for merch payments.
 
   ensuredMerchOrderIndexes = true;
 }
@@ -72,10 +69,6 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
     errors.name = "Name is required";
   }
 
-  if (!data.usn || data.usn.trim().length < 4) {
-    errors.usn = "USN is required";
-  }
-
   if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.email = "Valid email is required";
   }
@@ -98,26 +91,15 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
     return errors;
   }
 
-  const normalizedUsn = data.usn.toUpperCase();
   const normalizedEmail = data.email.toLowerCase();
   const normalizedTransactionId = data.transactionId.trim();
 
-  const existingOrders = await merchDb.merchOrder.findMany({
-    where: {
-      transactionId: normalizedTransactionId,
-    },
-    select: {
-      usn: true,
-      email: true,
-      transactionId: true,
-    },
+  const existingOrder = await merchDb.merchOrder.findFirst({
+    where: { transactionId: normalizedTransactionId },
+    select: { transactionId: true },
   });
 
-  const hasTransactionId = existingOrders.some(
-    (order: { transactionId: string }) => order.transactionId === normalizedTransactionId,
-  );
-
-  if (hasTransactionId) {
+  if (existingOrder) {
     errors.transactionId = "This transaction ID already exists";
   }
 
@@ -139,7 +121,6 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
 
     const baseData = {
       name: data.name.trim(),
-      usn: data.usn.toUpperCase().trim(),
       email: data.email.toLowerCase().trim(),
       phone: normalizePhone(data.phone),
       size: data.size,
@@ -179,7 +160,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
         return { data: null, error: { transactionId: "This transaction ID already exists" } };
       }
       if (target.includes("usn")) {
-        return { data: null, error: { usn: "A merch order already exists for this USN" } };
+        return { data: null, error: { transactionId: "A merch order already exists" } };
       }
       if (target.includes("email")) {
         return { data: null, error: { email: "A merch order already exists for this email" } };

@@ -28,7 +28,6 @@ export default function MerchBuy() {
   );
   const [formData, setFormData] = useState({
     name: "",
-    usn: "",
     email: "",
     phone: "",
     size: "M",
@@ -46,13 +45,11 @@ export default function MerchBuy() {
     setError("");
 
     if (!formData.name.trim()) return setError("Name is required");
-    if (!formData.usn.trim()) return setError("USN is required");
     if (!formData.email.trim()) return setError("Email is required");
     if (!formData.phone.trim()) return setError("Phone number is required");
 
     const params = new URLSearchParams({
       name: formData.name.trim(),
-      usn: formData.usn.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim(),
       size: formData.size,
@@ -143,7 +140,7 @@ export default function MerchBuy() {
                     Select Size
                 </h1>
                 <p className="merch-buy-copy mt-4 max-w-xl text-base leading-8">
-                  Add your size, USN, email, and phone number. After this, you’ll be taken to the payment page with the scanner.
+                  Add your size, email, and phone number. After this, you’ll be taken to the payment page with the scanner.
                 </p>
 
                 <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
@@ -155,15 +152,6 @@ export default function MerchBuy() {
                         value={formData.name}
                         onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                         placeholder="Your full name"
-                      />
-                    </label>
-                    <label className="space-y-2">
-                      <span className="merch-buy-label">USN</span>
-                      <input
-                        className="merch-buy-input w-full uppercase"
-                        value={formData.usn}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, usn: e.target.value.toUpperCase() }))}
-                        placeholder="1AJ25CS001"
                       />
                     </label>
                     <label className="space-y-2">
