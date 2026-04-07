@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { 
   AnimeParticleField, 
   AnimeOrbField, 
@@ -32,6 +34,23 @@ export default function TermsPage() {
       `}</style>
 
       <main style={{ position: "relative", minHeight: "100vh", overflow: "hidden", background: "#050505" }}>
+        <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+          <Image
+            src="/bg.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center", opacity: 0.35 }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(180deg, rgba(5, 5, 5, 0.55) 0%, rgba(5, 5, 5, 0.72) 100%)",
+            }}
+          />
+        </div>
         <AnimeOrbField />
         <AnimeParticleField />
 
