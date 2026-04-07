@@ -20,7 +20,9 @@ import {
 const merchUpiId = "aakar2026@upi";
 const merchQrImageUrl ="/merch-qr.jpeg";
 
-export default function MerchPayment() {
+import { Suspense } from "react";
+
+function MerchPaymentContent() {
   const params = useSearchParams();
   const [transactionId, setTransactionId] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
@@ -325,5 +327,17 @@ export default function MerchPayment() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function MerchPayment() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center font-mono text-[#00E5FF] tracking-[0.2em] uppercase text-sm">
+        Initializing Secure Terminal...
+      </div>
+    }>
+      <MerchPaymentContent />
+    </Suspense>
   );
 }

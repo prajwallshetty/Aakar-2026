@@ -13,9 +13,11 @@ import {
   ANIME_COLORS,
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
+import { Suspense } from "react";
+
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"] as const;
 
-export default function MerchBuy() {
+function MerchBuyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedVariant = useMemo(
@@ -594,7 +596,7 @@ export default function MerchBuy() {
                     Armor Class
                   </h1>
                   <p className="info-desc">
-                    Add your size, email, and phone number. After this, you'll be taken to the payment page with the scanner.
+                    Add your size, email, and phone number. After this, you'll be taken to the payment.
                   </p>
 
                   <form className="mt-8 space-y-5 relative z-10" onSubmit={handleSubmit}>
@@ -727,5 +729,17 @@ export default function MerchBuy() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function MerchBuy() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center font-mono text-[#00E5FF] tracking-[0.2em] uppercase text-sm">
+        Loading Armory...
+      </div>
+    }>
+      <MerchBuyContent />
+    </Suspense>
   );
 }
