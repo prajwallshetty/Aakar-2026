@@ -18,6 +18,17 @@ export default function HeroLanding() {
   const [isMuted,  setIsMuted]  = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // ── Visibility Detection ──────────────────────────────────────────────────
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // ── Audio ────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -70,11 +81,17 @@ export default function HeroLanding() {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    // Force playback as soon as enough data is buffered
-    const onCanPlay = () => video.play().catch(() => {});
+
+    if (isVisible) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+
+    const onCanPlay = () => isVisible && video.play().catch(() => {});
     video.addEventListener("canplaythrough", onCanPlay, { once: true });
     return () => video.removeEventListener("canplaythrough", onCanPlay);
-  }, []);
+  }, [isVisible]);
 
   // ── Ember canvas ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -112,6 +129,7 @@ export default function HeroLanding() {
     const em: P[] = Array.from({ length: COUNT }, spawn);
 
     const draw = () => {
+      if (!isVisible) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = 0; i < em.length; i++) {
         const e = em[i];
@@ -125,13 +143,14 @@ export default function HeroLanding() {
       ctx.globalAlpha = 1;
       rafRef.current = requestAnimationFrame(draw);
     };
-    draw();
+
+    if (isVisible) draw();
 
     return () => {
       window.removeEventListener("resize", resize);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isMobile]);
+  }, [isMobile, isVisible]);
 
   const chars = "A NEW ERA BEGINS".split("");
 
@@ -193,7 +212,7 @@ export default function HeroLanding() {
 
       <section
         ref={sectionRef}
-        className="hl relative w-full h-screen min-h-[640px] overflow-hidden bg-black"
+        className="hl gpu-accelerate relative w-full h-screen min-h-[640px] overflow-hidden bg-black"
         style={{ fontFamily: "'Cinzel',serif" }}
       >
 
@@ -205,12 +224,14 @@ export default function HeroLanding() {
             loop
             muted
             playsInline
+            poster="/video-poster.jpg"
             preload="auto"
             // @ts-ignore – fetchPriority is a valid HTML attribute not yet in React types
             fetchPriority="high"
             className="hl-video"
           >
-            {/* mp4 first — broadest support + fastest decode */}
+            {/* Optimized for screen size: Only loads one based on media query */}
+            <source src="/aakarlandingvideo-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
             <source src="/aakarlandingvideo.mp4" type="video/mp4" />
           </video>
         </div>
