@@ -4,549 +4,582 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createElitePassOrder } from "@/backend/elite-pass";
-import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
-  AnimeCardWrapper, 
-  AnimeSectionHeading, 
-  AnimeGlitchText,
+import { cinzelFont } from "@/lib/font";
+import {
+  AnimeParticleField,
+  AnimeOrbField,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const PASS_FEE = 999;
+const PASS_PRICE_EARLY = 399;
+const PASS_PRICE_REGULAR = 499;
 
-// ─── Anime Design tokens ────────────────────────────────────────────────────────────
-const C = {
-    yellow: ANIME_COLORS.accent,
-    magenta: ANIME_COLORS.primary,
-    cyan: ANIME_COLORS.secondary,
-    pink: ANIME_COLORS.purple,
-    hot: ANIME_COLORS.purple,
-    black: ANIME_COLORS.background,
-    white: ANIME_COLORS.text,
-};
-
-const popFont = "'Bebas Neue', Impact, sans-serif";
-const monoFont = "'Share Tech Mono', monospace";
-const displayFont = "'Bebas Neue', Impact, sans-serif";
-
-function Card({ children, style, className }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
-    return (
-        <AnimeCardWrapper accentIndex={0} className={className} style={{
-            padding: "clamp(1.4rem,3.5vw,2.5rem)",
-            position: "relative",
-            ...style,
-        }}>
-            {children}
-        </AnimeCardWrapper>
-    );
-}
-
-function SectionHeading({ children, color = ANIME_COLORS.primary, center = false }: { children: React.ReactNode; color?: string; center?: boolean }) {
-    const accentIndex = color === ANIME_COLORS.primary ? 0 : color === ANIME_COLORS.secondary ? 1 : color === ANIME_COLORS.accent ? 2 : 3;
-    return (
-        <AnimeSectionHeading index={accentIndex} style={{
-            textAlign: center ? "center" : "left",
-        }}>
-            {children}
-        </AnimeSectionHeading>
-    );
-}
-
-function Chip({ children, color }: { children: React.ReactNode; color: string }) {
-    return (
-        <div
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                background: `${color}40`,
-                border: `1px solid ${color}`,
-                boxShadow: `0 0 12px ${color}40`,
-                padding: "6px 16px",
-                borderRadius: 6,
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(0.85rem,2vw,1.1rem)",
-                letterSpacing: "0.12em",
-                color: ANIME_COLORS.text,
-                backdropFilter: "blur(4px)"
-            }}
-        >
-            {children}
-        </div>
-    );
-}
-
-const AnimeButton: React.FC<{
-    children: React.ReactNode;
-    onClick?: () => void;
-    type?: "button" | "submit";
-    disabled?: boolean;
-    bg?: string;
-    fg?: string;
-}> = ({ children, onClick, type = "button", disabled, bg = ANIME_COLORS.primary, fg = ANIME_COLORS.text }) => {
-    const [hov, setHov] = useState(false);
-    return (
-        <button
-            type={type}
-            onClick={onClick}
-            disabled={disabled}
-            onMouseEnter={() => setHov(true)}
-            onMouseLeave={() => setHov(false)}
-            style={{
-                background: disabled ? `${ANIME_COLORS.background}40` : `${bg}20`,
-                color: disabled ? `${ANIME_COLORS.text}40` : fg,
-                border: `1px solid ${bg}`,
-                boxShadow: hov && !disabled ? `0 0 20px ${bg}60` : `0 0 8px ${bg}40`,
-                fontFamily: popFont,
-                fontSize: 12,
-                fontWeight: 900,
-                letterSpacing: 3,
-                textTransform: "uppercase",
-                padding: "12px 28px",
-                cursor: disabled ? "not-allowed" : "pointer",
-                transform: hov && !disabled ? "translateY(-2px)" : "none",
-                transition: "all 0.3s ease",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                justifyContent: "center",
-                borderRadius: 6,
-                backdropFilter: "blur(4px)"
-            }}
-        >
-            {children}
-        </button>
-    );
-};
-
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 4 }}>
-            <label style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", color: ANIME_COLORS.text, marginBottom: 4, display: "block" }}>
-                {label}
-            </label>
-            {children}
-            {error && <span style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, color: ANIME_COLORS.purple, letterSpacing: 1, marginTop: 3 }}>⚡ {error}</span>}
-        </div>
-    );
-}
-
-function LoadingSkeleton() {
-    return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <AnimeOrbField />
-            <AnimeParticleField />
-            <AnimeCardWrapper accentIndex={0} style={{ padding: 32, width: "min(620px,90vw)", position: "relative", zIndex: 1 }}>
-                <div style={{ fontFamily: displayFont, fontSize: 28, letterSpacing: 4, marginBottom: 12, color: ANIME_COLORS.text }}>
-                    <AnimeGlitchText text="Loading Elite Pass…">
-                        Loading Elite Pass…
-                    </AnimeGlitchText>
-                </div>
-                <div style={{ height: 10, width: "45%", background: `${ANIME_COLORS.background}40`, border: `1px solid ${ANIME_COLORS.primary}`, marginBottom: 10 }} />
-                <div style={{ height: 42, background: `${ANIME_COLORS.background}20`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 8px ${ANIME_COLORS.primary}40` }} />
-            </AnimeCardWrapper>
-        </div>
-    );
-}
+const COLLEGES = ["A J Institute of Engineering and Technology, Mangalore","Alva's Institute of Engineering Technology, Moodbidri","Manipal Institute of Technology, Manipal","NITK, Surathkal","St Joseph Engineering College, Vamanjoor, Mangaluru","Sahyadri College of Engineering and Management","MITE - Mangalore Institute of Technology & Engineering","Karavali Institute of Technology, Mangalore","SDM College of Engineering and Technology (SDMC)","Srinivas Institute of Engineering and Technology, Mukka","P.A. College of Engineering, Mangalore","N.M.A.M. Institute of Technology, Nitte, Karkala","Canara Engineering College, Mangalore","Yenepoya Institute of Technology (YIT), Moodbidri","Govinda Dasa College, Surathkal","Other"].sort();
 
 async function compressImageForUpload(file: File): Promise<File> {
-    // Keep small files as-is to avoid unnecessary processing delay.
-    if (!file.type.startsWith("image/") || file.size <= 1.5 * 1024 * 1024) {
-        return file;
-    }
-
-    return new Promise<File>((resolve) => {
-        const img = new Image();
-        const objectUrl = URL.createObjectURL(file);
-
-        img.onload = () => {
-            const maxDimension = 1600;
-            const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
-            const targetWidth = Math.max(1, Math.round(img.width * scale));
-            const targetHeight = Math.max(1, Math.round(img.height * scale));
-
-            const canvas = document.createElement("canvas");
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-
-            const ctx = canvas.getContext("2d");
-            if (!ctx) {
-                URL.revokeObjectURL(objectUrl);
-                resolve(file);
-                return;
-            }
-
-            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-            canvas.toBlob(
-                (blob) => {
-                    URL.revokeObjectURL(objectUrl);
-
-                    if (!blob) {
-                        resolve(file);
-                        return;
-                    }
-
-                    const compressedFile = new File(
-                        [blob],
-                        file.name.replace(/\.[^.]+$/, "") + ".jpg",
-                        { type: "image/jpeg" },
-                    );
-
-                    resolve(compressedFile.size < file.size ? compressedFile : file);
-                },
-                "image/jpeg",
-                0.8,
-            );
-        };
-
-        img.onerror = () => {
-            URL.revokeObjectURL(objectUrl);
-            resolve(file);
-        };
-
-        img.src = objectUrl;
-    });
+  if (!file.type.startsWith("image/") || file.size <= 1.5 * 1024 * 1024) return file;
+  return new Promise<File>((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const maxDimension = 1600;
+      const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { URL.revokeObjectURL(objectUrl); resolve(file); return; }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        URL.revokeObjectURL(objectUrl);
+        if (!blob) { resolve(file); return; }
+        const compressed = new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" });
+        resolve(compressed.size < file.size ? compressed : file);
+      }, "image/jpeg", 0.8);
+    };
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(file); };
+    img.src = objectUrl;
+  });
 }
 
 export default function ElitePassBuyPage() {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showQRCode, setShowQRCode] = useState(false);
-    const [qrImageUrl, setQrImageUrl] = useState("");
-    const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "confirm">("details");
-    const [generalError, setGeneralError] = useState("");
-    const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        usn: "",
-        college: "",
-        department: "",
-        year: 0,
-        transactionId: "",
-        paymentScreenshot: null as File | null,
-    });
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "confirm">("details");
+  const [generalError, setGeneralError] = useState("");
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
+  const [screenshotPreview, setScreenshotPreview] = useState("");
+  const [formData, setFormData] = useState({
+    name: "", email: "", phone: "", usn: "", college: "", department: "", year: 0,
+    transactionId: "", paymentScreenshot: null as File | null,
+  });
 
-    const colleges = [...[
-        "A J Institute of Engineering and Technology, Mangalore", "Alva's Ayurveda Medical College, Moodbidri", "Srinivas institute of technology, valachill", "Alva's Homoeopathic Medical College, Moodbidri", "Alva's Institute of Engineering Technology, Moodbidri", "Alvas College of Nursing, Moodbidri", "The Oxford college of engineering", "Aloysius MBA, Mangalore", "Canara Engineering College, Mangalore", "Carmel Degree College, Modankap, BC Road", "St. Mary's College, Shirva", "adichunchanagiri institute of engineering, coorg", "CIT, chickmagalur", "Rajarajeshwari college Bangalore", "Shri Madhwa Vadiraja Institute of Technology and Management, Udupi", "Mahathma Gandhi Memorial (MGM) College, Udupi", "Vaikunta Baliga College of Law, Udupi", "Trisha Vidya College of Commerce and Management", "Upendra Pai Memorial College, Udupi", "Udupi Group of Institutions, Manipal", "Kasturba Medical College (KMC), Manipal", "Laxmi Memorial College of Nursing & Physiotherapy", "Manipal Institute of Technology, Manipal", "College of Fisheries, Mangalore", "Dr G Shankar Government Women's First Grade College & PG Study Centre, Ajjarkadu, Udupi", "Govt. First Grade College, Kaup", "Government Girls Degree College, Brahmagiri, Udupi", "Govinda Dasa College, Surathkal", "GTTC Baikampady, Mangalore", "Karavali Ayurveda and Medical Research, Mangalore", "Karavali College of Hotel Management", "Karavali College of Nursing Science", "Karavali College of Pharmacy, Mangalore", "Karavali College of Pharmacy, Vamanjoor, Mangalore", "Karavali College of Physiotherapy", "Karavali Institute of Technology, Mangalore", "Karavali Institute of Technology, Moodbidri", "KMC, Manipal", "Mahatma Gandhi Memorial (MGM) College, Udupi", "MIT Hotel Management", "MIT Manipal", "MITE - Mangalore Institute of Technology & Engineering", "Moodlakatte Institute of Technology, Kundapur", "N.M.A.M. Institute of Technology, Nitte, Karkala", "NITK, Surathkal", "Nitte Institute of Pharmacy", "Padua College, Mangaluru", "Padu Thirupathi Degree College, Karkala", "Poornaprajna College, Udupi", "Pompeii College, Aikala", "Sahyadri College of Engineering and Management", "SDM College of Engineering and Technology (SDMC)", "SDM Polytechnic, Ujire", "SDPT First Grade College, Kateel", "Shirdi Sai Degree College, Karkala", "Shri Madhwa Vadiraja Institute of Technology & Management, Bantakal", "Sri Bhuvanendra College, Karkala", "Sri Devi Institute of Technology, Kenjara, Bajpe", "Sri Mahaveera College, Kodangallu, Moodbidri", "Sri Taralabalu Jagadguru Institute of Technology", "Srinivas Institute of Engineering and Technology, Mukka", "Srinivas Institute of Medical Sciences and Research Center, Mukka", "St Joseph Engineering College, Vamanjoor, Mangaluru", "St. Raymond's Degree College, Vamanjoor, Kudupu, Karnataka", "Sumedha Fashion Institute, Karkala", "S NM Polytechnic, Moodbidri", "Udupi Group of Institutions", "Upendra Pai Memorial College (UPMC), Kunjebettu, Udupi", "Yenapoya Institute of Arts Science and Commerce", "Muniyal Ayurveda College", "Vaikunta Baliga College of Law, Kunjibettu", "Gandhinagar First Grade College", "Tejaswini Group of Institutions", "Mangala Group of Institutions", "PACE Mangalore", "Yenepoya School Of Engineering & Technology", "Bearys Institute of Technology", "Kanachur Institute of Medical Science", "NITTE Architecture", "NITTE Nursing", "St Mary's College, Shirva", "Ids college, Mangalore", "Canara Degree College", "St Agnes College(Autonomous). Bendur, Mangaluru", "Besant Women's College", "Shree Gokarnanatheshwara College", "Mahatma Gandhi Memorial College, Udupi", "Yenepoya Allied Science", "NITTE Institute of Communication", "Unity Academy of Education, Institute of Nursing, Ashok Nagar, Mangalore", "Trisha College of Commerce and Management, Alake Road, Kodailbail", "Narayana Guru School And College, Barke Road, Kudroli", "Athene Institute of Health Science", "Athena Institute of Nursing Science", "Indira Institute of Nursing Science", "Laxmi Memorial College of Nursing", "St. Aloysius", "Ramakrishna Degree College", "MAPS College", "NITTE MBA", "Moti Mahal", "Govt. JJJ College", "Dr. Dayananda Pai - P Sathisha Pai Govt. First Grade College, Car Street, Mangalore", "AJIM", "M. V. Shetty College of Physiotherapy, Mangalore", "Trisha College of Nursing, Mangalore", "Shree Devi Institute of Technology, Mangalore", "Manel Srinivas Nayak Institute of Management, Mangalore", "Yenepoya Institute of Technology (YIT), Moodbidri", "Sahyadri College of Nursing, Mangalore", "A.J. Institute of Management, Mangalore", "A.J. Institute of Dental Sciences, Mangalore", "A.J. Institute of Allied Health Sciences, Mangalore", "A.J. Institute of Medical Sciences, Mangalore", "Padua College of Commerce and Management, Mangalore", "A.J. Institute of Nursing, Mangalore", "A.J. Institute of Physiotherapy, Mangalore", "Yenepoya Degree College, Mangalore", "Shridevi Institute of Computer Sciences (BCA), Mangalore", "Shridevi College of Nursing, Mangalore", "Shridevi College of Commerce (B.Com), Mangalore", "SDM College of Business Management (MBA), Mangalore", "SDM Law College, Mangalore", "SDM PG College Ujire", "SDM Institute of Technology (SDMIT) Ujire", "Canara College (MCA Program), Mangalore", "Minerva College, Mangalore", "Srinivas Institute of Nursing Sciences, Mangalore", "Srinivas College of Pharmacy, Mangalore", "P.A. College of Engineering, Mangalore", "P.A. Polytechnic, Mangalore", "P.A. First Grade College, Mangalore", "Alva's College, Moodbidri", "Alva's College of Law, Moodbidri", "Alva's College of Naturopathy and Yogic Sciences, Moodbidri", "Canara Engineering College (CEC), Benjanapadavu", "Anugraha Women's College, Kalladka", "Sri Rama First Grade College, Kalladka", "Vivekananda Degree College, Puttur", "Vivekananda College of Engineering & Technology, Puttur", "St Philomena College, Puttur", "St Philomena PG and Research Centre, Puttur", "Akshaya College, Puttur", "Ambika First Grade College, Puttur", "KVG Ayurveda College, Sulya", "KVG College of Engineering, Sulya", "KVG Dental College, Sulya", "BGS Institute of Technology, Bangalore", "Shri Shirdi Sai Mandira College, Karkala", "Vijaya College, Mulki", "Srinivas Institute of Allied Health Sciences, Mangalore", "BGS Institute of Technology, Mangalore", "Acharya Institute of Technology, Bangalore", "Adi Shankara Institute of Engineering Technology, Kalady", "Amrita Vishwa Vidyapeetham, Coimbatore", "Angadi Institute of Technology, Belagavi", "Bangalore Institute of Technology, Bangalore", "BMS College of Engineering, Bangalore", "BMS Institute of Technology and Management, Bangalore", "BNM Institute of Technology, Bangalore", "CMR Institute of Technology, Bangalore", "Dayananda Sagar College of Engineering, Bangalore", "Dr. Ambedkar Institute of Technology, Bangalore", "East Point College of Engineering, Bangalore", "Global Academy of Technology, Bangalore", "Gogte Institute of Technology, Belagavi", "HKBK College of Engineering, Bangalore", "KS Institute of Technology, Bangalore", "KLE Technological University, Hubli", "LBS Institute of Technology for Women, Thiruvananthapuram", "M S Engineering College, Bangalore", "MS Ramaiah Institute of Technology, Bangalore", "New Horizon College of Engineering, Bangalore", "Nitte Meenakshi Institute of Technology, Bangalore", "PES College of Engineering, Mandya", "PES University, Bangalore", "Poojya Doddappa Appa College of Engineering, Kalaburagi", "RNS Institute of Technology, Bangalore", "RV College of Engineering, Bangalore", "Sir M Visvesvaraya Institute of Technology, Bangalore", "SJB Institute of Technology, Bangalore", "SNS College of Engineering, Coimbatore", "Sri Jayachamarajendra College of Engineering (SJCE), Mysore", "Sri Ramakrishna Engineering College, Coimbatore", "Vidyavardhaka College of Engineering, Mysore", "College of Engineering Chengannur", "College of Engineering Trivandrum", "Federal Institute of Science and Technology, Angamaly", "Government Engineering College Adoor", "Government Engineering College Alappuzha", "Government Engineering College Attingal", "Government Engineering College Barton Hill, Thiruvananthapuram", "Government Engineering College Chavara, Kollam", "Government Engineering College Ernakulam", "Government Engineering College Idukki", "Government Engineering College Kanhangad", "Government Engineering College Kannur", "Government Engineering College Karunagapally", "Government Engineering College Kasaragod", "Government Engineering College Kayamkulam", "Government Engineering College Kollam", "Government Engineering College Kottarakkara", "Government Engineering College Kottayam", "Government Engineering College Kozhikode", "Government Engineering College Kunnamkulam", "Government Engineering College Malappuram", "Yenepoya Homoeopathic Medical College and hospital", "Government Engineering College Mananthavady", "Government Engineering College Munnar", "Government Engineering College Painavu", "Government Engineering College Palakkad", "Government Engineering College Pathanamthitta", "Government Engineering College Payyannur", "Government Engineering College Sreekrishnapuram", "Government Engineering College Thalassery", "Government Engineering College Thiruvananthapuram", "Government Engineering College Thodupuzha", "Government Engineering College Thrissur", "Government Engineering College Vadakara", "Government Engineering College Vatakara", "Government Engineering College Wayanad", "Ilahia College of Engineering, Muvattupuzha", "Jyothi Engineering College, Thrissur", "Mar Baselios College of Engineering, Thiruvananthapuram", "Model Engineering College, Kochi", "Mohandas College of Engineering, Thiruvananthapuram", "Rajagiri School of Engineering and Technology, Kochi", "Saintgits College of Engineering, Kottayam", "Sree Buddha College of Engineering, Alappuzha", "TKM College of Engineering, Kollam", "Vidya Academy of Science and Technology, Thrissur", "Coimbatore Institute of Technology", "Garden City University, Bangalore", "Indian Institute of Science (IISc), Bangalore", "Jain University, Bangalore", "JSS Science and Technology University, Mysuru", "Karpagam College of Engineering, Coimbatore", "Karunya Institute of Technology and Sciences, Coimbatore", "Kumaraguru College of Technology, Coimbatore", "National Institute of Engineering (NIE), Mysuru", "PSG College of Technology, Coimbatore", "Reva University, Bangalore"
-    ]].sort((a, b) => a.localeCompare(b));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: id === "year" ? parseInt(value) : id === "usn" ? value.toUpperCase() : id === "email" ? value.toLowerCase() : value,
+    }));
+    if (formErrors[id]) setFormErrors((prev) => ({ ...prev, [id]: undefined }));
+  };
 
-    useEffect(() => {
-        (async () => {
-            try {
-                setIsLoading(true);
-                const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar Elite Pass")}&am=${PASS_FEE}&cu=INR&tn=${encodeURIComponent("Aakar Elite Pass")}`;
-                setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`);
-            } catch (error) {
-                console.error("Error loading Elite Pass data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, []);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      const file = e.target.files[0];
+      setFormData((prev) => ({ ...prev, paymentScreenshot: file }));
+      const reader = new FileReader();
+      reader.onload = (ev) => setScreenshotPreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+      if (formErrors.paymentScreenshot) setFormErrors((prev) => ({ ...prev, paymentScreenshot: undefined }));
+    }
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: id === "year" ? parseInt(value) : id === "usn" ? value.toUpperCase() : id === "email" ? value.toLowerCase() : value,
-        }));
-        if (formErrors[id]) setFormErrors((prev) => ({ ...prev, [id]: undefined }));
-    };
+  const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errors: { [key: string]: string } = {};
+    if (!formData.name.trim()) errors.name = "Required";
+    if (!formData.email.trim()) errors.email = "Required";
+    if (!formData.phone.trim()) errors.phone = "Required";
+    if (!formData.usn.trim()) errors.usn = "Required";
+    if (!formData.college.trim()) errors.college = "Required";
+    if (!formData.department.trim()) errors.department = "Required";
+    if (!formData.year || Number.isNaN(formData.year)) errors.year = "Required";
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Please fix the highlighted fields."); return; }
+    setGeneralError("");
+    setPaymentStep("payment");
+  };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFormData((prev) => ({ ...prev, paymentScreenshot: e.target.files![0] }));
-            if (formErrors.paymentScreenshot) setFormErrors((prev) => ({ ...prev, paymentScreenshot: undefined }));
+  const proceedToConfirm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formData.transactionId.trim()) errors.transactionId = "Transaction ID is required";
+    if (!formData.paymentScreenshot) errors.paymentScreenshot = "Screenshot is required";
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Please complete payment details."); return; }
+    setGeneralError("");
+    setPaymentStep("confirm");
+  };
+
+  const submitOrder = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!formData.paymentScreenshot) { setFormErrors({ paymentScreenshot: "Required" }); return; }
+    setIsSubmitting(true);
+    setGeneralError("");
+    try {
+      const optimizedFile = await compressImageForUpload(formData.paymentScreenshot);
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", optimizedFile);
+      const uploadResponse = await fetch("/api/elite-pass/upload", { method: "POST", body: uploadFormData });
+      const uploadResult = await uploadResponse.json();
+      if (!uploadResponse.ok) { setGeneralError(uploadResult?.error || "Upload failed."); setIsSubmitting(false); return; }
+      const screenshotUrl = uploadResult.url as string;
+      if (!screenshotUrl) { setGeneralError("Upload failed."); setIsSubmitting(false); return; }
+      const result = await createElitePassOrder({
+        name: formData.name, email: formData.email, phone: formData.phone,
+        usn: formData.usn, college: formData.college, department: formData.department,
+        year: formData.year, transactionId: formData.transactionId, paymentScreenshotUrl: screenshotUrl,
+      });
+      if (!result || result.error) {
+        if (typeof result?.error === "object" && result.error !== null) setFormErrors(result.error);
+        else setGeneralError(result?.error || "Purchase failed.");
+        setIsSubmitting(false); return;
+      }
+      router.replace("/aakar-elite-pass/success");
+    } catch {
+      setGeneralError("Something went wrong. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <style>{`
+        ${ANIME_GLOBAL_STYLES}
+
+        @keyframes bannerGlitch {
+          0%,92%,100% { transform: none; text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40; }
+          93% { transform: translate(-3px,0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
+          95% { transform: translate(3px,0) skewX(2deg); text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
+          97% { transform: none; }
         }
-    };
-
-    const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const errors: { [key: string]: string } = {};
-        if (!formData.name.trim()) errors.name = "Name is required";
-        if (!formData.email.trim()) errors.email = "Email is required";
-        if (!formData.phone.trim()) errors.phone = "Phone number is required";
-        if (!formData.usn.trim()) errors.usn = "USN is required";
-        if (!formData.college.trim()) errors.college = "College name is required";
-        if (!formData.department.trim()) errors.department = "Department is required";
-        if (!formData.year || Number.isNaN(formData.year)) errors.year = "Year of study is required";
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            setGeneralError("Please fix the highlighted fields.");
-            return;
+        @keyframes scanLine {
+          0% { top: -4px; opacity: 0.6; }
+          90% { opacity: 0.6; }
+          100% { top: 100%; opacity: 0; }
         }
-        setGeneralError("");
-        setPaymentStep("payment");
-        setShowQRCode(true);
-    };
-
-    const proceedToConfirm = () => {
-        const errors: { [key: string]: string } = {};
-        if (!formData.transactionId.trim()) errors.transactionId = "Transaction ID is required";
-        if (!formData.paymentScreenshot) errors.paymentScreenshot = "Payment screenshot is required";
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            setGeneralError("Please complete payment details.");
-            return;
+        @keyframes rubyPulse {
+          0%,100% { opacity: 0.65; transform: scaleX(1); }
+          50% { opacity: 1; transform: scaleX(1.03); }
         }
-        setGeneralError("");
-        setPaymentStep("confirm");
-    };
-
-    const submitOrder = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!formData.paymentScreenshot) {
-            setFormErrors({ paymentScreenshot: "Payment screenshot is required" });
-            return;
+        @keyframes neonBreath {
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          50% { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
+        }
+        @keyframes crtScan {
+          from { background-position: 0 0; }
+          to { background-position: 0 80px; }
+        }
+        @keyframes shimmerBtn {
+          0% { left: -100%; }
+          100% { left: 140%; }
+        }
+        @keyframes tagFlicker {
+          0%,100% { opacity: 1; }
+          91% { opacity: 1; }
+          93% { opacity: 0.25; }
+          95% { opacity: 1; }
+          97% { opacity: 0.4; }
+        }
+        @keyframes merchPanelIn {
+          from { opacity: 0; transform: translateY(20px) scale(0.975); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes priceIn {
+          from { letter-spacing: 0.18em; opacity: 0.4; }
+          to { letter-spacing: 0.04em; opacity: 1; }
         }
 
-        setIsSubmitting(true);
-        setFormErrors({});
-        setGeneralError("");
-
-        try {
-            const optimizedFile = await compressImageForUpload(formData.paymentScreenshot);
-            const uploadFormData = new FormData();
-            uploadFormData.append("file", optimizedFile);
-
-            const uploadResponse = await fetch("/api/elite-pass/upload", {
-                method: "POST",
-                body: uploadFormData,
-            });
-
-            const uploadResult = await uploadResponse.json();
-
-            if (!uploadResponse.ok) {
-                setGeneralError(uploadResult?.error || "Payment screenshot upload failed.");
-                setIsSubmitting(false);
-                return;
-            }
-
-            const screenshotUrl = uploadResult.url as string;
-            if (!screenshotUrl) {
-                setGeneralError("Payment screenshot upload failed.");
-                setIsSubmitting(false);
-                return;
-            }
-
-            const result = await createElitePassOrder({
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                usn: formData.usn,
-                college: formData.college,
-                department: formData.department,
-                year: formData.year,
-                transactionId: formData.transactionId,
-                paymentScreenshotUrl: screenshotUrl,
-            });
-
-            if (!result || result.error) {
-                if (typeof result?.error === "object" && result.error !== null) {
-                    setFormErrors(result.error);
-                } else {
-                    setGeneralError(result?.error || "Elite Pass purchase failed.");
-                }
-                setIsSubmitting(false);
-                return;
-            }
-
-            router.replace("/aakar-elite-pass/success");
-        } catch (error) {
-            console.error("Elite Pass purchase error:", error);
-            setGeneralError("Something went wrong. Please try again.");
-            setIsSubmitting(false);
+        .merch-shell { animation: merchPanelIn .5s cubic-bezier(.22,1,.36,1) both; }
+        .merch-card {
+          background: linear-gradient(155deg, rgba(8,3,18,.97) 0%, rgba(12,5,24,.95) 55%, rgba(9,3,18,.98) 100%);
+          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          animation: neonBreath 5s ease-in-out infinite;
+          position: relative; overflow: hidden;
         }
-    };
+        .merch-card::after {
+          content: ''; position: absolute; inset: 0;
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}07 3px, ${ANIME_COLORS.primary}07 4px);
+          pointer-events: none; z-index: 0; animation: crtScan 7s linear infinite;
+        }
+        .scan-line {
+          position: absolute; left: 0; right: 0; height: 2px;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          animation: scanLine 5s linear infinite; pointer-events: none; z-index: 5;
+        }
+        .street-banner {
+          text-align: center; padding: 2.4rem 1rem 2rem;
+          border-bottom: 1.5px solid ${ANIME_COLORS.primary}44;
+          position: relative; z-index: 1;
+        }
+        .street-banner::before {
+          content: ''; position: absolute; inset: 0;
+          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+                      radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
+          pointer-events: none;
+        }
+        .banner-ruby {
+          display: inline-flex; align-items: center; gap: 0.6rem;
+          font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.45em;
+          color: ${ANIME_COLORS.accent}; text-transform: uppercase;
+          padding: 0.22rem 1.1rem; border: 1px solid ${ANIME_COLORS.accent}80;
+          background: ${ANIME_COLORS.accent}16;
+          clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+          animation: rubyPulse 3s ease-in-out infinite; margin-bottom: 1rem;
+        }
+        .banner-ruby::before, .banner-ruby::after { content: '◆'; font-size: 0.35rem; opacity: 0.7; }
+        .banner-title {
+          display: block; font-size: clamp(2.8rem, 7.5vw, 3.8rem); line-height: 0.88;
+          letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
+          text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35;
+          animation: bannerGlitch 8s ease-in-out infinite;
+        }
+        .banner-title .stroke-word {
+          -webkit-text-stroke: 2px ${ANIME_COLORS.primary}; color: transparent;
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc);
+        }
+        .banner-sub {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.5em;
+          color: ${ANIME_COLORS.secondary}bb; margin-top: 0.9rem; text-transform: uppercase;
+        }
+        .banner-deco {
+          width: 72px; height: 2px; margin: 0.8rem auto 0;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent);
+          animation: rubyPulse 2.8s ease-in-out infinite;
+        }
+        .pane-divider { display: none; }
+        @media (min-width: 1024px) {
+          .pane-divider {
+            display: block; position: absolute; top: 5%; bottom: 5%; left: 50%;
+            width: 1.5px;
+            background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.primary}55 20%, ${ANIME_COLORS.primary}55 80%, transparent 100%);
+            pointer-events: none;
+          }
+        }
+        .form-pane { position: relative; z-index: 1; }
+        .info-tag {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.57rem; letter-spacing: 0.5em;
+          color: ${ANIME_COLORS.secondary}; text-transform: uppercase;
+          animation: tagFlicker 9s ease-in-out infinite;
+        }
+        .info-title {
+          letter-spacing: 0.04em; color: #fff; line-height: 0.9; margin-top: 0.4rem;
+          text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.primary}50;
+        }
+        .step-badge {
+          display: inline-flex; align-items: center; gap: 0.6rem;
+          font-family: 'Share Tech Mono', monospace; font-size: 0.56rem; letter-spacing: 0.42em;
+          color: ${ANIME_COLORS.secondary}; text-transform: uppercase;
+          padding: 0.2rem 0.9rem; border: 1px solid ${ANIME_COLORS.secondary}60;
+          background: ${ANIME_COLORS.secondary}12; border-radius: 2px; margin-bottom: 0.9rem;
+        }
+        .field-label {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.54rem; letter-spacing: 0.44em;
+          color: ${ANIME_COLORS.secondary}; text-transform: uppercase; display: block; margin-bottom: 0.4rem;
+        }
+        .merch-input {
+          width: 100%;
+          background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88));
+          border: 1.5px solid ${ANIME_COLORS.primary}70; color: ${ANIME_COLORS.text};
+          font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.04em;
+          padding: 0.72rem 1rem; border-radius: 6px; outline: none;
+          transition: border-color .18s ease, box-shadow .18s ease;
+        }
+        .merch-input::placeholder { color: ${ANIME_COLORS.text}44; }
+        .merch-input:focus {
+          border-color: ${ANIME_COLORS.accent};
+          box-shadow: 0 0 22px ${ANIME_COLORS.accent}45, inset 0 0 10px ${ANIME_COLORS.accent}20;
+        }
+        .merch-input.err { border-color: ${ANIME_COLORS.purple}; box-shadow: 0 0 12px ${ANIME_COLORS.purple}40; }
+        .err-msg { color: ${ANIME_COLORS.purple}; font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; margin-top: 3px; letter-spacing: 0.1em; }
+        .error-box {
+          border: 1.5px solid ${ANIME_COLORS.purple}90; background: ${ANIME_COLORS.purple}18;
+          color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem;
+          letter-spacing: 0.06em; padding: 0.7rem 1rem; border-radius: 6px;
+          box-shadow: 0 0 14px ${ANIME_COLORS.purple}35;
+        }
+        .summary-pane {
+          position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.primary}44;
+          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%);
+        }
+        @media (min-width: 1024px) {
+          .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.primary}44; }
+        }
+        .summary-card {
+          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92));
+          border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden;
+          animation: neonBreath 5s ease-in-out infinite;
+        }
+        .summary-card::after {
+          content: ''; position: absolute; inset: 0;
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px);
+          pointer-events: none; animation: crtScan 7s linear infinite;
+        }
+        .summary-row {
+          display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+          padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.primary}28;
+          font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em;
+          color: ${ANIME_COLORS.text}cc;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row span:last-child { color: ${ANIME_COLORS.secondary}; font-weight: 700; }
+        .price-row {
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 1rem; border: 1.5px solid ${ANIME_COLORS.accent}80;
+          background: linear-gradient(135deg, ${ANIME_COLORS.accent}18 0%, rgba(8,3,18,.9) 55%, ${ANIME_COLORS.accent}0e 100%);
+          border-radius: 10px; padding: 1.1rem 1.4rem;
+          box-shadow: 0 0 24px ${ANIME_COLORS.accent}28, inset 0 0 14px ${ANIME_COLORS.accent}0e; margin-top: 1.4rem;
+        }
+        .price-label {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.54rem; letter-spacing: 0.44em;
+          color: ${ANIME_COLORS.secondary}; text-transform: uppercase; display: block; margin-bottom: 0.24rem;
+        }
+        .price-val { font-size: 2.2rem; font-weight: 700; color: #fff; letter-spacing: 0.04em; line-height: 1; animation: priceIn .4s ease both; }
+        .price-old { font-family: 'Share Tech Mono', monospace; font-size: 1rem; color: ${ANIME_COLORS.text}50; text-decoration: line-through; margin-left: 0.5rem; }
+        .limited-tag {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: ${ANIME_COLORS.accent};
+          background: ${ANIME_COLORS.accent}20; padding: 0.3rem 0.6rem; border-radius: 4px;
+          border: 1px solid ${ANIME_COLORS.accent}; text-transform: uppercase; letter-spacing: 0.1em;
+          margin-bottom: 0.5rem; display: inline-block; animation: rubyPulse 2s infinite;
+        }
+        .buy-btn {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em;
+          text-transform: uppercase; padding: 0.78rem 1.8rem;
+          border: 1.5px solid ${ANIME_COLORS.primary};
+          background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30);
+          color: #fff; border-radius: 5px;
+          box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70;
+          white-space: nowrap; cursor: pointer; position: relative; overflow: hidden;
+          transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .buy-btn::after {
+          content: ''; position: absolute; top: 0; left: -120%; width: 80%; height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+          animation: shimmerBtn 3.5s ease-in-out infinite;
+        }
+        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary}; }
+        .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .back-btn {
+          font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
+          padding: 0.78rem 1.6rem; border: 1.5px solid ${ANIME_COLORS.secondary}80;
+          background: transparent; color: ${ANIME_COLORS.text}bb; border-radius: 5px;
+          transition: all .16s ease; text-decoration: none; display: inline-block; cursor: pointer;
+        }
+        .back-btn:hover { border-color: ${ANIME_COLORS.secondary}; color: ${ANIME_COLORS.text}; box-shadow: 0 0 16px ${ANIME_COLORS.secondary}35; transform: translateY(-1px); }
+        .qr-box {
+          border: 2px solid ${ANIME_COLORS.accent}; border-radius: 12px; padding: 1.5rem;
+          background: linear-gradient(135deg, ${ANIME_COLORS.accent}10, rgba(8,3,18,.9));
+          box-shadow: 0 0 30px ${ANIME_COLORS.accent}30; text-align: center;
+          display: flex; flex-direction: column; align-items: center; gap: 1rem;
+        }
+        .review-row {
+          display: flex; gap: 1rem; padding: 0.6rem 0;
+          border-bottom: 1px dashed ${ANIME_COLORS.primary}30;
+          font-family: 'Share Tech Mono', monospace; font-size: 0.78rem;
+        }
+        .review-row:last-child { border-bottom: none; }
+        .review-key { min-width: 110px; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: ${ANIME_COLORS.secondary}; }
+        .review-val { color: ${ANIME_COLORS.text}; }
+      `}</style>
 
-    if (isLoading) return <LoadingSkeleton />;
+      <main className="relative min-h-screen overflow-hidden">
+        <AnimeOrbField />
+        <AnimeParticleField />
+        <div className="absolute inset-0 -z-0 bg-black/10" />
 
-    return (
-        <div style={{ minHeight: "100vh", position: "relative", padding: "clamp(3rem,8vh,6rem) clamp(1rem,5vw,3rem) clamp(3rem,8vh,5rem)" }}>
-            <style>{`
-                ${ANIME_GLOBAL_STYLES}
-                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono:wght@400;700&display=swap');
-                * { box-sizing: border-box; }
-                @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-                .fade-up { animation: fadeUp 0.5s ease both; }
-                .anime-input:focus { box-shadow: 0 0 16px ${ANIME_COLORS.secondary}60 !important; border-color: ${ANIME_COLORS.secondary} !important; outline: none; }
-                .anime-input::placeholder { color: ${ANIME_COLORS.text}60; font-style: italic; }
-            `}</style>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+          <div className="merch-shell space-y-5">
 
-            <AnimeOrbField />
-            <AnimeParticleField />
+            {/* ── BANNER ── */}
+            <div className="merch-card street-banner rounded-[1.5rem]">
+              <div className="scan-line" />
+              <span className="banner-ruby">
+                {paymentStep === "details" ? "Step 1 of 3 · Hero Credentials" : paymentStep === "payment" ? "Step 2 of 3 · Forge the Seal" : "Step 3 of 3 · Final Pact"}
+              </span>
+              <h2 className={`banner-title ${cinzelFont.className}`}>
+                AAKAR&nbsp;<span className="stroke-word">ELITE PASS</span>
+              </h2>
+              <p className="banner-sub">guild enrollment &nbsp;·&nbsp; one pass &nbsp;·&nbsp; full access</p>
+              <div className="banner-deco" />
+            </div>
 
-            <main style={{ position: "relative", zIndex: 10 }}>
-                <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: "clamp(2rem,4vh,3rem)" }}>
-                    <div className="fade-up" style={{ textAlign: "center" }}>
-                        <div style={{ display: "inline-block", background: `${ANIME_COLORS.background}80`, color: ANIME_COLORS.accent, fontFamily: displayFont, fontSize: "clamp(0.7rem,1.6vw,0.9rem)", letterSpacing: "0.4em", padding: "4px 20px", border: `1px solid ${ANIME_COLORS.accent}`, boxShadow: `0 0 12px ${ANIME_COLORS.accent}40`, marginBottom: "0.7rem", backdropFilter: "blur(4px)" }}>
-                            PURCHASE PASS
+            {/* ── MAIN CARD ── */}
+            <section className="merch-card overflow-hidden rounded-[1.5rem] relative">
+              <div className="scan-line" />
+              <div className="pane-divider" />
+              <div className="grid lg:grid-cols-2">
+
+                {/* LEFT — FORM */}
+                <div className="form-pane p-6 lg:p-10 border-b border-[rgba(255,77,0,0.18)] lg:border-b-0">
+
+                  {/* STEP 1: DETAILS */}
+                  {paymentStep === "details" && (
+                    <form onSubmit={proceedToPayment}>
+                      <span className="step-badge">/ 01 &nbsp; Your Details</span>
+                      <p className="info-tag">Guild Registration</p>
+                      <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Hero Credentials</h1>
+
+                      {generalError && <div className="error-box mt-4">⚡ {generalError}</div>}
+
+                      <div className="mt-6 grid gap-4 md:grid-cols-2">
+                        {([
+                          { id: "name", label: "Full Name", placeholder: "Enter your full name", type: "text" },
+                          { id: "email", label: "Email", placeholder: "your@email.com", type: "email" },
+                          { id: "phone", label: "Phone", placeholder: "+91 XXXXXXXXXX", type: "tel" },
+                          { id: "usn", label: "USN", placeholder: "1AJ21CS000", type: "text" },
+                          { id: "year", label: "Year of Study", placeholder: "1, 2, 3 or 4", type: "number" },
+                          { id: "department", label: "Department", placeholder: "e.g. Computer Science", type: "text" },
+                        ] as const).map(({ id, label, placeholder, type }) => (
+                          <label key={id} className="space-y-0">
+                            <span className="field-label">{label}</span>
+                            <input
+                              type={type} id={id} className={`merch-input${formErrors[id] ? " err" : ""}`}
+                              value={id === "year" ? (formData.year || "") : (formData as any)[id]}
+                              onChange={handleChange} placeholder={placeholder}
+                              min={id === "year" ? 1 : undefined} max={id === "year" ? 8 : undefined}
+                            />
+                            {formErrors[id] && <span className="err-msg">⚡ {formErrors[id]}</span>}
+                          </label>
+                        ))}
+                        <label className="space-y-0 md:col-span-2">
+                          <span className="field-label">College</span>
+                          <input
+                            type="text" id="college" list="collegeList"
+                            className={`merch-input${formErrors.college ? " err" : ""}`}
+                            value={formData.college} onChange={handleChange}
+                            placeholder="Search or type your college"
+                          />
+                          <datalist id="collegeList">
+                            {COLLEGES.map((c) => <option key={c} value={c} />)}
+                          </datalist>
+                          {formErrors.college && <span className="err-msg">⚡ {formErrors.college}</span>}
+                        </label>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 pt-6">
+                        <button type="submit" className="buy-btn">Proceed to Payment →</button>
+                        <Link href="/aakar-elite-pass" className="back-btn">← Back</Link>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* STEP 2: PAYMENT */}
+                  {paymentStep === "payment" && (
+                    <div>
+                      <span className="step-badge">/ 02 &nbsp; Forge the Seal</span>
+                      <p className="info-tag">UPI Payment</p>
+                      <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Scan & Pay</h1>
+                      <p className="mt-3 font-mono text-sm" style={{ color: `${ANIME_COLORS.text}aa`, lineHeight: 1.8 }}>
+                        Scan the QR code to complete payment, then enter your transaction ID below.
+                      </p>
+
+                      <div className="qr-box mt-6">
+                        <img src="/elite-pass-qr.jpeg" alt="Elite Pass UPI QR" className="w-52 h-52 object-cover" style={{ border: `2px solid ${ANIME_COLORS.accent}`, borderRadius: 8 }} onError={(e) => (e.currentTarget.style.display = "none")} />
+                        <div>
+                          <div className="field-label">UPI ID</div>
+                          <div className="font-mono text-sm" style={{ color: ANIME_COLORS.text }}>ajiet@cnrb</div>
                         </div>
-                        <div style={{ fontFamily: displayFont, fontSize: "clamp(3rem,10vw,7rem)", lineHeight: 0.88, letterSpacing: "0.04em", color: ANIME_COLORS.text, textShadow: `0 0 30px ${ANIME_COLORS.primary}45, -3px -3px 0 ${ANIME_COLORS.primary}, 3px 3px 0 ${ANIME_COLORS.secondary}` }}>
-                            <AnimeGlitchText text="AAKAR ELITE">
-                                AAKAR ELITE
-                            </AnimeGlitchText>
+                        <div className="font-mono text-xs" style={{ color: `${ANIME_COLORS.secondary}bb`, letterSpacing: "0.2em" }}>
+                          Pay ₹{PASS_PRICE_EARLY} (Early Bird)
                         </div>
-                        <div style={{ marginTop: 18, display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8 }}>
-                            <Chip color={ANIME_COLORS.accent}>BUY PASS</Chip>
-                            <Chip color={ANIME_COLORS.secondary}>₹{PASS_FEE}</Chip>
-                        </div>
+                      </div>
+
+                      <div className="mt-6 space-y-4">
+                        <label className="space-y-0 block">
+                          <span className="field-label">Transaction ID / UTR</span>
+                          <input type="text" id="transactionId" className={`merch-input${formErrors.transactionId ? " err" : ""}`}
+                            value={formData.transactionId} onChange={handleChange} placeholder="Enter UTR / Transaction reference" />
+                          {formErrors.transactionId && <span className="err-msg">⚡ {formErrors.transactionId}</span>}
+                        </label>
+                        <label className="space-y-0 block">
+                          <span className="field-label">Payment Screenshot</span>
+                          <input type="file" accept="image/*" onChange={handleFileUpload}
+                            className={`merch-input${formErrors.paymentScreenshot ? " err" : ""}`}
+                            style={{ cursor: "pointer" }} />
+                          {formErrors.paymentScreenshot && <span className="err-msg">⚡ {formErrors.paymentScreenshot}</span>}
+                        </label>
+                        {screenshotPreview && (
+                          <div className="rounded-lg p-2" style={{ border: `1px solid ${ANIME_COLORS.primary}40` }}>
+                            <img src={screenshotPreview} alt="Preview" className="h-32 w-full object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+
+                      {generalError && <div className="error-box mt-4">⚡ {generalError}</div>}
+
+                      <div className="flex flex-wrap items-center gap-3 pt-6">
+                        <button type="button" className="buy-btn" onClick={proceedToConfirm}>Verify & Review →</button>
+                        <button type="button" className="back-btn" onClick={() => setPaymentStep("details")}>← Back</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 3: CONFIRM */}
+                  {paymentStep === "confirm" && (
+                    <form onSubmit={submitOrder}>
+                      <span className="step-badge">/ 03 &nbsp; Final Pact</span>
+                      <p className="info-tag">Confirm & Submit</p>
+                      <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Review Details</h1>
+
+                      <div className="mt-6 space-y-0" style={{ border: `1.5px solid ${ANIME_COLORS.primary}40`, borderRadius: 8, padding: "1rem" }}>
+                        {([
+                          ["Name", formData.name], ["Email", formData.email], ["Phone", formData.phone],
+                          ["USN", formData.usn], ["College", formData.college], ["Department", formData.department],
+                          ["Year", formData.year?.toString()], ["Transaction ID", formData.transactionId],
+                          ["Screenshot", formData.paymentScreenshot?.name || "—"],
+                        ]).map(([key, val]) => (
+                          <div key={key} className="review-row">
+                            <span className="review-key">{key}</span>
+                            <span className="review-val">{val}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {generalError && <div className="error-box mt-4">⚡ {generalError}</div>}
+
+                      <div className="flex flex-wrap items-center gap-3 pt-6">
+                        <button type="submit" className="buy-btn" disabled={isSubmitting}>
+                          {isSubmitting ? "Forging Pact…" : "Complete Enrollment ✓"}
+                        </button>
+                        <button type="button" className="back-btn" onClick={() => setPaymentStep("payment")}>← Back</button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+
+                {/* RIGHT — ORDER SUMMARY */}
+                <div className="summary-pane p-6 lg:p-10">
+                  <div className="summary-card">
+                    <div className="scan-line" />
+                    <p className="info-tag relative z-10">Pass Summary</p>
+                    <h2 className={`info-title text-[clamp(1.6rem,3.5vw,2.4rem)] relative z-10 mt-2 ${cinzelFont.className}`}>
+                      Elite Clearance
+                    </h2>
+
+                    <div className="mt-5 relative z-10">
+                      <div className="summary-row"><span>Solo Events</span><span>Unlimited</span></div>
+                      <div className="summary-row"><span>Concert</span><span>Entry Included</span></div>
+                      <div className="summary-row"><span>Pass Type</span><span>S-Class</span></div>
                     </div>
 
-                    {generalError && (
-                        <div style={{ background: `${ANIME_COLORS.purple}40`, color: ANIME_COLORS.text, border: `1px solid ${ANIME_COLORS.purple}`, boxShadow: `0 0 12px ${ANIME_COLORS.purple}40`, padding: "12px 20px", fontFamily: popFont, fontSize: 12, fontWeight: 900, letterSpacing: 2, borderRadius: 6, backdropFilter: "blur(4px)" }}>
-                            ⚡ {generalError}
+                    <div className="price-row relative z-10">
+                      <div>
+                        <span className="limited-tag">Early Bird — Till 15th!</span>
+                        <span className="price-label">Amount</span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="price-val">₹{PASS_PRICE_EARLY}</span>
+                          <span className="price-old">₹{PASS_PRICE_REGULAR}</span>
                         </div>
-                    )}
+                      </div>
+                    </div>
+                  </div>
 
-                    {paymentStep === "details" && (
-                        <form onSubmit={proceedToPayment} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                            <Card>
-                                <SectionHeading color={ANIME_COLORS.primary}>01 · Your Details</SectionHeading>
-                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16 }}>
-                                    {([
-                                        { id: "name", label: "Full Name", placeholder: "Enter your full name", type: "text" },
-                                        { id: "email", label: "Email Address", placeholder: "your@email.com", type: "email" },
-                                        { id: "phone", label: "Phone Number", placeholder: "+91 XXXXXXXXXX", type: "tel" },
-                                        { id: "usn", label: "USN", placeholder: "1AJ21CS000", type: "text" },
-                                        { id: "year", label: "Year of Study", placeholder: "1, 2, 3 or 4", type: "number" },
-                                        { id: "department", label: "Department", placeholder: "e.g. Computer Science", type: "text" },
-                                    ] as const).map(({ id, label, placeholder, type }) => (
-                                        <Field key={id} label={label} error={formErrors[id]}>
-                                            <input
-                                                type={type}
-                                                id={id}
-                                                value={id === "year" ? (formData.year || "") : (formData as any)[id]}
-                                                onChange={handleChange}
-                                                placeholder={placeholder}
-                                                required
-                                                min={id === "year" ? 1 : undefined}
-                                                max={id === "year" ? 8 : undefined}
-                                                className="anime-input"
-                                                style={{ width: "100%", padding: "10px 12px", border: formErrors[id] ? `1px solid ${ANIME_COLORS.purple}` : `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6, boxShadow: formErrors[id] ? `0 0 12px ${ANIME_COLORS.purple}40` : `0 0 8px ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13, background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.text, outline: "none", backdropFilter: "blur(4px)" }}
-                                            />
-                                        </Field>
-                                    ))}
-                                </div>
-                                <div style={{ gridColumn: "1/-1", marginTop: 16 }}>
-                                    <Field label="College Name" error={formErrors.college}>
-                                        <input
-                                            type="text"
-                                            id="college"
-                                            list="collegeList"
-                                            value={formData.college}
-                                            onChange={handleChange}
-                                            placeholder="Search or type your college"
-                                            required
-                                            className="anime-input"
-                                            style={{ width: "100%", padding: "10px 12px", border: formErrors.college ? `1px solid ${ANIME_COLORS.purple}` : `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6, boxShadow: formErrors.college ? `0 0 12px ${ANIME_COLORS.purple}40` : `0 0 8px ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13, background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.text, outline: "none", backdropFilter: "blur(4px)" }}
-                                        />
-                                        <datalist id="collegeList">
-                                            {colleges.map((collegeName) => <option key={collegeName} value={collegeName} />)}
-                                        </datalist>
-                                    </Field>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
-                                    <AnimeButton type="submit" bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text}>PROCEED TO PAYMENT →</AnimeButton>
-                                </div>
-                            </Card>
-                        </form>
-                    )}
-
-                    {paymentStep === "payment" && (
-                        <Card>
-                            <SectionHeading color={ANIME_COLORS.accent}>02 · Payment</SectionHeading>
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-                                <div style={{ background: `${ANIME_COLORS.background}80`, border: `1px solid ${ANIME_COLORS.accent}`, boxShadow: `0 0 12px ${ANIME_COLORS.accent}40`, padding: "12px 32px", borderRadius: 6, backdropFilter: "blur(4px)" }}>
-                                    <span style={{ fontFamily: displayFont, fontSize: 42, letterSpacing: 4, color: ANIME_COLORS.accent }}>₹{PASS_FEE}</span>
-                                </div>
-                                <div style={{ fontFamily: monoFont, fontSize: 12, letterSpacing: 2, color: ANIME_COLORS.subtext, textAlign: "center" }}>
-                                    Scan QR code to pay via UPI · <strong>ajiet@cnrb</strong>
-                                </div>
-                                {showQRCode ? (
-                                    <div style={{ background: `${ANIME_COLORS.background}80`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`, padding: 12, borderRadius: 6, backdropFilter: "blur(4px)" }}>
-                                        <img src={qrImageUrl || "/logo.svg"} alt="UPI QR Code" style={{ width: 220, height: 220, display: "block" }} />
-                                        <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 9, fontWeight: 700, letterSpacing: 3, marginTop: 8, textTransform: "uppercase", color: ANIME_COLORS.text }}>
-                                            UPI · Aakar Elite Pass
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <AnimeButton bg={ANIME_COLORS.secondary} fg={ANIME_COLORS.text} onClick={() => setShowQRCode(true)}>GENERATE QR CODE</AnimeButton>
-                                )}
-                                <div style={{ width: "100%", maxWidth: 640 }}>
-                                    <div style={{ background: `${ANIME_COLORS.background}80`, border: `1px solid ${ANIME_COLORS.primary}`, boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`, padding: 20, borderRadius: 6, backdropFilter: "blur(4px)" }}>
-                                        <SectionHeading color={ANIME_COLORS.primary}>After Payment</SectionHeading>
-                                        <Field label="Transaction ID / Reference Number" error={formErrors.transactionId}>
-                                            <input
-                                                type="text"
-                                                id="transactionId"
-                                                value={formData.transactionId}
-                                                onChange={handleChange}
-                                                placeholder="Enter UTR / Transaction ID"
-                                                className="anime-input"
-                                                style={{ width: "100%", padding: "10px 12px", border: formErrors.transactionId ? `1px solid ${ANIME_COLORS.purple}` : `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6, boxShadow: formErrors.transactionId ? `0 0 12px ${ANIME_COLORS.purple}40` : `0 0 8px ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13, background: `${ANIME_COLORS.background}40`, color: ANIME_COLORS.text, outline: "none", backdropFilter: "blur(4px)" }}
-                                            />
-                                        </Field>
-                                        <div style={{ marginTop: 14 }}>
-                                            <Field label="Payment Screenshot" error={formErrors.paymentScreenshot}>
-                                                <input type="file" accept="image/*" onChange={handleFileUpload} className="anime-input" style={{ width: "100%", padding: "10px 12px", border: `1px dashed ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.accent}40`, fontFamily: monoFont, fontSize: 12, cursor: "pointer", borderRadius: 6, color: ANIME_COLORS.text, backdropFilter: "blur(4px)" }} />
-                                            </Field>
-                                            {formData.paymentScreenshot && (
-                                                <div style={{ fontFamily: monoFont, fontSize: 10, marginTop: 6, color: ANIME_COLORS.subtext, letterSpacing: 1 }}>
-                                                    ✔ {formData.paymentScreenshot.name}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap", marginTop: 20 }}>
-                                <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("details")}>← BACK</AnimeButton>
-                                <AnimeButton bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} onClick={proceedToConfirm}>VERIFY PAYMENT →</AnimeButton>
-                            </div>
-                        </Card>
-                    )}
-
-                    {paymentStep === "confirm" && (
-                        <form onSubmit={submitOrder} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                            <Card>
-                                <SectionHeading color={ANIME_COLORS.secondary}>03 · Review Details</SectionHeading>
-                                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                                    {[
-                                        ["Name", formData.name],
-                                        ["Email", formData.email],
-                                        ["Phone", formData.phone],
-                                        ["USN", formData.usn],
-                                        ["College", formData.college],
-                                        ["Department", formData.department],
-                                        ["Year", formData.year?.toString()],
-                                        ["Transaction ID", formData.transactionId],
-                                        ["Screenshot", formData.paymentScreenshot?.name || "No file selected"],
-                                    ].map(([key, value]) => (
-                                        <div key={key} style={{ display: "flex", gap: 12, padding: "8px 0", borderBottom: `1px dashed ${ANIME_COLORS.primary}40`, fontFamily: monoFont, fontSize: 13 }}>
-                                            <span style={{ minWidth: 120, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", fontSize: 10, color: ANIME_COLORS.secondary }}>{key}</span>
-                                            <span style={{ color: ANIME_COLORS.text }}>{value}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Card>
-                            <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-                                <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("payment")}>← BACK</AnimeButton>
-                                <AnimeButton type="submit" bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} disabled={isSubmitting}>
-                                    {isSubmitting ? "SUBMITTING…" : "COMPLETE PURCHASE ✓"}
-                                </AnimeButton>
-                            </div>
-                        </form>
-                    )}
-
+                  {/* FEAT CARDS */}
+                  <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
+                    {[["/ 01", "Solo Events Unlocked"], ["/ 02", "Concert Access"]].map(([num, text], i) => (
+                      <div key={num} className="relative p-3 rounded" style={{ border: `1px solid ${ANIME_COLORS.primary}40`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%)`, animationDelay: `${i * 0.08 + 0.06}s` }}>
+                        <span className="field-label">{num}</span>
+                        <span className="font-mono text-sm" style={{ color: ANIME_COLORS.text, letterSpacing: "0.04em" }}>{text}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-            </main>
+
+              </div>
+            </section>
+
+          </div>
         </div>
-    );
+      </main>
+    </>
+  );
 }
