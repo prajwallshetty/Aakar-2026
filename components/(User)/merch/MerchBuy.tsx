@@ -6,15 +6,11 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { cinzelFont } from "@/lib/font";
 import { getMerchVariant } from "@/lib/merchVariants";
-import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
-  AnimeCardWrapper, 
-  AnimeSectionHeading, 
-  AnimeGlitchText,
+import {
+  AnimeParticleField,
+  AnimeOrbField,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"] as const;
@@ -63,182 +59,670 @@ export default function MerchBuy() {
     <>
       <style>{`
         ${ANIME_GLOBAL_STYLES}
-        .merch-buy-shell {
-          border: 2px solid ${ANIME_COLORS.primary};
-          box-shadow: 0 0 30px ${ANIME_COLORS.primary}60, inset 0 0 20px ${ANIME_COLORS.primary}30;
-          background: linear-gradient(135deg, ${ANIME_COLORS.background}95, ${ANIME_COLORS.background}90);
-          backdrop-filter: blur(12px);
+
+        /* ── SHARED CARD SKIN (mirrors MerchPage .merch-card) ─── */
+        @keyframes neonBreath {
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          50%      { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
+        }
+        @keyframes scanLine {
+          0%   { top: -4px; opacity: 0.6; }
+          90%  { opacity: 0.6; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes crtScan {
+          from { background-position: 0 0; }
+          to   { background-position: 0 80px; }
+        }
+        @keyframes rubyPulse {
+          0%,100% { opacity: 0.65; transform: scaleX(1); }
+          50%      { opacity: 1;    transform: scaleX(1.03); }
+        }
+        @keyframes tagFlicker {
+          0%,100% { opacity: 1; }
+          91% { opacity: 1; }
+          93% { opacity: 0.25; }
+          95% { opacity: 1; }
+          97% { opacity: 0.4; }
+        }
+        @keyframes bannerGlitch {
+          0%,92%,100% {
+            transform: none;
+            text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40;
+          }
+          93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
+          95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
+          97% { transform: none; }
+        }
+        @keyframes shimmerBtn {
+          0%   { left: -100%; }
+          100% { left: 140%; }
+        }
+        @keyframes merchPanelIn {
+          from { opacity: 0; transform: translateY(20px) scale(0.975); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes featIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes featSlash {
+          from { transform: scaleX(0); opacity: 0; }
+          to   { transform: scaleX(1); opacity: 1; }
+        }
+        @keyframes priceIn {
+          from { letter-spacing: 0.18em; opacity: 0.4; }
+          to   { letter-spacing: 0.04em; opacity: 1; }
+        }
+        @keyframes inputGlow {
+          0%,100% { box-shadow: 0 0 12px ${ANIME_COLORS.primary}30, inset 0 0 6px ${ANIME_COLORS.primary}15; }
+          50%      { box-shadow: 0 0 20px ${ANIME_COLORS.primary}50, inset 0 0 10px ${ANIME_COLORS.primary}25; }
+        }
+
+        .merch-shell { animation: merchPanelIn .5s cubic-bezier(.22,1,.36,1) both; }
+
+        /* ── CARD BASE ──────────────────────────────── */
+        .merch-card {
+          background: linear-gradient(155deg,
+            rgba(8,3,18,.97) 0%,
+            rgba(12,5,24,.95) 55%,
+            rgba(9,3,18,.98) 100%
+          );
+          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          animation: neonBreath 5s ease-in-out infinite;
           position: relative;
           overflow: hidden;
         }
-        .merch-buy-shell::before {
+        .merch-card::after {
           content: '';
           position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}20, transparent);
-          animation: merchScan 3s ease-in-out infinite;
+          inset: 0;
+          background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 3px,
+            ${ANIME_COLORS.primary}07 3px,
+            ${ANIME_COLORS.primary}07 4px
+          );
+          pointer-events: none;
+          z-index: 0;
+          animation: crtScan 7s linear infinite;
         }
-        @keyframes merchScan {
-          0% { left: -100%; }
-          50% { left: 100%; }
-          100% { left: 100%; }
+        .scan-line {
+          position: absolute;
+          left: 0; right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          animation: scanLine 5s linear infinite;
+          pointer-events: none;
+          z-index: 5;
         }
-        .merch-buy-heading {
-          letter-spacing: 0.08em;
-          color: ${ANIME_COLORS.text};
+
+        /* ── STREET BANNER ─────────────────────────── */
+        .street-banner {
+          text-align: center;
+          padding: 2.4rem 1rem 2rem;
+          border-bottom: 1.5px solid ${ANIME_COLORS.primary}44;
+          position: relative;
+          z-index: 1;
         }
-        .merch-buy-copy {
+        .street-banner::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+            radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
+          pointer-events: none;
+        }
+        .banner-ruby {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
           font-family: 'Share Tech Mono', monospace;
-          letter-spacing: 0.02em;
-          color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 6px ${ANIME_COLORS.text}30;
-        }
-        .merch-buy-label {
-          font-family: 'Share Tech Mono', monospace;
-          letter-spacing: 0.22em;
+          font-size: 0.58rem;
+          letter-spacing: 0.45em;
+          color: ${ANIME_COLORS.accent};
           text-transform: uppercase;
-          color: ${ANIME_COLORS.secondary};
-          font-size: 10px;
-          font-weight: 700;
+          padding: 0.22rem 1.1rem;
+          border: 1px solid ${ANIME_COLORS.accent}80;
+          background: ${ANIME_COLORS.accent}16;
+          clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+          animation: rubyPulse 3s ease-in-out infinite;
+          margin-bottom: 1rem;
         }
-        .merch-buy-input, .merch-buy-select {
-          border: 2px solid ${ANIME_COLORS.primary};
-          box-shadow: 0 0 15px ${ANIME_COLORS.primary}30, inset 0 0 8px ${ANIME_COLORS.primary}20;
-          background: linear-gradient(135deg, ${ANIME_COLORS.background}85, ${ANIME_COLORS.background}75);
+        .banner-ruby::before,
+        .banner-ruby::after { content: '◆'; font-size: 0.35rem; opacity: 0.7; }
+        .banner-title {
+          display: block;
+          font-size: clamp(2.8rem, 7.5vw, 3.8rem);
+          line-height: 0.88;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #fff;
+          text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35;
+          animation: bannerGlitch 8s ease-in-out infinite;
+        }
+        .banner-title .stroke-word {
+          -webkit-text-stroke: 2px ${ANIME_COLORS.primary};
+          color: transparent;
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc);
+        }
+        .banner-sub {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.5em;
+          color: ${ANIME_COLORS.secondary}bb;
+          margin-top: 0.9rem;
+          text-transform: uppercase;
+        }
+        .banner-deco {
+          width: 72px; height: 2px;
+          margin: 0.8rem auto 0;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent);
+          animation: rubyPulse 2.8s ease-in-out infinite;
+        }
+
+        /* ── DIVIDER ────────────────────────────────── */
+        .pane-divider { display: none; }
+        @media (min-width: 1024px) {
+          .pane-divider {
+            display: block;
+            position: absolute;
+            top: 5%; bottom: 5%; left: 50%;
+            width: 1.5px;
+            background: linear-gradient(180deg,
+              transparent 0%,
+              ${ANIME_COLORS.primary}55 20%,
+              ${ANIME_COLORS.primary}55 80%,
+              transparent 100%
+            );
+            pointer-events: none;
+          }
+        }
+
+        /* ── FORM PANE ──────────────────────────────── */
+        .form-pane { position: relative; z-index: 1; }
+
+        .info-tag {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.57rem;
+          letter-spacing: 0.5em;
+          color: ${ANIME_COLORS.secondary};
+          text-transform: uppercase;
+          animation: tagFlicker 9s ease-in-out infinite;
+        }
+        .info-title {
+          letter-spacing: 0.04em;
+          color: #fff;
+          line-height: 0.9;
+          margin-top: 0.4rem;
+          text-transform: uppercase;
+          text-shadow: 0 0 30px ${ANIME_COLORS.primary}50;
+        }
+        .info-desc {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.8rem;
+          line-height: 1.8;
+          color: ${ANIME_COLORS.text}cc;
+          margin-top: 1.2rem;
+          padding-left: 1.1rem;
+          border-left: 2px solid ${ANIME_COLORS.accent};
+          letter-spacing: 0.02em;
+          max-width: 44ch;
+        }
+
+        /* ── FIELD LABELS ───────────────────────────── */
+        .field-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.54rem;
+          letter-spacing: 0.44em;
+          color: ${ANIME_COLORS.secondary};
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 0.4rem;
+        }
+
+        /* ── INPUTS / SELECT ────────────────────────── */
+        .merch-input, .merch-select {
+          width: 100%;
+          background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88));
+          border: 1.5px solid ${ANIME_COLORS.primary}70;
           color: ${ANIME_COLORS.text};
           font-family: 'Share Tech Mono', monospace;
-          padding: 12px 14px;
+          font-size: 0.8rem;
+          letter-spacing: 0.04em;
+          padding: 0.72rem 1rem;
+          border-radius: 6px;
           outline: none;
-          backdrop-filter: blur(8px);
-          transition: all 0.3s ease;
+          transition: border-color .18s ease, box-shadow .18s ease;
+          animation: inputGlow 5s ease-in-out infinite;
         }
-        .merch-buy-input:focus, .merch-buy-select:focus {
+        .merch-input::placeholder { color: ${ANIME_COLORS.text}44; letter-spacing: 0.04em; }
+        .merch-input:focus, .merch-select:focus {
           border-color: ${ANIME_COLORS.accent};
-          box-shadow: 0 0 25px ${ANIME_COLORS.accent}50, inset 0 0 12px ${ANIME_COLORS.accent}30;
+          box-shadow: 0 0 22px ${ANIME_COLORS.accent}45, inset 0 0 10px ${ANIME_COLORS.accent}20;
+          animation: none;
         }
-        .merch-buy-select option {
-          background: ${ANIME_COLORS.background};
+        .merch-select option {
+          background: #0a0314;
           color: ${ANIME_COLORS.text};
         }
-        .merch-buy-select option:checked {
-          background: ${ANIME_COLORS.primary};
-          color: ${ANIME_COLORS.background};
+
+        /* ── SIZE PILL GRID ─────────────────────────── */
+        .size-grid {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.45rem;
+          margin-top: 0.6rem;
+        }
+        .size-pill {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          padding: 0.38rem 0.85rem;
+          border-radius: 4px;
+          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          background: transparent;
+          color: ${ANIME_COLORS.text}88;
+          cursor: pointer;
+          transition: all .16s ease;
+        }
+        .size-pill:hover {
+          border-color: ${ANIME_COLORS.primary}cc;
+          color: ${ANIME_COLORS.text};
+          transform: translateY(-1px);
+          box-shadow: 0 0 14px ${ANIME_COLORS.primary}35;
+        }
+        .size-pill.active {
+          border-color: ${ANIME_COLORS.accent};
+          background: ${ANIME_COLORS.accent}20;
+          color: ${ANIME_COLORS.text};
+          box-shadow: 0 0 18px ${ANIME_COLORS.accent}50;
+        }
+
+        /* ── ERROR BOX ──────────────────────────────── */
+        .error-box {
+          border: 1.5px solid ${ANIME_COLORS.accent}90;
+          background: ${ANIME_COLORS.accent}18;
+          color: ${ANIME_COLORS.text};
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.78rem;
+          letter-spacing: 0.06em;
+          padding: 0.7rem 1rem;
+          border-radius: 6px;
+          box-shadow: 0 0 14px ${ANIME_COLORS.accent}35;
+        }
+
+        /* ── BUTTONS ────────────────────────────────── */
+        .buy-btn {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          padding: 0.78rem 1.8rem;
+          border: 1.5px solid ${ANIME_COLORS.primary};
+          background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30);
+          color: #fff;
+          border-radius: 5px;
+          box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70;
+          white-space: nowrap;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .buy-btn::after {
+          content: '';
+          position: absolute;
+          top: 0; left: -120%;
+          width: 80%; height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+          animation: shimmerBtn 3.5s ease-in-out infinite;
+        }
+        .buy-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary};
+        }
+        .buy-btn:active { transform: translateY(0); }
+
+        .back-btn {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          padding: 0.78rem 1.6rem;
+          border: 1.5px solid ${ANIME_COLORS.secondary}80;
+          background: transparent;
+          color: ${ANIME_COLORS.text}bb;
+          border-radius: 5px;
+          transition: all .16s ease;
+          text-decoration: none;
+          display: inline-block;
+        }
+        .back-btn:hover {
+          border-color: ${ANIME_COLORS.secondary};
+          color: ${ANIME_COLORS.text};
+          box-shadow: 0 0 16px ${ANIME_COLORS.secondary}35;
+          transform: translateY(-1px);
+        }
+
+        /* ── ORDER SUMMARY PANE ─────────────────────── */
+        .summary-pane {
+          position: relative;
+          z-index: 1;
+          border-top: 1.5px solid ${ANIME_COLORS.primary}44;
+          background: linear-gradient(135deg,
+            ${ANIME_COLORS.primary}0d 0%,
+            rgba(8,3,18,.6) 60%,
+            ${ANIME_COLORS.secondary}09 100%
+          );
+        }
+        @media (min-width: 1024px) {
+          .summary-pane {
+            border-top: none;
+            border-left: 1.5px solid ${ANIME_COLORS.primary}44;
+          }
+        }
+
+        /* ── SUMMARY INNER CARD ─────────────────────── */
+        .summary-card {
+          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92));
+          border-radius: 1rem;
+          padding: 1.6rem;
+          position: relative;
+          overflow: hidden;
+          animation: neonBreath 5s ease-in-out infinite;
+        }
+        .summary-card::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: repeating-linear-gradient(
+            0deg, transparent, transparent 3px,
+            ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px
+          );
+          pointer-events: none;
+          animation: crtScan 7s linear infinite;
+        }
+
+        /* ── PRICE ROW ──────────────────────────────── */
+        .price-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          border: 1.5px solid ${ANIME_COLORS.accent}80;
+          background: linear-gradient(135deg,
+            ${ANIME_COLORS.accent}18 0%,
+            rgba(8,3,18,.9) 55%,
+            ${ANIME_COLORS.accent}0e 100%
+          );
+          border-radius: 10px;
+          padding: 1.1rem 1.4rem;
+          box-shadow: 0 0 24px ${ANIME_COLORS.accent}28, inset 0 0 14px ${ANIME_COLORS.accent}0e;
+          margin-top: 1.4rem;
+        }
+        .price-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.54rem;
+          letter-spacing: 0.44em;
+          color: ${ANIME_COLORS.secondary};
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 0.24rem;
+        }
+        .price-val {
+          font-size: 2.4rem;
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: 0.04em;
+          line-height: 1;
+          animation: priceIn .4s ease both;
+        }
+
+        /* ── SUMMARY ROWS ───────────────────────────── */
+        .summary-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+          padding: 0.6rem 0;
+          border-bottom: 1px solid ${ANIME_COLORS.primary}28;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.76rem;
+          letter-spacing: 0.04em;
+          color: ${ANIME_COLORS.text}cc;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row span:last-child { color: ${ANIME_COLORS.text}; font-weight: 700; }
+
+        /* ── FEAT CARD (step indicators) ───────────────── */
+        .feat-card {
+          position: relative;
+          padding: 0.7rem 0.9rem 0.75rem;
+          border: 1px solid ${ANIME_COLORS.primary}40;
+          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%);
+          border-radius: 6px;
+          overflow: hidden;
+          animation: featIn .35s ease both;
+        }
+        .feat-card::after {
+          content: '';
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          height: 1.5px;
+          background: linear-gradient(90deg, ${ANIME_COLORS.primary}00, ${ANIME_COLORS.primary}80, ${ANIME_COLORS.primary}00);
+          transform-origin: left;
+          animation: featSlash .55s cubic-bezier(.22,1,.36,1) both;
+          animation-delay: inherit;
+        }
+        .feat-pill-num {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.5rem;
+          letter-spacing: 0.3em;
+          color: ${ANIME_COLORS.accent};
+          display: block;
+          margin-bottom: 0.2rem;
+        }
+        .feat-text {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.74rem;
+          letter-spacing: 0.04em;
+          color: ${ANIME_COLORS.text};
+        }
+        .feat-glyph {
+          position: absolute;
+          top: 0.55rem; right: 0.65rem;
+          width: 4px; height: 4px;
+          border-radius: 50%;
+          background: ${ANIME_COLORS.accent};
+          opacity: 0.45;
+          animation: rubyPulse 2.5s ease-in-out infinite;
+        }
+
+        /* ── STEP BADGE ─────────────────────────────── */
+        .step-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.56rem;
+          letter-spacing: 0.42em;
+          color: ${ANIME_COLORS.secondary};
+          text-transform: uppercase;
+          padding: 0.2rem 0.9rem;
+          border: 1px solid ${ANIME_COLORS.secondary}60;
+          background: ${ANIME_COLORS.secondary}12;
+          border-radius: 2px;
+          margin-bottom: 0.9rem;
         }
       `}</style>
-      <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+
+      <main className="relative min-h-screen overflow-hidden">
         <AnimeOrbField />
         <AnimeParticleField />
-        <div className="relative z-10 mx-auto max-w-5xl">
-          <div className="merch-buy-shell rounded-[2rem] overflow-hidden">
-            <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="p-6 sm:p-8 lg:p-10">
-                <p className="merch-buy-copy text-xs uppercase tracking-[0.4em]">Step 1 · Add Details</p>
-                <h1 className={`merch-buy-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
-                    Select Size
-                </h1>
-                <p className="merch-buy-copy mt-4 max-w-xl text-base leading-8">
-                  Add your size, email, and phone number. After this, you’ll be taken to the payment page with the scanner.
-                </p>
+        <div className="absolute inset-0 -z-0 bg-black/10" />
 
-                <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-                  <div className="grid gap-5 md:grid-cols-2">
-                    <label className="space-y-2">
-                      <span className="merch-buy-label">Name</span>
-                      <input
-                        className="merch-buy-input w-full"
-                        value={formData.name}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                        placeholder="Your full name"
-                      />
-                    </label>
-                    <label className="space-y-2">
-                      <span className="merch-buy-label">Email</span>
-                      <input
-                        className="merch-buy-input w-full"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                        placeholder="name@example.com"
-                      />
-                    </label>
-                    <label className="space-y-2">
-                      <span className="merch-buy-label">Phone</span>
-                      <input
-                        className="merch-buy-input w-full"
-                        value={formData.phone}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                        placeholder="10-digit phone number"
-                      />
-                    </label>
-                  </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+          <div className="merch-shell space-y-5">
 
-                  <label className="block space-y-2">
-                    <span className="merch-buy-label">Size</span>
-                    <select
-                      className="merch-buy-select w-full"
-                      value={formData.size}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, size: e.target.value }))}
-                    >
-                      {sizeOptions.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+            {/* ── STREET BANNER ──────────────────────── */}
+            <div className="merch-card street-banner rounded-[1.5rem]">
+              <div className="scan-line" />
+              <span className="banner-ruby">Step 1 of 2 · Armor Up</span>
+              <h2 className={`banner-title ${cinzelFont.className}`}>
+                AAKAR&nbsp;<span className="stroke-word">ARMOR CLASS</span>
+              </h2>
+              <p className="banner-sub">add details &nbsp;·&nbsp; lock the size &nbsp;·&nbsp; proceed to payment</p>
+              <div className="banner-deco" />
+            </div>
 
-                  {error && (
-                    <div className="border-2 px-4 py-3 font-bold shadow-[4px_4px_0_#000]" style={{ border: `1px solid ${ANIME_COLORS.purple}`, background: `${ANIME_COLORS.purple}40`, color: ANIME_COLORS.text, boxShadow: `0 0 12px ${ANIME_COLORS.purple}40` }}>
-                      {error}
+            {/* ── MAIN CARD ──────────────────────────── */}
+            <section className="merch-card overflow-hidden rounded-[1.5rem] relative">
+              <div className="scan-line" />
+              <div className="pane-divider" />
+              <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
+
+                {/* LEFT — FORM */}
+                <div className="form-pane p-6 lg:p-10 border-b border-[rgba(255,100,0,0.18)] lg:border-b-0">
+                  <span className="step-badge">/ 01 &nbsp; Add Details</span>
+                  <p className="info-tag">Merch Purchase</p>
+                  <h1 className={`info-title text-[clamp(2.2rem,5.5vw,3.8rem)] ${cinzelFont.className}`}>
+                    Armor Class
+                  </h1>
+                  <p className="info-desc">
+                    Add your size, email, and phone number. After this, you'll be taken to the payment page with the scanner.
+                  </p>
+
+                  <form className="mt-8 space-y-5 relative z-10" onSubmit={handleSubmit}>
+                    <div className="grid gap-5 md:grid-cols-2">
+                      <label className="space-y-0">
+                        <span className="field-label">Name</span>
+                        <input
+                          className="merch-input"
+                          value={formData.name}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                          placeholder="Your full name"
+                        />
+                      </label>
+                      <label className="space-y-0">
+                        <span className="field-label">Email</span>
+                        <input
+                          className="merch-input"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                          placeholder="name@example.com"
+                        />
+                      </label>
+                      <label className="space-y-0 md:col-span-2">
+                        <span className="field-label">Phone</span>
+                        <input
+                          className="merch-input"
+                          value={formData.phone}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                          placeholder="10-digit phone number"
+                        />
+                      </label>
                     </div>
-                  )}
 
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <button
-                      type="submit"
-                      className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
-                      style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}
-                    >
-                      Continue to Payment
-                    </button>
-                    <Link
-                      href="/merch"
-                      className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005]"
-                      style={{ border: `2px solid ${ANIME_COLORS.secondary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}90, ${ANIME_COLORS.background}80)`, color: ANIME_COLORS.text, boxShadow: `0 0 15px ${ANIME_COLORS.secondary}50` }}
-                    >
-                      Back
-                    </Link>
-                  </div>
-                </form>
-              </div>
+                    {/* SIZE PILLS */}
+                    <div>
+                      <span className="field-label">Size</span>
+                      <div className="size-grid">
+                        {sizeOptions.map((size) => (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => setFormData((prev) => ({ ...prev, size }))}
+                            className={`size-pill${formData.size === size ? " active" : ""}`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-              <div className="border-t-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-l-2 lg:border-t-0 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
-                <div className="rounded-[1.75rem] border-2 p-6 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
-                  <p className="merch-buy-label">Order Summary</p>
-                    <p className="merch-buy-copy mt-1 text-xs uppercase tracking-[0.22em]">{summary.tag}</p>
-                  <h2 className={`merch-buy-heading mt-2 text-4xl uppercase leading-none ${cinzelFont.className}`}>
+                    {error && (
+                      <div className="error-box">
+                        ⚠ &nbsp;{error}
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                      <button type="submit" className="buy-btn">
+                        Continue to Payment
+                      </button>
+                      <Link href="/merch" className="back-btn">
+                        ← Back
+                      </Link>
+                    </div>
+                  </form>
+                </div>
+
+                {/* RIGHT — ORDER SUMMARY */}
+                <div className="summary-pane p-6 lg:p-10">
+                  <div className="summary-card">
+                    <div className="scan-line" />
+                    <p className="info-tag relative z-10">Order Summary</p>
+                    <p className="relative z-10 font-mono text-[0.57rem] tracking-[0.44em] uppercase mt-1"
+                      style={{ color: `${ANIME_COLORS.secondary}99` }}>
+                      {summary.tag}
+                    </p>
+                    <h2 className={`info-title text-[clamp(1.8rem,4vw,2.8rem)] relative z-10 ${cinzelFont.className}`}>
                       {summary.title}
-                  </h2>
-                  <div className="mt-5 space-y-3 merch-buy-copy text-sm leading-7">
-                    <div className="flex justify-between gap-4 border-b border-black/15 pb-2">
-                      <span>Price</span>
-                      <span className="font-bold">{summary.price}</span>
+                    </h2>
+
+                    <div className="mt-5 relative z-10 space-y-0">
+                      <div className="summary-row">
+                        <span>Price</span>
+                        <span>{summary.price}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span>Sizes Available</span>
+                        <span>XS → 4XL</span>
+                      </div>
+                      <div className="summary-row">
+                        <span>Payment Method</span>
+                        <span>UPI Scanner</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between gap-4 border-b border-black/15 pb-2">
-                      <span>Sizes</span>
-                      <span className="font-bold">XS to 4XL</span>
+
+                    <div className="price-row relative z-10">
+                      <div>
+                        <span className="price-label">Total</span>
+                        <span className="price-val">{summary.price}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between gap-4 border-b border-black/15 pb-2">
-                      <span>Payment</span>
-                      <span className="font-bold">UPI scanner</span>
-                    </div>
+                  </div>
+
+                  {/* MINI FEATURE CARDS */}
+                  <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
+                    {[
+                      ["/ 01", "Limited Drop"],
+                      ["/ 02", "Premium Fabric"],
+                      ["/ 03", "Secure UPI"],
+                      ["/ 04", "Pickup At Fest"],
+                    ].map(([num, text], i) => (
+                      <div
+                        key={num}
+                        className="feat-card"
+                        style={{ animationDelay: `${i * 0.08 + 0.06}s` }}
+                      >
+                        <div className="feat-glyph" style={{ animationDelay: `${i * 0.6}s` }} />
+                        <span className="feat-pill-num">{num}</span>
+                        <span className="feat-text">{text}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
+
               </div>
-            </div>
+            </section>
+
           </div>
         </div>
       </main>
