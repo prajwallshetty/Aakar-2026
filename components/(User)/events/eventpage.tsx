@@ -75,62 +75,7 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
           )}
         </div>
         
-        {/* Overlay Gradient */}
-        <div 
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `linear-gradient(to top, ${ANIME_COLORS.background} 0%, transparent 60%)`,
-            zIndex: 2
-          }}
-        />
-        
-        {/* Content */}
-        <div 
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: "1.5rem",
-            zIndex: 3,
-            color: ANIME_COLORS.text
-          }}
-        >
-          <h3 
-            style={{
-              fontFamily: "'Cinzel', serif",
-              fontSize: "clamp(1.2rem, 3vw, 1.8rem)",
-              letterSpacing: "0.05em",
-              margin: "0 0 0.5rem 0",
-              textShadow: `0 0 12px ${accent.primary}40`
-            }}
-          >
-            {event.eventName}
-          </h3>
-          
-          <div 
-            style={{
-              fontFamily: "'Share Tech Mono', monospace",
-              fontSize: "clamp(0.7rem, 1.5vw, 0.9rem)",
-              opacity: 0.8,
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem"
-            }}
-          >
-            <span 
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                background: accent.primary,
-                boxShadow: `0 0 6px ${accent.primary}`
-              }}
-            />
-            {event.venue || "TBD"}
-          </div>
-        </div>
+
       </Link>
     </AnimeCardWrapper>
   );
