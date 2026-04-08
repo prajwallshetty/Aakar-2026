@@ -12,8 +12,6 @@ import Image from "next/image";
 
 export default function HeroLanding() {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
-  const rafRef     = useRef<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isMuted,  setIsMuted]  = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -93,64 +91,7 @@ export default function HeroLanding() {
     return () => video.removeEventListener("canplaythrough", onCanPlay);
   }, [isVisible]);
 
-  // ── Ember canvas ─────────────────────────────────────────────────────────
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const SZ = 24;
-    const sprite = document.createElement("canvas");
-    sprite.width = SZ; sprite.height = SZ;
-    const sc = sprite.getContext("2d")!;
-    const g = sc.createRadialGradient(SZ/2, SZ/2, 0, SZ/2, SZ/2, SZ/2);
-    g.addColorStop(0,    "hsla(28,100%,90%,1)");
-    g.addColorStop(0.35, "hsla(22,100%,64%,.76)");
-    g.addColorStop(0.70, "hsla(15,100%,50%,.34)");
-    g.addColorStop(1,    "hsla(10,100%,38%,0)");
-    sc.fillStyle = g; sc.beginPath(); sc.arc(SZ/2, SZ/2, SZ/2, 0, Math.PI*2); sc.fill();
-
-    const COUNT = isMobile ? 26 : 52;
-    type P = { x:number; y:number; vx:number; vy:number; r:number; op:number; life:number; max:number };
-    const spawn = (): P => ({
-      x: Math.random() * canvas.width,
-      y: canvas.height + Math.random() * 60,
-      vx: (Math.random() - 0.5) * 0.7,
-      vy: -(Math.random() * 1.4 + 0.35),
-      r: Math.random() * 2.2 + 0.5,
-      op: Math.random() * 0.52 + 0.18,
-      life: 0, max: 130 + Math.random() * 130,
-    });
-    const em: P[] = Array.from({ length: COUNT }, spawn);
-
-    const draw = () => {
-      if (!isVisible) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < em.length; i++) {
-        const e = em[i];
-        e.x += e.vx + Math.sin(e.life * 0.035) * 0.28; e.y += e.vy; e.life++;
-        if (e.life > e.max || e.y < -20) { em[i] = spawn(); continue; }
-        const fade = Math.sin((e.life / e.max) * Math.PI);
-        const size = e.r * 7 * fade;
-        ctx.globalAlpha = e.op * fade;
-        ctx.drawImage(sprite, e.x - size/2, e.y - size/2, size, size);
-      }
-      ctx.globalAlpha = 1;
-      rafRef.current = requestAnimationFrame(draw);
-    };
-
-    if (isVisible) draw();
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [isMobile, isVisible]);
 
   const chars = "A NEW ERA BEGINS".split("");
 
@@ -253,8 +194,7 @@ export default function HeroLanding() {
           }} />
         </motion.div>
 
-        {/* ── OVERLAY 3: embers ── */}
-        <canvas ref={canvasRef} className="absolute inset-0 z-[4] pointer-events-none" style={{ mixBlendMode: "screen", opacity: 0.82 }} />
+
 
         {/* ── OVERLAY 4: texture ── */}
         <div className="hl-scan absolute inset-0 z-[5] pointer-events-none" />
@@ -266,10 +206,10 @@ export default function HeroLanding() {
 
         {/* ══════════ CONTENT ══════════ */}
         <motion.div
-          className="absolute inset-0 z-30 flex flex-col justify-end md:justify-center"
+          className="absolute inset-0 z-30 flex flex-col justify-end md:justify-start md:pt-[10vh]"
           style={!isMobile
             ? { paddingLeft: "clamp(28px,7vw,100px)", y: textY, x: textMX }
-            : { paddingLeft: "20px", paddingRight: "20px", paddingTop: "clamp(170px,12vh,90px)", justifyContent: "flex-start", alignItems: "center" }}
+            : { paddingLeft: "20px", paddingRight: "20px", paddingTop: "clamp(80px,10vh,50px)", justifyContent: "flex-start", alignItems: "center" }}
         >
 
           {/* ── DESKTOP LOGO ── */}

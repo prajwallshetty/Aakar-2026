@@ -7,6 +7,84 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Participant {
+  id                    Int      @id @default(autoincrement())
+  uuid                  String   @unique @default(uuid())
+  name                  String
+  usn                   String   @unique
+  phone                 String
+  college               String
+  transaction_ids       String[]
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  email                 String   @unique
+  paymentScreenshotUrls String[]
+  department            String?
+  amount                Int      @default(0)
+  year                  Int      @default(1)
+  groupMembersData      Json?    @default("[]")
+  events                Event[]  @relation("EventToParticipant")
+}
+
+model Event {
+  id                  Int           @id @default(autoincrement())
+  eventName           String
+  eventCategory       eventCategory @default(Technical)
+  eventType           eventType     @default(Solo)
+  minMembers          Int           @default(1)
+  maxMembers          Int           @default(1)
+  description         String
+  fee                 Int
+  date                DateTime
+  time                String
+  venue               String
+  studentCoordinators Json          @default("[]")
+  facultyCoordinators Json          @default("[]")
+  rules               String[]
+  imageUrl            String
+  Participants        Participant[] @relation("EventToParticipant")
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  name     String
+  phone    String @unique
+  password String
+  email    String @unique
+}
+
+model MerchOrder {
+  id                   Int        @id @default(autoincrement())
+  uuid                 String     @unique @default(uuid())
+  name                 String
+  usn                  String     @unique
+  email                String     @unique
+  phone                String
+  size                 tshirtSize
+  transactionId        String     @unique
+  amount               Int        @default(499)
+  paymentScreenshotUrl String?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+}
+
+model ElitePassOrder {
+  id                   Int      @id @default(autoincrement())
+  uuid                 String   @unique @default(uuid())
+  name                 String
+  usn                  String   @unique
+  email                String   @unique
+  phone                String
+  college              String
+  department           String?
+  year                 Int      @default(1)
+  transactionId        String   @unique
+  amount               Int      @default(0)
+  paymentScreenshotUrl String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now()) @updatedAt
+}
+
 enum eventCategory {
   Technical
   Cultural
@@ -29,82 +107,4 @@ enum tshirtSize {
   XXL
   XXXL
   XXXXL
-}
-
-model Participant {
-  id                    Int      @id @default(autoincrement())
-  uuid                  String   @unique @default(uuid())
-  name                  String
-  usn                   String   @unique
-  phone                 String
-  college               String
-  events                Event[]
-  transaction_ids       String[]
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  email                 String   @unique
-  paymentScreenshotUrls String[]
-  department            String?
-  amount                Int      @default(0)
-  year                  Int      @default(1)
-  groupMembersData      Json?    @default("[]")
-}
-
-model Event {
-  id                  Int           @id @default(autoincrement())
-  eventName           String
-  eventCategory       eventCategory @default(Technical)
-  eventType           eventType     @default(Solo)
-  minMembers          Int           @default(1)
-  maxMembers          Int           @default(1)
-  description         String
-  fee                 Int
-  date                DateTime
-  time                String
-  venue               String
-  studentCoordinators Json          @default("[]")
-  facultyCoordinators Json          @default("[]")
-  rules               String[]
-  imageUrl            String
-  Participants        Participant[]
-}
-
-model Admin {
-  id       Int    @id @default(autoincrement())
-  name     String
-  phone    String @unique
-  password String
-  email    String @unique
-}
-
-model MerchOrder {
-  id                    Int              @id @default(autoincrement())
-  uuid                  String           @unique @default(uuid())
-  name                  String
-  email                 String
-  phone                 String
-  merchVariant          String           @default("classic")
-  size                  tshirtSize
-  transactionId         String           @unique
-  amount                Int              @default(499)
-  paymentScreenshotUrl  String?
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
-}
-
-model ElitePassOrder {
-  id                    Int              @id @default(autoincrement())
-  uuid                  String           @unique @default(uuid())
-  name                  String
-  usn                   String           @unique
-  email                 String           @unique
-  phone                 String
-  college               String
-  department            String?
-  year                  Int              @default(1)
-  transactionId         String           @unique
-  amount                Int              @default(0)
-  paymentScreenshotUrl  String?
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
 }
