@@ -120,209 +120,287 @@ function MerchPaymentContent() {
     <>
       <style>{`
         ${ANIME_GLOBAL_STYLES}
-        .merch-pay-shell {
-          border: 2px solid ${ANIME_COLORS.primary};
-          box-shadow: 0 0 30px ${ANIME_COLORS.primary}60, inset 0 0 20px ${ANIME_COLORS.primary}30;
-          background: linear-gradient(135deg, ${ANIME_COLORS.background}95, ${ANIME_COLORS.background}90);
-          backdrop-filter: blur(12px);
+        /* ── SHARED CARD SKIN (mirrors MerchPage .merch-card) ─── */
+        @keyframes neonBreath {
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          50%      { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
+        }
+        @keyframes scanLine {
+          0%   { top: -4px; opacity: 0.6; }
+          90%  { opacity: 0.6; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes crtScan {
+          from { background-position: 0 0; }
+          to   { background-position: 0 80px; }
+        }
+        @keyframes rubyPulse {
+          0%,100% { opacity: 0.65; transform: scaleX(1); }
+          50%      { opacity: 1;    transform: scaleX(1.03); }
+        }
+        @keyframes tagFlicker {
+          0%,100% { opacity: 1; }
+          91% { opacity: 1; }
+          93% { opacity: 0.25; }
+          95% { opacity: 1; }
+          97% { opacity: 0.4; }
+        }
+        @keyframes bannerGlitch {
+          0%,92%,100% {
+            transform: none;
+            text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40;
+          }
+          93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
+          95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
+          97% { transform: none; }
+        }
+        @keyframes shimmerBtn {
+          0%   { left: -100%; }
+          100% { left: 140%; }
+        }
+        @keyframes merchPanelIn {
+          from { opacity: 0; transform: translateY(20px) scale(0.975); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes inputGlow {
+          0%,100% { box-shadow: 0 0 12px ${ANIME_COLORS.primary}30, inset 0 0 6px ${ANIME_COLORS.primary}15; }
+          50%      { box-shadow: 0 0 20px ${ANIME_COLORS.primary}50, inset 0 0 10px ${ANIME_COLORS.primary}25; }
+        }
+
+        .merch-shell { animation: merchPanelIn .5s cubic-bezier(.22,1,.36,1) both; }
+
+        /* ── CARD BASE ──────────────────────────────── */
+        .merch-card {
+          background: linear-gradient(155deg, rgba(8,3,18,.97) 0%, rgba(12,5,24,.95) 55%, rgba(9,3,18,.98) 100%);
+          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          animation: neonBreath 5s ease-in-out infinite;
           position: relative;
           overflow: hidden;
         }
-        .merch-pay-shell::before {
+        .merch-card::after {
           content: '';
           position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}20, transparent);
-          animation: merchScan 3s ease-in-out infinite;
+          inset: 0;
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}07 3px, ${ANIME_COLORS.primary}07 4px);
+          pointer-events: none;
+          z-index: 0;
+          animation: crtScan 7s linear infinite;
         }
-        @keyframes merchScan {
-          0% { left: -100%; }
-          50% { left: 100%; }
-          100% { left: 100%; }
+        .scan-line {
+          position: absolute; left: 0; right: 0; height: 2px;
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          animation: scanLine 5s linear infinite; pointer-events: none; z-index: 5;
         }
-        .merch-pay-heading {
-          letter-spacing: 0.08em;
-          color: ${ANIME_COLORS.text};
+
+        /* ── STREET BANNER ─────────────────────────── */
+        .street-banner { text-align: center; padding: 2.4rem 1rem 2rem; border-bottom: 1.5px solid ${ANIME_COLORS.primary}44; position: relative; z-index: 1; }
+        .street-banner::before {
+          content: ''; position: absolute; inset: 0; pointer-events: none;
+          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+                      radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
         }
-        .merch-pay-copy {
-          font-family: 'Share Tech Mono', monospace;
-          letter-spacing: 0.02em;
-          color: ${ANIME_COLORS.text};
-          text-shadow: 0 0 6px ${ANIME_COLORS.text}30;
+        .banner-ruby {
+          display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.45em; color: ${ANIME_COLORS.accent}; text-transform: uppercase; padding: 0.22rem 1.1rem; border: 1px solid ${ANIME_COLORS.accent}80; background: ${ANIME_COLORS.accent}16; clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%); animation: rubyPulse 3s ease-in-out infinite; margin-bottom: 1rem;
         }
-        .merch-pay-label {
-          font-family: 'Share Tech Mono', monospace;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: ${ANIME_COLORS.secondary};
-          font-size: 10px;
-          font-weight: 700;
+        .banner-ruby::before, .banner-ruby::after { content: '◆'; font-size: 0.35rem; opacity: 0.7; }
+        .banner-title { display: block; font-size: clamp(2.8rem, 7.5vw, 3.8rem); line-height: 0.88; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35; animation: bannerGlitch 8s ease-in-out infinite; }
+        .banner-title .stroke-word { -webkit-text-stroke: 2px ${ANIME_COLORS.primary}; color: transparent; filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc); }
+        .banner-sub { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.5em; color: ${ANIME_COLORS.secondary}bb; margin-top: 0.9rem; text-transform: uppercase; }
+        .banner-deco { width: 72px; height: 2px; margin: 0.8rem auto 0; background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent); animation: rubyPulse 2.8s ease-in-out infinite; }
+
+        /* ── DIVIDER ────────────────────────────────── */
+        .pane-divider { display: none; }
+        @media (min-width: 1024px) {
+          .pane-divider { display: block; position: absolute; top: 5%; bottom: 5%; left: 50%; width: 1.5px; background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.primary}55 20%, ${ANIME_COLORS.primary}55 80%, transparent 100%); pointer-events: none; }
         }
-        .merch-pay-input {
-          border: 2px solid ${ANIME_COLORS.primary};
-          box-shadow: 0 0 15px ${ANIME_COLORS.primary}30, inset 0 0 8px ${ANIME_COLORS.primary}20;
-          background: linear-gradient(135deg, ${ANIME_COLORS.background}85, ${ANIME_COLORS.background}75);
-          color: ${ANIME_COLORS.text};
-          font-family: 'Share Tech Mono', monospace;
-          padding: 12px 14px;
-          outline: none;
-          backdrop-filter: blur(8px);
-          transition: all 0.3s ease;
-        }
-        .merch-pay-input:focus {
-          border-color: ${ANIME_COLORS.accent};
-          box-shadow: 0 0 25px ${ANIME_COLORS.accent}50, inset 0 0 12px ${ANIME_COLORS.accent}30;
-        }
-        .merch-pay-input[type="file"]::file-selector-button {
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50);
-          color: ${ANIME_COLORS.text};
-          border: 2px solid ${ANIME_COLORS.primary};
-          padding: 8px 12px;
-          margin-right: 12px;
-          border-radius: 4px;
-          font-family: 'Share Tech Mono', monospace;
-          font-weight: bold;
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 0 12px ${ANIME_COLORS.primary}40;
-        }
-        .merch-pay-input[type="file"]::file-selector-button:hover {
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}70, ${ANIME_COLORS.primary}60);
-          box-shadow: 0 0 18px ${ANIME_COLORS.primary}60;
-        }
+
+        /* ── FORM PANE ──────────────────────────────── */
+        .form-pane { position: relative; z-index: 1; }
+        .info-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.57rem; letter-spacing: 0.5em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; animation: tagFlicker 9s ease-in-out infinite; }
+        .info-title { letter-spacing: 0.04em; color: #fff; line-height: 0.9; margin-top: 0.4rem; text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.primary}50; }
+        .info-desc { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; line-height: 1.8; color: ${ANIME_COLORS.text}cc; margin-top: 1.2rem; padding-left: 1.1rem; border-left: 2px solid ${ANIME_COLORS.accent}; letter-spacing: 0.02em; max-width: 44ch; }
+        .field-label { font-family: 'Share Tech Mono', monospace; font-size: 0.54rem; letter-spacing: 0.44em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; display: block; margin-bottom: 0.4rem; }
+
+        /* ── INPUTS ────────────────────────── */
+        .merch-input { width: 100%; background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88)); border: 1.5px solid ${ANIME_COLORS.primary}70; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.04em; padding: 0.72rem 1rem; border-radius: 6px; outline: none; transition: border-color .18s ease, box-shadow .18s ease; animation: inputGlow 5s ease-in-out infinite; }
+        .merch-input::placeholder { color: ${ANIME_COLORS.text}44; letter-spacing: 0.04em; }
+        .merch-input:focus { border-color: ${ANIME_COLORS.accent}; box-shadow: 0 0 22px ${ANIME_COLORS.accent}45, inset 0 0 10px ${ANIME_COLORS.accent}20; animation: none; }
+        .merch-input[type="file"]::file-selector-button { background: linear-gradient(135deg, ${ANIME_COLORS.primary}40, ${ANIME_COLORS.primary}20); color: ${ANIME_COLORS.text}; border: 1px solid ${ANIME_COLORS.primary}; padding: 6px 10px; margin-right: 12px; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; }
+        .merch-input[type="file"]::file-selector-button:hover { background: linear-gradient(135deg, ${ANIME_COLORS.primary}50, ${ANIME_COLORS.primary}30); box-shadow: 0 0 12px ${ANIME_COLORS.primary}60; }
+
+        .error-box { border: 1.5px solid ${ANIME_COLORS.accent}90; background: ${ANIME_COLORS.accent}18; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; padding: 0.7rem 1rem; border-radius: 6px; box-shadow: 0 0 14px ${ANIME_COLORS.accent}35; }
+
+        /* ── BUTTONS ────────────────────────────────── */
+        .buy-btn { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; padding: 0.78rem 1.8rem; border: 1.5px solid ${ANIME_COLORS.primary}; background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30); color: #fff; border-radius: 5px; box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70; white-space: nowrap; cursor: pointer; position: relative; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
+        .buy-btn::after { content: ''; position: absolute; top: 0; left: -120%; width: 80%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent); animation: shimmerBtn 3.5s ease-in-out infinite; }
+        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary}; }
+        .buy-btn:active { transform: translateY(0); }
+        .buy-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .back-btn { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; padding: 0.78rem 1.6rem; border: 1.5px solid ${ANIME_COLORS.secondary}80; background: transparent; color: ${ANIME_COLORS.text}bb; border-radius: 5px; transition: all .16s ease; text-decoration: none; display: inline-block; }
+        .back-btn:hover { border-color: ${ANIME_COLORS.secondary}; color: ${ANIME_COLORS.text}; box-shadow: 0 0 16px ${ANIME_COLORS.secondary}35; transform: translateY(-1px); }
+
+        /* ── ORDER SUMMARY PANE ─────────────────────── */
+        .summary-pane { position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.primary}44; background: linear-gradient(135deg, ${ANIME_COLORS.primary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%); }
+        @media (min-width: 1024px) { .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.primary}44; } }
+        .summary-card { border: 1.5px solid ${ANIME_COLORS.primary}55; background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92)); border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden; animation: neonBreath 5s ease-in-out infinite; }
+        .summary-card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px); pointer-events: none; animation: crtScan 7s linear infinite; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.primary}28; font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: ${ANIME_COLORS.text}cc; }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row span:last-child { color: ${ANIME_COLORS.text}; font-weight: 700; }
+        .step-badge { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.56rem; letter-spacing: 0.42em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; padding: 0.2rem 0.9rem; border: 1px solid ${ANIME_COLORS.secondary}60; background: ${ANIME_COLORS.secondary}12; border-radius: 2px; margin-bottom: 0.9rem; }
       `}</style>
-      <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+
+      <main className="relative min-h-screen overflow-hidden">
         <AnimeOrbField />
         <AnimeParticleField />
-        <div className="relative z-10 mx-auto max-w-6xl">
-          <div className="merch-pay-shell overflow-hidden rounded-[2rem]">
-            <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
-              <div className="border-b-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-b-0 lg:border-r-2 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
-                <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Step 2 · Forge the Seal</p>
-                <h1 className={`merch-pay-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
-                    Scan QR
-                </h1>
-                <p className="merch-pay-copy mt-4 text-base leading-8">
-                  Complete your tribute via the scanner, then enter the transaction ID to seal the loot order.
-                </p>
+        <div className="absolute inset-0 -z-0 bg-black/10" />
 
-                <div className="mt-8 rounded-[1.75rem] border-2 p-8 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    {merchQrImageUrl ? (
-                      <img src={merchQrImageUrl} alt="Merch payment scanner" className="h-72 w-72 border-2 p-3 object-cover" style={{ borderColor: ANIME_COLORS.primary, background: ANIME_COLORS.background }} />
-                    ) : (
-                      <div className="flex h-72 w-72 items-center justify-center border-2 p-3 text-center text-sm font-bold uppercase tracking-[0.12em]" style={{ borderColor: ANIME_COLORS.primary, background: ANIME_COLORS.background, color: ANIME_COLORS.text }}>
-                        QR not configured
-                      </div>
-                    )}
-                    <div className="space-y-1">
-                      <p className="merch-pay-label">UPI ID</p>
-                      <p className="merch-pay-copy text-sm font-bold">{merchUpiId}</p>
-                      <p className="merch-pay-copy text-sm">Amount: ₹{order.variant.price}</p>
-                    </div>
-                  </div>
-                </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+          <div className="merch-shell space-y-5">
+            
+            {/* ── STREET BANNER ──────────────────────── */}
+            <div className="merch-card street-banner rounded-[1.5rem]">
+              <div className="scan-line" />
+              <span className="banner-ruby">Step 2 of 2 · Forge the Seal</span>
+              <h2 className={`banner-title ${cinzelFont.className}`}>
+                AAKAR&nbsp;<span className="stroke-word">MERCHANT SEAL</span>
+              </h2>
+              <p className="banner-sub">scan qr &nbsp;·&nbsp; enter id &nbsp;·&nbsp; secure the loot</p>
+              <div className="banner-deco" />
+            </div>
 
-                <div className="mt-6 rounded-2xl border-2 px-5 py-4 shadow-[4px_4px_0_#000] text-left" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
-                  <p className="merch-pay-copy text-sm">
-                    Variant: <span className="font-bold uppercase">{order.variant.title}</span>
-                  </p>
-                  <p className="merch-pay-copy text-sm">
-                    Order for <span className="font-bold uppercase">{order.name || "—"}</span>, size <span className="font-bold uppercase">{order.size}</span>.
-                  </p>
-                  <p className="merch-pay-copy text-sm">
-                    Email: <span className="font-bold uppercase">{order.email || "—"}</span>
-                  </p>
-                  <p className="merch-pay-copy text-sm">
-                    Phone: <span className="font-bold uppercase">{order.phone || "—"}</span>
-                  </p>
-                </div>
+            {/* ── MAIN CARD ──────────────────────────── */}
+            <section className="merch-card overflow-hidden rounded-[1.5rem] relative">
+              <div className="scan-line" />
+              <div className="pane-divider" />
+              <div className="grid lg:grid-cols-[1fr_1fr]">
 
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link href="/merch/buy" className="rounded-lg border-2 px-5 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005]" style={{ border: `2px solid ${ANIME_COLORS.secondary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}90, ${ANIME_COLORS.background}80)`, color: ANIME_COLORS.text, boxShadow: `0 0 15px ${ANIME_COLORS.secondary}50` }}>
-                    Back
-                  </Link>
-                  <Link href="/merch" className="rounded-lg border-2 px-5 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}>
-                    Back to Armory
-                  </Link>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 lg:p-10">
                 {submitted ? (
-                  <div className="flex h-full min-h-[520px] flex-col justify-center rounded-[1.75rem] border-2 border-black bg-[#00ffff] p-8 text-center shadow-[6px_6px_0_#000]" style={{ border: `1px solid ${ANIME_COLORS.secondary}`, background: `${ANIME_COLORS.secondary}40`, boxShadow: `0 0 16px ${ANIME_COLORS.secondary}40` }}>
-                    <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Loot Secured</p>
-                    <h2 className={`merch-pay-heading mt-2 text-[clamp(2.2rem,5vw,4rem)] uppercase leading-none ${cinzelFont.className}`}>
-                        Quest Item: Claimed!
-                    </h2>
-                    <div className="mt-6 rounded-2xl border-2 px-5 py-4 shadow-[4px_4px_0_#000] text-left" style={{ border: `1px solid ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.background}40`, boxShadow: `0 0 8px ${ANIME_COLORS.primary}40` }}>
-                      <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">Size:</span> {order.size}</p>
-                      <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">Transaction ID:</span> {transactionId}</p>
-                    </div>
+                  <div className="lg:col-span-2 p-6 lg:p-14 text-center">
+                      <p className="info-tag relative z-10 mb-4">Loot Secured</p>
+                      <h2 className={`info-title text-[clamp(2.2rem,5vw,4rem)] mb-8 ${cinzelFont.className}`}>
+                          Quest Item: Claimed!
+                      </h2>
+                      <div className="max-w-md mx-auto summary-card">
+                        <div className="scan-line" />
+                        <div className="summary-row">
+                          <span>Variant</span>
+                          <span>{order.variant.title}</span>
+                        </div>
+                        <div className="summary-row">
+                          <span>Size</span>
+                          <span>{order.size}</span>
+                        </div>
+                        <div className="summary-row">
+                          <span>Transaction ID</span>
+                          <span>{transactionId}</span>
+                        </div>
+                      </div>
+                      <div className="mt-8 flex justify-center gap-3 relative z-10">
+                         <Link href="/merch" className="back-btn">
+                            ← Return to Armory
+                         </Link>
+                      </div>
                   </div>
                 ) : (
-                  <div className="rounded-[1.75rem] border-2 p-5 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
-                    <p className="merch-pay-label">Forge the Seal</p>
-                    <h2 className={`merch-pay-heading mt-2 text-4xl uppercase leading-none ${cinzelFont.className}`}>
-                        Transaction ID
-                    </h2>
-                    <p className="merch-pay-copy mt-3 text-base leading-8">
-                      Enter the UPI ID after your tribute. Admins will verify and dispatch your loot.
+                  <>
+                  {/* LEFT — QR AND SUMMARY */}
+                  <div className="form-pane p-6 lg:p-10 border-b border-[rgba(255,100,0,0.18)] lg:border-b-0">
+                    <span className="step-badge">/ 02 &nbsp; Payment</span>
+                    <p className="info-tag">Scan to Pay</p>
+                    <h1 className={`info-title text-[clamp(2.2rem,5.5vw,3.8rem)] ${cinzelFont.className}`}>
+                      Tribute
+                    </h1>
+                    <p className="info-desc mb-6">
+                      Scan the QR below to pay ₹{order.variant.price} via UPI to Aakar Admin.
                     </p>
 
-                    <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-                      <label className="block space-y-2">
-                        <span className="merch-pay-label">Transaction ID</span>
+                    <div className="flex justify-center my-8 relative z-10">
+                       <div className="summary-card w-full max-w-sm flex flex-col items-center">
+                         {merchQrImageUrl ? (
+                           <img src={merchQrImageUrl} alt="Merchant QR" className="h-48 w-48 border-2 mb-4 p-2 rounded-xl object-contain bg-white relative z-10" style={{ borderColor: ANIME_COLORS.primary }} />
+                         ) : (
+                           <div className="h-48 w-48 border-2 mb-4 p-2 flex items-center justify-center font-mono text-[#00E5FF] relative z-10">QR MISSING</div>
+                         )}
+                         <div className="text-center font-mono text-[#00E5FF]/80 text-sm tracking-widest uppercase relative z-10">UPI ID: {merchUpiId}</div>
+                       </div>
+                    </div>
+
+                    <div className="summary-card mt-6">
+                       <p className="info-tag relative z-10 mb-2">Order Details</p>
+                       <div className="summary-row relative z-10">
+                         <span>Variant</span>
+                         <span>{order.variant.title}</span>
+                       </div>
+                       <div className="summary-row relative z-10">
+                         <span>Buyer</span>
+                         <span>{order.name || "—"}</span>
+                       </div>
+                       <div className="summary-row relative z-10">
+                         <span>Size</span>
+                         <span>{order.size || "—"}</span>
+                       </div>
+                    </div>
+                  </div>
+
+                  {/* RIGHT — FORM */}
+                  <div className="summary-pane p-6 lg:p-10">
+                    <p className="info-tag relative z-10">Verification</p>
+                    <h1 className={`info-title text-[clamp(1.8rem,4.5vw,2.8rem)] mb-8 relative z-10 ${cinzelFont.className}`}>
+                      Forge Seal
+                    </h1>
+
+                    <form className="space-y-6 relative z-10" onSubmit={handleSubmit}>
+                      <label className="block space-y-2 relative z-10">
+                        <span className="field-label">Transaction ID</span>
                         <input
-                          className="merch-pay-input w-full"
+                          className="merch-input"
                           value={transactionId}
                           onChange={(e) => setTransactionId(e.target.value)}
-                          placeholder="Enter transaction reference"
+                          placeholder="tx ID tracking ref"
                         />
                       </label>
 
-                      <label className="block space-y-2">
-                        <span className="merch-pay-label">Payment Screenshot</span>
+                      <label className="block space-y-2 relative z-10">
+                        <span className="field-label">Payment Screenshot</span>
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handleScreenshotChange}
-                          className="merch-pay-input w-full cursor-pointer file:mr-3 file:py-2 file:px-3 file:border-0 file:border-r-2 file:rounded-none file:font-bold file:uppercase file:text-xs"
+                          className="merch-input cursor-pointer"
                         />
                       </label>
 
                       {screenshotPreview && (
-                        <div className="rounded-lg border-2 p-3" style={{ border: `1px solid ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.background}40` }}>
-                          <p className="merch-pay-label mb-2">Preview</p>
-                          <img src={screenshotPreview} alt="Screenshot preview" className="h-40 w-full object-cover border-2 rounded" style={{ borderColor: ANIME_COLORS.primary }} />
+                        <div className="mt-4 border border-[#00E5FF]/30 rounded-lg p-2 bg-black/40 relative z-10">
+                          <span className="field-label mb-2">Preview</span>
+                          <img src={screenshotPreview} alt="Preview" className="h-32 w-[90%] mx-auto object-cover rounded opacity-90 border-[1px] border-[#00E5FF]/50" />
                         </div>
                       )}
 
                       {error && (
-                        <div className="border-2 px-4 py-3 font-bold shadow-[4px_4px_0_#000]" style={{ border: `1px solid ${ANIME_COLORS.purple}`, background: `${ANIME_COLORS.purple}40`, color: ANIME_COLORS.text, boxShadow: `0 0 12px ${ANIME_COLORS.purple}40` }}>
-                          {error}
+                        <div className="error-box relative z-10">
+                          ⚠ &nbsp;{error}
                         </div>
                       )}
 
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70"
-                        style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}
-                      >
-                        {loading ? "Forging..." : "Lock in Order"}
-                      </button>
+                      <div className="flex flex-wrap items-center gap-3 pt-4 relative z-10">
+                        <button type="submit" disabled={loading} className="buy-btn">
+                          {loading ? "Forging..." : "Lock in Order"}
+                        </button>
+                        <Link href="/merch/buy" className="back-btn">
+                          ← Back
+                        </Link>
+                      </div>
                     </form>
+
                   </div>
+                  </>
                 )}
+
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </main>
