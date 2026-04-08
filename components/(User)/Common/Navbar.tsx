@@ -324,6 +324,7 @@ export default function Navbar() {
                 { label: "About", href: "/about" },
                 { label: "Team", href: "/team" },
                 { label: "Merch", href: "/merch" },
+                { label: "Elite Pass", href: "/aakar-elite-pass" },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <Link

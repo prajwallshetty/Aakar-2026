@@ -127,6 +127,7 @@ const EventsCRUD = () => {
   const [downloading, setDownloading] = useState(false)
   const [imagePreviewSrc, setImagePreviewSrc] = useState("")
   const [imagePreviewStatus, setImagePreviewStatus] = useState<"idle" | "loading" | "found" | "missing">("idle")
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const defaultForm: FormData = {
     eventName: "", eventType: "Solo", eventCategory: "Cultural",
@@ -247,11 +248,24 @@ const EventsCRUD = () => {
   const resetForm = () => {
     setFormData(defaultForm); setIsEditing(false); setCurrentId(null)
     setNewStudentCoord({ name: "", phone: "" }); setNewFacultyCoord({ name: "", phone: "" }); setNewRule("")
+    setSelectedFile(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError(""); setUploadProgress(true)
     try {
+      let finalImageUrl = normalizeImageInput(formData.imageUrl)
+
+      // If a file is selected, upload it first
+      if (selectedFile) {
+        const uploadedUrl = await uploadFile(selectedFile, "eventimages")
+        if (uploadedUrl) {
+          finalImageUrl = uploadedUrl
+        } else {
+          throw new Error("Failed to upload image")
+        }
+      }
+
       const studentCoordinators = [...formData.studentCoordinators]
       if (newStudentCoord.name.trim() && newStudentCoord.phone.trim()) {
         studentCoordinators.push({ ...newStudentCoord })
@@ -269,21 +283,21 @@ const EventsCRUD = () => {
 
       const payload: any = {
         ...formData,
-        imageUrl: normalizeImageInput(formData.imageUrl),
+        imageUrl: finalImageUrl,
         studentCoordinators,
         facultyCoordinators,
         rules,
       }
 
       if (isEditing && currentId) {
-        const result = await updateEvent(currentId, payload)
+        await updateEvent(currentId, payload)
       } else {
-        const result = await createEvent(payload)
+        await createEvent(payload)
       }
       fetchEvents(); resetForm(); setOpenDialog(false)
-    } catch (err) { 
+    } catch (err: any) { 
       console.error("Submit error:", err)
-      setError("Could not save event. Please try again.") 
+      setError(err.message || "Could not save event. Please try again.") 
     }
     finally { setUploadProgress(false) }
   }
@@ -624,18 +638,42 @@ const EventsCRUD = () => {
                   <Input name="fee" type="number" min="0" value={formData.fee} onChange={handleInput} className="h-9 text-sm border-zinc-200" required />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-zinc-700">Image URL</Label>
-                  <Input name="imageUrl" value={formData.imageUrl} onChange={handleInput} placeholder="e.g. 22 or 22.png or https://..." className="h-9 text-sm border-zinc-200" />
-                  <div className="text-[11px] text-zinc-500 min-h-4">
-                    {imagePreviewStatus === "idle" && "Enter a number like 25 or filename like 25.png"}
-                    {imagePreviewStatus === "loading" && "Checking image..."}
-                    {imagePreviewStatus === "found" && `Found: ${imagePreviewSrc}`}
-                    {imagePreviewStatus === "missing" && "No matching file found in /public/events"}
+                  <Label className="text-xs font-medium text-zinc-700">Event Image</Label>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                       <Input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                        className="h-9 text-xs border-zinc-200 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-zinc-50 file:text-zinc-700 hover:file:bg-zinc-100 cursor-pointer" 
+                      />
+                      <span className="text-zinc-400 py-2 text-xs">OR</span>
+                      <Input name="imageUrl" value={formData.imageUrl} onChange={handleInput} placeholder="ID or URL" className="h-9 text-sm border-zinc-200" />
+                    </div>
+                    
+                    <div className="text-[11px] text-zinc-500 min-h-4">
+                      {selectedFile ? (
+                        <span className="text-green-600 font-medium">Ready to upload: {selectedFile.name}</span>
+                      ) : (
+                        <>
+                          {imagePreviewStatus === "idle" && "Enter a number like 25 or filename like 25.png"}
+                          {imagePreviewStatus === "loading" && "Checking image..."}
+                          {imagePreviewStatus === "found" && `Found: ${imagePreviewSrc}`}
+                          {imagePreviewStatus === "missing" && "No matching file found /public/events"}
+                        </>
+                      )}
+                      {error && error.includes("upload") && (
+                        <div className="text-red-500 mt-1 font-semibold flex items-center gap-1">
+                          <AlertCircle size={10} /> {error}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  {imagePreviewSrc && (
-                    <div className="h-20 w-14 overflow-hidden rounded border border-zinc-200 bg-zinc-100">
+                  
+                  {(imagePreviewSrc || selectedFile) && (
+                    <div className="h-24 w-20 overflow-hidden rounded border border-zinc-200 bg-zinc-100 mt-1">
                       <img
-                        src={imagePreviewSrc}
+                        src={selectedFile ? URL.createObjectURL(selectedFile) : imagePreviewSrc}
                         alt="Event preview"
                         className="h-full w-full object-cover"
                       />

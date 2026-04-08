@@ -37,7 +37,7 @@ export async function uploadFile(
   }
 
   const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_")
-  const filePath = `public/${Date.now()}-${sanitizedName}`
+  const filePath = `${Date.now()}-${sanitizedName}`
 
   try {
     console.log(`Uploading to bucket: ${bucketName}, path: ${filePath}, size: ${file.size}`)

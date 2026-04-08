@@ -30,10 +30,16 @@ export function resolveEventImageUrl(imageUrl: string | null | undefined, fallba
     }
 
     if (!raw) {
-        return "";
+        return ""; 
     }
 
     const normalized = raw.replace(/^\.\//, "").replace(/^\//, "");
+    
+    // If it's just a number, treat as event ID
+    if (/^\d+$/.test(normalized)) {
+        return `/events/${normalized}.png`;
+    }
+
     const withoutEventsPrefix = normalized.replace(/^events\//i, "");
     const loweredExtensionPath = withoutEventsPrefix.replace(
         /\.(PNG|JPG|JPEG|WEBP|GIF|AVIF|SVG)$/,
