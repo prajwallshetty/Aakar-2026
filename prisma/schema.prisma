@@ -84,6 +84,8 @@ model ElitePassOrder {
   transactionId        String   @unique
   amount               Int      @default(0)
   paymentScreenshotUrl String?
+  paymentStatus        PaymentStatus @default(PENDING)
+  certificateSent      Boolean       @default(false)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @default(now()) @updatedAt
 }

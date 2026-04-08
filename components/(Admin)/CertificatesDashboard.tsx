@@ -175,10 +175,6 @@ export const CertificatesDashboard = ({ initialPendingCount, initialSentCount }:
                         </div>
                         <div className="flex gap-3">
                             <div className="h-6 w-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 text-zinc-900 font-bold">2</div>
-                            <p>Ensure the <b>certificate_template.pdf</b> is correctly uploaded to the public directory.</p>
-                        </div>
-                        <div className="flex gap-3">
-                            <div className="h-6 w-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 text-zinc-900 font-bold">3</div>
                             <p>Click <b>Send Certificates</b> to start the batch. The system processes users with 500ms delay to ensure high deliverability.</p>
                         </div>
                         

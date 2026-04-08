@@ -8,26 +8,49 @@ export const metadata: Metadata = {
 };
 
 export default async function CertificatesPage() {
-    // Initial counts for the dashboard
-    // We use strings for PaymentStatus to avoid potential enum mismatches in the client
-    const pendingCount = await db.participant.count({
+    // 1. Count Normal Participants (Approved + must have events)
+    const pendingParticipants = await db.participant.count({
         where: {
             paymentStatus: "APPROVED" as any,
-            certificateSent: false
+            certificateSent: false,
+            events: {
+                some: {} 
+            }
         }
     });
 
-    const sentCount = await db.participant.count({
+    const sentParticipants = await db.participant.count({
         where: {
             certificateSent: true
         }
     });
 
+    // 2. Count Elite Pass Orders using Raw SQL to bypass stale Prisma client validation
+    let pendingElitePass = 0;
+    let sentElitePass = 0;
+
+    try {
+        const pendingResult = await db.$queryRaw<any[]>`
+            SELECT COUNT(*)::int as count FROM "ElitePassOrder" 
+            WHERE "paymentStatus" = 'APPROVED' AND "certificateSent" = false
+        `;
+        pendingElitePass = pendingResult[0]?.count || 0;
+
+        const sentResult = await db.$queryRaw<any[]>`
+            SELECT COUNT(*)::int as count FROM "ElitePassOrder" 
+            WHERE "certificateSent" = true
+        `;
+        sentElitePass = sentResult[0]?.count || 0;
+    } catch (err) {
+        console.error("Failed to fetch ElitePass metrics via raw query:", err);
+        // Fallback to 0 if the table isn't ready or columns are missing
+    }
+
     return (
         <div className="container py-8 max-w-7xl mx-auto">
             <CertificatesDashboard 
-                initialPendingCount={pendingCount} 
-                initialSentCount={sentCount} 
+                initialPendingCount={pendingParticipants + pendingElitePass} 
+                initialSentCount={sentParticipants + sentElitePass} 
             />
         </div>
     );
