@@ -264,7 +264,7 @@ export default function Navbar() {
               href="/register"
               className="register-btn inline-flex items-center text-sm tracking-widest uppercase"
             >
-              <span>Register</span>
+              <span>Join Now</span>
             </Link>
           </div>
 
@@ -378,7 +378,7 @@ export default function Navbar() {
               className="register-btn flex items-center justify-center w-full py-3 text-sm tracking-widest uppercase"
               onClick={() => setSidebarOpen(false)}
             >
-              <span>Register Now</span>
+              <span>Join the Guild</span>
             </Link>
           </div>
         </div>

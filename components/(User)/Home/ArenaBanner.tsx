@@ -4,7 +4,7 @@ const ArenaBanner = () => {
     return (
         <div className="w-full text-white py-16 px-6 text-center relative overflow-hidden">
             <h2 className="text-3xl md:text-6xl font-extrabold tracking-wide leading-tight animate-pulse z-10 relative">
-                All in or out
+                All in — no respawns
                 <br />
                 <span className="inline-block mt-4 text-transparent bg-clip-text bg-gradient-to-r from-[#AA1F26] via-red-500 to-yellow-400 animate-textZoom">
                     Aakar is an ARENA

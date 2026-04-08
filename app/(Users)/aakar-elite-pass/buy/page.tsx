@@ -85,7 +85,7 @@ export default function ElitePassBuyPage() {
     if (!formData.college.trim()) errors.college = "Required";
     if (!formData.department.trim()) errors.department = "Required";
     if (!formData.year || Number.isNaN(formData.year)) errors.year = "Required";
-    if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Please fix the highlighted fields."); return; }
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Fix the highlighted power stats first."); return; }
     setGeneralError("");
     setPaymentStep("payment");
   };
@@ -94,7 +94,7 @@ export default function ElitePassBuyPage() {
     const errors: { [key: string]: string } = {};
     if (!formData.transactionId.trim()) errors.transactionId = "Transaction ID is required";
     if (!formData.paymentScreenshot) errors.paymentScreenshot = "Screenshot is required";
-    if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Please complete payment details."); return; }
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Seal incomplete — fill in payment details."); return; }
     setGeneralError("");
     setPaymentStep("confirm");
   };
@@ -120,12 +120,12 @@ export default function ElitePassBuyPage() {
       });
       if (!result || result.error) {
         if (typeof result?.error === "object" && result.error !== null) setFormErrors(result.error);
-        else setGeneralError(result?.error || "Purchase failed.");
+        else setGeneralError(result?.error || "Enrollment failed.");
         setIsSubmitting(false); return;
       }
       router.replace("/aakar-elite-pass/success");
     } catch {
-      setGeneralError("Something went wrong. Please try again.");
+      setGeneralError("Something broke. Try again, hero.");
       setIsSubmitting(false);
     }
   };
@@ -404,7 +404,7 @@ export default function ElitePassBuyPage() {
                   {/* STEP 1: DETAILS */}
                   {paymentStep === "details" && (
                     <form onSubmit={proceedToPayment}>
-                      <span className="step-badge">/ 01 &nbsp; Your Details</span>
+                      <span className="step-badge">/ 01 &nbsp; Hero Stats</span>
                       <p className="info-tag">Guild Registration</p>
                       <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Hero Credentials</h1>
 
@@ -459,7 +459,7 @@ export default function ElitePassBuyPage() {
                       <p className="info-tag">UPI Payment</p>
                       <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Scan & Pay</h1>
                       <p className="mt-3 font-mono text-sm" style={{ color: `${ANIME_COLORS.text}aa`, lineHeight: 1.8 }}>
-                        Scan the QR code to complete payment, then enter your transaction ID below.
+                         Scan the QR to complete your tribute, then enter the transaction ID.
                       </p>
 
                       <div className="qr-box mt-6">
@@ -469,7 +469,7 @@ export default function ElitePassBuyPage() {
                           <div className="font-mono text-sm" style={{ color: ANIME_COLORS.text }}>ajiet@cnrb</div>
                         </div>
                         <div className="font-mono text-xs" style={{ color: `${ANIME_COLORS.secondary}bb`, letterSpacing: "0.2em" }}>
-                          Pay ₹{PASS_PRICE_EARLY} (Early Bird)
+                           Pay ₹{PASS_PRICE_EARLY} (Early Bird)
                         </div>
                       </div>
 
@@ -497,7 +497,7 @@ export default function ElitePassBuyPage() {
                       {generalError && <div className="error-box mt-4">⚡ {generalError}</div>}
 
                       <div className="flex flex-wrap items-center gap-3 pt-6">
-                        <button type="button" className="buy-btn" onClick={proceedToConfirm}>Verify & Review →</button>
+                        <button type="button" className="buy-btn" onClick={proceedToConfirm}>Review Pact →</button>
                         <button type="button" className="back-btn" onClick={() => setPaymentStep("details")}>← Back</button>
                       </div>
                     </div>
@@ -528,7 +528,7 @@ export default function ElitePassBuyPage() {
 
                       <div className="flex flex-wrap items-center gap-3 pt-6">
                         <button type="submit" className="buy-btn" disabled={isSubmitting}>
-                          {isSubmitting ? "Forging Pact…" : "Complete Enrollment ✓"}
+                          {isSubmitting ? "Forging Pact…" : "Seal the Pact ✓"}
                         </button>
                         <button type="button" className="back-btn" onClick={() => setPaymentStep("payment")}>← Back</button>
                       </div>
@@ -540,15 +540,15 @@ export default function ElitePassBuyPage() {
                 <div className="summary-pane p-6 lg:p-10">
                   <div className="summary-card">
                     <div className="scan-line" />
-                    <p className="info-tag relative z-10">Pass Summary</p>
+                    <p className="info-tag relative z-10">Elite Pass Scroll</p>
                     <h2 className={`info-title text-[clamp(1.6rem,3.5vw,2.4rem)] relative z-10 mt-2 ${cinzelFont.className}`}>
                       Elite Clearance
                     </h2>
 
                     <div className="mt-5 relative z-10">
-                      <div className="summary-row"><span>Solo Events</span><span>Unlimited</span></div>
-                      <div className="summary-row"><span>Concert</span><span>Entry Included</span></div>
-                      <div className="summary-row"><span>Pass Type</span><span>S-Class</span></div>
+                      <div className="summary-row"><span>Solo Quests</span><span>Unlimited</span></div>
+                      <div className="summary-row"><span>Boss Battle Concert</span><span>Access Granted</span></div>
+                      <div className="summary-row"><span>Pass Rank</span><span>S-Class</span></div>
                     </div>
 
                     <div className="price-row relative z-10">
@@ -565,7 +565,7 @@ export default function ElitePassBuyPage() {
 
                   {/* FEAT CARDS */}
                   <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
-                    {[["/ 01", "Solo Events Unlocked"], ["/ 02", "Concert Access"]].map(([num, text], i) => (
+                    {[["/ 01", "Solo Quests Unlocked"], ["/ 02", "Boss Battle Access"]].map(([num, text], i) => (
                       <div key={num} className="relative p-3 rounded" style={{ border: `1px solid ${ANIME_COLORS.primary}40`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%)`, animationDelay: `${i * 0.08 + 0.06}s` }}>
                         <span className="field-label">{num}</span>
                         <span className="font-mono text-sm" style={{ color: ANIME_COLORS.text, letterSpacing: "0.04em" }}>{text}</span>

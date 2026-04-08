@@ -541,7 +541,7 @@ export default function AakarElitePage() {
                 <div className="summary-pane p-6 lg:p-10">
                   <div className="summary-card">
                     <div className="scan-line" />
-                    <p className="info-tag relative z-10">Access Granted</p>
+                    <p className="info-tag relative z-10">Clearance: Granted</p>
                     <p className="relative z-10 font-mono text-[0.57rem] tracking-[0.44em] uppercase mt-1"
                       style={{ color: `${ANIME_COLORS.secondary}99` }}>
                       Premium Level
@@ -551,17 +551,17 @@ export default function AakarElitePage() {
                     </h2>
                     
                     <p className="info-desc relative z-10">
-                        AAKAR ELITE gives one-pass access to the complete solo-event lineup, plus the high-energy show nights that define the fest. Designed for students who want the full Aakar experience without selecting each event individually.
+                        AAKAR ELITE unlocks your entire solo-quest roster in one move, plus a VIP seat at the ultimate boss-level concert night. Made for the protagonist who wants the full arc — no grinding through individual registrations.
                     </p>
 
                     <div className="mt-5 relative z-10 space-y-0">
                       <div className="summary-row">
-                        <span>Solo Events</span>
+                        <span>Solo Quests</span>
                         <span>Unlimited</span>
                       </div>
                       <div className="summary-row">
-                        <span>Concert</span>
-                        <span>Entry Included</span>
+                        <span>Boss Battle Concert</span>
+                        <span>Access Granted</span>
                       </div>
                     </div>
 
@@ -586,8 +586,8 @@ export default function AakarElitePage() {
                   {/* MINI FEATURE CARDS */}
                   <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
                     {[
-                      ["/ 01", "Solo Events Unlocked"],
-                      ["/ 02", "Concert Access"],
+                      ["/ 01", "Solo Quests Unlocked"],
+                      ["/ 02", "Boss Battle Access"],
                     ].map(([num, text], i) => (
                       <div
                         key={num}

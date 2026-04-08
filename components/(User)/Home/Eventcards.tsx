@@ -566,7 +566,7 @@ export default function EventCircularGallery() {
         marginTop: "1rem",
         textTransform: "uppercase",
       }}>
-        {isMobile ? "Tap a card to explore · Swipe to browse" : "Click a card to explore · Drag to browse"}
+        {isMobile ? "Tap a card to enter · Swipe to scout" : "Click a card to enter · Drag to scout"}
       </p>
     </section>
   );

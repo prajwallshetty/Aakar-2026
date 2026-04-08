@@ -204,12 +204,12 @@ function MerchPaymentContent() {
           <div className="merch-pay-shell overflow-hidden rounded-[2rem]">
             <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
               <div className="border-b-2 border-black/20 bg-[#ffea8a] p-6 sm:p-8 lg:border-b-0 lg:border-r-2 lg:p-10" style={{ background: `linear-gradient(135deg, ${ANIME_COLORS.accent}30, ${ANIME_COLORS.accent}20)`, borderColor: ANIME_COLORS.accent }}>
-                <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Step 2 · Payment</p>
+                <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Step 2 · Forge the Seal</p>
                 <h1 className={`merch-pay-heading mt-2 text-[clamp(2.4rem,6vw,4.8rem)] uppercase leading-[0.95] ${cinzelFont.className}`}>
                     Scan QR
                 </h1>
                 <p className="merch-pay-copy mt-4 text-base leading-8">
-                  Pay the merch amount using the scanner, then enter the transaction ID below to confirm your order.
+                  Complete your tribute via the scanner, then enter the transaction ID to seal the loot order.
                 </p>
 
                 <div className="mt-8 rounded-[1.75rem] border-2 p-8 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
@@ -249,7 +249,7 @@ function MerchPaymentContent() {
                     Back
                   </Link>
                   <Link href="/merch" className="rounded-lg border-2 px-5 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}>
-                    Merch Home
+                    Back to Armory
                   </Link>
                 </div>
               </div>
@@ -257,9 +257,9 @@ function MerchPaymentContent() {
               <div className="p-6 sm:p-8 lg:p-10">
                 {submitted ? (
                   <div className="flex h-full min-h-[520px] flex-col justify-center rounded-[1.75rem] border-2 border-black bg-[#00ffff] p-8 text-center shadow-[6px_6px_0_#000]" style={{ border: `1px solid ${ANIME_COLORS.secondary}`, background: `${ANIME_COLORS.secondary}40`, boxShadow: `0 0 16px ${ANIME_COLORS.secondary}40` }}>
-                    <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Order Submitted</p>
+                    <p className="merch-pay-copy text-xs uppercase tracking-[0.4em]">Loot Secured</p>
                     <h2 className={`merch-pay-heading mt-2 text-[clamp(2.2rem,5vw,4rem)] uppercase leading-none ${cinzelFont.className}`}>
-                        Order placed successfully
+                        Quest Item: Claimed!
                     </h2>
                     <div className="mt-6 rounded-2xl border-2 px-5 py-4 shadow-[4px_4px_0_#000] text-left" style={{ border: `1px solid ${ANIME_COLORS.primary}`, background: `${ANIME_COLORS.background}40`, boxShadow: `0 0 8px ${ANIME_COLORS.primary}40` }}>
                       <p className="merch-pay-copy text-sm"><span className="font-bold uppercase">Size:</span> {order.size}</p>
@@ -268,12 +268,12 @@ function MerchPaymentContent() {
                   </div>
                 ) : (
                   <div className="rounded-[1.75rem] border-2 p-5 shadow-[6px_6px_0_#000]" style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.background}92, ${ANIME_COLORS.background}85)`, boxShadow: `0 0 15px ${ANIME_COLORS.primary}40` }}>
-                    <p className="merch-pay-label">Confirm Payment</p>
+                    <p className="merch-pay-label">Forge the Seal</p>
                     <h2 className={`merch-pay-heading mt-2 text-4xl uppercase leading-none ${cinzelFont.className}`}>
                         Transaction ID
                     </h2>
                     <p className="merch-pay-copy mt-3 text-base leading-8">
-                      Enter the UPI transaction ID after payment. This will be sent to the admin panel for verification.
+                      Enter the UPI ID after your tribute. Admins will verify and dispatch your loot.
                     </p>
 
                     <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
@@ -316,7 +316,7 @@ function MerchPaymentContent() {
                         className="rounded-lg border-2 px-6 py-3 font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_#0a0005] transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70"
                         style={{ border: `2px solid ${ANIME_COLORS.primary}`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}60, ${ANIME_COLORS.primary}50)`, color: ANIME_COLORS.text, boxShadow: `0 0 20px ${ANIME_COLORS.primary}60` }}
                       >
-                        {loading ? "Uploading..." : "Submit Order"}
+                        {loading ? "Forging..." : "Lock in Order"}
                       </button>
                     </form>
                   </div>
