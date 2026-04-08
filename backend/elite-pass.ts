@@ -1,6 +1,6 @@
 "use server";
 
-import { Prisma, PrismaClient } from "@prisma/client";
+import { eventType, Prisma, PrismaClient } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { db } from ".";
 import { isAdmin } from "./admin";
@@ -19,11 +19,18 @@ type ElitePassOrderInput = {
   year: number;
   transactionId: string;
   paymentScreenshotUrl?: string;
+  eventIds: number[];
 };
 
 type ServiceResponse<T> = {
   data: T | null;
   error: { [key: string]: string } | string | null;
+};
+
+type ElitePassDuplicateCheckInput = {
+  email?: string;
+  usn?: string;
+  transactionId?: string;
 };
 
 let fallbackPrismaClient: PrismaClient | null = null;
@@ -150,8 +157,133 @@ export async function validateElitePassOrderData(data: ElitePassOrderInput): Pro
   if (!data.department || data.department.trim().length < 2) errors.department = "Department is required";
   if (!data.year || Number.isNaN(Number(data.year)) || data.year < 1 || data.year > 8) errors.year = "Valid year of study is required";
   if (!data.transactionId || data.transactionId.trim().length < 4) errors.transactionId = "Transaction ID is required";
+  if (!Array.isArray(data.eventIds) || data.eventIds.length < 1) errors.eventIds = "Select at least one solo event";
+  if (Array.isArray(data.eventIds) && data.eventIds.some((id) => !Number.isInteger(id) || id <= 0)) errors.eventIds = "Invalid event selection";
 
   return Object.keys(errors).length > 0 ? errors : null;
+}
+
+export async function checkElitePassDuplicates(input: ElitePassDuplicateCheckInput): Promise<{ [key: string]: string } | null> {
+  const errors: { [key: string]: string } = {};
+
+  const normalizedEmail = input.email?.toLowerCase().trim();
+  const normalizedUsn = input.usn?.toUpperCase().trim();
+  const normalizedTransactionId = input.transactionId?.trim();
+
+  if (!normalizedEmail && !normalizedUsn && !normalizedTransactionId) {
+    return null;
+  }
+
+  const where: any = { OR: [] as any[] };
+  if (normalizedEmail) where.OR.push({ email: normalizedEmail });
+  if (normalizedUsn) where.OR.push({ usn: normalizedUsn });
+  if (normalizedTransactionId) where.OR.push({ transactionId: normalizedTransactionId });
+
+  const existing = await (db as any).elitePassOrder.findFirst({
+    where,
+    select: {
+      email: true,
+      usn: true,
+      transactionId: true,
+    },
+  });
+
+  if (!existing) return null;
+
+  if (normalizedEmail && existing.email?.toLowerCase() === normalizedEmail) {
+    errors.email = "An Elite Pass order already exists for this email";
+  }
+
+  if (normalizedUsn && existing.usn?.toUpperCase() === normalizedUsn) {
+    errors.usn = "An Elite Pass order already exists for this USN";
+  }
+
+  if (normalizedTransactionId && existing.transactionId === normalizedTransactionId) {
+    errors.transactionId = "This transaction ID already exists";
+  }
+
+  return Object.keys(errors).length > 0 ? errors : null;
+}
+
+async function validateSoloEvents(eventIds: number[]): Promise<boolean> {
+  if (!eventIds.length) return false;
+
+  const soloEvents = await db.event.findMany({
+    where: {
+      id: { in: eventIds },
+      eventType: eventType.Solo,
+    },
+    select: { id: true },
+  });
+
+  return new Set(soloEvents.map((event) => event.id)).size === new Set(eventIds).size;
+}
+
+async function syncParticipantWithElitePass(
+  client: any,
+  payload: {
+    name: string;
+    usn: string;
+    email: string;
+    phone: string;
+    college: string;
+    department: string | null;
+    year: number;
+    transactionId: string;
+    paymentScreenshotUrl: string | null;
+    eventIds: number[];
+  },
+) {
+  const existingParticipant = await client.participant.findFirst({
+    where: {
+      OR: [{ email: payload.email }, { usn: payload.usn }],
+    },
+    select: {
+      id: true,
+      transaction_ids: true,
+      paymentScreenshotUrls: true,
+      amount: true,
+    },
+  });
+
+  if (existingParticipant) {
+    return client.participant.update({
+      where: { id: existingParticipant.id },
+      data: {
+        name: payload.name,
+        phone: payload.phone,
+        college: payload.college,
+        department: payload.department,
+        year: payload.year,
+        amount: (existingParticipant.amount || 0) + ELITE_PASS_PRICE,
+        transaction_ids: Array.from(new Set([...(existingParticipant.transaction_ids || []), payload.transactionId])),
+        paymentScreenshotUrls: Array.from(
+          new Set([...(existingParticipant.paymentScreenshotUrls || []), ...(payload.paymentScreenshotUrl ? [payload.paymentScreenshotUrl] : [])]),
+        ),
+        events: {
+          connect: payload.eventIds.map((id) => ({ id })),
+        },
+      },
+    });
+  }
+
+  return client.participant.create({
+    data: {
+      name: payload.name,
+      usn: payload.usn,
+      email: payload.email,
+      phone: payload.phone,
+      college: payload.college,
+      department: payload.department,
+      year: payload.year,
+      amount: ELITE_PASS_PRICE,
+      transaction_ids: [payload.transactionId],
+      paymentScreenshotUrls: payload.paymentScreenshotUrl ? [payload.paymentScreenshotUrl] : [],
+      events: {
+        connect: payload.eventIds.map((id) => ({ id })),
+      },
+    },
+  });
 }
 
 export async function createElitePassOrder(data: ElitePassOrderInput): Promise<ServiceResponse<any>> {
@@ -163,7 +295,22 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
       return { data: null, error: validationErrors };
     }
 
-    const order = await createElitePassOrderRecord(passDb, {
+    const duplicateErrors = await checkElitePassDuplicates({
+      email: data.email,
+      usn: data.usn,
+      transactionId: data.transactionId,
+    });
+    if (duplicateErrors) {
+      return { data: null, error: duplicateErrors };
+    }
+
+    const normalizedEventIds = Array.from(new Set(data.eventIds.map((id) => Number(id))));
+    const hasValidSoloEvents = await validateSoloEvents(normalizedEventIds);
+    if (!hasValidSoloEvents) {
+      return { data: null, error: { eventIds: "Please select valid solo events" } };
+    }
+
+    const normalizedPayload = {
       name: data.name.trim(),
       usn: data.usn.toUpperCase().trim(),
       email: data.email.toLowerCase().trim(),
@@ -172,8 +319,29 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
       department: data.department?.trim() || null,
       year: data.year,
       transactionId: data.transactionId.trim(),
-      amount: ELITE_PASS_PRICE,
       paymentScreenshotUrl: data.paymentScreenshotUrl || null,
+      eventIds: normalizedEventIds,
+    };
+
+    const order = await passDb.$transaction(async (tx: any) => {
+      const createdOrder = await createElitePassOrderRecord(tx, {
+        name: normalizedPayload.name,
+        usn: normalizedPayload.usn,
+        email: normalizedPayload.email,
+        phone: normalizedPayload.phone,
+        college: normalizedPayload.college,
+        department: normalizedPayload.department,
+        year: normalizedPayload.year,
+        transactionId: normalizedPayload.transactionId,
+        amount: ELITE_PASS_PRICE,
+        paymentScreenshotUrl: normalizedPayload.paymentScreenshotUrl,
+      });
+
+      await syncParticipantWithElitePass(tx, normalizedPayload);
+      return createdOrder;
+    }, {
+      maxWait: 10000,
+      timeout: 20000,
     });
 
     if (order) {
@@ -205,6 +373,10 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
 
       if (error.code === "P2010") {
         return { data: null, error: "Database write failed. Please try again." };
+      }
+
+      if (error.code === "P2028") {
+        return { data: null, error: "Request timed out while saving. Please try again." };
       }
     }
 
