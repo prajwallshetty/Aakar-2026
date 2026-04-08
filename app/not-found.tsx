@@ -209,6 +209,27 @@ export default function NotFound() {
       `}</style>
 
       {/* ── Background ── */}
+      <div className="fixed inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url(/bg.jpg)", transform: "scale(1.02)" }}
+        />
+        {/* Dark gradient mapping overlay for cinematic feel */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/95" />
+
+        {/* Global Tech Grid */}
+        <div
+          className="absolute inset-0 opacity-[0.05] grid-animate pointer-events-none"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+
+        {/* Vignette */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.7) 100%)" }} />
+      </div>
+
       <AnimeOrbField />
       <AnimeParticleField />
 
@@ -222,13 +243,13 @@ export default function NotFound() {
         textAlign:"center",
       }}>
 
-        {/* spinning starburst */}
+        {/* spinning starburst (layered between bg and content) */}
         <div style={{
           position:"fixed",
           top:"50%", left:"50%",
           width:"clamp(340px,65vw,680px)",
           height:"clamp(340px,65vw,680px)",
-          zIndex:0, pointerEvents:"none",
+          zIndex:1, pointerEvents:"none",
           animation:"burstSpin 40s linear infinite",
           transform:"translate(-50%,-50%)",
         }}>
