@@ -14,6 +14,7 @@ import {
     Shirt,
     Ticket,
     ChevronRight,
+    Award,
     X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const menuItems = [
     { icon: Ticket, label: "Elite Pass Orders", href: "/ElitePassOrders" },
     { icon: BarChart2, label: "Event Stats", href: "/EventStatistics" },
     { icon: School, label: "College Stats", href: "/CollegeStatistics" },
+    { icon: Award, label: "Certificates", href: "/Certificates" },
 ];
 
 const AdminSidebar = () => {
