@@ -14,12 +14,13 @@ const GlimpseOfAakar = () => {
                     autoPlay
                     loop
                     muted
-                    preload="none"
+                    playsInline
+                    poster="/glimpse-poster.jpg"
+                    preload="metadata"
                 >
                     <source
                         src="/glimpse.mp4"
                         type="video/mp4"
-                        className=""
                     />
                 </video>
             </div>

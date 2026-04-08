@@ -244,6 +244,7 @@ class App {
   camera!: Camera; scene!: Transform;
   planeGeometry!: Plane;
   raf = 0;
+  paused = false;
 
   isDown = false; start = 0; dragDelta = 0;
 
@@ -406,6 +407,7 @@ class App {
   }
 
   update = () => {
+    if (this.paused) return;
     if (!this.userInteracting) {
       this.scroll.target += this.opts.autoScrollSpeed;
     }
@@ -495,12 +497,25 @@ export default function EventCircularGallery() {
       (href: string) => router.push(href),
     );
 
-    return () => app.destroy();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        app.paused = !entry.isIntersecting;
+        if (entry.isIntersecting) app.update();
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+      app.destroy();
+    };
     // re-initialise if isMobile flips (orientation change / resize crosses 768)
   }, [router, isMobile]);
 
   return (
     <section
+      className="gpu-accelerate"
       style={{
         position: "relative",
         width: "100%",

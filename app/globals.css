@@ -169,6 +169,12 @@
   .transform-style-3d {
     transform-style: preserve-3d;
   }
+
+  .gpu-accelerate {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
 }
 
 @font-face {
