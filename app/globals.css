@@ -58,8 +58,8 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.06 0 0);
-  --foreground: oklch(0.95 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -168,12 +168,6 @@
 
   .transform-style-3d {
     transform-style: preserve-3d;
-  }
-
-  .gpu-accelerate {
-    will-change: transform, opacity;
-    transform: translateZ(0);
-    backface-visibility: hidden;
   }
 }
 
