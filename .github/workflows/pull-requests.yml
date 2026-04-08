@@ -9,4 +9,4 @@ permissions:
 
 jobs:
   uneditable:
-    uses: gaureshpai/aakar2025/.github/workflows/pull-requests.yml@main
+    uses: gaureshpai/aakar2026/.github/workflows/pull-requests.yml@main

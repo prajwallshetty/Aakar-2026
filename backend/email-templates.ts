@@ -9,7 +9,7 @@ export function buildElitePassEmail(name: string, usn: string, transactionId: st
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Aakar 2025 – Elite Pass Confirmed!</title>
+  <title>Aakar 2026 – Elite Pass Confirmed!</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
 
@@ -154,7 +154,7 @@ export function buildElitePassEmail(name: string, usn: string, transactionId: st
 
                   <div style="font-family:'Share Tech Mono',monospace;font-size:16px;color:#ffffff;line-height:1.6;margin-bottom:30px;">
                     Greetings, <span style="color:#00ffff;font-weight:700;">${name}</span>.<br/><br/>
-                    Your Elite Pass for Aakar 2025 has been successfully processed. You now have full access to all premium events and amenities.
+                    Your Elite Pass for Aakar 2026 has been successfully processed. You now have full access to all premium events and amenities.
                   </div>
 
                   <div style="background:#00000044;border:1px solid #ffffff11;padding:20px;margin-bottom:30px;">
@@ -177,7 +177,7 @@ export function buildElitePassEmail(name: string, usn: string, transactionId: st
         <!-- ═══ FOOTER ═══ -->
         <tr>
           <td style="background:#0a0a2e;padding:24px 32px;border-top:1px solid #00ffff33;text-align:center;">
-            <div style="font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#ffffff88;letter-spacing:2px;">AAKAR 2025 · THE CYBERNETIC ODYSSEY</div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#ffffff88;letter-spacing:2px;">AAKAR 2026 · THE CYBERNETIC ODYSSEY</div>
           </td>
         </tr>
       </table>
@@ -191,7 +191,7 @@ export function buildElitePassEmail(name: string, usn: string, transactionId: st
 export function buildMerchEmail(name: string, variant: string, size: string, transactionId: string): string {
   const variantDisplay = variant.charAt(0).toUpperCase() + variant.slice(1);
   const variantColor = variant.toLowerCase() === 'neon' ? '#00ffff' : variant.toLowerCase() === 'pro' ? '#ff0066' : '#ffffff';
-  
+
   // Inferred price for display in email
   const price = variant.toLowerCase() === 'neon' ? '549' : variant.toLowerCase() === 'pro' ? '599' : '499';
 
@@ -200,7 +200,7 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Aakar 2025 – Merch Order Confirmed!</title>
+  <title>Aakar 2026 – Merch Order Confirmed!</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
 
@@ -234,7 +234,7 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
           <td style="background: linear-gradient(135deg, #0a0a2e 0%, #1a0033 100%); padding:40px 20px; text-align:center; border-bottom: 1px solid ${variantColor}22;">
             <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${variantColor};letter-spacing:5px;margin-bottom:10px;text-transform:uppercase;">▸ SYSTEM://ARMORY/LINK_ESTABLISHED ▸</div>
             <div style="font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;color:#ffffff;letter-spacing:4px;text-transform:uppercase;margin:0;">GEAR SECURED</div>
-            <div style="display:inline-block;margin-top:15px;padding:4px 15px;border:1px solid #ff0066;color:#ff0066;font-size:12px;letter-spacing:3px;">AAKAR 2025 MERCH</div>
+            <div style="display:inline-block;margin-top:15px;padding:4px 15px;border:1px solid #ff0066;color:#ff0066;font-size:12px;letter-spacing:3px;">AAKAR 2026 MERCH</div>
           </td>
         </tr>
 
@@ -243,7 +243,7 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
           <td style="padding:40px 30px;background:#06091a;">
             <div style="font-family:'Share Tech Mono',monospace;font-size:16px;line-height:1.6;margin-bottom:30px;">
               Greetings, <span style="color:${variantColor};font-weight:700;">${name}</span>. <br/><br/>
-              Your request for Aakar 2025 tactical apparel has been logged and encrypted. You are now part of the movement.
+              Your request for Aakar 2026 tactical apparel has been logged and encrypted. You are now part of the movement.
             </div>
 
             <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:25px;margin-bottom:30px;border-left:4px solid ${variantColor};">
@@ -272,7 +272,7 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
             <div style="border: 1px dashed ${variantColor}44; padding: 20px; text-align:center;">
               <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;color:#ffffff;">NEXT STEPS</div>
               <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;">
-                Verification in progress. Once the transmission is confirmed, your gear will be prepared for pickup at the <strong>Aakar 2025 Tech Hub</strong> during the event.
+                Verification in progress. Once the transmission is confirmed, your gear will be prepared for pickup at the <strong>Aakar 2026 Tech Hub</strong> during the event.
               </div>
             </div>
           </td>
@@ -308,7 +308,7 @@ export function buildMerchAdminNotificationEmail(order: any): string {
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>New Merch Order - Aakar 2025</title>
+  <title>New Merch Order - Aakar 2026</title>
 </head>
 <body style="font-family:sans-serif; background:#f4f4f4; padding:20px;">
   <div style="max-width:600px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd;">

@@ -16,7 +16,7 @@ const Concert = () => {
         <h2 className="text-4xl font-bold mb-2">Live Concert – Day 2</h2>
         <h3 className="text-3xl font-semibold mb-4">The Harmonic Vibes</h3>
         <p className={`text-lg md:text-xl text-gray-300 mb-8 ${montserrat.className}`}>
-          Day 2 of Aakar 2025 will echo with raw energy and new beats as Rythm Mates steps into the spotlight.<br />
+          Day 2 of Aakar 2026 will echo with raw energy and new beats as Rythm Mates steps into the spotlight.<br />
           Join us for a night of musical discovery and excitement!
         </p>
 

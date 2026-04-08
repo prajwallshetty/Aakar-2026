@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
+import {
+  AnimeParticleField,
+  AnimeOrbField,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
+  ACCENTS
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const faqs = [
@@ -19,8 +19,8 @@ const faqs = [
   { question: "What happens if I miss my quest?", answer: "Missing a registered quest may lead to disqualification from that particular event. We recommend checking the schedule thoroughly and arriving on time." },
   { question: "Will there be food and accommodation for participants?", answer: "Yes. Food stalls and arrangements will be available at the venue. For outstation participants, accommodation can be arranged on prior request—please contact the coordinators for details." },
   { question: "Can I bring my own laptop or project materials?", answer: "Yes, participants are encouraged to bring their own laptops, tools, or materials as per event requirements. Ensure you comply with the guidelines provided for each event." },
-  { question: "How will I be notified about updates?", answer: "Participants will receive updates via email, WhatsApp, and SMS. You can also stay informed by following our official Instagram page: @aakar__2025." },
-  { question: "Who should I contact for support?", answer: "For any queries or assistance, please contact us at: Email: aakarofficial2025@gmail.com | Phone: +91 9741152696" },
+  { question: "How will I be notified about updates?", answer: "Participants will receive updates via email, WhatsApp, and SMS. You can also stay informed by following our official Instagram page: @aakar__2026." },
+  { question: "Who should I contact for support?", answer: "For any queries or assistance, please contact us at: Email: aakarofficial2026@gmail.com | Phone: +91 9741152696" },
 ];
 
 export default function FAQPage() {
@@ -91,7 +91,7 @@ export default function FAQPage() {
               fontWeight: 400
             }}>
               FREQUENTLY ASKED
-              <br/>
+              <br />
               <span style={{ color: ANIME_COLORS.primary }}>QUESTIONS</span>
             </h1>
             <p style={{
@@ -136,10 +136,10 @@ export default function FAQPage() {
                       WebkitBackdropFilter: "blur(12px)",
                     }}
                     onMouseEnter={(e: React.MouseEvent) => {
-                       if(!isOpen) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
+                      if (!isOpen) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
                     }}
                     onMouseLeave={(e: React.MouseEvent) => {
-                       if(!isOpen) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)";
+                      if (!isOpen) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)";
                     }}
                   >
                     <span style={{

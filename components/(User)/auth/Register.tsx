@@ -315,7 +315,7 @@ const Register = () => {
             ? events.filter((e) => selectedEvents.find((s) => s.id === e.id)).reduce((sum, e) => sum + (e.fee || 0), 0)
             : 0;
         setTotalAmount(amount);
-        const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2025 Registration")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Aakar 2025 Registration")}`;
+        const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2026 Registration")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Aakar 2026 Registration")}`;
         setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`);
         setShowQRCode(true);
     };
@@ -411,7 +411,7 @@ const Register = () => {
         }
     };
 
-    const colleges =  [
+    const colleges = [
         "A J Institute of Engineering and Technology, Mangalore",
         "Alva's Ayurveda Medical College, Moodbidri",
         "Srinivas institute of technology, valachill",
