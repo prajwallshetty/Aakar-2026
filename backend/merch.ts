@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
-import { buildMerchEmail } from "./email-templates";
+import { buildMerchEmail, buildMerchAdminNotificationEmail } from "./email-templates";
 
 const variantPriceMap = {
   classic: 499,
@@ -152,11 +152,25 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
     }
 
     if (order) {
+      // 1. Send confirmation to customer
       await sendEmail(
         order.email,
         `Merch Order Confirmed – Aakar 2025! 👕`,
         buildMerchEmail(order.name, order.merchVariant || "Classic", order.size, order.transactionId)
       );
+
+      // 2. Notify Admin
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (adminEmail) {
+        await sendEmail(
+          adminEmail,
+          `New Merch Order: ${order.name} (${order.merchVariant || 'Classic'})`,
+          buildMerchAdminNotificationEmail({
+            ...order,
+            merchVariant: order.merchVariant || inferVariantFromAmount(order.amount)
+          })
+        );
+      }
     }
 
     return { data: order, error: null };

@@ -2,7 +2,7 @@
 
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
+const mailConfig: any = {
   host: 'smtp.gmail.com',
   port: 465,
   secure: true,
@@ -11,10 +11,16 @@ const transporter = nodemailer.createTransport({
     user: process.env.MAIL_USER,
     clientId: process.env.MAIL_CLIENT_ID,
     clientSecret: process.env.MAIL_CLIENT_SECRET,
-    accessToken: process.env.MAIL_ACCESS_TOKEN,
     refreshToken: process.env.MAIL_REFRESH_TOKEN
   }
-});
+};
+
+// Only add accessToken if strictly provided and not empty
+if (process.env.MAIL_ACCESS_TOKEN) {
+  mailConfig.auth.accessToken = process.env.MAIL_ACCESS_TOKEN;
+}
+
+const transporter = nodemailer.createTransport(mailConfig);
 
 export async function sendEmail(to: string, subject: string, html: string) {
   try {

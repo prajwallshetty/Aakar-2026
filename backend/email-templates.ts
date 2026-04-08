@@ -189,7 +189,11 @@ export function buildElitePassEmail(name: string, usn: string, transactionId: st
 }
 
 export function buildMerchEmail(name: string, variant: string, size: string, transactionId: string): string {
+  const variantDisplay = variant.charAt(0).toUpperCase() + variant.slice(1);
   const variantColor = variant.toLowerCase() === 'neon' ? '#00ffff' : variant.toLowerCase() === 'pro' ? '#ff0066' : '#ffffff';
+  
+  // Inferred price for display in email
+  const price = variant.toLowerCase() === 'neon' ? '549' : variant.toLowerCase() === 'pro' ? '599' : '499';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -199,70 +203,134 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
   <title>Aakar 2025 – Merch Order Confirmed!</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.98); }
+    }
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 10px ${variantColor}88, 0 0 20px ${variantColor}44; }
+      50% { text-shadow: 0 0 15px ${variantColor}, 0 0 30px ${variantColor}88; }
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#050818;font-family:'Share Tech Mono',monospace;">
+<body style="margin:0;padding:0;background:#050818;font-family:'Share Tech Mono',monospace;color:#ffffff;">
 
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#050818;padding:48px 20px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#050818;padding:40px 10px;">
   <tr><td align="center">
-    <div style="max-width:600px;width:100%;border: 1px solid #ff006644;position:relative;">
+    
+    <div style="max-width:600px;width:100%;border: 1px solid ${variantColor}44;background:#0a0a2e;position:relative;overflow:hidden;border-radius:4px;">
       
-      <table width="100%" cellpadding="0" cellspacing="0">
+      <!-- Scanline overlay effect -->
+      <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);"></div>
+
+      <table width="100%" cellpadding="0" cellspacing="0" style="position:relative;z-index:2;">
         <!-- HEADER -->
         <tr>
-          <td style="background:#1a0033;padding:40px;text-align:center;border-bottom:1px solid #ff006633;">
-            <div style="font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:#ffffff;letter-spacing:5px;">GEAR SECURED</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff0066;letter-spacing:10px;margin-top:10px;">AAKAR 2025 MERCH</div>
+          <td style="background: linear-gradient(135deg, #0a0a2e 0%, #1a0033 100%); padding:40px 20px; text-align:center; border-bottom: 1px solid ${variantColor}22;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${variantColor};letter-spacing:5px;margin-bottom:10px;text-transform:uppercase;">▸ SYSTEM://ARMORY/LINK_ESTABLISHED ▸</div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;color:#ffffff;letter-spacing:4px;text-transform:uppercase;margin:0;">GEAR SECURED</div>
+            <div style="display:inline-block;margin-top:15px;padding:4px 15px;border:1px solid #ff0066;color:#ff0066;font-size:12px;letter-spacing:3px;">AAKAR 2025 MERCH</div>
           </td>
         </tr>
 
         <!-- BODY -->
         <tr>
-          <td style="background:#06091a;padding:40px;">
-            <div style="font-family:'Share Tech Mono',monospace;font-size:16px;color:#ffffff;line-height:1.6;margin-bottom:30px;">
-              Ready to represent, <span style="color:#ff0066;">${name}</span>?<br/><br/>
-              Your order for Aakar 2025 merchandise has been confirmed. You've selected the following gear:
+          <td style="padding:40px 30px;background:#06091a;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:16px;line-height:1.6;margin-bottom:30px;">
+              Greetings, <span style="color:${variantColor};font-weight:700;">${name}</span>. <br/><br/>
+              Your request for Aakar 2025 tactical apparel has been logged and encrypted. You are now part of the movement.
             </div>
 
-            <div style="background:#00000044;border:1px solid #ffffff11;padding:24px;margin-bottom:30px;">
-              <table width="100%" style="font-family:'Share Tech Mono',monospace;color:#ffffff;">
+            <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:25px;margin-bottom:30px;border-left:4px solid ${variantColor};">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:15px;">◈ ORDER_MANIFEST</div>
+              
+              <table width="100%" style="font-family:'Share Tech Mono',monospace;color:#ffffff;font-size:14px;">
                 <tr>
-                  <td width="40%" style="padding:8px 0;color:#ffffff44;">VARIANT:</td>
-                  <td style="padding:8px 0;color:${variantColor};font-weight:700;text-transform:uppercase;">${variant}</td>
+                  <td width="40%" style="padding:8px 0;color:rgba(255,255,255,0.4);">ARMOR_CLASS:</td>
+                  <td style="padding:8px 0;color:${variantColor};font-weight:700;text-transform:uppercase;letter-spacing:1px;">${variantDisplay}</td>
                 </tr>
                 <tr>
-                  <td style="padding:8px 0;color:#ffffff44;">SIZE:</td>
-                  <td style="padding:8px 0;color:#ffffff;">${size}</td>
+                  <td style="padding:8px 0;color:rgba(255,255,255,0.4);">CHASSIS_SIZE:</td>
+                  <td style="padding:8px 0;">${size}</td>
                 </tr>
                 <tr>
-                  <td style="padding:8px 0;color:#ffffff44;">TXN_ID:</td>
-                  <td style="padding:8px 0;color:#ffffff66;font-size:11px;">${transactionId}</td>
+                  <td style="padding:8px 0;color:rgba(255,255,255,0.4);">CREDITS:</td>
+                  <td style="padding:8px 0;">₹${price}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:rgba(255,255,255,0.4);">LOG_ID:</td>
+                  <td style="padding:8px 0;font-size:11px;color:rgba(255,255,255,0.6);">${transactionId}</td>
                 </tr>
               </table>
             </div>
 
-            <div style="border-left:2px solid #ff0066;padding-left:20px;font-size:13px;color:#ffffff88;line-height:1.6;">
-              <strong style="color:#ffffff;">WHAT'S NEXT?</strong><br/>
-              Stay tuned for collection details. We will notify you once your gear is ready for pickup during the fest.
+            <div style="border: 1px dashed ${variantColor}44; padding: 20px; text-align:center;">
+              <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;color:#ffffff;">NEXT STEPS</div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;">
+                Verification in progress. Once the transmission is confirmed, your gear will be prepared for pickup at the <strong>Aakar 2025 Tech Hub</strong> during the event.
+              </div>
             </div>
           </td>
         </tr>
 
         <!-- FOOTER -->
         <tr>
-          <td style="background:#0a0a2e;padding:20px;text-align:center;font-size:10px;color:#ffffff44;letter-spacing:2px;">
-             EQUIPMENT // APPAREL // AAKAR 25
+          <td style="background:#0a0a2e;padding:25px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
+            <div style="font-family:'Orbitron',sans-serif;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:3px;">
+              EQUIPMENT // APPAREL // AAKAR 25
+            </div>
+            <div style="margin-top:10px;font-size:9px;color:rgba(255,255,255,0.2);">
+              DO NOT REPLY TO THIS AUTOMATED UPLINK
+            </div>
           </td>
         </tr>
       </table>
 
     </div>
+
+    <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;">
+      Powering the Future @ AJIET
+    </div>
+
   </td></tr>
 </table>
+
+</body>
+</html>`;
+}
+export function buildMerchAdminNotificationEmail(order: any): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>New Merch Order - Aakar 2025</title>
+</head>
+<body style="font-family:sans-serif; background:#f4f4f4; padding:20px;">
+  <div style="max-width:600px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd;">
+    <h2 style="color:#333; border-bottom:2px solid #ff0066; padding-bottom:10px;">New Merch Order Received</h2>
+    
+    <table width="100%" style="border-collapse:collapse; margin-top:20px;">
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Name:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.name}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Email:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.email}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Phone:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.phone}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Variant:</td><td style="padding:8px; border-bottom:1px solid #eee; text-transform:uppercase;">${order.merchVariant || 'Classic'}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Size:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.size}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">TXN ID:</td><td style="padding:8px; border-bottom:1px solid #eee; font-family:monospace;">${order.transactionId}</td></tr>
+    </table>
+
+    <div style="margin-top:30px; text-align:center;">
+      <a href="${order.paymentScreenshotUrl || '#'}" style="display:inline-block; padding:12px 25px; background:#ff0066; color:#fff; text-decoration:none; border-radius:4px; font-weight:bold;">View Payment Screenshot</a>
+    </div>
+
+    <p style="margin-top:30px; font-size:12px; color:#666; text-align:center;">
+      Access the admin panel to verify this transaction.
+    </p>
+  </div>
 </body>
 </html>`;
 }
