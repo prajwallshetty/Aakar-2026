@@ -60,7 +60,6 @@ model MerchOrder {
   id                   Int        @id @default(autoincrement())
   uuid                 String     @unique @default(uuid())
   name                 String
-  usn                  String     @unique
   email                String     @unique
   phone                String
   size                 tshirtSize

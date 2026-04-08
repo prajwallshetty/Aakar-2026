@@ -1,6 +1,7 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
+import { randomUUID } from "crypto";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
@@ -44,7 +45,9 @@ let ensuredMerchOrderIndexes = false;
 async function ensureMerchOrderIndexes(client: any) {
   if (ensuredMerchOrderIndexes) return;
 
-  // Keep transactionId unique for merch payments.
+  // Remove legacy USN artifacts from older schemas so merch orders no longer require USN.
+  await client.$executeRawUnsafe(`DROP INDEX IF EXISTS "MerchOrder_usn_key";`);
+  await client.$executeRawUnsafe(`ALTER TABLE IF EXISTS "MerchOrder" DROP COLUMN IF EXISTS "usn";`);
 
   ensuredMerchOrderIndexes = true;
 }
@@ -63,9 +66,30 @@ function normalizePhone(phone: string): string {
   return digits;
 }
 
+async function createMerchOrderRaw(client: any, baseData: {
+  name: string;
+  email: string;
+  phone: string;
+  size: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL";
+  transactionId: string;
+  amount: number;
+  paymentScreenshotUrl: string | null;
+}) {
+  const now = new Date();
+
+  const inserted = await client.$queryRaw<Array<any>>`
+    INSERT INTO "MerchOrder"
+      ("uuid", "name", "email", "phone", "size", "transactionId", "amount", "paymentScreenshotUrl", "createdAt", "updatedAt")
+    VALUES
+      (${randomUUID()}, ${baseData.name}, ${baseData.email}, ${baseData.phone}, ${baseData.size}::"tshirtSize", ${baseData.transactionId}, ${baseData.amount}, ${baseData.paymentScreenshotUrl}, ${now}, ${now})
+    RETURNING *
+  `;
+
+  return inserted[0] ?? null;
+}
+
 export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [key: string]: string } | null> {
   const errors: { [key: string]: string } = {};
-  const merchDb = db as any;
 
   if (!data.name || data.name.trim().length < 2) {
     errors.name = "Name is required";
@@ -93,25 +117,12 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
     return errors;
   }
 
-  const normalizedEmail = data.email.toLowerCase();
-  const normalizedTransactionId = data.transactionId.trim();
-
-  const existingOrder = await merchDb.merchOrder.findFirst({
-    where: { transactionId: normalizedTransactionId },
-    select: { transactionId: true },
-  });
-
-  if (existingOrder) {
-    errors.transactionId = "This transaction ID already exists";
-  }
-
   return Object.keys(errors).length > 0 ? errors : null;
 }
 
 export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceResponse<any>> {
   try {
     const merchDb = db as any;
-    await ensureMerchOrderIndexes(merchDb);
 
     const validationErrors = await validateMerchOrderData(data);
     if (validationErrors) {
@@ -131,46 +142,48 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
       paymentScreenshotUrl: data.paymentScreenshotUrl || null,
     };
 
-    let order;
     try {
-      order = await merchDb.merchOrder.create({
-        data: {
-          ...baseData,
-          merchVariant,
-        },
-      });
+      await ensureMerchOrderIndexes(merchDb);
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      if (!message.includes("Unknown argument `merchVariant`")) {
+      if (!message.includes("does not exist")) {
         throw error;
       }
-
-      // Backward compatibility for databases not migrated yet.
-      order = await merchDb.merchOrder.create({
-        data: baseData,
-      });
     }
+
+    const order = await createMerchOrderRaw(merchDb, baseData);
 
     if (order) {
       // 1. Send confirmation to customer
       await sendEmail(
         order.email,
-        `Merch Order Confirmed – Aakar 2026! 👕`,
+        `Merch Order Confirmed – Aakar 2025! 👕`,
         buildMerchEmail(order.name, order.merchVariant || "Classic", order.size, order.transactionId)
       );
 
       // 2. Notify Admin
       const adminEmail = process.env.ADMIN_EMAIL;
-      if (adminEmail) {
-        await sendEmail(
-          adminEmail,
-          `New Merch Order: ${order.name} (${order.merchVariant || 'Classic'})`,
-          buildMerchAdminNotificationEmail({
-            ...order,
-            merchVariant: order.merchVariant || inferVariantFromAmount(order.amount)
-          })
-        );
-      }
+
+      // Do not block the checkout response on SMTP/network latency.
+      void Promise.allSettled([
+        sendEmail(
+          order.email,
+          `Merch Order Confirmed – Aakar 2025! 👕`,
+          buildMerchEmail(order.name, resolvedVariant, order.size, order.transactionId)
+        ),
+        ...(adminEmail
+          ? [
+              sendEmail(
+                adminEmail,
+                `New Merch Order: ${order.name} (${resolvedVariant})`,
+                buildMerchAdminNotificationEmail({
+                  ...order,
+                  merchVariant: resolvedVariant,
+                })
+              ),
+            ]
+          : []),
+      ]);
     }
 
     return { data: order, error: null };
@@ -182,9 +195,6 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
 
       if (target.includes("transactionid")) {
         return { data: null, error: { transactionId: "This transaction ID already exists" } };
-      }
-      if (target.includes("usn")) {
-        return { data: null, error: { transactionId: "A merch order already exists" } };
       }
       if (target.includes("email")) {
         return { data: null, error: { email: "A merch order already exists for this email" } };
@@ -210,7 +220,22 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
     }
 
     const merchDb = db as any;
-    const orders = await merchDb.merchOrder.findMany({ orderBy: { createdAt: "desc" } });
+    const orders = await merchDb.$queryRaw<Array<any>>`
+      SELECT
+        "id",
+        "uuid",
+        "name",
+        "email",
+        "phone",
+        "size",
+        "transactionId",
+        "amount",
+        "paymentScreenshotUrl",
+        "createdAt",
+        "updatedAt"
+      FROM "MerchOrder"
+      ORDER BY "createdAt" DESC
+    `;
     const normalizedOrders = (orders || []).map((order: any) => ({
       ...order,
       merchVariant: order.merchVariant || inferVariantFromAmount(order.amount),
@@ -224,5 +249,9 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
 
 export async function getMerchOrdersCount(): Promise<number> {
   if (!(await isAdmin())) return 0;
-  return (db as any).merchOrder.count();
+  const result = await (db as any).$queryRaw<Array<{ count: bigint }>>`
+    SELECT COUNT(*)::bigint AS count
+    FROM "MerchOrder"
+  `;
+  return Number(result[0]?.count ?? 0);
 }
