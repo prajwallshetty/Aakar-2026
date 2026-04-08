@@ -531,29 +531,7 @@ const Team = () => (
         display: flex; align-items: center; gap: 8px;
       }
 
-      /* ── Page title ── */
-      .page-badge {
-        display: inline-flex; align-items: center; gap: 8px;
-        background: rgba(0,0,0,0.45);
-        backdrop-filter: blur(6px);
-        color: #00E5FF;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: clamp(0.65rem, 2vw, 0.85rem);
-        letter-spacing: 0.22em;
-        padding: 6px 22px;
-        border: 1px solid rgba(0,229,255,0.4);
-        border-radius: 30px;
-        box-shadow: 0 0 18px rgba(0,229,255,0.2), inset 0 0 12px rgba(0,229,255,0.07);
-        margin-bottom: 1.6rem;
-        animation: subtitleReveal 1s ease 0.2s both;
-      }
-      .badge-dot {
-        width: 7px; height: 7px; border-radius: 50%;
-        background: #00E5FF;
-        box-shadow: 0 0 8px #00E5FF;
-        animation: ledPulse 1.5s ease-in-out infinite;
-        flex-shrink: 0;
-      }
+      
       .main-title {
         font-family: 'Cinzel', serif;
         font-size: clamp(3rem, 10vw, 6.5rem);
@@ -570,17 +548,6 @@ const Team = () => (
         -webkit-text-stroke: 0;
         text-shadow: 0 0 35px rgba(255,255,255,0.4);
       }
-      .main-subtitle {
-        font-family: 'Share Tech Mono', monospace;
-        font-size: clamp(0.7rem, 2vw, 0.9rem);
-        letter-spacing: 0.3em;
-        color: #00E5FF;
-        margin-top: 1.8rem;
-        text-transform: uppercase;
-        text-shadow: 0 0 12px #00E5FF;
-        animation: subtitleReveal 1.2s ease 0.5s both;
-      }
-      .cursor-blink { animation: ledPulse 1s step-end infinite; }
 
       /* ── Grid divider line ── */
       .grid-divider {
@@ -688,20 +655,13 @@ const Team = () => (
 
         {/* ── Page header ────────────────────────────────────── */}
         <div style={{ textAlign: "center", position: "relative", zIndex: 20 }}>
-          <div className="page-badge">
-            <div className="badge-dot" />
-            SYSTEM_OP // AAKAR_2026
-          </div>
+          
 
           <h1 className="main-title">
             MEET THE{" "}
             <span className="main-title-accent">SQUAD</span>
           </h1>
 
-          <p className="main-subtitle">
-            &gt; WARNING: HIGH POWER LEVELS DETECTED{" "}
-            <span className="cursor-blink">_</span>
-          </p>
 
           {/* Decorative horizontal rule */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "center", marginTop: "2.5rem" }}>
