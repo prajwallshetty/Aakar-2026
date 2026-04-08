@@ -9,10 +9,10 @@ type GL = Renderer["gl"];
 
 /* ─── Event card data with routes ───────────────────────────────── */
 const EVENT_ITEMS = [
-  { image: "/events/9.png",  text: "CULTURAL",  href: "/events/cultural"  },
-  { image: "/events/12.png", text: "TECHNICAL", href: "/events/technical" },
-  { image: "/events/13.png", text: "GAMING",    href: "/events/gaming"    },
-  { image: "/events/11.png", text: "SPECIAL",   href: "/events/special"   },
+  { image: "/events/cultural.png",  text: "CULTURAL",  href: "/events/cultural"  },
+  { image: "/events/technical.png", text: "TECHNICAL", href: "/events/technical" },
+  { image: "/events/gaming.png", text: "GAMING",    href: "/events/gaming"    },
+  { image: "/events/special.png",   text: "SPECIAL",   href: "/events/special"   },
 ];
 
 /* ─── Helpers ───────────────────────────────────────────────────── */
