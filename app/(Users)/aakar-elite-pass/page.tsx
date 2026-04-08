@@ -571,7 +571,7 @@ export default function AakarElitePage() {
                                 <span className="limited-tag">Limited Offer till 15th!</span>
                                 <span className="price-label">Cost</span>
                                 <div className="flex items-center gap-3">
-                                    <span className="price-old">₹499</span>
+                                    <span className="price-old">₹699</span>
                                     <span className="price-val">₹399</span>
                                 </div>
                             </div>

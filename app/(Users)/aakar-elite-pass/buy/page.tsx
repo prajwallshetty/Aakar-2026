@@ -64,6 +64,7 @@ export default function ElitePassBuyPage() {
   const [generalError, setGeneralError] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
   const [screenshotPreview, setScreenshotPreview] = useState("");
+  const [qrImageUrl, setQrImageUrl] = useState("");
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", usn: "", college: "", department: "", year: 0,
     transactionId: "", paymentScreenshot: null as File | null,
@@ -177,7 +178,14 @@ export default function ElitePassBuyPage() {
     }
 
     setGeneralError("");
+    generateQRCode();
     setPaymentStep("payment");
+  };
+
+  const generateQRCode = () => {
+    const amount = PASS_PRICE_EARLY;
+    const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2025 Elite Pass")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Elite Pass Purchase")}`;
+    setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`);
   };
 
   const proceedToConfirm = async () => {
@@ -716,7 +724,13 @@ export default function ElitePassBuyPage() {
                       </p>
 
                       <div className="qr-box mt-6">
-                        <img src="/elite-pass-qr.jpeg" alt="Elite Pass UPI QR" className="w-52 h-52 object-cover" style={{ border: `2px solid ${ANIME_COLORS.accent}`, borderRadius: 8 }} onError={(e) => (e.currentTarget.style.display = "none")} />
+                        {qrImageUrl ? (
+                          <img src={qrImageUrl} alt="Elite Pass UPI QR" className="w-52 h-52 object-cover" style={{ border: `2px solid ${ANIME_COLORS.accent}`, borderRadius: 8 }} />
+                        ) : (
+                          <div className="w-52 h-52 flex items-center justify-center font-mono text-xs" style={{ border: `1.5px dashed ${ANIME_COLORS.primary}44` }}>
+                            Initializing Transponder...
+                          </div>
+                        )}
                         <div>
                           <div className="field-label">UPI ID</div>
                           <div className="font-mono text-sm" style={{ color: ANIME_COLORS.text }}>ajiet@cnrb</div>
