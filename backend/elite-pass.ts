@@ -347,7 +347,7 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
     if (order) {
       await sendEmail(
         order.email,
-        "Elite Pass Confirmed – Aakar 2025! ⚡",
+        "Elite Pass Confirmed – Aakar 2026! ⚡",
         buildElitePassEmail(order.name, order.usn, order.transactionId)
       );
     }
@@ -419,7 +419,7 @@ export async function updateElitePassOrder(id: number, data: any): Promise<Servi
     } catch (prismaErr) {
       // Fallback to raw SQL if Prisma client is stale and doesn't recognize new columns
       console.warn("Prisma update failed, attempting raw SQL fallback:", prismaErr);
-      
+
       if (data.paymentStatus !== undefined || data.certificateSent !== undefined) {
         const updates: string[] = [];
         if (data.paymentStatus !== undefined) updates.push(`"paymentStatus" = '${data.paymentStatus}'`);
@@ -432,7 +432,7 @@ export async function updateElitePassOrder(id: number, data: any): Promise<Servi
             SET ${updates.join(', ')}
             WHERE "id" = ${id}
           `);
-          
+
           // Return the updated object by fetching it
           const result = await db.$queryRaw<any[]>`SELECT * FROM "ElitePassOrder" WHERE "id" = ${id}`;
           return { data: result[0], error: null };

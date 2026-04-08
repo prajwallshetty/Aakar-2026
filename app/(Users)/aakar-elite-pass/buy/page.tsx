@@ -23,7 +23,7 @@ type SoloEventOption = {
   date: string;
 };
 
-const COLLEGES = ["A J Institute of Engineering and Technology, Mangalore","Alva's Institute of Engineering Technology, Moodbidri","Manipal Institute of Technology, Manipal","NITK, Surathkal","St Joseph Engineering College, Vamanjoor, Mangaluru","Sahyadri College of Engineering and Management","MITE - Mangalore Institute of Technology & Engineering","Karavali Institute of Technology, Mangalore","SDM College of Engineering and Technology (SDMC)","Srinivas Institute of Engineering and Technology, Mukka","P.A. College of Engineering, Mangalore","N.M.A.M. Institute of Technology, Nitte, Karkala","Canara Engineering College, Mangalore","Yenepoya Institute of Technology (YIT), Moodbidri","Govinda Dasa College, Surathkal","Other"].sort();
+const COLLEGES = ["A J Institute of Engineering and Technology, Mangalore", "Alva's Institute of Engineering Technology, Moodbidri", "Manipal Institute of Technology, Manipal", "NITK, Surathkal", "St Joseph Engineering College, Vamanjoor, Mangaluru", "Sahyadri College of Engineering and Management", "MITE - Mangalore Institute of Technology & Engineering", "Karavali Institute of Technology, Mangalore", "SDM College of Engineering and Technology (SDMC)", "Srinivas Institute of Engineering and Technology, Mukka", "P.A. College of Engineering, Mangalore", "N.M.A.M. Institute of Technology, Nitte, Karkala", "Canara Engineering College, Mangalore", "Yenepoya Institute of Technology (YIT), Moodbidri", "Govinda Dasa College, Surathkal", "Other"].sort();
 
 async function compressImageForUpload(file: File): Promise<File> {
   if (!file.type.startsWith("image/") || file.size <= 1.5 * 1024 * 1024) return file;
@@ -184,7 +184,7 @@ export default function ElitePassBuyPage() {
 
   const generateQRCode = () => {
     const amount = PASS_PRICE_EARLY;
-    const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2025 Elite Pass")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Elite Pass Purchase")}`;
+    const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2026 Elite Pass")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Elite Pass Purchase")}`;
     setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`);
   };
 
@@ -720,7 +720,7 @@ export default function ElitePassBuyPage() {
                       <p className="info-tag">UPI Payment</p>
                       <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Scan & Pay</h1>
                       <p className="mt-3 font-mono text-sm" style={{ color: `${ANIME_COLORS.text}aa`, lineHeight: 1.8 }}>
-                         Scan the QR to complete your tribute, then enter the transaction ID.
+                        Scan the QR to complete your tribute, then enter the transaction ID.
                       </p>
 
                       <div className="qr-box mt-6">
@@ -736,7 +736,7 @@ export default function ElitePassBuyPage() {
                           <div className="font-mono text-sm" style={{ color: ANIME_COLORS.text }}>ajiet@cnrb</div>
                         </div>
                         <div className="font-mono text-xs" style={{ color: `${ANIME_COLORS.secondary}bb`, letterSpacing: "0.2em" }}>
-                           Pay ₹{PASS_PRICE_EARLY} (Early Bird)
+                          Pay ₹{PASS_PRICE_EARLY} (Early Bird)
                         </div>
                       </div>
 

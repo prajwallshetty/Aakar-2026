@@ -58,10 +58,10 @@ export async function POST(req: NextRequest) {
                 }
 
                 const attachments = [];
-                
+
                 for (const event of participant.events) {
                     const certId = `${participant.uuid.slice(0, 8)}-${event.id}`;
-                    
+
                     const pdfBuffer = await generateCertificate(
                         participant.name,
                         event.eventName,
@@ -110,10 +110,10 @@ export async function POST(req: NextRequest) {
         for (const order of elitePassOrders) {
             try {
                 const certId = `ELITE-${order.uuid.slice(0, 8)}`;
-                
+
                 const pdfBuffer = await generateCertificate(
                     order.name,
-                    "Aakar 2025", 
+                    "Aakar 2026",
                     certId
                 );
 

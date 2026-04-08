@@ -155,7 +155,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
       // 1. Send confirmation to customer
       await sendEmail(
         order.email,
-        `Merch Order Confirmed – Aakar 2025! 👕`,
+        `Merch Order Confirmed – Aakar 2026! 👕`,
         buildMerchEmail(order.name, order.merchVariant || "Classic", order.size, order.transactionId)
       );
 

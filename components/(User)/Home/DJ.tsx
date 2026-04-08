@@ -16,7 +16,7 @@ const DJ = () => {
         <h2 className="text-4xl font-bold mb-2">DJ Night – Day 1</h2>
         <h3 className="text-3xl font-semibold mb-4">Pulse Night</h3>
         <p className={`text-lg md:text-xl text-gray-300 mb-8 ${montserrat.className}`}>
-          Day 1 of Aakar 2025 will end on a high note with the electrifying DJ Night featuring VDJ Toxic!<br/>
+          Day 1 of Aakar 2026 will end on a high note with the electrifying DJ Night featuring VDJ Toxic!<br />
           Get ready to experience unforgettable beats and explosive energy that will light up the night.
         </p>
 

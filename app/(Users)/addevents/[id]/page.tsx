@@ -103,8 +103,8 @@ export default function AddAdditionalEvents({
                     label: category.label,
                     options: category.options.filter(
                         (option) => !userEvents?.some((ex) => ex.id === option.id)
-                 )
-            }));
+                    )
+                }));
 
                 setEventOptions(filteredOptions);
             } catch (error) {
@@ -176,8 +176,8 @@ export default function AddAdditionalEvents({
         setTotalAmount(amount);
 
         const upiId = "ajiet@cnrb";
-        const payeeName = "Aakar 2025 Registration";
-        const transactionNote = "Aakar 2025 Registration";
+        const payeeName = "Aakar 2026 Registration";
+        const transactionNote = "Aakar 2026 Registration";
 
         const upiUrl = `upi://pay?pa=${encodeURIComponent(
             upiId

@@ -10,15 +10,15 @@ import Script from "next/script";
 export const metadata: Metadata = {
     title: "AAKAR 2026",
     description:
-        "Experience the spirit of innovation, creativity, and competition at AAKAR 2025 – a premier TechnoCultural fest bringing together students, tech enthusiasts, and innovators for exciting events, workshops, and unforgettable memories.",
+        "Experience the spirit of innovation, creativity, and competition at AAKAR 2026 – a premier TechnoCultural fest bringing together students, tech enthusiasts, and innovators for exciting events, workshops, and unforgettable memories.",
     keywords: [
-        "AAKAR 2026", "TechnoCultural Fest", "Engineering Fest", "Cultural Fest India", "Student Innovation", 
-        "AJIET Mangaluru", "College Fest Karnataka", "Technical Events", "Cultural Events India", 
-        "Hackathon 2026", "Robotics Competition", "Dance Battle", "Music Fest", "Innovation Challenge", 
-        "Gaming Tournament", "Workshop for Students", "Tech Symposium", "Youth Festival India", 
+        "AAKAR 2026", "TechnoCultural Fest", "Engineering Fest", "Cultural Fest India", "Student Innovation",
+        "AJIET Mangaluru", "College Fest Karnataka", "Technical Events", "Cultural Events India",
+        "Hackathon 2026", "Robotics Competition", "Dance Battle", "Music Fest", "Innovation Challenge",
+        "Gaming Tournament", "Workshop for Students", "Tech Symposium", "Youth Festival India",
         "AAKAR Registration", "Best College Fest South India", "Web Development Contest", "AI ML Workshop"
     ],
-    authors: [{ name: "AAKAR Team", url: "https://aakar2025.in" }],
+    authors: [{ name: "AAKAR Team", url: "https://aakar2026.in" }],
     creator: "AAKAR Team",
     publisher: "AAKAR Fest Committee",
     robots: "index, follow",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
         description:
             "Tech meets culture at AAKAR 2026! Explore innovation, creativity, and fun at our annual fest.",
         images: ["https://aakar.live/aklogo.png"],
-        creator: "@aakar__2025",
+        creator: "@aakar__2026",
     },
 };
 
@@ -64,11 +64,11 @@ export default async function RootLayout({
                 <SessionProvider session={session}>{children}</SessionProvider>
                 <Analytics />
                 <SpeedInsights />
-                
+
                 {/* Google Analytics */}
-                <Script 
-                    src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM" 
-                    strategy="afterInteractive" 
+                <Script
+                    src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM"
+                    strategy="afterInteractive"
                 />
                 <Script id="google-analytics" strategy="afterInteractive">
                     {`
