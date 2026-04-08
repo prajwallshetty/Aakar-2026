@@ -9,7 +9,7 @@ interface TeamCategory { name: string; members: TeamMember[]; }
 
 const teamData: TeamCategory[] = [
   {
-    name: "Mentorship Panel",
+    name: "Sensei Council",
     members: [
       { name: "Dr. Chanchal Antony", role: "Chief Co-ordinator", image: "/Team/lecturer/chanchalantony.jpg" },
       { name: "Mr. Harold D'Souza", role: "Faculty Co-ordinator", image: "/Team/lecturer/harold.jpg" },
@@ -18,7 +18,7 @@ const teamData: TeamCategory[] = [
     ],
   },
   {
-    name: "Core Committee",
+    name: "Guild Masters",
     members: [
       { name: "Aman Hasan", role: "Event Head", image: "/Team/Core-Committee/aman.jpg" },
       { name: "Ankitha", role: "Sponsorship & Finance Head", image: "/Team/Core-Committee/ankitha.jpeg" },
@@ -36,7 +36,7 @@ const teamData: TeamCategory[] = [
     ],
   },
   {
-  name: "Website Team",
+  name: "Code Ninjas",
   members: [
     {
       name: "Prajwal Shetty",
@@ -221,7 +221,7 @@ function MemberCard({ member, index, category }: { member: TeamMember; index: nu
   </div>
 
   {/* 🔥 GITHUB LINK */}
-  {category === "Website Team" && member.github && (
+  {category === "Code Ninjas" && member.github && (
   <a
     href={member.github}
     target="_blank"

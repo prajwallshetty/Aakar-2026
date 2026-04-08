@@ -26,15 +26,15 @@ const RegisterSection = () => {
             
             <div className="text-center max-w-3xl relative z-10">
                 <AnimeCardWrapper accentIndex={0} style={{ padding: "2rem 3rem", marginBottom: "2rem" }}>
-                    <AnimeSectionHeading index={0}>Register Now</AnimeSectionHeading>
+                    <AnimeSectionHeading index={0}>Join the Guild</AnimeSectionHeading>
                 </AnimeCardWrapper>
 
                 <p className={`text-xl md:text-2xl py-6 ${montserrat.className}`} style={{ color: ANIME_COLORS.text }}>
-                    Don't miss out on the ultimate techno-cultural experience!
+                    Don't sit on the sidelines like an NPC!
                     <br />
-                    Register now and be part of the excitement!
+                    Join the quest and be part of the saga!
                     <br />
-                    Participation is open to all UG and PG students.
+                    All UG and PG students can enter the arena.
                     <span className="inline-block align-middle ml-2">
                         <Image
                             className="w-[100px] h-auto inline-block"
@@ -59,8 +59,8 @@ const RegisterSection = () => {
                                 backdropFilter: "blur(4px)"
                             }}
                         >
-                            <AnimeGlitchText text="Register Now">
-                                Register Now
+                            <AnimeGlitchText text="Join Now">
+                                Join Now
                             </AnimeGlitchText>
                         </Button>
                     </AnimeCardWrapper>

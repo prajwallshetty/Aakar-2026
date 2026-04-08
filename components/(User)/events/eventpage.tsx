@@ -283,7 +283,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
               marginTop: "0.5rem",
               textTransform: "uppercase",
             }}>
-              ▲ BRAINS · GUTS · GLORY ▲
+              ▲ POWER · GUTS · GLORY ▲
             </div>
           </div>
 

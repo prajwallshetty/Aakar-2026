@@ -591,12 +591,12 @@ function MerchBuyContent() {
                 {/* LEFT — FORM */}
                 <div className="form-pane p-6 lg:p-10 border-b border-[rgba(255,100,0,0.18)] lg:border-b-0">
                   <span className="step-badge">/ 01 &nbsp; Add Details</span>
-                  <p className="info-tag">Merch Purchase</p>
+                  <p className="info-tag">Loot Order</p>
                   <h1 className={`info-title text-[clamp(2.2rem,5.5vw,3.8rem)] ${cinzelFont.className}`}>
                     Armor Class
                   </h1>
                   <p className="info-desc">
-                    Add your size, email, and phone number. After this, you'll be taken to the payment.
+                    Lock in your stats, email, and contact. Payment awaits after.
                   </p>
 
                   <form className="mt-8 space-y-5 relative z-10" onSubmit={handleSubmit}>
@@ -669,7 +669,7 @@ function MerchBuyContent() {
                 <div className="summary-pane p-6 lg:p-10">
                   <div className="summary-card">
                     <div className="scan-line" />
-                    <p className="info-tag relative z-10">Order Summary</p>
+                    <p className="info-tag relative z-10">Loot Summary</p>
                     <p className="relative z-10 font-mono text-[0.57rem] tracking-[0.44em] uppercase mt-1"
                       style={{ color: `${ANIME_COLORS.secondary}99` }}>
                       {summary.tag}
@@ -705,9 +705,9 @@ function MerchBuyContent() {
                   <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
                     {[
                       ["/ 01", "Limited Drop"],
-                      ["/ 02", "Premium Fabric"],
+                      ["/ 02", "S-Rank Material"],
                       ["/ 03", "Secure UPI"],
-                      ["/ 04", "Pickup At Fest"],
+                      ["/ 04", "Claim at the Arena"],
                     ].map(([num, text], i) => (
                       <div
                         key={num}

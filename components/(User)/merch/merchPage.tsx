@@ -603,7 +603,7 @@ export default function MerchPage() {
 
                   <div className="drag-hint">
                     <span className="drag-dot" />
-                    drag model to rotate
+                    drag to inspect loot
                   </div>
 
                   <div className="variant-rail">
@@ -646,14 +646,14 @@ export default function MerchPage() {
                   {/* PRICE + BUY */}
                   <div className="price-row">
                     <div>
-                      <span className="price-label">Selected Price</span>
+                      <span className="price-label">Item Cost</span>
                       <span className="price-val">₹{selectedVariant.price}</span>
                     </div>
                     <Link
                       href={`/merch/buy?variant=${selectedVariant.key}`}
                       className="buy-btn"
                     >
-                      Buy Now
+                    Equip Now
                     </Link>
                   </div>
                 </div>

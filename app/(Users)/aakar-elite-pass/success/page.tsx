@@ -263,7 +263,7 @@ export default function ElitePassSuccessPage() {
               <h2 className={`banner-title ${cinzelFont.className}`}>
                 AAKAR&nbsp;<span className="stroke-word">ELITE ACCESS</span>
               </h2>
-              <p className="banner-sub">status confirmed &nbsp;·&nbsp; pass activated &nbsp;·&nbsp; see you at the fest</p>
+              <p className="banner-sub">saga unlocked &nbsp;·&nbsp; power activated &nbsp;·&nbsp; see you at the arena</p>
               <div className="banner-deco" />
             </div>
 
@@ -300,26 +300,26 @@ export default function ElitePassSuccessPage() {
                     <div className="scan-line" />
                     <p className="info-tag relative z-10">Quest Complete</p>
                     <p className="relative z-10 font-mono text-[0.57rem] tracking-[0.44em] uppercase mt-1" style={{ color: `${ANIME_COLORS.secondary}99` }}>
-                      Enrollment Confirmed
+                      Quest Cleared
                     </p>
                     <h2 className={`info-title text-[clamp(1.6rem,3.5vw,2.4rem)] relative z-10 mt-2 ${cinzelFont.className}`}>
                       You're In!
                     </h2>
 
                     <p className="relative z-10 mt-4 font-mono text-sm" style={{ color: `${ANIME_COLORS.text}aa`, lineHeight: 1.8, borderLeft: `2px solid ${ANIME_COLORS.accent}`, paddingLeft: "1rem" }}>
-                      Your Elite Pass details and payment screenshot have been submitted. Our team will verify and confirm your pass shortly.
+                        Your Elite Pass details and proof of tribute have been sent. Our team will verify and unlock your pass shortly.
                     </p>
 
                     <div className="mt-5 relative z-10">
-                      <div className="summary-row"><span>Solo Events</span><span>Unlocked</span></div>
-                      <div className="summary-row"><span>Concert</span><span>Entry Included</span></div>
-                      <div className="summary-row"><span>Pass Status</span><span>Pending Verification</span></div>
+                            <div className="summary-row"><span>Solo Quests</span><span>Unlocked</span></div>
+                            <div className="summary-row"><span>Boss Battle Concert</span><span>Access Granted</span></div>
+                            <div className="summary-row"><span>Pass Status</span><span>Pending Clearance</span></div>
                     </div>
                   </div>
 
                   {/* FEAT CARDS */}
                   <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
-                    {[["/ 01", "Solo Events Unlocked"], ["/ 02", "Concert Access"]].map(([num, text]) => (
+                    {[["/ 01", "Solo Quests Unlocked"], ["/ 02", "Concert Access"]].map(([num, text], i) => (
                       <div key={num} className="feat-card">
                         <span className="field-label">{num}</span>
                         <span className="feat-text">{text}</span>
@@ -329,8 +329,8 @@ export default function ElitePassSuccessPage() {
 
                   {/* BUTTONS */}
                   <div className="mt-5 flex flex-wrap gap-3 relative z-10">
-                    <Link href="/" className="buy-btn">Go to Home</Link>
-                    <Link href="/events" className="back-btn">View Events</Link>
+                    <Link href="/" className="buy-btn" style={{ textDecoration: "none", display: "inline-block" }}>Return to Base</Link>
+                  <Link href="/events" className="back-btn">Browse Quests</Link>
                   </div>
                 </div>
 

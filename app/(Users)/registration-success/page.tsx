@@ -168,7 +168,7 @@ export default function RegistrationSuccess() {
                         fontSize: 10, fontWeight: 900, letterSpacing: 5, color: ANIME_COLORS.text,
                         animation: "marquee 10s linear infinite",
                     }}>
-                        {Array(12).fill("★ REGISTRATION SUCCESS ★ AAKAR 2026 ★ AJIET ★ ").join("")}
+                        {Array(12).fill("★ QUEST ACCEPTED ★ AAKAR 2026 ★ AJIET ★ ").join("")}
                     </div>
                     <style>{`@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
                 </div>
@@ -235,7 +235,7 @@ export default function RegistrationSuccess() {
                             textAlign: "center",
                         }}>
                             Your spot at <strong>AAKAR 2026</strong> is locked in!<br />
-                            Check your email for a confirmation ticket.<br />
+                            Check your inbox for your quest pass.<br />
                             <span style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>
                                 APRIL 24–25, 2026 · AJIET, MANGALORE
                             </span>
@@ -245,8 +245,8 @@ export default function RegistrationSuccess() {
                     {/* What's next pills */}
                     <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
                         {[
-                            { text: "Confirmation email sent to your inbox", color: ANIME_COLORS.secondary },
-                            { text: "Show your ticket at the venue on event day", color: ANIME_COLORS.purple },
+                            { text: "Quest pass sent to your inbox", color: ANIME_COLORS.secondary },
+                            { text: "Show your quest pass at the arena", color: ANIME_COLORS.purple },
                             { text: "Follow us on Instagram for updates", color: ANIME_COLORS.primary },
                         ].map((item, i) => (
                             <div key={i} style={{
@@ -286,7 +286,7 @@ export default function RegistrationSuccess() {
                             borderRadius: 6,
                             backdropFilter: "blur(4px)"
                         }}>
-                            BACK TO HOME
+                            RETURN TO BASE
                         </Link>
 
                         <Link href="/events" className="btn-pop" style={{
@@ -302,7 +302,7 @@ export default function RegistrationSuccess() {
                             borderRadius: 6,
                             backdropFilter: "blur(4px)"
                         }}>
-                            EXPLORE EVENTS
+                            BROWSE QUESTS
                         </Link>
                     </div>
                 </div>
