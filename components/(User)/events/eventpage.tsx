@@ -202,24 +202,10 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
           minHeight: "100vh",
           position: "relative",
           overflow: "hidden",
-          background: ANIME_COLORS.background,
+          background: "transparent",
           fontFamily: "'Share Tech Mono', monospace",
         }}
       >
-        {/* ── LAYER 1: diagonal stripe base ── */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute", inset: 0, zIndex: 0,
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              ${ANIME_COLORS.background}  0px,
-              ${ANIME_COLORS.background}  18px,
-              ${ANIME_COLORS.background}  18px,
-              ${ANIME_COLORS.background}  36px
-            )`,
-          }}
-        />
 
         {/* ── LAYER 2: halftone dots ── */}
         <div
@@ -243,22 +229,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         >
           {/* page title */}
           <div style={{ marginBottom: "clamp(1.5rem,5vh,3.5rem)", textAlign: "center" }}>
-            {/* label chip */}
-            <div style={{
-              display: "inline-block",
-              background: ANIME_COLORS.background,
-              color: ANIME_COLORS.primary,
-              fontFamily: "'Share Tech Mono',monospace",
-              fontSize: "clamp(0.6rem,1.6vw,0.8rem)",
-              letterSpacing: "0.4em",
-              padding: "4px 18px",
-              marginBottom: "0.6rem",
-              border: `1px solid ${ANIME_COLORS.primary}`,
-              boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`,
-              backdropFilter: "blur(8px)"
-            }}>
-              AAKAR 2026
-            </div>
+           
 
             <h1 style={{
               fontFamily: "'Cinzel',serif",
@@ -274,17 +245,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
               {eventCategory}
             </h1>
 
-            <div style={{
-              fontFamily: "'Share Tech Mono',monospace",
-              fontSize: "clamp(0.55rem,1.5vw,0.7rem)",
-              letterSpacing: "0.3em",
-              color: ANIME_COLORS.secondary,
-              opacity: 0.8,
-              marginTop: "0.5rem",
-              textTransform: "uppercase",
-            }}>
-              ▲ POWER · GUTS · GLORY ▲
-            </div>
+           
           </div>
 
           {/* grid */}

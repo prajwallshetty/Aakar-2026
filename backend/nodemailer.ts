@@ -22,15 +22,16 @@ if (process.env.MAIL_ACCESS_TOKEN) {
 
 const transporter = nodemailer.createTransport(mailConfig);
 
-export async function sendEmail(to: string, subject: string, html: string) {
+export async function sendEmail(to: string, subject: string, html: string, attachments?: { filename: string, content: Buffer | string, contentType?: string }[]) {
   try {
     await transporter.sendMail({
       from: process.env.MAIL_USER,
       to,
       subject,
-      html  // ← was `text`, now `html`
+      html,
+      attachments
     });
   } catch (error) {
     console.error("Error sending email:", error);
   }
-}
+}

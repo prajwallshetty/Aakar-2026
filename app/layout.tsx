@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
     title: "AAKAR 2026",
@@ -58,21 +59,26 @@ export default async function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <script async src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM"></script>
-                <script>
-                    {
-                        `window.dataLayer = window.dataLayer || [];
-                        function gtag(){dataLayer.push(arguments);}
-                        gtag('js', new Date());
-
-                        gtag('config', 'G-EXY2XKHRKM');`
-                        }
-                </script>
             </head>
             <body suppressHydrationWarning className={`${baseFont.className} antialiased`}>
                 <SessionProvider session={session}>{children}</SessionProvider>
                 <Analytics />
                 <SpeedInsights />
+                
+                {/* Google Analytics */}
+                <Script 
+                    src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM" 
+                    strategy="afterInteractive" 
+                />
+                <Script id="google-analytics" strategy="afterInteractive">
+                    {`
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+
+                        gtag('config', 'G-EXY2XKHRKM');
+                    `}
+                </Script>
             </body>
         </html>
     );

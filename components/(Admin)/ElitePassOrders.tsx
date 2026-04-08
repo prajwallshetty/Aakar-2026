@@ -7,9 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Download, Search, Ticket } from "lucide-react";
-import { getElitePassOrders } from "@/backend/elite-pass";
+import { getElitePassOrders, updateElitePassOrder } from "@/backend/elite-pass";
 import { Button } from "@/components/ui/button";
 import { downloadCsv } from "@/lib/downloadCsv";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ElitePassOrderRow = {
   id: number;
@@ -23,6 +31,7 @@ type ElitePassOrderRow = {
   transactionId: string;
   amount: number;
   paymentScreenshotUrl?: string | null;
+  paymentStatus: string;
 };
 
 export default function ElitePassOrders() {
@@ -60,6 +69,37 @@ export default function ElitePassOrders() {
       ...current,
       [orderId]: true,
     }));
+  };
+
+  const handleStatusUpdate = async (orderId: number, newStatus: string) => {
+    const updateToast = toast.loading(`Updating status to ${newStatus}...`);
+
+    try {
+      const response = await updateElitePassOrder(orderId, {
+        paymentStatus: newStatus as any,
+      });
+
+      if (response.error) {
+        toast.error(typeof response.error === "string" ? response.error : "Failed to update status", {
+          id: updateToast,
+        });
+        return;
+      }
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, paymentStatus: newStatus } : order
+        )
+      );
+      toast.success(`Status updated to ${newStatus}`, {
+        id: updateToast,
+      });
+    } catch (err) {
+      console.error("Error updating status:", err);
+      toast.error("An error occurred while updating status", {
+        id: updateToast,
+      });
+    }
   };
 
   const handleDownload = () => {
@@ -149,6 +189,7 @@ export default function ElitePassOrders() {
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Transaction ID</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Screenshot</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -163,6 +204,21 @@ export default function ElitePassOrders() {
                           <TableCell>{order.email}</TableCell>
                           <TableCell>{order.phone}</TableCell>
                           <TableCell className="font-mono text-xs">{order.transactionId}</TableCell>
+                          <TableCell>
+                            <Select
+                              value={order.paymentStatus}
+                              onValueChange={(value) => handleStatusUpdate(order.id, value)}
+                            >
+                              <SelectTrigger className="w-[120px] h-8 text-xs">
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="PENDING">PENDING</SelectItem>
+                                <SelectItem value="APPROVED">APPROVED</SelectItem>
+                                <SelectItem value="FAILED">FAILED</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
                           <TableCell>
                             <Button
                               variant="outline"

@@ -402,3 +402,46 @@ export async function getElitePassOrders(): Promise<ServiceResponse<any[]>> {
     return { data: null, error: "Failed to fetch Elite Pass orders" };
   }
 }
+
+export async function updateElitePassOrder(id: number, data: any): Promise<ServiceResponse<any>> {
+  try {
+    if (!(await isAdmin())) {
+      return { data: null, error: "Unauthorized" };
+    }
+
+    // Attempt to update via standard delegate first
+    try {
+      const updated = await (db as any).elitePassOrder.update({
+        where: { id },
+        data
+      });
+      return { data: updated, error: null };
+    } catch (prismaErr) {
+      // Fallback to raw SQL if Prisma client is stale and doesn't recognize new columns
+      console.warn("Prisma update failed, attempting raw SQL fallback:", prismaErr);
+      
+      if (data.paymentStatus !== undefined || data.certificateSent !== undefined) {
+        const updates: string[] = [];
+        if (data.paymentStatus !== undefined) updates.push(`"paymentStatus" = '${data.paymentStatus}'`);
+        if (data.certificateSent !== undefined) updates.push(`"certificateSent" = ${data.certificateSent}`);
+        updates.push(`"updatedAt" = CURRENT_TIMESTAMP`);
+
+        if (updates.length > 0) {
+          await db.$executeRawUnsafe(`
+            UPDATE "ElitePassOrder"
+            SET ${updates.join(', ')}
+            WHERE "id" = ${id}
+          `);
+          
+          // Return the updated object by fetching it
+          const result = await db.$queryRaw<any[]>`SELECT * FROM "ElitePassOrder" WHERE "id" = ${id}`;
+          return { data: result[0], error: null };
+        }
+      }
+      throw prismaErr;
+    }
+  } catch (error) {
+    console.error("Error updating Elite Pass order:", error);
+    return { data: null, error: "Failed to update Elite Pass order" };
+  }
+}
