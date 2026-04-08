@@ -12,6 +12,7 @@ const teamData: TeamCategory[] = [
     name: "Sensei Council",
     members: [
       { name: "Dr. Chanchal Antony", role: "Chief Co-ordinator", image: "/Team/lecturer/chanchalantony.jpg" },
+      { name: "Mrs. Anusha Anchan", role: "Faculty Co-ordinator", image: "/Team/lecturer/anusha.jpg" },
       { name: "Mr. Harold D'Souza", role: "Faculty Co-ordinator", image: "/Team/lecturer/harold.jpg" },
       { name: "Dr. Jennifer Charlotte", role: "Faculty Co-ordinator", image: "/Team/lecturer/jennifer.jpg" },
       { name: "Mrs. Nydile", role: "Faculty Co-ordinator", image: "/Team/lecturer/nydile.jpg" },
