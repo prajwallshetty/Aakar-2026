@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createElitePassOrder } from "@/backend/elite-pass";
+import { checkElitePassDuplicates, createElitePassOrder } from "@/backend/elite-pass";
 import { cinzelFont } from "@/lib/font";
 import {
   AnimeParticleField,
@@ -14,6 +14,14 @@ import {
 
 const PASS_PRICE_EARLY = 399;
 const PASS_PRICE_REGULAR = 499;
+
+type SoloEventOption = {
+  id: number;
+  eventName: string;
+  eventCategory: string;
+  fee: number;
+  date: string;
+};
 
 const COLLEGES = ["A J Institute of Engineering and Technology, Mangalore","Alva's Institute of Engineering Technology, Moodbidri","Manipal Institute of Technology, Manipal","NITK, Surathkal","St Joseph Engineering College, Vamanjoor, Mangaluru","Sahyadri College of Engineering and Management","MITE - Mangalore Institute of Technology & Engineering","Karavali Institute of Technology, Mangalore","SDM College of Engineering and Technology (SDMC)","Srinivas Institute of Engineering and Technology, Mukka","P.A. College of Engineering, Mangalore","N.M.A.M. Institute of Technology, Nitte, Karkala","Canara Engineering College, Mangalore","Yenepoya Institute of Technology (YIT), Moodbidri","Govinda Dasa College, Surathkal","Other"].sort();
 
@@ -46,7 +54,13 @@ async function compressImageForUpload(file: File): Promise<File> {
 export default function ElitePassBuyPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "confirm">("details");
+  const [soloEvents, setSoloEvents] = useState<SoloEventOption[]>([]);
+  const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
+  const [eventToAdd, setEventToAdd] = useState("");
+  const [isLoadingSoloEvents, setIsLoadingSoloEvents] = useState(true);
+  const [soloEventsLoadError, setSoloEventsLoadError] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
   const [screenshotPreview, setScreenshotPreview] = useState("");
@@ -54,6 +68,40 @@ export default function ElitePassBuyPage() {
     name: "", email: "", phone: "", usn: "", college: "", department: "", year: 0,
     transactionId: "", paymentScreenshot: null as File | null,
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSoloEvents() {
+      setIsLoadingSoloEvents(true);
+      setSoloEventsLoadError("");
+      try {
+        const response = await fetch("/api/events/solo", { cache: "no-store" });
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result?.error || "Failed to load solo events");
+        }
+
+        const events = Array.isArray(result?.data) ? result.data as SoloEventOption[] : [];
+        if (!cancelled) {
+          setSoloEvents(events);
+        }
+      } catch {
+        if (!cancelled) {
+          setSoloEventsLoadError("Could not load solo events. Refresh and try again.");
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingSoloEvents(false);
+        }
+      }
+    }
+
+    void loadSoloEvents();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -75,7 +123,34 @@ export default function ElitePassBuyPage() {
     }
   };
 
-  const proceedToPayment = (e: React.FormEvent<HTMLFormElement>) => {
+  const addSelectedEvent = () => {
+    const eventId = Number(eventToAdd);
+    if (!eventId) return;
+
+    setSelectedEventIds((prev) => {
+      if (prev.includes(eventId)) return prev;
+      return [...prev, eventId];
+    });
+    setEventToAdd("");
+
+    if (formErrors.eventIds) {
+      setFormErrors((prev) => ({ ...prev, eventIds: undefined }));
+    }
+  };
+
+  const removeSelectedEvent = (eventId: number) => {
+    setSelectedEventIds((prev) => prev.filter((id) => id !== eventId));
+  };
+
+  const handleEventToAddChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEventToAdd(e.target.value);
+
+    if (formErrors.eventIds) {
+      setFormErrors((prev) => ({ ...prev, eventIds: undefined }));
+    }
+  };
+
+  const proceedToPayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors: { [key: string]: string } = {};
     if (!formData.name.trim()) errors.name = "Required";
@@ -85,16 +160,44 @@ export default function ElitePassBuyPage() {
     if (!formData.college.trim()) errors.college = "Required";
     if (!formData.department.trim()) errors.department = "Required";
     if (!formData.year || Number.isNaN(formData.year)) errors.year = "Required";
+    if (!selectedEventIds.length) errors.eventIds = "Select at least one solo event";
     if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Fix the highlighted power stats first."); return; }
+
+    setIsCheckingDuplicates(true);
+    const duplicateErrors = await checkElitePassDuplicates({
+      email: formData.email,
+      usn: formData.usn,
+    });
+    setIsCheckingDuplicates(false);
+
+    if (duplicateErrors) {
+      setFormErrors((prev) => ({ ...prev, ...duplicateErrors }));
+      setGeneralError("Email or USN already used for Elite Pass.");
+      return;
+    }
+
     setGeneralError("");
     setPaymentStep("payment");
   };
 
-  const proceedToConfirm = () => {
+  const proceedToConfirm = async () => {
     const errors: { [key: string]: string } = {};
     if (!formData.transactionId.trim()) errors.transactionId = "Transaction ID is required";
     if (!formData.paymentScreenshot) errors.paymentScreenshot = "Screenshot is required";
     if (Object.keys(errors).length > 0) { setFormErrors(errors); setGeneralError("Seal incomplete — fill in payment details."); return; }
+
+    setIsCheckingDuplicates(true);
+    const duplicateErrors = await checkElitePassDuplicates({
+      transactionId: formData.transactionId,
+    });
+    setIsCheckingDuplicates(false);
+
+    if (duplicateErrors) {
+      setFormErrors((prev) => ({ ...prev, ...duplicateErrors }));
+      setGeneralError("Transaction ID already used.");
+      return;
+    }
+
     setGeneralError("");
     setPaymentStep("confirm");
   };
@@ -105,6 +208,18 @@ export default function ElitePassBuyPage() {
     setIsSubmitting(true);
     setGeneralError("");
     try {
+      const duplicateErrors = await checkElitePassDuplicates({
+        email: formData.email,
+        usn: formData.usn,
+        transactionId: formData.transactionId,
+      });
+      if (duplicateErrors) {
+        setFormErrors((prev) => ({ ...prev, ...duplicateErrors }));
+        setGeneralError("Duplicate details found. Update and try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const optimizedFile = await compressImageForUpload(formData.paymentScreenshot);
       const uploadFormData = new FormData();
       uploadFormData.append("file", optimizedFile);
@@ -117,6 +232,7 @@ export default function ElitePassBuyPage() {
         name: formData.name, email: formData.email, phone: formData.phone,
         usn: formData.usn, college: formData.college, department: formData.department,
         year: formData.year, transactionId: formData.transactionId, paymentScreenshotUrl: screenshotUrl,
+        eventIds: selectedEventIds,
       });
       if (!result || result.error) {
         if (typeof result?.error === "object" && result.error !== null) setFormErrors(result.error);
@@ -369,6 +485,73 @@ export default function ElitePassBuyPage() {
         .review-row:last-child { border-bottom: none; }
         .review-key { min-width: 110px; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: ${ANIME_COLORS.secondary}; }
         .review-val { color: ${ANIME_COLORS.text}; }
+        .event-controls {
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 0.6rem;
+        }
+        .event-select {
+          color: ${ANIME_COLORS.text};
+          background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88));
+        }
+        .event-select option {
+          color: #111;
+          background: #f4f4f4;
+        }
+        .event-add-btn {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          border: 1.5px solid ${ANIME_COLORS.accent};
+          color: ${ANIME_COLORS.accent};
+          background: ${ANIME_COLORS.accent}18;
+          border-radius: 6px;
+          padding: 0 0.9rem;
+          min-height: 43px;
+          cursor: pointer;
+          transition: box-shadow .16s ease, transform .16s ease;
+        }
+        .event-add-btn:hover { box-shadow: 0 0 14px ${ANIME_COLORS.accent}3a; transform: translateY(-1px); }
+        .event-add-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+        .selected-events {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .event-token {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          border: 1px solid ${ANIME_COLORS.primary}75;
+          background: linear-gradient(135deg, ${ANIME_COLORS.primary}16 0%, rgba(8,3,18,.78) 100%);
+          color: ${ANIME_COLORS.text};
+          border-radius: 999px;
+          padding: 0.32rem 0.7rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.66rem;
+          letter-spacing: 0.05em;
+        }
+        .event-remove-btn {
+          border: 1px solid ${ANIME_COLORS.secondary};
+          color: ${ANIME_COLORS.secondary};
+          background: transparent;
+          width: 18px;
+          height: 18px;
+          line-height: 1;
+          border-radius: 999px;
+          cursor: pointer;
+          font-size: 0.7rem;
+          padding: 0;
+        }
+        .event-remove-btn:hover { box-shadow: 0 0 10px ${ANIME_COLORS.secondary}3a; }
+        .event-meta {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          color: ${ANIME_COLORS.secondary};
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+        }
       `}</style>
 
       <main className="relative min-h-screen overflow-hidden">
@@ -443,10 +626,80 @@ export default function ElitePassBuyPage() {
                           </datalist>
                           {formErrors.college && <span className="err-msg">⚡ {formErrors.college}</span>}
                         </label>
+
+                        <div className="space-y-2 md:col-span-2">
+                          <span className="field-label">Select Solo Events</span>
+                          {isLoadingSoloEvents && (
+                            <div className="font-mono text-xs" style={{ color: `${ANIME_COLORS.text}88` }}>
+                              Syncing solo quest roster...
+                            </div>
+                          )}
+
+                          {soloEventsLoadError && (
+                            <div className="err-msg">⚡ {soloEventsLoadError}</div>
+                          )}
+
+                          {!isLoadingSoloEvents && !soloEventsLoadError && soloEvents.length === 0 && (
+                            <div className="err-msg">⚡ No solo events are available right now.</div>
+                          )}
+
+                          {!isLoadingSoloEvents && !soloEventsLoadError && soloEvents.length > 0 && (
+                            <div className="grid gap-3">
+                              <div className="event-controls">
+                                <select
+                                  className="merch-input event-select"
+                                  value={eventToAdd}
+                                  onChange={handleEventToAddChange}
+                                >
+                                  <option value="">Choose a solo event</option>
+                                  {soloEvents.map((event) => (
+                                    <option key={event.id} value={event.id}>
+                                      {event.eventName} ({event.eventCategory} · ₹{event.fee})
+                                    </option>
+                                  ))}
+                                </select>
+                                <button
+                                  type="button"
+                                  className="event-add-btn"
+                                  onClick={addSelectedEvent}
+                                  disabled={!eventToAdd}
+                                >
+                                  Add
+                                </button>
+                              </div>
+
+                              <div className="selected-events">
+                                {selectedEventIds.length === 0 && (
+                                  <span className="event-meta">No solo events selected yet</span>
+                                )}
+
+                                {soloEvents
+                                  .filter((event) => selectedEventIds.includes(event.id))
+                                  .map((event) => (
+                                    <span key={event.id} className="event-token">
+                                      {event.eventName}
+                                      <button
+                                        type="button"
+                                        className="event-remove-btn"
+                                        onClick={() => removeSelectedEvent(event.id)}
+                                        aria-label={`Remove ${event.eventName}`}
+                                      >
+                                        ×
+                                      </button>
+                                    </span>
+                                  ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {formErrors.eventIds && <span className="err-msg">⚡ {formErrors.eventIds}</span>}
+                        </div>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 pt-6">
-                        <button type="submit" className="buy-btn">Proceed to Payment →</button>
+                        <button type="submit" className="buy-btn" disabled={isCheckingDuplicates}>
+                          {isCheckingDuplicates ? "Checking Records..." : "Proceed to Payment →"}
+                        </button>
                         <Link href="/aakar-elite-pass" className="back-btn">← Back</Link>
                       </div>
                     </form>
@@ -497,7 +750,9 @@ export default function ElitePassBuyPage() {
                       {generalError && <div className="error-box mt-4">⚡ {generalError}</div>}
 
                       <div className="flex flex-wrap items-center gap-3 pt-6">
-                        <button type="button" className="buy-btn" onClick={proceedToConfirm}>Review Pact →</button>
+                        <button type="button" className="buy-btn" onClick={proceedToConfirm} disabled={isCheckingDuplicates}>
+                          {isCheckingDuplicates ? "Checking Records..." : "Review Pact →"}
+                        </button>
                         <button type="button" className="back-btn" onClick={() => setPaymentStep("details")}>← Back</button>
                       </div>
                     </div>
@@ -522,6 +777,15 @@ export default function ElitePassBuyPage() {
                             <span className="review-val">{val}</span>
                           </div>
                         ))}
+                        <div className="review-row">
+                          <span className="review-key">Solo Events</span>
+                          <span className="review-val">
+                            {soloEvents
+                              .filter((event) => selectedEventIds.includes(event.id))
+                              .map((event) => event.eventName)
+                              .join(", ") || "—"}
+                          </span>
+                        </div>
                       </div>
 
                       {generalError && <div className="error-box mt-4">⚡ {generalError}</div>}
@@ -546,7 +810,7 @@ export default function ElitePassBuyPage() {
                     </h2>
 
                     <div className="mt-5 relative z-10">
-                      <div className="summary-row"><span>Solo Quests</span><span>Unlimited</span></div>
+                      <div className="summary-row"><span>Solo Quests</span><span>{selectedEventIds.length || 0} Selected</span></div>
                       <div className="summary-row"><span>Boss Battle Concert</span><span>Access Granted</span></div>
                       <div className="summary-row"><span>Pass Rank</span><span>S-Class</span></div>
                     </div>
