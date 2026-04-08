@@ -26,7 +26,7 @@ const teamData: TeamCategory[] = [
       { name: "Ayisha", role: "Designs & Creatives Head", image: "/Team/Core-Committee/Ayisha.jpg" },
       { name: "Pratham", role: "Operations Manager", image: "/Team/Core-Committee/pratham.png" },
       { name: "Rahul", role: "Social Media Manager", image: "/Team/Core-Committee/rahul.PNG" },
-      { name: "Monith", role: "Event Coordinator", image: "/Team/Core-Committee/Monith.png" },
+      { name: "Monith", role: "Event Coordinator", image: "/Team/Core-Committee/Mona.png" },
       { name: "Dhyan", role: "Content & Media Head", image: "/Team/Core-Committee/dhyan.jpeg" },
       { name: "Rithvik", role: "Merchandise Lead", image: "/Team/Core-Committee/rithvik.jpg" },
       { name: "Pooja", role: "Marketing & Promotions Head", image: "/Team/Core-Committee/Pooja.jpg" },
@@ -51,7 +51,7 @@ const teamData: TeamCategory[] = [
       github: "https://github.com/kishanBhandary"
     },
     {
-      name: "Pahima Uchil",
+      name: "Pahima R Uchil",
       role: "Full Stack Developer",
       image: "/Team/web/pahima.jpeg",
       github: "https://github.com/pahimauchil"
