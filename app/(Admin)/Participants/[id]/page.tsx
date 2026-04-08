@@ -25,7 +25,15 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { getParticipantWithEvents } from "@/backend/participant";
+import { getParticipantWithEvents, updateParticipant } from "@/backend/participant";
+import { toast } from "sonner";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import Link from "next/link";
 import type { Event } from "@prisma/client";
 import { ExtendedParticipant } from "@/types";
@@ -103,6 +111,35 @@ export default function ParticipantDetailPage() {
                     });
                     cache.put(url, response);
                 }
+            });
+        }
+    };
+
+    const handleStatusUpdate = async (newStatus: string) => {
+        if (!participant) return;
+
+        const updateToast = toast.loading(`Updating status to ${newStatus}...`);
+
+        try {
+            const response = await updateParticipant(participant.id, {
+                paymentStatus: newStatus as any
+            });
+
+            if (response.error) {
+                toast.error(typeof response.error === "string" ? response.error : "Failed to update status", {
+                    id: updateToast
+                });
+                return;
+            }
+
+            setParticipant(prev => prev ? { ...prev, paymentStatus: newStatus as any } : null);
+            toast.success(`Payment status updated to ${newStatus}`, {
+                id: updateToast
+            });
+        } catch (err) {
+            console.error("Error updating status:", err);
+            toast.error("An error occurred while updating status", {
+                id: updateToast
             });
         }
     };
@@ -343,6 +380,30 @@ export default function ParticipantDetailPage() {
                                             Amount Paid
                                         </div>
                                         <div>₹{participant.amount}</div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start">
+                                    <Tag className="h-5 w-5 mr-2 text-muted-foreground" />
+                                    <div className="flex-1">
+                                        <div className="font-medium mr-2">
+                                            Status
+                                        </div>
+                                        <div className="mt-1">
+                                            <Select
+                                                value={participant.paymentStatus}
+                                                onValueChange={handleStatusUpdate}
+                                            >
+                                                <SelectTrigger className="w-[140px] h-8">
+                                                    <SelectValue placeholder="Select status" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="PENDING">PENDING</SelectItem>
+                                                    <SelectItem value="APPROVED">APPROVED</SelectItem>
+                                                    <SelectItem value="FAILED">FAILED</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
                                 </div>
 

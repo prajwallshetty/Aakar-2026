@@ -487,6 +487,7 @@ export default function ParticipantsPage() {
                                                 <TableHead>id</TableHead>
                                                 <TableHead>Name</TableHead>
                                                 <TableHead>College</TableHead>
+                                                <TableHead>Status</TableHead>
                                                 <TableHead>Events</TableHead>
                                                 <TableHead>Phone</TableHead>
                                                 <TableHead>Actions</TableHead>
@@ -533,6 +534,24 @@ export default function ParticipantsPage() {
                                                                     {
                                                                         participant.college
                                                                     }
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <Badge
+                                                                        variant={
+                                                                            participant.paymentStatus === "APPROVED"
+                                                                                ? "default"
+                                                                                : participant.paymentStatus === "FAILED"
+                                                                                    ? "destructive"
+                                                                                    : "outline"
+                                                                        }
+                                                                        className={
+                                                                            participant.paymentStatus === "APPROVED"
+                                                                                ? "bg-green-600 hover:bg-green-700 text-white border-none"
+                                                                                : ""
+                                                                        }
+                                                                    >
+                                                                        {participant.paymentStatus}
+                                                                    </Badge>
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {participant.events.map((e, index) => (
