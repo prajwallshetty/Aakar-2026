@@ -202,4 +202,6 @@ textarea::placeholder {
   font-family: '--default-mono-font-family', sans-serif;
   color: #999;
 }
-
+
+@keyframes shimmer { 100% { transform: translateX(200%) skewX(-20deg); } }
+

@@ -529,12 +529,16 @@ export default function EventCircularGallery() {
         <h2
           style={{
             fontFamily: "'Cinzel', serif",
-            /* smaller floor on mobile: 1.8rem instead of 3rem */
-            fontSize: "clamp(1.8rem,7vw,7rem)",
-            lineHeight: 0.9,
-            letterSpacing: "0.06em",
-            color: ANIME_COLORS.text,
+            fontSize: "clamp(1.6rem, 6vw, 4.5rem)",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            background: "linear-gradient(135deg, #fff 0%, #ccc 40%, #AE48FF 70%, #00E5FF 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
             margin: 0,
+            lineHeight: 1.1,
+            filter: "drop-shadow(0 0 20px rgba(174,72,255,0.1))",
           }}
         >
           PICK YOUR<br />BATTLEGROUND

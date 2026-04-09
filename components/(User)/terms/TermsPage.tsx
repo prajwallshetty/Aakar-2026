@@ -3,8 +3,6 @@
 import Image from "next/image";
 
 import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
@@ -50,11 +48,7 @@ export default function TermsPage() {
               background: "linear-gradient(180deg, rgba(5, 5, 5, 0.55) 0%, rgba(5, 5, 5, 0.72) 100%)",
             }}
           />
-        </div>
-        <AnimeOrbField />
-        <AnimeParticleField />
-
-        <div style={{
+        </div><div style={{
           position: "relative", zIndex: 6,
           maxWidth: 860,
           margin: "0 auto",

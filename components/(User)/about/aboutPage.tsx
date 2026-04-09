@@ -6,8 +6,6 @@ import { useState } from "react";
 import { FaPlay } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
   AnimeCardWrapper, 
   AnimeSectionHeading, 
   AnimeGlitchText,
@@ -126,9 +124,7 @@ export default function AboutPage() {
         }
       `}</style>
 
-      {/* Anime Background Layers */}
-      <AnimeOrbField />
-      <AnimeParticleField />
+
 
       <main style={{
         position:"relative", 

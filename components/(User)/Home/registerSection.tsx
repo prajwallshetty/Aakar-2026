@@ -4,8 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
   AnimeCardWrapper, 
   AnimeSectionHeading, 
   AnimeGlitchText,
@@ -20,11 +18,7 @@ const RegisterSection = () => {
         <section className="flex items-center justify-center text-white px-6 pt-16 relative">
             <style>{ANIME_GLOBAL_STYLES}</style>
             
-            {/* Anime Background */}
-            <AnimeOrbField />
-            <AnimeParticleField />
-            
-            <div className="text-center max-w-3xl relative z-10">
+            {/* Anime Background */}<div className="text-center max-w-3xl relative z-10">
                 <AnimeCardWrapper accentIndex={0} style={{ padding: "2rem 3rem", marginBottom: "2rem" }}>
                     <AnimeSectionHeading index={0}>Join the Guild</AnimeSectionHeading>
                 </AnimeCardWrapper>
