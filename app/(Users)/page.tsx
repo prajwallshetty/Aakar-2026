@@ -13,12 +13,7 @@ export default function Home() {
   return (
     <>
       <LandingPage />
-      <GlimpseOfAakar />
       <Eventcards />
-      <ArenaBanner />
-      <DJ />
-      <Concert />
-      <RegisterSection />
     </>
   );
 }
