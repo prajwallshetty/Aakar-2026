@@ -153,7 +153,7 @@ The project is deployed using:
 - 📊 Analytics Dashboard
 - 🎟 QR Based Event Entry
 - 📢 Real-Time Notifications
-- 🤖 AI Event Recommendations
+
 
 ---
 
