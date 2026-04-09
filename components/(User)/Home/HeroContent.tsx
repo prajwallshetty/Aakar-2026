@@ -69,7 +69,7 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
           custom={0.8}
         >
           <p className="font-light text-[clamp(0.7rem,3vw,1.4rem)] tracking-[0.3em] text-white/95 whitespace-nowrap">
-            A NEW ERA BEGINS
+            TECHNO-CULTURE EVENT
           </p>
         </motion.div>
 
@@ -81,7 +81,7 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
           className="font-extralight text-[clamp(8px,2vw,12px)] tracking-[0.4em] text-white/40 mt-2 uppercase"
           style={{ fontFamily: "'Noto Serif JP', serif" }}
         >
-          新たな時代の幕開け
+          テクノ文化イベント
         </motion.p>
 
         {/* ── CTA ── */}
@@ -92,25 +92,19 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
           animate="visible"
           custom={1.4}
         >
-          <span className="hidden md:inline-block border border-white/20 bg-black/30 px-4 py-1.5 rounded-sm text-[10px] tracking-[0.3em] text-white/80 uppercase">
-            Techno-Cultural Fest
-          </span>
-          <span className="text-[10px] tracking-[0.3em] text-orange-400/80 border-l border-orange-500/20 pl-3 uppercase">
-            2026
-          </span>
           <a
-            href="/rulebook.pdf"
+            href="/Rulebook.pdf"
             download
-            className="bg-gradient-to-br from-neutral-900/90 to-orange-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(255,100,0,0.2)] transition-shadow active:scale-95 no-underline"
+            className="bg-gradient-to-br from-neutral-900/90 to-orange-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(255,100,0,0.2)] transition-shadow active:scale-95 no-underline flex items-center gap-2"
           >
-            📕 Rulebook
+            <span className="text-[14px]">📕</span> Rulebook
           </a>
           <a
-            href="/Aakar_2025_brochure.pdf"
+            href="/Aakar_2026_brochure.pdf"
             download
-            className="bg-gradient-to-br from-neutral-900/90 to-purple-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(99,68,245,0.25)] transition-shadow active:scale-95 no-underline"
+            className="bg-gradient-to-br from-neutral-900/90 to-purple-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(99,68,245,0.25)] transition-shadow active:scale-95 no-underline flex items-center gap-2"
           >
-            📄 Brochure
+            <span className="text-[14px]">📄</span> Brochure
           </a>
         </motion.div>
       </div>
