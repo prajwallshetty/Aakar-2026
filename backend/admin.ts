@@ -6,18 +6,27 @@ import { auth } from "../auth";
 
 export async function isAdmin(email?: string) {
     try {
-        const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-        if (!configuredEmail) return false;
-
         const resolvedEmail = email?.toLowerCase() || (await auth())?.user?.email?.toLowerCase();
         if (!resolvedEmail) return false;
 
-        return resolvedEmail === configuredEmail;
+        // 1. Check Env Email
+        const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+        if (configuredEmail && resolvedEmail === configuredEmail) return true;
+
+        // 2. Check Database
+        const dbAdmin = await db.admin.findUnique({
+            where: {
+                email: resolvedEmail
+            }
+        });
+
+        return !!dbAdmin;
     } catch (e) {
         console.error(e);
         return false;
     }
 }
+
 
 export async function getAdmins() {
     if (!await isAdmin()) return null;

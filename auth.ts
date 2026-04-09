@@ -1,21 +1,41 @@
 import NextAuth, { DefaultSession } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import { db } from "@/backend"
 
 async function verifyAdmin(email: string, password: string) {
     try {
         const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
         const configuredPassword = process.env.ADMIN_PASSWORD;
 
-        if (!configuredEmail || !configuredPassword) return null;
-        if (email.toLowerCase() !== configuredEmail) return null;
-        if (password !== configuredPassword) return null;
+        // 1. Check Env Credentials
+        if (configuredEmail && configuredPassword) {
+            if (email.toLowerCase() === configuredEmail && password === configuredPassword) {
+                return {
+                    id: 1,
+                    name: "Admin",
+                    email: configuredEmail,
+                    phone: "",
+                };
+            }
+        }
 
-        return {
-            id: 1,
-            name: "Admin",
-            email: configuredEmail,
-            phone: "",
-        };
+        // 2. Check Database Credentials
+        const dbAdmin = await db.admin.findUnique({
+            where: {
+                email: email.toLowerCase()
+            }
+        });
+
+        if (dbAdmin && dbAdmin.password === password) {
+            return {
+                id: dbAdmin.id,
+                name: dbAdmin.name,
+                email: dbAdmin.email,
+                phone: dbAdmin.phone,
+            };
+        }
+
+        return null;
     } catch (e) {
         console.error(e);
         return null;
@@ -44,4 +64,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ]
-})
+})
