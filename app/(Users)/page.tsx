@@ -1,19 +1,19 @@
-import GlimpseOfAakar from "@/components/(User)/Home/glimpseofaakar";
 import LandingPage from "@/components/(User)/Home/landingPage";
-import RegisterSection from "@/components/(User)/Home/registerSection";
 import Eventcards from "@/components/(User)/Home/Eventcards";
-import DJ from "@/components/(User)/Home/DJ";
-import Concert from "@/components/(User)/Home/Concert";
-import ArenaBanner from "@/components/(User)/Home/ArenaBanner";
-// import Sponsors from "@/components/(User)/Home/Sponsors";
-import Loading from "@/components/loading";
-// import Notice from "@/components/notice";
+import MarqueeStrip from "@/components/(User)/Home/MarqueeStrip";
+import MysteryReveal from "@/components/(User)/Home/MysteryReveal";
+import ElitePassPromo from "@/components/(User)/Home/ElitePassPromo";
+import CountdownRegister from "@/components/(User)/Home/CountdownRegister";
 
 export default function Home() {
   return (
     <>
       <LandingPage />
+      <MarqueeStrip />
       <Eventcards />
+      <MysteryReveal />
+      <ElitePassPromo />
+      <CountdownRegister />
     </>
   );
 }

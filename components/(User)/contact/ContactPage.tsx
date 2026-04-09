@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import {
-  AnimeParticleField,
-  AnimeOrbField,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
@@ -34,11 +32,7 @@ export default function ContactPage() {
         }
       `}</style>
 
-      <main style={{ position: "relative", minHeight: "100vh", overflow: "hidden", background: "#050505" }}>
-        <AnimeOrbField />
-        <AnimeParticleField />
-
-        <div style={{
+      <main style={{ position: "relative", minHeight: "100vh", overflow: "hidden", background: "#050505" }}><div style={{
           position: "relative", zIndex: 6,
           maxWidth: 960,
           margin: "0 auto",

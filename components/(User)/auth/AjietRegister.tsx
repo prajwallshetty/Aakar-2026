@@ -4,7 +4,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import {
     registerParticipant,
-    validateParticipantData,
+    validateParticipantData
 } from "@/backend/participant";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -13,14 +13,12 @@ import { getAllEvents, getEventOptions } from "@/backend/events";
 import {
     CartEvents,
     ExtendedEvent,
-    ExtendedParticipantCreateInput,
+    ExtendedParticipantCreateInput
 } from "@/types";
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
 import { ElitePassCard } from "@/components/(User)/auth/ElitePassCard";
 import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
   AnimeCardWrapper, 
   AnimeSectionHeading, 
   AnimeGlitchText,
@@ -187,10 +185,7 @@ const Field: React.FC<{ label: string; error?: string; children: React.ReactNode
 // ─── Loading Skeleton ────────────────────────────────────────────────────────────
 function LoadingSkeleton() {
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <AnimeOrbField />
-            <AnimeParticleField />
-            <AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}><AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
                 <AnimeSectionHeading index={1}>INITIALIZING AJIET SYSTEM</AnimeSectionHeading>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
                     {[...Array(4)].map((_, i) => (
@@ -608,12 +603,7 @@ const AjietRegister = () => {
                     background: #ffd70060 !important;
                     color: #ffffff !important;
                 }
-            `}</style>
-
-            <AnimeOrbField />
-            <AnimeParticleField />
-
-            <div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
+            `}</style><div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
 
                 {/* Header */}
                 <div style={{ marginBottom: "3rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, textAlign: "center" }}>

@@ -44,12 +44,12 @@ function EmberCanvas() {
 
     const embers: Ember[] = [];
     const COLORS = [
-      "#dc2626",
-      "#ef4444",
-      "#f97316",
-      "#fb923c",
-      "#fbbf24",
-      "#b91c1c",
+      "#18ccfc",
+      "#6344f5",
+      "#ae48ff",
+      "#60a5fa",
+      "#c084fc",
+      "#818cf8",
     ];
 
     const spawn = (): Ember => {
@@ -151,7 +151,7 @@ export default function Footer() {
       className={`relative overflow-hidden text-white ${montserrat.className}`}
       style={{
         background:
-          "linear-gradient(180deg, #000000 0%, #080101 60%, #0c0202 100%)",
+          "linear-gradient(180deg, transparent 0%, rgba(10,1,24,0.8) 40%, #08001a 100%)",
       }}
     >
       {/* Ember particles */}
@@ -159,14 +159,14 @@ export default function Footer() {
         <EmberCanvas />
       </div>
 
-      {/* Top red glow line */}
+      {/* Top glow line */}
       <div
         className="absolute top-0 left-0 right-0 h-px z-10"
         style={{
           background:
-            "linear-gradient(90deg, transparent 0%, #dc2626 30%, #ef4444 50%, #dc2626 70%, transparent 100%)",
+            "linear-gradient(90deg, transparent 0%, #6344F5 30%, #18CCFC 50%, #6344F5 70%, transparent 100%)",
           boxShadow:
-            "0 0 20px 3px rgba(220,38,38,0.5), 0 0 60px 8px rgba(220,38,38,0.2)",
+            "0 0 20px 3px rgba(99,68,245,0.5), 0 0 60px 8px rgba(24,204,252,0.2)",
         }}
       />
 
@@ -175,7 +175,7 @@ export default function Footer() {
         className="absolute bottom-0 left-0 right-0 h-48 z-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(0deg, rgba(15,1,1,0.9) 0%, transparent 100%)",
+            "linear-gradient(0deg, rgba(8,0,26,0.9) 0%, transparent 100%)",
         }}
       />
 
@@ -186,23 +186,23 @@ export default function Footer() {
           <p
             className="text-4xl font-black tracking-[0.3em] uppercase"
             style={{
-              background: "linear-gradient(135deg, #ffffff 30%, #dc2626 70%)",
+              background: "linear-gradient(135deg, #ffffff 30%, #18CCFC 70%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 18px rgba(220,38,38,0.4))",
+              filter: "drop-shadow(0 0 18px rgba(24,204,252,0.4))",
             }}
           >
             AAKAR
           </p>
-          <p className="text-xs tracking-[0.5em] text-red-600 uppercase mt-1">
+          <p className="text-xs tracking-[0.5em] text-purple-400 uppercase mt-1">
             A New Era Begins · 新たな時代の幕開け
           </p>
           <div
             className="mt-5 w-24 h-px"
             style={{
               background:
-                "linear-gradient(90deg, transparent, #dc2626, transparent)",
-              boxShadow: "0 0 8px #dc2626",
+                "linear-gradient(90deg, transparent, #6344F5, transparent)",
+              boxShadow: "0 0 8px #6344F5",
             }}
           />
         </div>
@@ -211,7 +211,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Explore */}
           <div>
-            <h4 className="text-xs tracking-[0.3em] uppercase text-red-500 mb-5 font-semibold">
+            <h4 className="text-xs tracking-[0.3em] uppercase text-purple-400 mb-5 font-semibold">
               Explore
             </h4>
             <ul className="space-y-3">
@@ -228,7 +228,7 @@ export default function Footer() {
                     className="text-gray-500 hover:text-white text-sm tracking-wide transition-colors duration-200 hover:pl-2 inline-block"
                     style={{ transition: "all 0.2s ease" }}
                   >
-                    <span className="text-red-700 mr-2 opacity-60">›</span>
+                    <span className="text-purple-400 mr-2 opacity-60">›</span>
                     {label}
                   </Link>
                 </li>
@@ -238,7 +238,7 @@ export default function Footer() {
 
           {/* Events */}
           <div>
-            <h4 className="text-xs tracking-[0.3em] uppercase text-red-500 mb-5 font-semibold">
+            <h4 className="text-xs tracking-[0.3em] uppercase text-purple-400 mb-5 font-semibold">
               Events
             </h4>
             <ul className="space-y-3">
@@ -254,7 +254,7 @@ export default function Footer() {
                     className="text-gray-500 hover:text-white text-sm tracking-wide transition-colors duration-200 hover:pl-2 inline-block"
                     style={{ transition: "all 0.2s ease" }}
                   >
-                    <span className="text-red-700 mr-2 opacity-60">›</span>
+                    <span className="text-purple-400 mr-2 opacity-60">›</span>
                     {label}
                   </Link>
                 </li>
@@ -264,7 +264,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-xs tracking-[0.3em] uppercase text-red-500 mb-5 font-semibold">
+            <h4 className="text-xs tracking-[0.3em] uppercase text-purple-400 mb-5 font-semibold">
               Contact Us
             </h4>
             <ul className="space-y-4">
@@ -276,13 +276,13 @@ export default function Footer() {
                   className="flex items-center gap-3 text-gray-500 hover:text-white text-sm transition-colors duration-200 group"
                 >
                   <span
-                    className="flex items-center justify-center w-7 h-7 border border-red-900/40 group-hover:border-red-600 transition-colors duration-200"
+                    className="flex items-center justify-center w-7 h-7 border border-purple-900/40 group-hover:border-cyan-500 transition-colors duration-200"
                     style={{
                       clipPath:
                         "polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%)",
                     }}
                   >
-                    <FaInstagram className="text-xs text-red-700 group-hover:text-red-400" />
+                    <FaInstagram className="text-xs text-purple-400 group-hover:text-cyan-400" />
                   </span>
                   @aakar_2026
                 </Link>
@@ -293,13 +293,13 @@ export default function Footer() {
                   className="flex items-center gap-3 text-gray-500 hover:text-white text-sm transition-colors duration-200 group"
                 >
                   <span
-                    className="flex items-center justify-center w-7 h-7 border border-red-900/40 group-hover:border-red-600 transition-colors duration-200"
+                    className="flex items-center justify-center w-7 h-7 border border-purple-900/40 group-hover:border-cyan-500 transition-colors duration-200"
                     style={{
                       clipPath:
                         "polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%)",
                     }}
                   >
-                    <FaPhone className="text-xs text-red-700 group-hover:text-red-400" />
+                    <FaPhone className="text-xs text-purple-400 group-hover:text-cyan-400" />
                   </span>
                   +91 62827 59863
                 </Link>
@@ -310,13 +310,13 @@ export default function Footer() {
                   className="flex items-center gap-3 text-gray-500 hover:text-white text-sm transition-colors duration-200 group"
                 >
                   <span
-                    className="flex items-center justify-center w-7 h-7 border border-red-900/40 group-hover:border-red-600 transition-colors duration-200"
+                    className="flex items-center justify-center w-7 h-7 border border-purple-900/40 group-hover:border-cyan-500 transition-colors duration-200"
                     style={{
                       clipPath:
                         "polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%)",
                     }}
                   >
-                    <FaEnvelope className="text-xs text-red-700 group-hover:text-red-400" />
+                    <FaEnvelope className="text-xs text-purple-400 group-hover:text-cyan-400" />
                   </span>
                   aakar2026@ajiet.edu.in
                 </Link>
@@ -326,7 +326,7 @@ export default function Footer() {
 
           {/* Address + Legal */}
           <div>
-            <h4 className="text-xs tracking-[0.3em] uppercase text-red-500 mb-5 font-semibold">
+            <h4 className="text-xs tracking-[0.3em] uppercase text-purple-400 mb-5 font-semibold">
               Address
             </h4>
             <p className="text-gray-500 text-sm leading-relaxed mb-6">
@@ -335,7 +335,7 @@ export default function Footer() {
               Mangaluru, Karnataka — 575006
             </p>
 
-            <h4 className="text-xs tracking-[0.3em] uppercase text-red-500 mb-4 font-semibold">
+            <h4 className="text-xs tracking-[0.3em] uppercase text-purple-400 mb-4 font-semibold">
               Legal
             </h4>
             <ul className="space-y-2">
@@ -360,7 +360,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div
           className="mt-12 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ borderTop: "1px solid rgba(220,38,38,0.12)" }}
+          style={{ borderTop: "1px solid rgba(99,68,245,0.2)" }}
         >
           <p className="text-gray-700 text-xs tracking-widest uppercase text-center md:text-left">
             © 2026 Aakar · AJIET · All rights reserved

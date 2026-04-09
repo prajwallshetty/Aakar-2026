@@ -7,8 +7,6 @@ import { createMerchOrder } from "@/backend/merch";
 import { cinzelFont } from "@/lib/font";
 import { getMerchVariant } from "@/lib/merchVariants";
 import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
   AnimeCardWrapper, 
   AnimeSectionHeading, 
   AnimeGlitchText,
@@ -251,10 +249,7 @@ function MerchPaymentContent() {
         .step-badge { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.56rem; letter-spacing: 0.42em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; padding: 0.2rem 0.9rem; border: 1px solid ${ANIME_COLORS.secondary}60; background: ${ANIME_COLORS.secondary}12; border-radius: 2px; margin-bottom: 0.9rem; }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden">
-        <AnimeOrbField />
-        <AnimeParticleField />
-        <div className="absolute inset-0 -z-0 bg-black/10" />
+      <main className="relative min-h-screen overflow-hidden"><div className="absolute inset-0 -z-0 bg-black/10" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <div className="merch-shell space-y-5">

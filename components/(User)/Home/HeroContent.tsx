@@ -24,12 +24,12 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
     <motion.div
       className="absolute inset-0 z-30 flex flex-col justify-end md:justify-start md:pt-[12vh]"
       style={!isMobile
-        ? { paddingLeft: "clamp(28px,7vw,100px)", y: textY, x: textMX }
-        : { paddingLeft: "20px", paddingRight: "20px", paddingTop: "12vh", justifyContent: "flex-start", alignItems: "center" }}
+        ? { paddingLeft: "clamp(28px,7vw,100px)", paddingBottom: "clamp(60px,12vh,120px)", y: textY, x: textMX }
+        : { paddingLeft: "20px", paddingRight: "20px", paddingTop: "12vh", paddingBottom: "80px", justifyContent: "flex-start", alignItems: "center" }}
     >
       {/* ── LOGO ── */}
       <motion.div
-        style={!isMobile ? { y: logoY, marginLeft: "-7vw" } : { width: "clamp(200px,80vw,420px)", marginBottom: "16px" }}
+        style={!isMobile ? { y: logoY, marginLeft: "-7vw" } : { width: "clamp(280px,90vw,520px)", marginBottom: "16px" }}
         variants={fadeUp}
         initial="hidden"
         animate="visible"
@@ -86,7 +86,7 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
 
         {/* ── CTA ── */}
         <motion.div
-          className="flex items-center gap-4 mt-8"
+          className="flex flex-wrap items-center gap-3 mt-8"
           variants={fadeUp}
           initial="hidden"
           animate="visible"
@@ -95,14 +95,26 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
           <span className="hidden md:inline-block border border-white/20 bg-black/30 px-4 py-1.5 rounded-sm text-[10px] tracking-[0.3em] text-white/80 uppercase">
             Techno-Cultural Fest
           </span>
-          <span className="text-[10px] tracking-[0.3em] text-orange-400/80 border-l border-orange-500/20 pl-4 uppercase">
+          <span className="text-[10px] tracking-[0.3em] text-orange-400/80 border-l border-orange-500/20 pl-3 uppercase">
             2026
           </span>
-          <button className="bg-gradient-to-br from-neutral-900/90 to-orange-950/80 border border-white/20 px-6 py-2 rounded-sm text-[10px] tracking-[0.3em] text-white uppercase hover:shadow-[0_0_20px_rgba(255,100,0,0.2)] transition-shadow active:scale-95">
-            Explore ›
-          </button>
+          <a
+            href="/rulebook.pdf"
+            download
+            className="bg-gradient-to-br from-neutral-900/90 to-orange-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(255,100,0,0.2)] transition-shadow active:scale-95 no-underline"
+          >
+            📕 Rulebook
+          </a>
+          <a
+            href="/Aakar_2025_brochure.pdf"
+            download
+            className="bg-gradient-to-br from-neutral-900/90 to-purple-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(99,68,245,0.25)] transition-shadow active:scale-95 no-underline"
+          >
+            📄 Brochure
+          </a>
         </motion.div>
       </div>
     </motion.div>
   );
 }
+

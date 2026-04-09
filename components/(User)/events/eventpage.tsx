@@ -9,8 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { generateEventSlug, getEventImageCandidates } from "@/lib/utils";
 import {
-  AnimeParticleField,
-  AnimeOrbField,
   AnimeCardWrapper,
   AnimeSectionHeading,
   AnimeGlitchText,
@@ -194,11 +192,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         }
       `}</style>
 
-      {/* Anime Background Layers */}
-      <AnimeOrbField />
-      <AnimeParticleField />
-
-      <div
+      {/* Anime Background Layers */}<div
         style={{
           minHeight: "100vh",
           position: "relative",
