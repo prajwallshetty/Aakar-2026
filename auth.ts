@@ -1,6 +1,7 @@
-import NextAuth, { DefaultSession } from "next-auth"
+import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { db } from "@/backend"
+import { authConfig } from "./auth.config"
 
 async function verifyAdmin(email: string, password: string) {
     try {
@@ -43,7 +44,7 @@ async function verifyAdmin(email: string, password: string) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "dev-secret-change-me",
+  ...authConfig,
   providers: [
     Credentials({
       credentials: {

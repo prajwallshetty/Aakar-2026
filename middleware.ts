@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "./auth";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 
-export default auth(async (req, ctx) => {
+const { auth } = NextAuth(authConfig);
+
+export default auth(async (req) => {
     if(!req.auth?.user?.email && !req.nextUrl.pathname.toLowerCase().startsWith("/adminlogin")) {
         return NextResponse.redirect(req.nextUrl.origin + "/AdminLogin");
     }
