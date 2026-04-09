@@ -1,345 +1,444 @@
 "use client";
 
 import Link from "next/link";
-import {
-  AnimeParticleField,
-  AnimeOrbField,
-  ANIME_GLOBAL_STYLES,
-  ANIME_COLORS,
-} from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import { useState, useEffect } from "react";
 import { cinzelFont } from "@/lib/font";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 
-/* ─── pre-computed starburst path (no hydration mismatch) ──── */
-function buildStarburstPath(cx: number, cy: number, outerR: number, innerR: number, spikes = 24) {
-  let d = "";
-  for (let i = 0; i < spikes * 2; i++) {
-    const r   = i % 2 === 0 ? outerR : innerR;
-    const ang = (Math.PI / spikes) * i - Math.PI / 2;
-    const x   = Math.round((cx + r * Math.cos(ang)) * 1e4) / 1e4;
-    const y   = Math.round((cy + r * Math.sin(ang)) * 1e4) / 1e4;
-    d += (i === 0 ? "M" : "L") + `${x},${y}`;
-  }
-  return d + "Z";
-}
+/* ─── funny slangs that rotate ────────────────────────────────── */
+const SLANGS = [
+  "Bro really typed a URL like it's a cheat code 💀",
+  "This page said 'aight imma head out' 🚪",
+  "You got ratio'd by the server fr fr",
+  "No cap, this page doesn't exist",
+  "It's giving... 404 energy ✨",
+  "This page ghosted you harder than your crush 👻",
+  "Skill issue tbh 🎮",
+  "L + bozo + page not found + touch grass 🌿",
+  "POV: you clicked the wrong link again",
+  "Not even ctrl+z can save you now 😭",
+  "Sir, this is a Wendy's... not a valid URL 🍔",
+  "This page went to get milk and never came back 🥛",
+];
 
-const BURST = buildStarburstPath(0, 0, 280, 170, 24);
+const EMOJIS = ["💀", "😭", "🤡", "👻", "🫠", "😵‍💫", "🥴", "🤯"];
 
-/* ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════ */
 export default function NotFound() {
+  const [sloganIdx, setSloganIdx] = useState(0);
+  const [emojiIdx, setEmojiIdx] = useState(0);
+  const [glitchActive, setGlitchActive] = useState(false);
+
+  /* rotate slangs */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSloganIdx((p) => (p + 1) % SLANGS.length);
+      setEmojiIdx((p) => (p + 1) % EMOJIS.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  /* periodic glitch burst */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 400);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <style>{`
-        ${ANIME_GLOBAL_STYLES}
-
-        /* ── fonts ── */
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
 
         /* ── keyframes ── */
-        @keyframes burstSpin {
-          to { transform: translate(-50%,-50%) rotate(360deg); }
+        @keyframes float404 {
+          0%, 100% { transform: translateY(0px); }
+          50%      { transform: translateY(-18px); }
         }
         @keyframes glitch404 {
-          0%,88%,100% { clip-path:none; transform:translate(0,0); }
-          89% { clip-path:inset(18% 0 54% 0); transform:translate(-8px, 3px); color:${ANIME_COLORS.secondary}; }
-          91% { clip-path:inset(56% 0  8% 0); transform:translate( 8px,-4px); color:${ANIME_COLORS.accent}; }
-          93% { clip-path:inset( 4% 0 78% 0); transform:translate(-5px, 5px); color:${ANIME_COLORS.primary}; }
-          95% { clip-path:inset(42% 0 28% 0); transform:translate( 5px,-2px); color:${ANIME_COLORS.secondary}; }
-          97% { clip-path:none; transform:translate(0,0); }
+          0%   { clip-path: inset(40% 0 30% 0); transform: translate(-6px, 2px) skewX(-2deg); }
+          20%  { clip-path: inset(10% 0 75% 0); transform: translate(5px, -3px) skewX(1deg); }
+          40%  { clip-path: inset(70% 0 5% 0);  transform: translate(-4px, 4px) skewX(-1deg); }
+          60%  { clip-path: inset(20% 0 50% 0);  transform: translate(6px, -1px) skewX(2deg); }
+          80%  { clip-path: inset(55% 0 15% 0);  transform: translate(-3px, 3px) skewX(-1deg); }
+          100% { clip-path: inset(30% 0 40% 0);  transform: translate(4px, -2px) skewX(1deg); }
         }
         @keyframes fadeUp {
-          from { opacity:0; transform:translateY(22px); }
-          to   { opacity:1; transform:translateY(0); }
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes scanLine404 {
-          0%   { top: -3px; opacity:0.7; }
-          90%  { opacity:0.7; }
-          100% { top:100%; opacity:0; }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
-        @keyframes neonBreath404 {
-          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
-          50%     { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
+        @keyframes sloganSwap {
+          0%   { opacity: 0; transform: translateY(12px) scale(0.96); filter: blur(4px); }
+          15%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+          85%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+          100% { opacity: 0; transform: translateY(-12px) scale(0.96); filter: blur(4px); }
         }
-        @keyframes rubyPulse404 {
-          0%,100% { opacity:0.65; transform:scaleX(1); }
-          50%     { opacity:1;    transform:scaleX(1.03); }
+        @keyframes pulseGlow {
+          0%, 100% { box-shadow: 0 0 20px rgba(99,68,245,0.3), 0 0 60px rgba(99,68,245,0.1); }
+          50%      { box-shadow: 0 0 35px rgba(99,68,245,0.5), 0 0 80px rgba(174,72,255,0.2); }
         }
-        @keyframes shimmerBtn404 {
-          0%   { left:-100%; }
-          100% { left:140%; }
+        @keyframes shimmer {
+          0%   { left: -100%; }
+          100% { left: 200%; }
         }
-        @keyframes tagFlicker404 {
-          0%,100% { opacity:1; }
-          91% { opacity:1; }
-          93% { opacity:0.2; }
-          95% { opacity:1; }
-          97% { opacity:0.35; }
+        @keyframes borderGlow {
+          0%, 100% { border-color: rgba(99,68,245,0.4); }
+          50%      { border-color: rgba(174,72,255,0.6); }
+        }
+        @keyframes breathe {
+          0%, 100% { opacity: 0.4; }
+          50%      { opacity: 0.8; }
+        }
+        @keyframes spinSlow {
+          to { transform: translate(-50%,-50%) rotate(360deg); }
+        }
+        @keyframes scanLine {
+          0%   { top: -2px; }
+          100% { top: 100%; }
+        }
+        @keyframes emojiFloat {
+          0%, 100% { transform: scale(1) rotate(0deg); }
+          25%      { transform: scale(1.2) rotate(-8deg); }
+          50%      { transform: scale(1) rotate(0deg); }
+          75%      { transform: scale(1.2) rotate(8deg); }
         }
 
-        /* ── 404 number ── */
-        .nf-num { animation: glitch404 5s ease-in-out infinite; }
+        /* ── the number ── */
+        .num-404 {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(8rem, 28vw, 18rem);
+          line-height: 0.82;
+          letter-spacing: 0.04em;
+          color: transparent;
+          background: linear-gradient(180deg, #c4b5fd 0%, #6344F5 40%, #AE48FF 70%, #18CCFC 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          position: relative;
+          z-index: 2;
+          animation: float404 4s ease-in-out infinite;
+          filter: drop-shadow(0 0 40px rgba(99,68,245,0.4)) drop-shadow(0 0 80px rgba(174,72,255,0.2));
+          margin: 0;
+          user-select: none;
+        }
 
-        /* ── card shell ── */
+        /* glitch clones */
+        .glitch-layer {
+          position: absolute; inset: 0;
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(8rem, 28vw, 18rem);
+          line-height: 0.82;
+          letter-spacing: 0.04em;
+          pointer-events: none;
+          user-select: none;
+          opacity: 0;
+        }
+        .glitch-active .glitch-layer {
+          animation: glitch404 0.4s steps(3) both;
+          opacity: 0.7;
+        }
+        .glitch-layer.cyan  { color: #18CCFC; mix-blend-mode: screen; }
+        .glitch-layer.pink  { color: #AE48FF; mix-blend-mode: screen; }
+
+        /* ── card ── */
         .nf-card {
           position: relative;
+          max-width: 560px;
+          width: 100%;
           background: linear-gradient(155deg,
-            rgba(8,3,18,.97) 0%,
-            rgba(12,5,24,.95) 55%,
-            rgba(9,3,18,.98) 100%
+            rgba(15,8,40,0.85) 0%,
+            rgba(20,12,50,0.80) 50%,
+            rgba(12,6,35,0.88) 100%
           );
-          border: 1.5px solid ${ANIME_COLORS.primary}80;
-          border-radius: 1.5rem;
+          border: 1.5px solid rgba(99,68,245,0.35);
+          border-radius: 20px;
+          padding: clamp(1.6rem, 4vw, 2.6rem) clamp(1.8rem, 5vw, 3rem);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
           overflow: hidden;
-          animation: neonBreath404 5s ease-in-out infinite;
+          animation: pulseGlow 5s ease-in-out infinite, borderGlow 4s ease-in-out infinite;
         }
-        .nf-card::after {
-          content:'';
-          position:absolute; inset:0;
-          background: repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 3px,
-            ${ANIME_COLORS.primary}07 3px,
-            ${ANIME_COLORS.primary}07 4px
-          );
-          pointer-events:none; z-index:0;
+        .nf-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(99,68,245,0.6), rgba(174,72,255,0.4), transparent);
         }
+
+        /* scan line across card */
         .nf-scan {
-          position:absolute; left:0; right:0;
-          height:2px;
-          background:linear-gradient(90deg,transparent,${ANIME_COLORS.primary}55,transparent);
-          animation:scanLine404 4s linear infinite;
-          pointer-events:none; z-index:5;
+          position: absolute; left: 0; right: 0;
+          height: 1.5px;
+          background: linear-gradient(90deg, transparent, rgba(99,68,245,0.4), rgba(24,204,252,0.3), transparent);
+          animation: scanLine 3.5s linear infinite;
+          pointer-events: none; z-index: 5;
         }
 
-        /* ── ruby badge ── */
-        .nf-ruby {
-          display:inline-flex; align-items:center; gap:0.6rem;
-          font-family:'Share Tech Mono',monospace;
-          font-size:0.58rem; letter-spacing:0.45em;
-          color:${ANIME_COLORS.accent};
-          text-transform:uppercase;
-          padding:0.22rem 1.1rem;
-          border:1px solid ${ANIME_COLORS.accent}80;
-          background:${ANIME_COLORS.accent}16;
-          clip-path:polygon(10px 0%,calc(100% - 10px) 0%,100% 50%,calc(100% - 10px) 100%,10px 100%,0% 50%);
-          animation:rubyPulse404 3s ease-in-out infinite;
+        /* ── slogan area ── */
+        .slogan-box {
+          min-height: 3.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .nf-ruby::before,.nf-ruby::after { content:'◆'; font-size:0.35rem; opacity:0.7; }
-
-        /* ── tags / labels ── */
-        .nf-tag {
-          font-family:'Share Tech Mono',monospace;
-          font-size:0.57rem; letter-spacing:0.5em;
-          color:${ANIME_COLORS.secondary};
-          text-transform:uppercase;
-          animation:tagFlicker404 9s ease-in-out infinite;
+        .slogan-text {
+          font-family: 'Space Mono', monospace;
+          font-size: clamp(0.82rem, 2.2vw, 1.05rem);
+          color: #c4b5fd;
+          text-align: center;
+          line-height: 1.6;
+          animation: sloganSwap 3.5s ease-in-out infinite;
+          padding: 0 0.5rem;
         }
 
-        /* ── body copy ── */
-        .nf-desc {
-          font-family:'Share Tech Mono',monospace;
-          font-size:0.82rem; line-height:1.9;
-          color:${ANIME_COLORS.text}cc;
-          padding-left:1rem;
-          border-left:2px solid ${ANIME_COLORS.accent};
-          letter-spacing:0.02em;
+        /* ── status badge ── */
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-family: 'Space Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: rgba(196,181,253,0.7);
+          padding: 0.3rem 1rem;
+          border: 1px solid rgba(99,68,245,0.3);
+          border-radius: 999px;
+          background: rgba(99,68,245,0.08);
+        }
+        .status-dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: #AE48FF;
+          box-shadow: 0 0 8px #AE48FF;
+          animation: breathe 2s ease-in-out infinite;
         }
 
         /* ── CTA button ── */
         .nf-btn {
-          font-family:'Share Tech Mono',monospace;
-          font-size:0.72rem; letter-spacing:0.28em;
-          text-transform:uppercase;
-          padding:0.85rem 2.2rem;
-          border:1.5px solid ${ANIME_COLORS.primary};
-          background:linear-gradient(135deg,${ANIME_COLORS.primary}55,${ANIME_COLORS.primary}30);
-          color:#fff;
-          border-radius:5px;
-          box-shadow:0 0 22px ${ANIME_COLORS.primary}50,inset 0 1px 0 ${ANIME_COLORS.primary}70;
-          cursor:pointer; display:inline-block;
-          text-decoration:none;
-          position:relative; overflow:hidden;
-          transition:transform .16s ease,box-shadow .16s ease;
+          font-family: 'Space Mono', monospace;
+          font-size: 0.78rem;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          padding: 0.9rem 2.4rem;
+          background: linear-gradient(135deg, #6344F5 0%, #AE48FF 100%);
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          cursor: pointer;
+          display: inline-block;
+          text-decoration: none;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 4px 24px rgba(99,68,245,0.35), 0 0 0 1px rgba(174,72,255,0.2);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .nf-btn::after {
-          content:'';
-          position:absolute; top:0; left:-120%;
-          width:80%; height:100%;
-          background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
-          animation:shimmerBtn404 3.2s ease-in-out infinite;
+          content: '';
+          position: absolute;
+          top: 0; left: -100%;
+          width: 60%; height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+          animation: shimmer 3s ease-in-out infinite;
         }
         .nf-btn:hover {
-          transform:translateY(-3px);
-          box-shadow:0 0 36px ${ANIME_COLORS.primary}75,inset 0 1px 0 ${ANIME_COLORS.primary};
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 8px 36px rgba(99,68,245,0.55), 0 0 0 1px rgba(174,72,255,0.4);
         }
-        .nf-btn:active { transform:translateY(0); }
+        .nf-btn:active { transform: translateY(0) scale(0.98); }
 
-        /* ── secondary ghost btn ── */
+        /* ── ghost button ── */
         .nf-btn-ghost {
-          font-family:'Share Tech Mono',monospace;
-          font-size:0.72rem; letter-spacing:0.28em;
-          text-transform:uppercase;
-          padding:0.85rem 2.2rem;
-          border:1.5px solid ${ANIME_COLORS.secondary}80;
-          background:transparent;
-          color:${ANIME_COLORS.text}bb;
-          border-radius:5px;
-          text-decoration:none; display:inline-block;
-          transition:all .16s ease;
+          font-family: 'Space Mono', monospace;
+          font-size: 0.78rem;
+          font-weight: 700;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          padding: 0.9rem 2.4rem;
+          background: transparent;
+          color: #c4b5fd;
+          border: 1.5px solid rgba(99,68,245,0.4);
+          border-radius: 10px;
+          text-decoration: none;
+          display: inline-block;
+          transition: all 0.2s ease;
         }
         .nf-btn-ghost:hover {
-          border-color:${ANIME_COLORS.secondary};
-          color:${ANIME_COLORS.text};
-          box-shadow:0 0 18px ${ANIME_COLORS.secondary}35;
-          transform:translateY(-2px);
+          border-color: #AE48FF;
+          color: #fff;
+          background: rgba(99,68,245,0.12);
+          box-shadow: 0 0 24px rgba(174,72,255,0.2);
+          transform: translateY(-2px);
         }
 
-        /* ── deco divider ── */
-        .nf-deco {
-          width:72px; height:2px; margin:0.9rem auto;
-          background:linear-gradient(90deg,transparent,${ANIME_COLORS.primary}cc,transparent);
-          animation:rubyPulse404 2.8s ease-in-out infinite;
+        /* ── terminal log ── */
+        .terminal-log {
+          font-family: 'Space Mono', monospace;
+          font-size: 0.6rem;
+          color: rgba(196,181,253,0.35);
+          letter-spacing: 0.08em;
+          text-align: center;
+          line-height: 2;
+        }
+        .terminal-log span {
+          color: rgba(24,204,252,0.5);
         }
 
-        /* ── fade-up utility ── */
-        .fu-1 { animation:fadeUp .5s .10s ease both; }
-        .fu-2 { animation:fadeUp .5s .22s ease both; }
-        .fu-3 { animation:fadeUp .5s .36s ease both; }
-        .fu-4 { animation:fadeUp .5s .50s ease both; }
+        /* ── emoji ── */
+        .float-emoji {
+          font-size: 2.5rem;
+          animation: emojiFloat 3s ease-in-out infinite;
+          filter: drop-shadow(0 0 12px rgba(174,72,255,0.4));
+        }
+
+        /* ── fade utils ── */
+        .fu-1 { animation: fadeUp 0.6s 0.1s ease both; }
+        .fu-2 { animation: fadeUp 0.6s 0.25s ease both; }
+        .fu-3 { animation: fadeUp 0.6s 0.4s ease both; }
+        .fu-4 { animation: fadeUp 0.6s 0.55s ease both; }
+        .fu-5 { animation: fadeIn 0.8s 0.7s ease both; }
+
+        /* ── divider ── */
+        .nf-divider {
+          width: 80px;
+          height: 2px;
+          margin: 0 auto;
+          background: linear-gradient(90deg, transparent, #6344F5, #AE48FF, transparent);
+          border-radius: 2px;
+          animation: breathe 3s ease-in-out infinite;
+        }
+
+        /* ── corner decorations ── */
+        .corner-deco {
+          position: absolute;
+          width: 18px; height: 18px;
+          opacity: 0.3;
+          transition: opacity 0.3s;
+        }
+        .nf-card:hover .corner-deco { opacity: 0.6; }
+        .corner-deco.tl { top: 12px; left: 12px; border-top: 2px solid #6344F5; border-left: 2px solid #6344F5; border-radius: 3px 0 0 0; }
+        .corner-deco.tr { top: 12px; right: 12px; border-top: 2px solid #AE48FF; border-right: 2px solid #AE48FF; border-radius: 0 3px 0 0; }
+        .corner-deco.bl { bottom: 12px; left: 12px; border-bottom: 2px solid #AE48FF; border-left: 2px solid #AE48FF; border-radius: 0 0 0 3px; }
+        .corner-deco.br { bottom: 12px; right: 12px; border-bottom: 2px solid #18CCFC; border-right: 2px solid #18CCFC; border-radius: 0 0 3px 0; }
+
+        /* responsive */
+        @media (max-width: 480px) {
+          .btn-row { flex-direction: column; align-items: stretch; }
+          .nf-btn, .nf-btn-ghost { width: 100%; text-align: center; }
+        }
       `}</style>
 
       {/* ── Background ── */}
       <div className="fixed inset-0 z-0">
-        {/* Base dark indigo background */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a0118 0%, #0d0526 30%, #10082e 60%, #08001a 100%)" }} />
-
-        {/* Cinematic gradient overlay */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,1,20,0.8) 0%, rgba(10,3,30,0.6) 50%, rgba(8,0,22,0.95) 100%)" }} />
-
-        {/* Aceternity Background Beams */}
-        <BackgroundBeams className="absolute inset-0 opacity-60" />
-
-        {/* Vignette */}
+        <BackgroundBeams className="absolute inset-0 opacity-70" />
         <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.7) 100%)" }} />
       </div>
 
-      <AnimeOrbField />
-      <AnimeParticleField />
+      {/* ── Slow spinning ring deco ── */}
+      <div style={{
+        position: "fixed",
+        top: "50%", left: "50%",
+        width: "clamp(300px, 55vw, 600px)",
+        height: "clamp(300px, 55vw, 600px)",
+        zIndex: 1, pointerEvents: "none",
+        animation: "spinSlow 60s linear infinite",
+        transform: "translate(-50%,-50%)",
+      }}>
+        <svg viewBox="0 0 200 200" width="100%" height="100%" style={{ opacity: 0.06 }}>
+          <circle cx="100" cy="100" r="95" fill="none" stroke="#6344F5" strokeWidth="0.5" strokeDasharray="6 8" />
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#AE48FF" strokeWidth="0.3" strokeDasharray="3 12" />
+          <circle cx="100" cy="100" r="65" fill="none" stroke="#18CCFC" strokeWidth="0.3" strokeDasharray="2 16" />
+        </svg>
+      </div>
 
       <main style={{
-        position:"relative", zIndex:10,
-        minHeight:"100vh",
-        display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center",
-        padding:"2rem",
-        gap:"clamp(0.8rem,2vh,1.6rem)",
-        textAlign:"center",
+        position: "relative", zIndex: 10,
+        minHeight: "100vh",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "2rem 1.5rem",
+        gap: "clamp(0.8rem, 2.5vh, 1.6rem)",
+        textAlign: "center",
       }}>
 
-        {/* spinning starburst (layered between bg and content) */}
-        <div style={{
-          position:"fixed",
-          top:"50%", left:"50%",
-          width:"clamp(340px,65vw,680px)",
-          height:"clamp(340px,65vw,680px)",
-          zIndex:1, pointerEvents:"none",
-          animation:"burstSpin 40s linear infinite",
-          transform:"translate(-50%,-50%)",
-        }}>
-          <svg viewBox="-280 -280 560 560" width="100%" height="100%">
-            <path d={BURST} fill={ANIME_COLORS.primary} opacity="0.06"
-              stroke={ANIME_COLORS.primary} strokeWidth="1"/>
-            <path d={BURST} fill="none"
-              stroke={ANIME_COLORS.secondary} strokeWidth="0.6" opacity="0.12"
-              transform="rotate(7.5)"/>
-          </svg>
+        {/* ── Status badge ── */}
+        <div className="fu-1">
+          <div className="status-badge">
+            <span className="status-dot" />
+            Error 404 · Page Not Found
+          </div>
         </div>
 
-        {/* ── ruby overline badge ── */}
-        <span className="nf-ruby fu-1">Quest Not Found · Error 404</span>
-
-        {/* ── giant 404 ── */}
-        <div style={{position:"relative", zIndex:2}} className="fu-1">
-          {/* ghost layers */}
-          <div style={{
-            position:"absolute",
-            fontFamily:"'Bebas Neue',sans-serif",
-            fontSize:"clamp(7rem,26vw,17rem)",
-            lineHeight:0.85, letterSpacing:"0.02em",
-            color:"transparent",
-            WebkitTextStroke:`0.04em ${ANIME_COLORS.secondary}`,
-            top:"7px", left:"-9px",
-            opacity:0.35, pointerEvents:"none", userSelect:"none",
-          }}>404</div>
-          <div style={{
-            position:"absolute",
-            fontFamily:"'Bebas Neue',sans-serif",
-            fontSize:"clamp(7rem,26vw,17rem)",
-            lineHeight:0.85, letterSpacing:"0.02em",
-            color:"transparent",
-            WebkitTextStroke:`0.04em ${ANIME_COLORS.accent}`,
-            top:"-6px", left:"9px",
-            opacity:0.3, pointerEvents:"none", userSelect:"none",
-          }}>404</div>
-          {/* primary glitch layer */}
-          <h1 className="nf-num" style={{
-            fontFamily:"'Bebas Neue',sans-serif",
-            fontSize:"clamp(7rem,26vw,17rem)",
-            lineHeight:0.85, letterSpacing:"0.02em",
-            color:ANIME_COLORS.text,
-            WebkitTextStroke:`0.025em ${ANIME_COLORS.primary}`,
-            textShadow:`0 0 35px ${ANIME_COLORS.primary}50, -3px -3px 0 ${ANIME_COLORS.primary}, 3px 3px 0 ${ANIME_COLORS.secondary}`,
-            margin:0, position:"relative", zIndex:2,
-          }}>404</h1>
+        {/* ── Giant 404 ── */}
+        <div style={{ position: "relative", zIndex: 2 }} className={`fu-1 ${glitchActive ? "glitch-active" : ""}`}>
+          <div className="glitch-layer cyan" aria-hidden>404</div>
+          <div className="glitch-layer pink" aria-hidden>404</div>
+          <h1 className="num-404">404</h1>
         </div>
 
-        {/* ── main card ── */}
-        <div className="nf-card fu-2" style={{
-          position:"relative", zIndex:2,
-          maxWidth:520, width:"100%",
-          padding:"clamp(1.4rem,3vw,2.2rem) clamp(1.6rem,4vw,2.8rem)",
-        }}>
+        {/* ── Floating emoji ── */}
+        <div className="fu-2 float-emoji" aria-hidden>
+          {EMOJIS[emojiIdx]}
+        </div>
+
+        {/* ── Card ── */}
+        <div className="nf-card fu-3">
           <div className="nf-scan" />
 
-          <p className="nf-tag" style={{position:"relative", zIndex:1}}>
-            System Alert · Route Unavailable
-          </p>
+          {/* Corner brackets */}
+          <div className="corner-deco tl" />
+          <div className="corner-deco tr" />
+          <div className="corner-deco bl" />
+          <div className="corner-deco br" />
 
-          <h2 className={`${cinzelFont.className}`} style={{
-            fontSize:"clamp(1.4rem,4vw,2.2rem)",
-            color:"#fff",
-            letterSpacing:"0.06em",
-            textTransform:"uppercase",
-            textShadow:`0 0 24px ${ANIME_COLORS.primary}55`,
-            margin:"0.6rem 0 1rem",
-            position:"relative", zIndex:1,
+          <h2 className={cinzelFont.className} style={{
+            fontSize: "clamp(1.3rem, 4vw, 2rem)",
+            color: "#fff",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            textShadow: "0 0 30px rgba(99,68,245,0.4)",
+            margin: "0 0 0.8rem",
+            position: "relative", zIndex: 1,
           }}>
-            This Quest Doesn't Exist
+            Yikes. Dead End, Bestie.
           </h2>
 
-          <p className="nf-desc" style={{position:"relative", zIndex:1}}>
-            The page you're looking for got lost in the void.<br/>
-            It never spawned — or was already defeated.<br/>
-            <span style={{
-              fontSize:"0.72rem", letterSpacing:"0.3em",
-              color:`${ANIME_COLORS.accent}bb`, textTransform:"uppercase",
-            }}>
-              No checkpoints here, hero.
-            </span>
-          </p>
+          <div className="nf-divider" style={{ marginBottom: "1.2rem" }} />
 
-          <div className="nf-deco" style={{position:"relative", zIndex:1}} />
+          {/* Rotating slangs */}
+          <div className="slogan-box" style={{ position: "relative", zIndex: 1 }}>
+            <p className="slogan-text" key={sloganIdx}>
+              {SLANGS[sloganIdx]}
+            </p>
+          </div>
+
+          <div className="nf-divider" style={{ marginTop: "1rem" }} />
         </div>
 
-        {/* ── action row ── */}
-        <div className="fu-3" style={{
-          display:"flex", gap:"1rem", flexWrap:"wrap",
-          justifyContent:"center",
-          position:"relative", zIndex:2,
+        {/* ── Action buttons ── */}
+        <div className="fu-4 btn-row" style={{
+          display: "flex", gap: "1rem", flexWrap: "wrap",
+          justifyContent: "center",
+          position: "relative", zIndex: 2,
         }}>
-          <Link href="/" className="nf-btn">← Return to Base</Link>
-          <Link href="/events/cultural" className="nf-btn-ghost">Browse Quests →</Link>
+          <Link href="/" className="nf-btn">← Take Me Home</Link>
+          <Link href="/events/cultural" className="nf-btn-ghost">Browse Events →</Link>
+        </div>
+
+        {/* ── Terminal log ── */}
+        <div className="fu-5 terminal-log">
+          <span>$</span> curl aakar.dev/this-page<br />
+          <span>→</span> 404: nah fam, that ain&apos;t here<br />
+          <span>→</span> suggestion: go touch some grass 🌿
         </div>
 
       </main>

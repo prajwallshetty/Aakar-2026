@@ -30,6 +30,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@supabase/supabase-js": "^2.101.1",
+    "@tabler/icons-react": "^3.41.1",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^22",
     "@types/nodemailer": "^6.4.17",
