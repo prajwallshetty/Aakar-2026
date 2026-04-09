@@ -13,6 +13,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
+import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 
 const eventCategories = [
