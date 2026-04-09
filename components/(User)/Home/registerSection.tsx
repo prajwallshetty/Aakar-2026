@@ -50,13 +50,11 @@ const RegisterSection = () => {
                     <AnimeCardWrapper accentIndex={1} style={{ display: "inline-block" }}>
                         <Button 
                             size="lg" 
-                            className="cursor-pointer transition duration-300 text-white font-light py-8 px-8 rounded-full text-xl leading-none bg-transparent hover:bg-transparent border-transparent"
                             style={{ 
-                                background: `${ANIME_COLORS.primary}20`,
-                                border: `1px solid ${ANIME_COLORS.primary}`,
-                                boxShadow: `0 0 12px ${ANIME_COLORS.primary}40`,
+                                background: `${ANIME_COLORS.primary}15`,
+                                border: `1px solid ${ANIME_COLORS.primary}40`,
+                                boxShadow: `0 0 10px ${ANIME_COLORS.primary}20`,
                                 color: ANIME_COLORS.text,
-                                backdropFilter: "blur(4px)"
                             }}
                         >
                             <AnimeGlitchText text="Join Now">

@@ -12,7 +12,13 @@ import Loading from "@/components/loading";
 export default function Home() {
   return (
     <>
-    <Eventcards />
+      <LandingPage />
+      <GlimpseOfAakar />
+      <Eventcards />
+      <ArenaBanner />
+      <DJ />
+      <Concert />
+      <RegisterSection />
     </>
   );
 }

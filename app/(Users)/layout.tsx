@@ -17,19 +17,13 @@ export default function RootLayout({
 }) {
   return (
     <div className={`${baseFont.className} antialiased flex flex-col min-h-screen`}>
-      {/* Dynamic Global Background */}
+      {/* Dynamic Global Background — 2 layers only */}
       <div className="fixed inset-0 z-[-10]">
-        {/* Base dark indigo background */}
+        {/* Combined dark indigo gradient (was 3 separate layers) */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a0118 0%, #0d0526 30%, #10082e 60%, #08001a 100%)" }} />
-
-        {/* Cinematic gradient overlay */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,1,20,0.7) 0%, rgba(10,3,30,0.5) 50%, rgba(8,0,22,0.9) 100%)" }} />
 
         {/* Aceternity Background Beams */}
         <BackgroundBeamsWrapper />
-
-        {/* Vignette */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />
       </div>
 
       <Navbar />

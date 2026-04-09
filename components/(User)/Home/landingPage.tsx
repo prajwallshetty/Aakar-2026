@@ -22,7 +22,7 @@ export default function HeroLanding() {
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
-    window.addEventListener("resize", check);
+    window.addEventListener("resize", check, { passive: true });
     return () => window.removeEventListener("resize", check);
   }, []);
 
@@ -67,8 +67,6 @@ export default function HeroLanding() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;700&family=Noto+Serif+JP:wght@200;300&display=swap');
-        
         .hero-side-label {
           writing-mode: vertical-rl;
           font-family: 'Cinzel', serif;
@@ -94,9 +92,7 @@ export default function HeroLanding() {
       >
         {/* ── VIDEO LAYER ── */}
         <div className="absolute inset-0 z-0">
-          <OptimizedVideo
-            src="/aakarlandingvideo.mp4"
-          />
+          <OptimizedVideo src="/aakarlandingvideo.mp4" />
         </div>
 
         {/* ── OVERLAYS ── */}
@@ -171,8 +167,8 @@ function AudioControl({ isMuted, onToggle }: { isMuted: boolean; onToggle: () =>
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 2.5, duration: 0.8 }}
-      className={`fixed bottom-8 right-8 z-[100] w-12 h-12 rounded-full flex items-center justify-center border transition-all duration-300 backdrop-blur-xl ${
-        isMuted ? "bg-black/50 border-white/20" : "bg-white/20 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+      className={`fixed bottom-8 right-8 z-[100] w-12 h-12 rounded-full flex items-center justify-center border transition-colors duration-300 ${
+        isMuted ? "bg-black/60 border-white/20" : "bg-white/15 border-white/40"
       }`}
     >
       {isMuted ? (

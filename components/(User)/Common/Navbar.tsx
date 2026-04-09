@@ -22,7 +22,7 @@ const eventCategories = [
   { name: "Special", href: "/events/special" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ visible }: { visible?: boolean }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [eventsOpen, setEventsOpen] = useState(false);
   const [mobileEventsOpen, setMobileEventsOpen] = useState(false);
@@ -53,10 +53,13 @@ export default function Navbar() {
       <NavbarWrapper>
         {/* ═══════════ Desktop Navigation ═══════════ */}
         <NavBody>
-          {/* Logo */}
+          {/* Logo — Scales based on scroll state */}
           <Link
             href="/"
-            className="relative z-20 mr-4 flex items-center px-2 py-1 shrink-0"
+            className="relative z-20 mr-4 flex items-center px-2 py-1 shrink-0 transition-transform duration-500 origin-left"
+            style={{ 
+              transform: visible ? "scale(0.8)" : "scale(1.2) translateY(4px)",
+            }}
           >
             <Image
               src="/aj.png"
@@ -64,21 +67,28 @@ export default function Navbar() {
               width={600}
               height={150}
               className="h-auto transition-all duration-300"
-              style={{ maxWidth: "160px" }}
+              style={{ maxWidth: visible ? "120px" : "220px" }}
+              priority
             />
           </Link>
 
           {/* ── Center Nav Links ── */}
           <motion.div
             onMouseLeave={() => setHovered(null)}
-            className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium lg:flex lg:space-x-2"
+            className={cn(
+               "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-1 text-sm font-medium lg:flex transition-all duration-300",
+               visible ? "lg:space-x-1" : "lg:space-x-4 ml-12"
+            )}
           >
             {navItems.map((item, idx) => (
               <a
                 key={`nav-${idx}`}
                 href={item.link}
                 onMouseEnter={() => setHovered(idx)}
-                className="relative px-4 py-2 text-neutral-300 hover:text-white transition-colors"
+                className={cn(
+                  "relative px-4 py-2 transition-all duration-300",
+                  visible ? "text-neutral-400 hover:text-white text-[13px]" : "text-white hover:text-[#AE48FF] text-[15px] font-semibold"
+                )}
               >
                 {hovered === idx && (
                   <motion.div
@@ -98,7 +108,10 @@ export default function Navbar() {
               onMouseLeave={() => { setHovered(null); setEventsOpen(false); }}
             >
               <button
-                className="relative px-4 py-2 text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer focus:outline-none"
+                className={cn(
+                  "relative px-4 py-2 transition-all duration-300 flex items-center gap-1.5 cursor-pointer focus:outline-none",
+                  visible ? "text-neutral-400 hover:text-white text-[13px]" : "text-white hover:text-[#AE48FF] text-[15px] font-semibold"
+                )}
                 onClick={() => setEventsOpen(!eventsOpen)}
               >
                 {hovered === navItems.length && (
@@ -122,10 +135,9 @@ export default function Navbar() {
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 rounded-xl overflow-hidden z-50"
                     style={{
-                      background: "rgba(13, 5, 38, 0.95)",
+                      background: "rgba(8, 1, 24, 0.98)", // More opaque, no blur for performance
                       border: "1px solid rgba(99, 68, 245, 0.25)",
-                      boxShadow: "0 0 30px rgba(99, 68, 245, 0.15), 0 20px 50px rgba(0,0,0,0.6)",
-                      backdropFilter: "blur(20px)",
+                      boxShadow: "0 10px 40px rgba(0,0,0,0.8)",
                     }}
                   >
                     {/* Top accent line */}
@@ -136,7 +148,7 @@ export default function Navbar() {
                         key={cat.name}
                         href={cat.href}
                         onClick={() => setEventsOpen(false)}
-                        className="block px-5 py-3 text-sm text-neutral-400 hover:text-white hover:bg-[#6344F5]/10 transition-all duration-200 border-l-2 border-transparent hover:border-[#AE48FF] hover:pl-6"
+                        className="block px-5 py-3 text-sm text-neutral-400 hover:text-white hover:bg-[#6344F5]/15 transition-all duration-200 border-l-2 border-transparent hover:border-[#AE48FF] hover:pl-6"
                         style={{
                           letterSpacing: "0.06em",
                           borderBottom: i < eventCategories.length - 1 ? "1px solid rgba(99, 68, 245, 0.08)" : "none",
@@ -153,8 +165,8 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="flex items-center gap-3">
-            <NavbarButton href="/events/cultural" variant="gradient">
-              Explore Events
+            <NavbarButton href="/register" variant="gradient">
+              Register Events
             </NavbarButton>
           </div>
         </NavBody>
@@ -228,12 +240,12 @@ export default function Navbar() {
 
             <div className="flex w-full flex-col gap-3 mt-3">
               <NavbarButton
-                href="/events/cultural"
+                href="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="gradient"
                 className="w-full"
               >
-                Explore Events
+                Register Events
               </NavbarButton>
             </div>
           </MobileNavMenu>

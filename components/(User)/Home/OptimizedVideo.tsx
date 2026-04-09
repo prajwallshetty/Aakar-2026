@@ -17,16 +17,10 @@ export default function OptimizedVideo({
     const video = videoRef.current;
     if (!video) return;
 
-    // Aggressive play on mount
-    const playVideo = () => {
-      video.play().catch((err) => {
-        console.warn("Autoplay failed, trying again on interaction:", err);
-      });
-    };
+    // Play on mount
+    video.play().catch(() => {});
 
-    playVideo();
-
-    // Ensure it plays when it becomes visible (no opacity tricks)
+    // Pause when out of view, resume when visible — saves GPU/CPU
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -35,13 +29,23 @@ export default function OptimizedVideo({
           video.pause();
         }
       },
-      { threshold: 0.001 }
+      { threshold: 0.05 }
     );
-
     observer.observe(video);
+
+    // Pause when tab is hidden
+    const handleVisibility = () => {
+      if (document.hidden) {
+        video.pause();
+      } else {
+        video.play().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [src]);
 
@@ -53,11 +57,11 @@ export default function OptimizedVideo({
         loop
         playsInline
         autoPlay
-        preload="auto"
+        preload="metadata"
         className="w-full h-full object-cover"
-        style={{ 
-          transform: "translateZ(0)", // Force hardware acceleration
-          backfaceVisibility: "hidden",
+        style={{
+          willChange: "transform",
+          transform: "translateZ(0)",
         }}
       >
         <source src={src} type="video/mp4" />

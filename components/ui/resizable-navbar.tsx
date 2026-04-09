@@ -87,9 +87,8 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(16px)" : "none",
         boxShadow: visible
-          ? "0 0 30px rgba(99, 68, 245, 0.15), 0 1px 1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(99, 68, 245, 0.1), 0 16px 68px rgba(10, 1, 24, 0.4), 0 1px 0 rgba(174, 72, 255, 0.1) inset"
+          ? "0 0 24px rgba(99, 68, 245, 0.12), 0 1px 1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(99, 68, 245, 0.1)"
           : "none",
         width: visible ? "60%" : "100%",
         y: visible ? 20 : 0,
@@ -104,11 +103,15 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
       }}
       className={cn(
         "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex",
-        visible && "bg-[#0d0526]/85 border border-[#6344F5]/20",
+        visible && "bg-[#0a0118]/95 border border-[#6344F5]/20",
         className,
       )}
     >
-      {children}
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(child as React.ReactElement<any>, { visible })
+          : child
+      )}
     </motion.div>
   );
 };
@@ -149,9 +152,8 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(16px)" : "none",
         boxShadow: visible
-          ? "0 0 30px rgba(99, 68, 245, 0.15), 0 1px 1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(99, 68, 245, 0.1)"
+          ? "0 0 24px rgba(99, 68, 245, 0.12), 0 1px 1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(99, 68, 245, 0.1)"
           : "none",
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
@@ -166,11 +168,15 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
       }}
       className={cn(
         "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
-        visible && "bg-[#0d0526]/90 border border-[#6344F5]/20",
+        visible && "bg-[#0a0118]/95 border border-[#6344F5]/20",
         className,
       )}
     >
-      {children}
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(child as React.ReactElement<any>, { visible })
+          : child
+      )}
     </motion.div>
   );
 };
@@ -205,7 +211,7 @@ export const MobileNavMenu = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-[#0d0526]/95 border border-[#6344F5]/20 px-4 py-8 shadow-[0_0_30px_rgba(99,68,245,0.15),_0_16px_68px_rgba(10,1,24,0.6)] backdrop-blur-xl",
+            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-[#0a0118]/98 border border-[#6344F5]/20 px-4 py-8 shadow-[0_0_24px_rgba(99,68,245,0.12),_0_16px_68px_rgba(10,1,24,0.5)]",
             className,
           )}
         >
