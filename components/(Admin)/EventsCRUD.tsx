@@ -138,6 +138,7 @@ const EventsCRUD = () => {
   const [formData, setFormData] = useState<FormData>(defaultForm)
 
   const dateOptions = [
+    { value: new Date("2026-04-23"), label: "Apr 23, 2026" },
     { value: new Date("2026-04-24"), label: "Apr 24, 2026" },
     { value: new Date("2026-04-25"), label: "Apr 25, 2026" },
   ]
