@@ -269,11 +269,10 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
               </table>
             </div>
 
-            <div style="border: 1px dashed ${variantColor}44; padding: 20px; text-align:center;">
-              <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:10px;color:#ffffff;">NEXT STEPS</div>
-              <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;">
-                Verification in progress. Once the transmission is confirmed, your gear will be prepared for pickup at the <strong>Aakar 2026 Tech Hub</strong> during the event.
-              </div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;">
+            Verification in progress. Once the transmission is confirmed, your gear will be prepared for pickup at the <strong>Aakar 2026 Tech Hub</strong> during the event.
+            <br/><br/>
+            Collect T-shirt with <strong>AMAN HASAN</strong> (+91 861 822 9502).
             </div>
           </td>
         </tr>
@@ -282,7 +281,7 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
         <tr>
           <td style="background:#0a0a2e;padding:25px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
             <div style="font-family:'Orbitron',sans-serif;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:3px;">
-              EQUIPMENT // APPAREL // AAKAR 25
+              EQUIPMENT // APPAREL // AAKAR 26
             </div>
             <div style="margin-top:10px;font-size:9px;color:rgba(255,255,255,0.2);">
               DO NOT REPLY TO THIS AUTOMATED UPLINK
