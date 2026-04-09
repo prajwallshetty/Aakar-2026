@@ -8,6 +8,7 @@ import {
   ANIME_COLORS,
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 import { cinzelFont } from "@/lib/font";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 
 /* ─── pre-computed starburst path (no hydration mismatch) ──── */
 function buildStarburstPath(cx: number, cy: number, outerR: number, innerR: number, spikes = 24) {
@@ -210,21 +211,14 @@ export default function NotFound() {
 
       {/* ── Background ── */}
       <div className="fixed inset-0 z-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/bg.jpg)", transform: "scale(1.02)" }}
-        />
-        {/* Dark gradient mapping overlay for cinematic feel */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/95" />
+        {/* Base dark indigo background */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a0118 0%, #0d0526 30%, #10082e 60%, #08001a 100%)" }} />
 
-        {/* Global Tech Grid */}
-        <div
-          className="absolute inset-0 opacity-[0.05] grid-animate pointer-events-none"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
+        {/* Cinematic gradient overlay */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,1,20,0.8) 0%, rgba(10,3,30,0.6) 50%, rgba(8,0,22,0.95) 100%)" }} />
+
+        {/* Aceternity Background Beams */}
+        <BackgroundBeams className="absolute inset-0 opacity-60" />
 
         {/* Vignette */}
         <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.7) 100%)" }} />

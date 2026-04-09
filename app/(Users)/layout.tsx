@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/(User)/Common/Navbar";
 import Footer from "@/components/(User)/Common/Footer";
 import { baseFont } from "@/lib/font";
+import { BackgroundBeamsWrapper } from "@/components/(User)/Common/BackgroundBeamsWrapper";
 
 export const metadata: Metadata = {
   title: "AAKAR 2026 | Brains, Guts and Glory",
@@ -18,21 +19,14 @@ export default function RootLayout({
     <div className={`${baseFont.className} antialiased flex flex-col min-h-screen`}>
       {/* Dynamic Global Background */}
       <div className="fixed inset-0 z-[-10]">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/bg.jpg)", transform: "scale(1.02)" }}
-        />
-        {/* Dark gradient mapping overlay for cinematic feel — better performance than backdrop-blur */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
+        {/* Base dark indigo background */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a0118 0%, #0d0526 30%, #10082e 60%, #08001a 100%)" }} />
 
-        {/* Cyber/Anime Tech grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03] grid-animate pointer-events-none"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
+        {/* Cinematic gradient overlay */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,1,20,0.7) 0%, rgba(10,3,30,0.5) 50%, rgba(8,0,22,0.9) 100%)" }} />
+
+        {/* Aceternity Background Beams */}
+        <BackgroundBeamsWrapper />
 
         {/* Vignette */}
         <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />

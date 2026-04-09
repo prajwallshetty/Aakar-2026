@@ -6,27 +6,28 @@ import { eventCategory } from "@prisma/client";
 import { getEventsByCategory } from "@/backend/events";
 import { ExtendedEvent } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 import { generateEventSlug, getEventImageCandidates } from "@/lib/utils";
-import { 
-  AnimeParticleField, 
-  AnimeOrbField, 
-  AnimeCardWrapper, 
-  AnimeSectionHeading, 
+import {
+  AnimeParticleField,
+  AnimeOrbField,
+  AnimeCardWrapper,
+  AnimeSectionHeading,
   AnimeGlitchText,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
+  ACCENTS
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 /* ─── palette ────────────────────────────────────────────────────────── */
 const P = {
-  yellow:  "#ffff00",
+  yellow: "#ffff00",
   yellow2: "#fff500",
   magenta: "#ff00ff",
-  cyan:    "#00ffff",
-  hot:     "#ff0066",
-  black:   "#0a0005",
-  white:   "#ffffff",
+  cyan: "#00ffff",
+  hot: "#ff0066",
+  black: "#0a0005",
+  white: "#ffffff",
 };
 
 /* ─── Anime Event Card ─────────────────────────────────────────── */
@@ -40,10 +41,10 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
   }, [event.imageUrl, event.id]);
 
   const imageSrc = imageCandidates[imageIndex] ?? "";
-  
+
   return (
-    <AnimeCardWrapper 
-      accentIndex={index} 
+    <AnimeCardWrapper
+      accentIndex={index}
       className="anime-event-card"
       style={{
         aspectRatio: "1/1.414",
@@ -54,7 +55,7 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
     >
       <Link href={`/events/${generateEventSlug(event)}`} className="block w-full h-full">
         {/* Background Image */}
-        <div 
+        <div
           style={{
             position: "absolute",
             inset: 0,
@@ -74,7 +75,7 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
             />
           )}
         </div>
-        
+
 
       </Link>
     </AnimeCardWrapper>
@@ -84,7 +85,7 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
 /* ─── skeleton card ──────────────────────────────────────────────────── */
 function AnimeSkeletonCard() {
   return (
-    <AnimeCardWrapper 
+    <AnimeCardWrapper
       accentIndex={0}
       style={{
         aspectRatio: "1/1.414",
@@ -126,7 +127,7 @@ function FloatShape({ style, delay, isCircle, color }: {
 
 /* ═══════════════════════════════════════════════════════════════════════ */
 const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
-  const [events, setEvents]   = useState<ExtendedEvent[]>([]);
+  const [events, setEvents] = useState<ExtendedEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -207,15 +208,15 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         }}
       >
 
-        {/* ── LAYER 2: halftone dots ── */}
+        {/* ── LAYER 2: Aceternity Background Beams ── */}
         <div
           aria-hidden
           style={{
             position: "absolute", inset: 0, zIndex: 1,
-            backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.18) 1.8px, transparent 1.8px)`,
-            backgroundSize: "14px 14px",
           }}
-        />
+        >
+          <BackgroundBeams className="absolute inset-0 opacity-50" />
+        </div>
 
         {/* ── main content (z:10+) ── */}
         <div
@@ -229,7 +230,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         >
           {/* page title */}
           <div style={{ marginBottom: "clamp(1.5rem,5vh,3.5rem)", textAlign: "center" }}>
-           
+
 
             <h1 style={{
               fontFamily: "'Cinzel',serif",
@@ -245,7 +246,7 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
               {eventCategory}
             </h1>
 
-           
+
           </div>
 
           {/* grid */}
