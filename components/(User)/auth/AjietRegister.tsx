@@ -306,9 +306,10 @@ const AjietRegister = () => {
     const handleParticipantCountChange = (groupId: string | number, count: number) => {
         const evDetail = events.find(e => e.id === Number(groupId));
         const maxLimit = evDetail ? evDetail.maxMembers - 1 : 10;
+        const minLimit = evDetail ? evDetail.minMembers - 1 : 1;
         
         const currentMembers = groupEventData[groupId]?.members || [];
-        let newCount = Math.max(1, count);
+        let newCount = Math.max(minLimit, count);
         
         // Ensure they cannot bypass the event's max participant limit!
         if (newCount > maxLimit) {
@@ -373,6 +374,29 @@ const AjietRegister = () => {
         if (selectedEvents.length === 0) {
             errors.events = "Select at least one event";
         }
+
+        // Validate Group Members
+        Object.keys(groupEventData).forEach((groupId) => {
+            const event = selectedEvents.find((e) => e.id === Number(groupId));
+            const eventDetail = events.find((e) => e.id === Number(groupId));
+            
+            if (event && eventDetail) {
+                const count = groupEventData[groupId].participantCount;
+                if (count < eventDetail.minMembers - 1 || count > eventDetail.maxMembers - 1) {
+                    errors[`group_${groupId}_count`] = `Team must have ${eventDetail.minMembers - 1}–${eventDetail.maxMembers - 1} extra members`;
+                }
+
+                groupEventData[groupId].members.forEach((member, index) => {
+                    if (!member.name) errors[`group_${groupId}_member_${index}_name`] = "Member name is required";
+                    if (!member.usn) {
+                        errors[`group_${groupId}_member_${index}_usn`] = "Member USN is required";
+                    } else if (!member.usn.toUpperCase().startsWith("4JK")) {
+                        errors[`group_${groupId}_member_${index}_usn`] = "Team members must be AJIET students (4JK)";
+                    }
+                    if (!member.email) errors[`group_${groupId}_member_${index}_email`] = "Member email is required";
+                });
+            }
+        });
 
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
@@ -800,6 +824,99 @@ const AjietRegister = () => {
                             </div>
                         </AnimeCardWrapper>
 
+                        {/* Team Member Forms */}
+                        {selectedEvents.map((event) => {
+                            if (event?.type !== "Team") return null;
+                            const eventDetail = events.find((e) => e.id === event.id);
+                            const groupData = groupEventData[event.id] || {
+                                participantCount: eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 : 1,
+                                members: Array.from({ length: eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 : 1 }, () => ({ name: "", email: "", usn: "" })),
+                            };
+                            return (
+                                <AnimeCardWrapper key={event.id} accentIndex={2} style={{ ...cardStyle, marginTop: 32 }}>
+                                    <AnimeSectionHeading index={2}>👥 {event.label} Details</AnimeSectionHeading>
+                                    
+                                    <div style={{ marginBottom: 20 }}>
+                                        <Field label="Additional Team Members" error={formErrors[`group_${event.id}_count`]}>
+                                            <input 
+                                                type="number"
+                                                min={eventDetail?.minMembers !== undefined ? eventDetail.minMembers - 1 : 1}
+                                                max={eventDetail?.maxMembers ? eventDetail.maxMembers - 1 : 10}
+                                                step={1}
+                                                value={groupData.participantCount || ""}
+                                                onChange={(e) => handleParticipantCountChange(event.id, parseInt(e.target.value) || 0)}
+                                                style={{ ...inputStyle, maxWidth: 120 }}
+                                            />
+                                            <p style={{ fontFamily: monoFont, fontSize: 10, color: ANIME_COLORS.secondary, marginTop: 4, letterSpacing: 1 }}>
+                                                Total team size: {groupData.participantCount + 1} (Leader + Members)
+                                            </p>
+                                        </Field>
+                                    </div>
+
+                                    {groupData.members.map((member, index) => (
+                                        <div key={index} style={{ 
+                                            background: `${ANIME_COLORS.background}40`, 
+                                            border: `1px solid ${ANIME_COLORS.primary}40`, 
+                                            padding: 16, 
+                                            borderRadius: 8, 
+                                            marginTop: 16,
+                                            position: "relative"
+                                        }}>
+                                            <div style={{ 
+                                                fontFamily: monoFont, 
+                                                fontSize: 10, 
+                                                letterSpacing: 2, 
+                                                color: ANIME_COLORS.primary,
+                                                marginBottom: 12,
+                                                textTransform: "uppercase"
+                                            }}>
+                                                Member {index + 1}
+                                            </div>
+                                            
+                                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+                                                <Field label="Full Name" error={formErrors[`group_${event.id}_member_${index}_name`]}>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Member Name"
+                                                        value={member.name}
+                                                        onChange={(e) => handleGroupMemberChange(event.id, index, "name", e.target.value)}
+                                                        style={{
+                                                            ...inputStyle,
+                                                            ...(formErrors[`group_${event.id}_member_${index}_name`] ? { borderColor: ANIME_COLORS.purple } : {})
+                                                        }}
+                                                    />
+                                                </Field>
+                                                <Field label="USN" error={formErrors[`group_${event.id}_member_${index}_usn`]}>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="4JKXXYYZZZ"
+                                                        value={member.usn}
+                                                        onChange={(e) => handleGroupMemberChange(event.id, index, "usn", e.target.value.toUpperCase())}
+                                                        style={{
+                                                            ...inputStyle,
+                                                            ...(formErrors[`group_${event.id}_member_${index}_usn`] ? { borderColor: ANIME_COLORS.purple } : {})
+                                                        }}
+                                                    />
+                                                </Field>
+                                                <Field label="Email" error={formErrors[`group_${event.id}_member_${index}_email`]}>
+                                                    <input
+                                                        type="email"
+                                                        placeholder="member@email.com"
+                                                        value={member.email}
+                                                        onChange={(e) => handleGroupMemberChange(event.id, index, "email", e.target.value.toLowerCase())}
+                                                        style={{
+                                                            ...inputStyle,
+                                                            ...(formErrors[`group_${event.id}_member_${index}_email`] ? { borderColor: ANIME_COLORS.purple } : {})
+                                                        }}
+                                                    />
+                                                </Field>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </AnimeCardWrapper>
+                            );
+                        })}
+
                         <AnimeCardWrapper accentIndex={1} style={{ ...cardStyle, marginTop: 32 }}>
                             <AnimeSectionHeading index={1}>Event Selection</AnimeSectionHeading>
                             
@@ -982,8 +1099,23 @@ const AjietRegister = () => {
                             <div style={{ fontFamily: monoFont, fontSize: 13, color: ANIME_COLORS.text }}>
                                 <strong>Events:</strong> {selectedEvents.map(e => e.label).join(", ")}
                             </div>
+                            {selectedEvents.some(e => e.type === "Team") && (
+                                <div style={{ borderLeft: `2px solid ${ANIME_COLORS.primary}40`, paddingLeft: 16, marginTop: 8 }}>
+                                    <h5 style={{ fontFamily: popFont, fontSize: 12, color: ANIME_COLORS.primary, letterSpacing: 2, marginBottom: 8 }}>TEAM MEMBERS DETAILS</h5>
+                                    {selectedEvents.filter(e => e.type === "Team").map(event => (
+                                        <div key={event.id} style={{ marginBottom: 12 }}>
+                                            <div style={{ fontFamily: monoFont, fontSize: 11, color: ANIME_COLORS.secondary, textTransform: "uppercase" }}>{event.label}:</div>
+                                            {groupEventData[event.id]?.members.map((m, i) => (
+                                                <div key={i} style={{ fontFamily: monoFont, fontSize: 11, color: ANIME_COLORS.text, marginLeft: 8 }}>
+                                                    Member {i + 1}: {m.name} ({m.usn} | {m.email})
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                             {totalAmount > 0 && (
-                                <div style={{ fontFamily: monoFont, fontSize: 13, color: ANIME_COLORS.accent }}>
+                                <div style={{ fontFamily: monoFont, fontSize: 13, color: ANIME_COLORS.accent, marginTop: 8 }}>
                                     <strong>Amount:</strong> ₹{totalAmount}
                                 </div>
                             )}
