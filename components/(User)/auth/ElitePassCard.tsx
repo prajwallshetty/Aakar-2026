@@ -53,7 +53,7 @@ export const ElitePassCard: React.FC = () => {
                         width: 170,
                         height: 170,
                         borderRadius: "50%",
-                        background: `radial-gradient(circle, ${ANIME_COLORS.primary}45 0%, ${ANIME_COLORS.purple}28 55%, transparent 100%)`,
+                        background: `radial-gradient(circle, ${ANIME_COLORS.secondary}45 0%, ${ANIME_COLORS.purple}28 55%, transparent 100%)`,
                         zIndex: 0,
                         pointerEvents: "none",
                     }}
@@ -64,8 +64,8 @@ export const ElitePassCard: React.FC = () => {
                         <AnimeCardWrapper accentIndex={1} style={{
                             padding: "7px 14px",
                             display: "inline-block",
-                            background: `${ANIME_COLORS.primary}40`,
-                            border: `1px solid ${ANIME_COLORS.primary}`,
+                            background: `${ANIME_COLORS.secondary}40`,
+                            border: `1px solid ${ANIME_COLORS.secondary}`,
                         }}>
                             <span style={{
                                 fontFamily: "'Cinzel', serif",
@@ -90,7 +90,7 @@ export const ElitePassCard: React.FC = () => {
                                 color: ANIME_COLORS.text,
                                 lineHeight: 1,
                             }}>
-                                ₹999
+                                ₹399
                             </span>
                         </AnimeCardWrapper>
                     </div>
@@ -179,7 +179,7 @@ export const ElitePassCard: React.FC = () => {
                             justifyContent: "space-between",
                             alignItems: "center",
                             paddingTop: 12,
-                            borderTop: `1px dashed ${ANIME_COLORS.primary}`,
+                            borderTop: `1px dashed ${ANIME_COLORS.secondary}`,
                         }}
                     >
                         <div
@@ -195,7 +195,7 @@ export const ElitePassCard: React.FC = () => {
                                         width: 8,
                                         height: 8,
                                         background: color,
-                                        border: `1px solid ${ANIME_COLORS.primary}`,
+                                        border: `1px solid ${ANIME_COLORS.secondary}`,
                                         borderRadius: 2,
                                     }}
                                 />
