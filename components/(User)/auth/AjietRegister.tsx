@@ -185,7 +185,7 @@ const Field: React.FC<{ label: string; error?: string; children: React.ReactNode
 // ─── Loading Skeleton ────────────────────────────────────────────────────────────
 function LoadingSkeleton() {
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}><AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}><AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
                 <AnimeSectionHeading index={1}>INITIALIZING AJIET SYSTEM</AnimeSectionHeading>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
                     {[...Array(4)].map((_, i) => (
@@ -213,6 +213,7 @@ const AjietRegister = () => {
     const [totalAmount, setTotalAmount] = useState(0);
     const [showQRCode, setShowQRCode] = useState(false);
     const [qrImageUrl, setQrImageUrl] = useState("");
+    const [upiDeepLink, setUpiDeepLink] = useState("");
     const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "verification">("details");
 
     const [formData, setFormData] = useState({
@@ -354,7 +355,8 @@ const AjietRegister = () => {
         if (totalAmount <= 0) return; // safety
 
         const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar Registration")}&am=${totalAmount}&cu=INR`;
-
+        
+        setUpiDeepLink(upiUrl);
         setQrImageUrl(
             `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`
         );
@@ -627,7 +629,7 @@ const AjietRegister = () => {
                     background: #ffd70060 !important;
                     color: #ffffff !important;
                 }
-            `}</style><div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
+            `}</style><div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
 
                 {/* Header */}
                 <div style={{ marginBottom: "3rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, textAlign: "center" }}>
@@ -1021,11 +1023,44 @@ const AjietRegister = () => {
                                 <p style={{ 
                                     fontFamily: monoFont, 
                                     fontSize: 12, 
-                                    color: ANIME_COLORS.subtext, 
+                                    color: ANIME_COLORS.text, 
+                                    opacity: 0.6,
                                     marginTop: 8,
                                     textAlign: "center"
                                 }}>
                                     Scan QR code to pay
+                                </p>
+                                
+                                {/* UPI Deep Link Button */}
+                                <a
+                                    href={upiDeepLink}
+                                    style={{
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                        background: "rgba(255,255,255,0.05)",
+                                        border: "1px solid rgba(255,255,255,0.15)",
+                                        color: "rgba(255,255,255,0.85)",
+                                        fontFamily: monoFont,
+                                        fontSize: 13,
+                                        padding: "10px 20px",
+                                        borderRadius: 6,
+                                        textDecoration: "none",
+                                        cursor: "pointer",
+                                        transition: "background 0.2s",
+                                        marginTop: 8,
+                                    }}
+                                >
+                                    📱 Pay via UPI App
+                                </a>
+                                <p style={{
+                                    fontFamily: monoFont,
+                                    fontSize: 11,
+                                    color: `${ANIME_COLORS.text}60`,
+                                    textAlign: "center",
+                                    margin: "6px 0 0",
+                                }}>
+                                    Opens GPay / PhonePe with ₹{totalAmount} pre-filled · return here to upload screenshot
                                 </p>
                             </div>
                         )}
@@ -1127,7 +1162,15 @@ const AjietRegister = () => {
                                     Back
                                 </AnimeButton>
                                 <AnimeButton type="submit" disabled={isRegistering}>
-                                    {isRegistering ? "Registering..." : "Complete Registration"}
+                                    {isRegistering ? (
+                                        <>
+                                            <svg style={{ animation: "spin 1s linear infinite", width: 16, height: 16 }} viewBox="0 0 24 24" fill="none">
+                                                <circle cx="12" cy="12" r="10" stroke={ANIME_COLORS.text} strokeWidth="3" opacity="0.3" />
+                                                <path d="M12 2a10 10 0 0 1 10 10" stroke={ANIME_COLORS.text} strokeWidth="3" strokeLinecap="round" />
+                                            </svg>
+                                            REGISTERING…
+                                        </>
+                                    ) : "COMPLETE REGISTRATION ✓"}
                                 </AnimeButton>
                             </div>
                         </form>
