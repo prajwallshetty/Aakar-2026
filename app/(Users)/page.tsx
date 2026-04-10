@@ -4,6 +4,7 @@ import MarqueeStrip from "@/components/(User)/Home/MarqueeStrip";
 import MysteryReveal from "@/components/(User)/Home/MysteryReveal";
 import ElitePassPromo from "@/components/(User)/Home/ElitePassPromo";
 import CountdownRegister from "@/components/(User)/Home/CountdownRegister";
+import EnterScreen from "@/components/(User)/EnterScreen";
 
 export default function Home() {
   return (

@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calendar, Clock, Wallet, Phone, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar, Clock, Wallet, Phone, ArrowRight, User, ShieldCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedEvent } from "@/types";
 import {
@@ -10,46 +11,64 @@ import {
   AnimeOrbField,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
+  AnimeCardWrapper,
+  AnimeSectionHeading,
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 import { getEventImageCandidates } from "@/lib/utils";
+import { cinzelFont } from "@/lib/font";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 /* ─── site-wide accents (purple/cyan matching footer + navbar) ── */
-const SITE = {
-  purple: "#6344F5",
-  cyan: "#18CCFC",
-  purpleGlow: "rgba(99,68,245,0.35)",
-  cyanGlow: "rgba(24,204,252,0.25)",
-  bg: "#08001a",
-};
-
 /* ─── per-category accent (used only for subtle highlights) ───── */
 const CATEGORY_ACCENT: Record<string, string> = {
   Cultural: "#C77DFF",
   Gaming: "#FF4D00",
-  Technical: "#DC2626",
+  Technical: "#00E5FF",
   Special: "#38BDF8",
   ComboPass: "#FFD700",
 };
 
-/* ─── InfoRow ──────────────────────────────────────────────────── */
-function InfoRow({ icon, label, color }: { icon: React.ReactNode; label: string; color: string }) {
+/* ─── Anime Stat Chip (Reusing pattern from AboutPage) ──────────────── */
+function AnimeStatChip({ icon: Icon, children, color }: { icon?: any; children: React.ReactNode; color: string }) {
   return (
-    <div
-      className="ed-info-row"
-      style={{ "--row-accent": color } as React.CSSProperties}
-    >
-      <span className="ed-info-icon">{icon}</span>
-      <span className="ed-info-label">{label}</span>
+    <div style={{
+      display:"inline-flex",alignItems:"center",gap: "8px",
+      background:color + "15",
+      border:`1px solid ${color}40`,
+      boxShadow:`0 0 15px ${color}20, inset 0 0 10px ${color}10`,
+      padding:"6px 16px",
+      borderRadius:8,
+      fontFamily:"'Share Tech Mono',monospace",
+      fontSize:"clamp(0.8rem,1.8vw,0.95rem)",
+      letterSpacing:"0.08em",
+      color:color,
+      textTransform:"uppercase",
+      backdropFilter:"blur(8px)",
+    }}>
+      {Icon && <Icon size={16} strokeWidth={2.5} />}
+      {children}
     </div>
   );
 }
 
 /* ─── CoordinatorCard ──────────────────────────────────────────── */
-function CoordinatorCard({ coordinator, accent }: { coordinator: { name: string; phone: string }; accent: string }) {
+function CoordinatorCard({ coordinator, accent, icon: Icon }: { coordinator: { name: string; phone: string }; accent: string; icon: any }) {
   return (
     <div className="ed-coord-card" style={{ "--coord-accent": accent } as React.CSSProperties}>
-      <p className="ed-coord-name">{coordinator.name}</p>
-      <div className="ed-coord-phone-row">
+      <div className="flex items-center gap-3 mb-2">
+        <div style={{
+          background: `${accent}20`,
+          padding: "8px",
+          borderRadius: "8px",
+          color: accent
+        }}>
+          <Icon size={18} />
+        </div>
+        <p className="ed-coord-name">{coordinator.name}</p>
+      </div>
+      <div className="ed-coord-phone-row pl-11">
         <Phone size={14} />
         <Link href={`tel:${coordinator.phone}`} className="ed-coord-phone">
           {coordinator.phone}
@@ -60,28 +79,26 @@ function CoordinatorCard({ coordinator, accent }: { coordinator: { name: string;
 }
 
 /* ─── Coordinator Section ──────────────────────────────────────── */
-function CoordinatorSection({ title, coordinators, accent }: { title: string; coordinators: Array<{ name: string; phone: string }>; accent: string }) {
+function CoordinatorSection({ title, coordinators, accent, icon }: { title: string; coordinators: Array<{ name: string; phone: string }>; accent: string; icon: any }) {
   if (!coordinators.length) return null;
   return (
-    <div style={{ marginBottom: "1.5rem" }}>
+    <div style={{ marginBottom: "2rem" }}>
       <div className="ed-coord-title-bar" style={{ "--coord-accent": accent } as React.CSSProperties}>
         <span className="ed-coord-title">{title}</span>
       </div>
       <div className="ed-coord-grid">
-        {coordinators.map((c, i) => <CoordinatorCard key={i} coordinator={c} accent={accent} />)}
+        {coordinators.map((c, i) => <CoordinatorCard key={i} coordinator={c} accent={accent} icon={icon} />)}
       </div>
     </div>
   );
 }
 
 /* ─── Section Heading ──────────────────────────────────────────── */
-function SectionHeading({ children }: { children: React.ReactNode }) {
+function SectionTitle({ children, index }: { children: React.ReactNode; index: number }) {
   return (
-    <div className="ed-section-head">
-      <div className="ed-head-line" style={{ background: `linear-gradient(90deg, transparent, ${SITE.purple})` }} />
-      <h2 className="ed-head-title">{children}</h2>
-      <div className="ed-head-line" style={{ background: `linear-gradient(-90deg, transparent, ${SITE.purple})` }} />
-    </div>
+    <AnimeSectionHeading index={index} style={{ margin: "1.5rem 0 2.5rem" }}>
+      {children}
+    </AnimeSectionHeading>
   );
 }
 
@@ -144,35 +161,12 @@ const EventDescription = ({
   const hasCoordinators = studentCoordinators.length > 0 || facultyCoordinators.length > 0;
   const hasRules = Array.isArray(eventData?.rules) && eventData!.rules.length > 0;
 
-  const catKey = eventData?.eventCategory ?? "Technical";
-  const catAccent = CATEGORY_ACCENT[catKey] ?? SITE.purple;
+  const catKey = (eventData?.eventCategory ?? "Technical") as keyof typeof CATEGORY_ACCENT;
+  const catAccent = CATEGORY_ACCENT[catKey] ?? ANIME_COLORS.purple;
 
   return (
     <>
       <style>{`
-        ${ANIME_GLOBAL_STYLES}
-
-        /* ── keyframes ── */
-        @keyframes edFadeUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes edPosterIn {
-          from { opacity: 0; transform: scale(0.92); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes edTitleIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes edShimmer {
-          0%   { left: -100%; }
-          100% { left: 200%; }
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-
         /* ── page wrapper ── */
         .ed-page {
           min-height: 100vh;
@@ -181,163 +175,135 @@ const EventDescription = ({
           background: transparent;
         }
 
+        /* Atmospheric Decorative Elements */
+        .hero-side-label {
+          writing-mode: vertical-rl;
+          font-family: 'Cinzel', serif;
+          font-size: 8px;
+          letter-spacing: 0.6em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.2);
+          position: fixed;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 50;
+          pointer-events: none;
+        }
+
+        .scan-line {
+          position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+          background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px);
+          animation: scanMove 12s linear infinite; z-index: 5;
+        }
+        @keyframes scanMove { from { background-position: 0 0; } to { background-position: 0 100%; } }
+
+        /* Brackets */
+        .ed-bracket {
+          position: absolute; width: 15px; height: 15px; z-index: 20;
+          opacity: 0.4; transition: opacity 0.3s, scale 0.3s;
+        }
+        .ed-bracket.tl { top: 12px; left: 12px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+        .ed-bracket.tr { top: 12px; right: 12px; border-top: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+        .ed-bracket.bl { bottom: 12px; left: 12px; border-bottom: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+        .ed-bracket.br { bottom: 12px; right: 12px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+
         /* ── main content container ── */
         .ed-main-content {
           position: relative;
           z-index: 10;
-          padding: clamp(4rem, 10vh, 7rem) clamp(1rem, 5vw, 4rem) 8rem;
+          padding: clamp(5rem, 12vh, 8rem) clamp(1rem, 5vw, 4rem) 8rem;
         }
         .ed-layout {
           max-width: 1120px;
           margin: 0 auto;
           display: flex;
           flex-direction: column;
-          gap: clamp(1.5rem, 3vh, 2.5rem);
+          gap: clamp(2rem, 5vh, 4rem);
         }
 
         /* ── hero row ── */
         .ed-hero-row {
           display: flex;
           flex-wrap: wrap;
-          gap: clamp(1.5rem, 4vw, 3rem);
+          gap: clamp(2rem, 5vw, 4rem);
           align-items: flex-start;
         }
         .ed-hero-left {
-          flex: 1 1 340px;
+          flex: 1 1 400px;
           display: flex;
           flex-direction: column;
-          gap: 18px;
-          animation: edFadeUp 0.6s cubic-bezier(0.2,0.8,0.2,1) both;
+          gap: 24px;
         }
         .ed-hero-right {
-          flex: 0 0 clamp(260px, 32vw, 360px);
+          flex: 0 0 clamp(280px, 35vw, 400px);
           margin: 0 auto;
-          animation: edPosterIn 0.7s cubic-bezier(0.2,0.8,0.2,1) 0.15s both;
         }
 
         /* ── category badge ── */
         .ed-category-badge {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          font-family: 'Montserrat', 'Rajdhani', sans-serif;
-          font-size: 0.7rem;
+          gap: 8px;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.75rem;
           font-weight: 700;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: ${SITE.cyan};
-          padding: 4px 12px;
-          border: 1px solid rgba(24,204,252,0.3);
-          border-radius: 3px;
-          background: rgba(24,204,252,0.06);
+          color: var(--accent);
+          padding: 6px 14px;
+          border: 1px solid var(--accent);
+          border-radius: 4px;
+          background: var(--accent) 10;
           width: fit-content;
+          box-shadow: 0 0 15px var(--accent) 20;
         }
 
         /* ── title ── */
         .ed-title {
-          font-family: "GameOfSquids", Impact, "Arial Black", sans-serif;
-          font-size: clamp(2.6rem, 7.5vw, 4.5rem);
-          font-weight: normal;
-          line-height: 0.95;
-          letter-spacing: 0.03em;
+          font-size: clamp(2.5rem, 8vw, 5rem);
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: 0.02em;
           color: #fff;
           margin: 0;
-          animation: edTitleIn 0.6s cubic-bezier(0.2,0.8,0.2,1) 0.08s both;
-          text-shadow: 0 2px 20px rgba(0,0,0,0.6);
-        }
-
-        /* ── card style ── */
-        .ed-card {
-          background: rgba(8, 2, 24, 0.65);
-          border: 1px solid rgba(99,68,245,0.12);
-          border-radius: 12px;
-          padding: clamp(1.2rem, 3vw, 2rem);
-          position: relative;
-          overflow: hidden;
-          transition: border-color 0.3s ease, box-shadow 0.3s ease;
-          animation: edFadeUp 0.5s cubic-bezier(0.2,0.8,0.2,1) both;
-        }
-        .ed-card:hover {
-          border-color: rgba(99,68,245,0.3);
-          box-shadow: 0 4px 24px rgba(99,68,245,0.1);
+          text-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
         /* ── description text ── */
         .ed-description {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: clamp(1rem, 1.8vw, 1.15rem);
-          color: rgba(255,255,255,0.8);
-          line-height: 1.75;
-          font-weight: 500;
-          letter-spacing: 0.01em;
-        }
-
-        /* ── info rows ── */
-        .ed-info-row {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          padding: 13px 18px;
-          background: rgba(99,68,245,0.04);
-          border: 1px solid rgba(99,68,245,0.1);
-          border-left: 3px solid var(--row-accent);
-          border-radius: 8px;
-          transition: background 0.25s ease, transform 0.25s ease;
-        }
-        .ed-info-row:hover {
-          background: rgba(99,68,245,0.08);
-          transform: translateX(3px);
-        }
-        .ed-info-icon {
-          color: var(--row-accent);
-          flex-shrink: 0;
-          opacity: 0.85;
-        }
-        .ed-info-label {
-          font-family: 'Rajdhani', sans-serif;
+          font-family: ${montserrat.style.fontFamily};
           font-size: clamp(0.95rem, 1.8vw, 1.1rem);
-          color: rgba(255,255,255,0.85);
-          font-weight: 600;
-          letter-spacing: 0.02em;
+          color: rgba(255,255,255,0.75);
+          line-height: 1.8;
+          font-weight: 400;
         }
 
-        /* ── CTA button (matches footer gradient: purple → cyan) ── */
+        /* ── CTA button ── */
         .ed-cta-btn {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          font-family: 'Montserrat', 'Rajdhani', sans-serif;
-          font-size: clamp(0.85rem, 1.6vw, 0.95rem);
+          justify-content: center;
+          gap: 12px;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1rem;
           font-weight: 700;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.15em;
           text-transform: uppercase;
-          color: #fff;
-          background: linear-gradient(135deg, ${SITE.purple}, ${SITE.cyan});
+          color: #000;
+          background: var(--accent);
           border: none;
-          border-radius: 6px;
-          padding: 13px 28px;
+          border-radius: 4px;
+          padding: 16px 40px;
           cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
-          box-shadow: 0 4px 18px ${SITE.purpleGlow};
+          transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+          box-shadow: 0 0 20px var(--accent) 40;
           text-decoration: none;
+          width: fit-content;
         }
         .ed-cta-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 24px ${SITE.purpleGlow}, 0 0 30px ${SITE.cyanGlow};
-        }
-        .ed-cta-btn:active {
-          transform: translateY(1px);
-        }
-        .ed-cta-btn::after {
-          content: "";
-          position: absolute;
-          top: 0; left: -100%;
-          width: 50%; height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-          transform: skewX(-20deg);
-          animation: edShimmer 3.5s ease-in-out infinite;
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 8px 30px var(--accent) 60;
+          letter-spacing: 0.2em;
         }
 
         /* ── poster frame ── */
@@ -347,234 +313,245 @@ const EventDescription = ({
           position: relative;
           border-radius: 12px;
           overflow: hidden;
-          border: 1px solid rgba(99,68,245,0.2);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px ${SITE.purpleGlow};
-          background: ${SITE.bg};
-          transition: box-shadow 0.35s ease, border-color 0.35s ease;
-        }
-        .ed-poster-frame:hover {
-          border-color: rgba(99,68,245,0.4);
-          box-shadow: 0 16px 50px rgba(0,0,0,0.6), 0 0 30px ${SITE.purpleGlow};
+          border: 1px solid var(--accent) 40;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--accent) 20;
+          background: #000;
         }
         .ed-poster-frame img {
           width: 100%; height: 100%;
           object-fit: cover; object-position: center;
         }
-        .ed-poster-vignette {
-          position: absolute; inset: 0;
-          box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
-          pointer-events: none; z-index: 2;
-        }
-        .ed-poster-grad {
-          position: absolute; bottom: 0; left: 0; right: 0;
-          height: 25%;
-          background: linear-gradient(transparent, rgba(8,0,26,0.4));
-          pointer-events: none; z-index: 2;
-        }
-        .ed-poster-placeholder {
-          position: absolute; inset: 0;
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center; gap: 12px;
-        }
-        .ed-poster-spinner {
-          width: 32px; height: 32px;
-          border: 2px solid ${SITE.purple};
-          border-top-color: transparent;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        /* ── section heading ── */
-        .ed-section-head {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          margin-bottom: 1.5rem;
-        }
-        .ed-head-line { flex: 1; height: 1px; opacity: 0.4; }
-        .ed-head-title {
-          font-family: "GameOfSquids", Impact, "Arial Black", sans-serif;
-          font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-          letter-spacing: 0.06em;
-          color: #fff;
-          margin: 0 16px;
-          white-space: nowrap;
-        }
 
         /* ── rules list ── */
         .ed-rule-item {
           display: flex;
-          gap: 14px;
+          gap: 18px;
           align-items: flex-start;
-          padding: 12px 16px;
-          background: rgba(99,68,245,0.03);
-          border: 1px solid rgba(99,68,245,0.06);
+          padding: 16px 20px;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.05);
           border-radius: 8px;
-          transition: background 0.25s, transform 0.25s;
+          transition: all 0.3s ease;
         }
         .ed-rule-item:hover {
-          background: rgba(99,68,245,0.07);
-          transform: translateX(3px);
+          background: rgba(255,255,255,0.06);
+          border-color: var(--accent) 40;
+          transform: translateX(8px);
         }
         .ed-rule-num {
-          font-family: 'Montserrat', sans-serif;
-          font-size: 0.85rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.9rem;
           font-weight: 700;
-          color: ${SITE.purple};
+          color: var(--accent);
+          background: var(--accent) 15;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
           flex-shrink: 0;
-          min-width: 26px;
-          opacity: 0.8;
         }
         .ed-rule-text {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: clamp(0.95rem, 1.6vw, 1.08rem);
+          font-family: ${montserrat.style.fontFamily};
+          font-size: 1.05rem;
           color: rgba(255,255,255,0.8);
-          line-height: 1.65;
-          font-weight: 500;
+          line-height: 1.6;
           margin: 0;
-        }
-        .ed-no-data {
-          font-family: 'Rajdhani', sans-serif;
-          color: rgba(255,255,255,0.35);
-          text-align: center;
-          font-style: italic;
-          padding: 2rem 0;
-          font-size: 1rem;
         }
 
         /* ── coordinator cards ── */
         .ed-coord-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-          gap: 12px;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 20px;
         }
         .ed-coord-card {
-          background: rgba(99,68,245,0.04);
-          border: 1px solid rgba(99,68,245,0.1);
-          border-bottom: 2px solid var(--coord-accent);
-          border-radius: 8px;
-          padding: 1.1rem;
-          transition: all 0.25s ease;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.06);
+          border-radius: 12px;
+          padding: 1.5rem;
+          transition: all 0.3s ease;
         }
         .ed-coord-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-          background: rgba(99,68,245,0.07);
+          transform: translateY(-5px);
+          background: rgba(255,255,255,0.05);
+          border-color: var(--coord-accent) 40;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .ed-coord-name {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: clamp(1.05rem, 2vw, 1.2rem);
-          font-weight: 700;
+          font-family: 'Cinzel', serif;
+          font-size: 1.2rem;
+          font-weight: 600;
           color: #fff;
-          margin: 0 0 0.3rem 0;
-          letter-spacing: 0.02em;
+          margin: 0;
+          letter-spacing: 0.05em;
         }
         .ed-coord-phone-row {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           color: var(--coord-accent);
         }
         .ed-coord-phone {
-          color: rgba(255,255,255,0.55);
-          font-family: 'Rajdhani', sans-serif;
-          font-size: 0.9rem;
+          color: rgba(255,255,255,0.5);
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1rem;
           text-decoration: none;
           transition: color 0.2s;
-          font-weight: 600;
         }
         .ed-coord-phone:hover { color: var(--coord-accent); }
         .ed-coord-title-bar {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 1rem;
-          border-left: 2px solid var(--coord-accent);
-          padding: 3px 12px;
-          background: linear-gradient(90deg, rgba(99,68,245,0.05), transparent);
+          margin-bottom: 1.5rem;
+          padding-left: 1rem;
+          border-left: 3px solid var(--coord-accent);
         }
         .ed-coord-title {
-          font-family: 'Rajdhani', sans-serif;
-          font-size: clamp(0.8rem, 1.8vw, 0.95rem);
-          letter-spacing: 0.12em;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1rem;
+          letter-spacing: 0.15em;
           color: var(--coord-accent);
           text-transform: uppercase;
           font-weight: 700;
         }
 
-        /* ── poster skeleton ── */
-        .ed-poster-skel {
-          width: clamp(260px, 32vw, 360px);
-          aspect-ratio: 4/5;
-          border-radius: 12px;
-          margin: 0 auto;
-        }
-
         /* ── responsive ── */
         @media (max-width: 768px) {
-          .ed-hero-row { flex-direction: column; }
-          .ed-hero-right { flex: 1 1 auto; width: 100%; max-width: 360px; }
-          .ed-poster-frame { aspect-ratio: 3/4; }
-        }
-        @media (max-width: 480px) {
-          .ed-main-content {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-          }
-          .ed-card { padding: 1rem; }
-          .ed-coord-grid { grid-template-columns: 1fr; }
+          .ed-hero-row { flex-direction: column-reverse; }
+          .ed-hero-right { width: 100%; max-width: 400px; }
+          .ed-main-content { padding-top: 6rem; }
         }
       `}</style>
 
-      {/* Background layers — same as other pages */}
       <AnimeOrbField />
       <AnimeParticleField />
+      <div className="scan-line" />
+      
+      <div className="hidden xl:block">
+        <span className="hero-side-label left-8">Aakar 2026</span>
+        <span className="hero-side-label right-8 rotate-180">AJIET · Mangaluru</span>
+      </div>
 
       <div className="ed-page">
         <div className="ed-main-content">
           <div className="ed-layout">
-            {isLoading ? <EventDescriptionSkeleton /> : !eventData ? (
-              <div className="ed-card">
-                <p className="ed-no-data">Event not found.</p>
-              </div>
-            ) : (
-              <>
-                {/* ── HERO ROW ── */}
-                <div className="ed-hero-row">
+            <AnimatePresence mode="wait">
+              {isLoading ? (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <EventDescriptionSkeleton />
+                </motion.div>
+              ) : !eventData ? (
+                <motion.div
+                  key="no-data"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="w-full"
+                >
+                  <AnimeCardWrapper accentIndex={0} style={{ padding: "3rem", textAlign: "center" }}>
+                    <p style={{ fontFamily: "'Share Tech Mono', monospace", color: "rgba(255,255,255,0.4)" }}>
+                      ERROR: EVENT_NOT_FOUND
+                    </p>
+                  </AnimeCardWrapper>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="content"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {/* ── HERO ROW ── */}
+                  <div className="ed-hero-row mb-12">
+                    {/* Left: Info */}
+                    <div className="ed-hero-left">
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <div className="ed-category-badge" style={{ "--accent": catAccent } as any}>
+                          ◆ {catKey} Event
+                        </div>
+                      </motion.div>
 
-                  {/* left: info */}
-                  <div className="ed-hero-left">
-                    <div className="ed-category-badge">◆ {catKey} Event</div>
+                      <motion.h1
+                        className={`ed-title ${cinzelFont.className}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        {eventData.eventName}
+                      </motion.h1>
 
-                    <h1 className="ed-title">{eventData.eventName}</h1>
+                      {/* Description */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <AnimeCardWrapper accentIndex={1} style={{ padding: "1.5rem 2rem" }}>
+                          <div className="ed-bracket tl" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                          <div className="ed-bracket tr" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                          <div className="ed-bracket bl" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                          <div className="ed-bracket br" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                          
+                          <div className="scan-line" style={{ opacity: 0.05 }} />
+                          
+                          <p className="ed-description relative z-10">
+                            {eventData.description || "The digital archives for this event are currently being updated. Details will be broadcasted shortly."}
+                          </p>
+                        </AnimeCardWrapper>
+                      </motion.div>
 
-                    {/* Description */}
-                    <div className="ed-card" style={{ animationDelay: "0.1s" }}>
-                      <p className="ed-description">
-                        {eventData.description || "Details coming soon..."}
-                      </p>
+                      {/* Quick Info Chips */}
+                      <motion.div
+                        className="flex flex-wrap gap-3"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <AnimeStatChip icon={Calendar} color={ANIME_COLORS.secondary}>
+                          {eventData.date ? new Date(eventData.date).toDateString() : "TBA / 2026"}
+                        </AnimeStatChip>
+                        <AnimeStatChip icon={Clock} color={ANIME_COLORS.purple}>
+                          {eventData.time || "CHRONO_TBA"}
+                        </AnimeStatChip>
+                        <AnimeStatChip icon={Wallet} color={catAccent}>
+                          {eventData.fee ? `CREDITS: ₹${eventData.fee}` : "FEE_TBA"}
+                        </AnimeStatChip>
+                      </motion.div>
+
+                      {/* CTA */}
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.6 }}
+                      >
+                        <Link href="/register" className="ed-cta-btn" style={{ "--accent": catAccent } as any}>
+                          Initialize Registration <ArrowRight size={20} />
+                        </Link>
+                      </motion.div>
                     </div>
 
-                    {/* Quick Info */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      <InfoRow icon={<Calendar size={17} />} label={eventData.date ? new Date(eventData.date).toDateString() : "TBA"} color={SITE.cyan} />
-                      <InfoRow icon={<Clock size={17} />} label={eventData.time || "TBA"} color={SITE.purple} />
-                      <InfoRow icon={<Wallet size={17} />} label={eventData.fee ? `₹${eventData.fee}` : "TBA"} color={catAccent} />
-                    </div>
-
-                    {/* CTA */}
-                    <div style={{ marginTop: 8 }}>
-                      <Link href="/register" className="ed-cta-btn">
-                        Register Now <ArrowRight size={16} />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* right: poster */}
-                  <div className="ed-hero-right">
-                    <div className="ed-poster-frame">
-                      {imageSrc ? (
-                        <>
+                    {/* Right: Poster */}
+                    <motion.div
+                      className="ed-hero-right"
+                      initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
+                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+                    >
+                      <div className="ed-poster-frame" style={{ "--accent": catAccent } as any}>
+                        <div className="ed-bracket tl" style={{ "--accent": catAccent } as any} />
+                        <div className="ed-bracket tr" style={{ "--accent": catAccent } as any} />
+                        <div className="ed-bracket bl" style={{ "--accent": catAccent } as any} />
+                        <div className="ed-bracket br" style={{ "--accent": catAccent } as any} />
+                        
+                        {imageSrc ? (
                           <img
                             src={imageSrc}
                             alt={eventData.eventName}
@@ -582,50 +559,95 @@ const EventDescription = ({
                               setImageIndex((prev) => (prev < imageCandidates.length - 1 ? prev + 1 : prev));
                             }}
                           />
-                          <div className="ed-poster-vignette" />
-                          <div className="ed-poster-grad" />
-                        </>
-                      ) : (
-                        <div className="ed-poster-placeholder">
-                          <div className="ed-poster-spinner" />
-                          <span style={{ fontFamily: "'Rajdhani', sans-serif", color: "rgba(255,255,255,0.35)", fontSize: "0.8rem", letterSpacing: "0.08em", fontWeight: 600 }}>Loading...</span>
-                        </div>
-                      )}
-                    </div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center h-full gap-4 text-white/20">
+                            <Skeleton className="w-16 h-16 rounded-full bg-white/5" />
+                            <span className="font-mono text-xs tracking-widest">LOADING_POSTER...</span>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
                   </div>
-                </div>
 
-                {/* ── RULES ── */}
-                <div className="ed-card" style={{ animationDelay: "0.15s" }}>
-                  <SectionHeading>Rules</SectionHeading>
-                  {hasRules ? (
-                    <ul style={{ display: "flex", flexDirection: "column", gap: 8, margin: 0, padding: 0, listStyle: "none" }}>
-                      {eventData.rules.map((rule, i) => (
-                        <li key={i} className="ed-rule-item">
-                          <span className="ed-rule-num">{String(i + 1).padStart(2, "0")}</span>
-                          <p className="ed-rule-text">{rule}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="ed-no-data">No rules specified yet.</p>
-                  )}
-                </div>
+                  {/* ── RULES SECTION ── */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <SectionTitle index={0}>Operational Protocols</SectionTitle>
+                    <AnimeCardWrapper accentIndex={3} style={{ padding: "2rem" }}>
+                      <div className="ed-bracket tl" style={{ "--accent": ANIME_COLORS.purple } as any} />
+                      <div className="ed-bracket tr" style={{ "--accent": ANIME_COLORS.purple } as any} />
+                      <div className="ed-bracket bl" style={{ "--accent": ANIME_COLORS.purple } as any} />
+                      <div className="ed-bracket br" style={{ "--accent": ANIME_COLORS.purple } as any} />
+                      
+                      {hasRules ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {eventData.rules.map((rule, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, x: -10 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: i * 0.05 }}
+                              className="ed-rule-item"
+                              style={{ "--accent": ANIME_COLORS.purple } as any}
+                            >
+                              <span className="ed-rule-num">{String(i + 1).padStart(2, "0")}</span>
+                              <p className="ed-rule-text">{rule}</p>
+                            </motion.div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p style={{ textAlign: "center", padding: "2rem", color: "rgba(255,255,255,0.3)", fontStyle: "italic", fontFamily: "'Share Tech Mono', monospace" }}>
+                          NO_PROTOCOLS_DEFINED_YET
+                        </p>
+                      )}
+                    </AnimeCardWrapper>
+                  </motion.div>
 
-                {/* ── COORDINATORS ── */}
-                <div className="ed-card" style={{ animationDelay: "0.25s" }}>
-                  <SectionHeading>Coordinators</SectionHeading>
-                  {hasCoordinators ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 18, marginTop: 6 }}>
-                      <CoordinatorSection title="Student Leads" coordinators={studentCoordinators} accent={SITE.cyan} />
-                      <CoordinatorSection title="Faculty Coordinators" coordinators={facultyCoordinators} accent={SITE.purple} />
-                    </div>
-                  ) : (
-                    <p className="ed-no-data">Coordinators to be announced.</p>
-                  )}
-                </div>
-              </>
-            )}
+                  {/* ── COORDINATORS SECTION ── */}
+                  <motion.div
+                    className="mt-16"
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <SectionTitle index={1}>Command & Control</SectionTitle>
+                    <AnimeCardWrapper accentIndex={1} style={{ padding: "2.5rem" }}>
+                      <div className="ed-bracket tl" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                      <div className="ed-bracket tr" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                      <div className="ed-bracket bl" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                      <div className="ed-bracket br" style={{ "--accent": ANIME_COLORS.secondary } as any} />
+                      
+                      {hasCoordinators ? (
+                        <div className="space-y-4">
+                          <CoordinatorSection 
+                            title="Field Operatives (Students)" 
+                            coordinators={studentCoordinators} 
+                            accent={ANIME_COLORS.secondary}
+                            icon={User}
+                          />
+                          <CoordinatorSection 
+                            title="Commanding Officers (Faculty)" 
+                            coordinators={facultyCoordinators} 
+                            accent={ANIME_COLORS.purple}
+                            icon={ShieldCheck}
+                          />
+                        </div>
+                      ) : (
+                        <p style={{ textAlign: "center", padding: "2rem", color: "rgba(255,255,255,0.3)", fontStyle: "italic", fontFamily: "'Share Tech Mono', monospace" }}>
+                          PERSONNEL_TO_BE_ASSIGNED
+                        </p>
+                      )}
+                    </AnimeCardWrapper>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
