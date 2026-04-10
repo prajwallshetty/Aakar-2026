@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { CheckCircle2, Ticket, Home, ArrowRight, Instagram, Mail, CalendarDays } from "lucide-react";
 import { cinzelFont } from "@/lib/font";
 import {
@@ -14,7 +14,7 @@ import {
 const monoFont = "'Share Tech Mono', monospace";
 
 // ─── Variants ──────────────────────────────────────────────────────────
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -25,7 +25,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
@@ -38,7 +38,7 @@ const itemVariants = {
   },
 };
 
-const checkmarkVariants = {
+const checkmarkVariants: Variants = {
   hidden: { scale: 0, rotate: -20, opacity: 0 },
   visible: {
     scale: 1,

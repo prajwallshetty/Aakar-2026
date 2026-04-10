@@ -1,3 +1,9 @@
+// ============================================================================
+// TEMPORARY LAUNCH SCREEN
+// NOTE: This component is used specifically for the initial website launch.
+// It is intended to be removed later.
+// ============================================================================
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
