@@ -133,12 +133,11 @@ export default function ElitePassSuccessPage() {
 
         /* hologram pass (left side) */
         .hologram-pass {
-          position: relative; width: 100%; max-width: 300px; aspect-ratio: 0.6/1;
+          position: relative; 
+          width: 100%; 
+          max-width: 320px;
           margin: 0 auto;
-          background: linear-gradient(145deg, ${ANIME_COLORS.secondary}20 0%, ${ANIME_COLORS.purple}20 100%);
-          border: 2px solid ${ANIME_COLORS.accent}; border-radius: 12px;
-          box-shadow: 0 0 20px ${ANIME_COLORS.accent}50, inset 0 0 30px ${ANIME_COLORS.accent}20;
-          overflow: hidden; animation: hologramPulse 4s infinite alternate ease-in-out;
+          animation: hologramPulse 4s infinite alternate ease-in-out;
         }
         .hologram-header {
           background: ${ANIME_COLORS.accent}30; padding: 1rem; text-align: center;
@@ -275,7 +274,21 @@ export default function ElitePassSuccessPage() {
 
                 {/* LEFT — ACTIVATED PASS */}
                 <div className="p-6 lg:p-10 border-b border-[rgba(0,229,255,0.18)] lg:border-b-0 lg:border-r flex items-center justify-center relative z-10">
-                  <img src="/elite-pass.png" alt="Aakar Elite Pass" className="hologram-pass object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]" />
+                    <div style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "320px",
+                        padding: "2rem 1.5rem",
+                        background: `linear-gradient(145deg, ${ANIME_COLORS.secondary}15 0%, rgba(8,10,18,0.6) 100%)`,
+                        border: `1.5px solid ${ANIME_COLORS.secondary}40`,
+                        borderRadius: "16px",
+                        boxShadow: `0 0 30px ${ANIME_COLORS.secondary}20, inset 0 0 20px ${ANIME_COLORS.secondary}10`,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }} className="hologram-pass">
+                        <img src="/elite-pass.png" alt="Aakar Elite Pass" className="w-full object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.5)]" />
+                    </div>
                 </div>
 
                 {/* RIGHT — SUCCESS SUMMARY */}
@@ -314,7 +327,7 @@ export default function ElitePassSuccessPage() {
                   {/* BUTTONS */}
                   <div className="mt-5 flex flex-wrap gap-3 relative z-10">
                     <Link href="/" className="buy-btn" style={{ textDecoration: "none", display: "inline-block" }}>Return to Base</Link>
-                  <Link href="/events" className="back-btn">Browse Quests</Link>
+                  <Link href="/events/cultural" className="back-btn">Browse Quests</Link>
                   </div>
                 </div>
 

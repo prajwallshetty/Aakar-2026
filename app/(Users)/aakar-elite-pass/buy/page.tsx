@@ -13,7 +13,7 @@ import {
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const PASS_PRICE_EARLY = 399;
-const PASS_PRICE_REGULAR = 499;
+const PASS_PRICE_REGULAR = 459;
 
 type SoloEventOption = {
   id: number;
@@ -56,6 +56,8 @@ export default function ElitePassBuyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "confirm">("details");
+  const [isEarlyBird, setIsEarlyBird] = useState(true);
+  const [currentPrice, setCurrentPrice] = useState(PASS_PRICE_EARLY);
   const [soloEvents, setSoloEvents] = useState<SoloEventOption[]>([]);
   const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
   const [eventToAdd, setEventToAdd] = useState("");
@@ -65,6 +67,7 @@ export default function ElitePassBuyPage() {
   const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
   const [screenshotPreview, setScreenshotPreview] = useState("");
   const [qrImageUrl, setQrImageUrl] = useState("");
+  const [upiDeepLink, setUpiDeepLink] = useState("");
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", usn: "", college: "", department: "", year: 0,
     transactionId: "", paymentScreenshot: null as File | null,
@@ -72,6 +75,13 @@ export default function ElitePassBuyPage() {
 
   useEffect(() => {
     let cancelled = false;
+
+    // Check early bird pricing safely
+    const early = new Date() < new Date("2026-04-16T00:00:00+05:30");
+    if (!cancelled) {
+      setIsEarlyBird(early);
+      setCurrentPrice(early ? PASS_PRICE_EARLY : PASS_PRICE_REGULAR);
+    }
 
     async function loadSoloEvents() {
       setIsLoadingSoloEvents(true);
@@ -124,27 +134,21 @@ export default function ElitePassBuyPage() {
     }
   };
 
-  const addSelectedEvent = () => {
-    const eventId = Number(eventToAdd);
-    if (!eventId) return;
-
-    setSelectedEventIds((prev) => {
-      if (prev.includes(eventId)) return prev;
-      return [...prev, eventId];
-    });
-    setEventToAdd("");
-
-    if (formErrors.eventIds) {
-      setFormErrors((prev) => ({ ...prev, eventIds: undefined }));
-    }
-  };
 
   const removeSelectedEvent = (eventId: number) => {
     setSelectedEventIds((prev) => prev.filter((id) => id !== eventId));
   };
 
   const handleEventToAddChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEventToAdd(e.target.value);
+    const eventId = Number(e.target.value);
+    if (!eventId) return;
+
+    setSelectedEventIds((prev) => {
+      if (prev.includes(eventId)) return prev;
+      return [...prev, eventId];
+    });
+    // reset select back to placeholder
+    setEventToAdd("");
 
     if (formErrors.eventIds) {
       setFormErrors((prev) => ({ ...prev, eventIds: undefined }));
@@ -183,8 +187,9 @@ export default function ElitePassBuyPage() {
   };
 
   const generateQRCode = () => {
-    const amount = PASS_PRICE_EARLY;
+    const amount = currentPrice;
     const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2026 Elite Pass")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Elite Pass Purchase")}`;
+    setUpiDeepLink(upiUrl);
     setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`);
   };
 
@@ -494,11 +499,11 @@ export default function ElitePassBuyPage() {
         .review-key { min-width: 110px; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: ${ANIME_COLORS.secondary}; }
         .review-val { color: ${ANIME_COLORS.text}; }
         .event-controls {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 0.6rem;
+          display: block;
+          width: 100%;
         }
         .event-select {
+          width: 100%;
           color: ${ANIME_COLORS.text};
           background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88));
         }
@@ -506,22 +511,7 @@ export default function ElitePassBuyPage() {
           color: #111;
           background: #f4f4f4;
         }
-        .event-add-btn {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.62rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          border: 1.5px solid ${ANIME_COLORS.accent};
-          color: ${ANIME_COLORS.accent};
-          background: ${ANIME_COLORS.accent}18;
-          border-radius: 6px;
-          padding: 0 0.9rem;
-          min-height: 43px;
-          cursor: pointer;
-          transition: box-shadow .16s ease, transform .16s ease;
-        }
-        .event-add-btn:hover { box-shadow: 0 0 14px ${ANIME_COLORS.accent}3a; transform: translateY(-1px); }
-        .event-add-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
         .selected-events {
           display: flex;
           flex-wrap: wrap;
@@ -659,21 +649,13 @@ export default function ElitePassBuyPage() {
                                   value={eventToAdd}
                                   onChange={handleEventToAddChange}
                                 >
-                                  <option value="">Choose a solo event</option>
+                                  <option value="">Choose a solo event to add</option>
                                   {soloEvents.map((event) => (
                                     <option key={event.id} value={event.id}>
                                       {event.eventName} ({event.eventCategory} · ₹{event.fee})
                                     </option>
                                   ))}
                                 </select>
-                                <button
-                                  type="button"
-                                  className="event-add-btn"
-                                  onClick={addSelectedEvent}
-                                  disabled={!eventToAdd}
-                                >
-                                  Add
-                                </button>
                               </div>
 
                               <div className="selected-events">
@@ -736,8 +718,32 @@ export default function ElitePassBuyPage() {
                           <div className="font-mono text-sm" style={{ color: ANIME_COLORS.text }}>ajiet@cnrb</div>
                         </div>
                         <div className="font-mono text-xs" style={{ color: `${ANIME_COLORS.secondary}bb`, letterSpacing: "0.2em" }}>
-                          Pay ₹{PASS_PRICE_EARLY} (Early Bird)
+                          Pay ₹{currentPrice} {isEarlyBird && "(Early Bird)"}
                         </div>
+                        
+                        {upiDeepLink && (
+                          <a
+                            href={upiDeepLink}
+                            className="flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-mono tracking-wider transition-all"
+                            style={{
+                              background: "rgba(0, 229, 255, 0.1)",
+                              border: "1px solid rgba(0, 229, 255, 0.3)",
+                              color: "#00e5ff",
+                              textDecoration: "none",
+                              marginTop: "0.5rem"
+                            }}
+                            onMouseEnter={(e) => {
+                              (e.currentTarget as HTMLElement).style.background = "rgba(0, 229, 255, 0.2)";
+                              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.3)";
+                            }}
+                            onMouseLeave={(e) => {
+                              (e.currentTarget as HTMLElement).style.background = "rgba(0, 229, 255, 0.1)";
+                              (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                            }}
+                          >
+                            📱 Pay via UPI App
+                          </a>
+                        )}
                       </div>
 
                       <div className="mt-6 space-y-4">
@@ -831,11 +837,11 @@ export default function ElitePassBuyPage() {
 
                     <div className="price-row relative z-10">
                       <div>
-                        <span className="limited-tag">Early Bird — Till 15th!</span>
+                        {isEarlyBird && <span className="limited-tag">Early Bird — Till 15th!</span>}
                         <span className="price-label">Amount</span>
                         <div className="flex items-baseline gap-2">
-                          <span className="price-val">₹{PASS_PRICE_EARLY}</span>
-                          <span className="price-old">₹{PASS_PRICE_REGULAR}</span>
+                          <span className="price-val">₹{currentPrice}</span>
+                          {isEarlyBird && <span className="price-old">₹{PASS_PRICE_REGULAR}</span>}
                         </div>
                       </div>
                     </div>

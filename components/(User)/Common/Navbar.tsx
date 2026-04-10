@@ -194,14 +194,24 @@ export default function Navbar() {
           <div className="flex items-center gap-3 ml-auto z-20">
             <Link href="/register" style={{ textDecoration: "none" }}>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "#AE48FF" }}
+                initial="initial"
+                whileHover="hover"
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "rounded-md border border-[#6344F5]/30 bg-[#6344F5] text-white font-semibold tracking-wide transition-colors cursor-pointer shadow-md",
+                  "relative group overflow-hidden rounded-md border border-[#6344F5]/50 bg-transparent text-white font-semibold tracking-wide transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(99,68,245,0.1)] hover:shadow-[0_0_20px_rgba(99,68,245,0.4)] hover:border-[#6344F5]",
                   visible ? "px-4 py-2 text-[13px]" : "px-5 py-2.5 text-[15px]"
                 )}
               >
-                Register
+                {/* Fill effect layer */}
+                <motion.div
+                  variants={{
+                    initial: { x: "-100%" },
+                    hover: { x: "0%" }
+                  }}
+                  transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
+                  className="absolute inset-0 bg-[#6344F5] z-[0]"
+                />
+                <span className="relative z-10 group-hover:text-white transition-colors duration-300">Register</span>
               </motion.button>
             </Link>
           </div>
@@ -305,10 +315,21 @@ export default function Navbar() {
                   <div className="flex w-full flex-col mt-5 px-1">
                     <Link href="/register" className="w-full block" onClick={() => setIsMobileMenuOpen(false)}>
                       <motion.button
+                        initial="initial"
+                        whileHover="hover"
                         whileTap={{ scale: 0.95 }}
-                        className="w-full text-center justify-center flex py-3 rounded-md border border-[#6344F5]/30 bg-[#6344F5] text-white font-semibold tracking-wide cursor-pointer shadow-md hover:bg-[#AE48FF] transition-colors"
+                        className="relative group overflow-hidden w-full text-center justify-center flex py-3 rounded-md border border-[#6344F5]/50 bg-transparent text-white font-semibold tracking-wide cursor-pointer shadow-[0_0_15px_rgba(99,68,245,0.1)] hover:shadow-[0_0_20px_rgba(99,68,245,0.4)] hover:border-[#6344F5] transition-all duration-300"
                       >
-                        Register
+                         {/* Fill effect layer */}
+                         <motion.div
+                          variants={{
+                            initial: { x: "-100%" },
+                            hover: { x: "0%" }
+                          }}
+                          transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
+                          className="absolute inset-0 bg-[#6344F5] z-[0]"
+                        />
+                        <span className="relative z-10 group-hover:text-white transition-colors duration-300">Register</span>
                       </motion.button>
                     </Link>
                   </div>

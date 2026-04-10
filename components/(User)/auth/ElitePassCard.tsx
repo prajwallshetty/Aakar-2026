@@ -13,6 +13,12 @@ import {
 
 export const ElitePassCard: React.FC = () => {
     const [hov, setHov] = useState(false);
+    const [currentPrice, setCurrentPrice] = React.useState(399);
+
+    React.useEffect(() => {
+        const isEarlyBird = new Date() < new Date("2026-04-16T00:00:00+05:30");
+        setCurrentPrice(isEarlyBird ? 399 : 459);
+    }, []);
 
     return (
         <Link href="/aakar-elite-pass" style={{ textDecoration: "none" }}>
@@ -90,7 +96,7 @@ export const ElitePassCard: React.FC = () => {
                                 color: ANIME_COLORS.text,
                                 lineHeight: 1,
                             }}>
-                                ₹399
+                                ₹{currentPrice}
                             </span>
                         </AnimeCardWrapper>
                     </div>

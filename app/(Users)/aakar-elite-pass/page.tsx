@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cinzelFont } from "@/lib/font";
 import {
@@ -10,6 +11,15 @@ import {
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 export default function AakarElitePage() {
+  const [isEarlyBird, setIsEarlyBird] = useState(true);
+  const [currentPrice, setCurrentPrice] = useState(399);
+
+  useEffect(() => {
+    const early = new Date() < new Date("2026-04-16T00:00:00+05:30");
+    setIsEarlyBird(early);
+    setCurrentPrice(early ? 399 : 459);
+  }, []);
+
   return (
     <>
       <style>{`
@@ -417,7 +427,21 @@ export default function AakarElitePage() {
 
                 {/* LEFT PANE — PASS */}
                 <div className="p-6 lg:p-10 border-b border-[rgba(0,229,255,0.18)] lg:border-b-0 lg:border-r flex items-center justify-center relative z-10">
-                    <img src="/elite-pass.png" alt="Aakar Elite Pass" className="hologram-pass object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]" />
+                    <div style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "320px",
+                        padding: "2rem 1.5rem",
+                        background: `linear-gradient(145deg, ${ANIME_COLORS.secondary}15 0%, rgba(8,10,18,0.6) 100%)`,
+                        border: `1.5px solid ${ANIME_COLORS.secondary}40`,
+                        borderRadius: "16px",
+                        boxShadow: `0 0 30px ${ANIME_COLORS.secondary}20, inset 0 0 20px ${ANIME_COLORS.secondary}10`,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }} className="hologram-pass">
+                        <img src="/elite-pass.png" alt="Aakar Elite Pass" className="w-full object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.5)]" />
+                    </div>
                 </div>
 
                 {/* RIGHT PANE — DETAILS & ORDER SUMMARY */}
@@ -451,9 +475,20 @@ export default function AakarElitePage() {
                     <div className="price-section relative z-10">
                         <div className="price-row">
                             <div>
+                                {isEarlyBird && (
+                                <span className="limited-tag" style={{
+                                    fontFamily: "'Share Tech Mono', monospace",
+                                    fontSize: "0.6rem", color: ANIME_COLORS.secondary,
+                                    background: `${ANIME_COLORS.secondary}20`, padding: "0.3rem 0.6rem",
+                                    borderRadius: "4px", border: `1px solid ${ANIME_COLORS.secondary}`,
+                                    textTransform: "uppercase", letterSpacing: "0.1em",
+                                    marginBottom: "0.5rem", display: "inline-block",
+                                }}>Early Bird — Till 15th!</span>
+                                )}
                                 <span className="price-label">Cost</span>
-                                <div className="flex items-center gap-3">
-                                    <span className="price-val">₹399</span>
+                                <div className="flex items-baseline gap-3">
+                                    <span className="price-val">₹{currentPrice}</span>
+                                    {isEarlyBird && <span className="font-mono text-[1.2rem] line-through text-zinc-500">₹459</span>}
                                 </div>
                             </div>
                         </div>
