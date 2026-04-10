@@ -3,6 +3,7 @@ import { db } from "@/backend";
 import { generateCertificate } from "@/backend/certificate";
 import { sendEmail } from "@/backend/nodemailer";
 import { isAdmin } from "@/backend/admin";
+import { buildCertificateEmail } from "@/backend/email-templates";
 
 // Add delay utility
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -78,16 +79,7 @@ export async function POST(req: NextRequest) {
                 await sendEmail(
                     participant.email,
                     "Your Aakar Certificate 🎉",
-                    `
-                    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-                        <h2 style="color: #6366f1;">Congratulations, ${participant.name}!</h2>
-                        <p>We are thrilled to present you with your official certificates for your participation in <b>Aakar</b>.</p>
-                        <p>Attached to this email, you will find your personalized certificates.</p>
-                        <br/>
-                        <p>Best regards,</p>
-                        <p><b>Team Aakar</b><br/>AJ Institute of Engineering & Technology</p>
-                    </div>
-                    `,
+                    buildCertificateEmail(participant.name, false),
                     attachments
                 );
 
@@ -126,16 +118,7 @@ export async function POST(req: NextRequest) {
                 await sendEmail(
                     order.email,
                     "Your Aakar Participation Certificate 🎉",
-                    `
-                    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-                        <h2 style="color: #6366f1;">Congratulations, ${order.name}!</h2>
-                        <p>Thank you for being part of <b>Aakar</b> as an Elite Pass holder.</p>
-                        <p>Attached to this email, you will find your official participation certificate.</p>
-                        <br/>
-                        <p>Best regards,</p>
-                        <p><b>Team Aakar</b><br/>AJ Institute of Engineering & Technology</p>
-                    </div>
-                    `,
+                    buildCertificateEmail(order.name, true),
                     attachments
                 );
 
