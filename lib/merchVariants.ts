@@ -1,4 +1,4 @@
-export type MerchVariantKey = "classic" | "neon" | "pro";
+export type MerchVariantKey = "ascend" | "pulse" | "ignite";
 
 export interface MerchVariant {
   key: MerchVariantKey;
@@ -12,53 +12,53 @@ export interface MerchVariant {
 
 export const merchVariants: MerchVariant[] = [
   {
-    key: "classic",
-    title: "AAKAR CLASSIC",
+    key: "ascend",
+    title: "Aakar Ascend",
     tag: "CORE DROP",
-    price: 499,
+    price: 399,
     modelUrl: "/model/aakarmodel1.glb",
     description:
-      "The original fest tee with clean front branding and everyday comfort. Built for full-day campus wear.",
+      "A unified visual bringing together multiple anime identities into one powerful composition, designed to represent diversity, strength, and character-driven expression",
     features: [
-      "Minimal front logo layout",
-      "Balanced regular fit",
-      "Breathable cotton blend",
-      "Best for daily fest use",
+      "Multi-character anime collage",
+      "Monochrome high-contrast finish",
+      "Balanced vertical identity layout",
+      "Universe-inspired concept design",
     ],
   },
   {
-    key: "neon",
-    title: "AAKAR NEON STRIKE",
+    key: "pulse",
+    title: "Aakar Pulse",
     tag: "NIGHT EDIT",
-    price: 549,
+    price: 399,
     modelUrl: "/model/aakarmodel2.glb",
     description:
-      "High-contrast neon graphics with bolder placement for evening events and stage-heavy moments.",
+      "A high-impact composition driven by anime intensity and sharp visual contrast, built for bold presence and statement-driven styling.",
     features: [
-      "Neon themed print style",
-      "High visibility event look",
-      "Soft-touch interior finish",
-      "Designed for night events",
+      "Multi-panel anime graphic layout",
+      "High contrast black & red theme",
+      "Vertical identity typography",
+      "Designed for bold street expression",
     ],
   },
   {
-    key: "pro",
-    title: "AAKAR PRO GRID",
+    key: "ignite",
+    title: "Aakar Ignite",
     tag: "LIMITED CUT",
-    price: 599,
+    price: 399,
     modelUrl: "/model/aakarmodel3.glb",
     description:
-      "Premium variant with denser fabric feel and sharper graphic blocks for a collector-grade look.",
+      "Subtle composition with bold cultural influence, blending Japanese wave motion with sharp contrast elements for a refined streetwear presence.",
     features: [
-      "Premium dense knit feel",
-      "Structured silhouette",
-      "Sharper multi-panel print",
-      "Limited run variant",
+      "Iconic wave graphic focus",
+      "Balanced minimal + detailed layout",
+      "Floral accent integration",
+      "Limited edition street drop",
     ],
   },
 ];
 
-export const defaultMerchVariantKey: MerchVariantKey = "classic";
+export const defaultMerchVariantKey: MerchVariantKey = "ascend";
 
 export const getMerchVariant = (key: string | null | undefined): MerchVariant => {
   const found = merchVariants.find((variant) => variant.key === key);
