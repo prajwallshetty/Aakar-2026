@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "AAKAR 2026 | Brains, Guts and Glory",
+    title: "AAKAR 2026 | Vibe. Compete. Conquer.",
     description:
       "Join us for AAKAR 2026, the ultimate blend of technology and culture. Participate in events, win prizes, and make unforgettable memories!",
     url: "https://aakar.live",
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AAKAR 2026 | Brains, Guts and Glory",
+    title: "AAKAR 2026 | Vibe. Compete. Conquer.",
     description:
       "Tech meets culture at AAKAR 2026! Explore innovation, creativity, and fun at our annual fest.",
     images: ["/aklogo.png"],
@@ -147,4 +147,4 @@ export default async function RootLayout({
       </body>
     </html>
   );
-}
+}

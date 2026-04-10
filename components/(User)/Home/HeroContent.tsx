@@ -22,14 +22,14 @@ const fadeUp = {
 export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroContentProps) {
   return (
     <motion.div
-      className="absolute inset-0 z-30 flex flex-col justify-end md:justify-start md:pt-[12vh]"
+      className="absolute inset-0 z-30 flex flex-col justify-end md:justify-start md:pt-[22vh]"
       style={!isMobile
         ? { paddingLeft: "clamp(28px,7vw,100px)", paddingBottom: "clamp(60px,12vh,120px)", y: textY, x: textMX }
-        : { paddingLeft: "20px", paddingRight: "20px", paddingTop: "12vh", paddingBottom: "80px", justifyContent: "flex-start", alignItems: "center" }}
+        : { paddingLeft: "10px", paddingRight: "10px", paddingTop: "12vh", paddingBottom: "80px", justifyContent: "flex-start", alignItems: "center" }}
     >
       {/* ── LOGO ── */}
       <motion.div
-        style={!isMobile ? { y: logoY, marginLeft: "-7vw" } : { width: "clamp(280px,90vw,520px)", marginBottom: "16px" }}
+        style={!isMobile ? { y: logoY, marginLeft: "calc(-7vw - 40px)", top: "90px" } : { width: "clamp(320px,95vw,600px)", marginBottom: "16px" }}
         variants={fadeUp}
         initial="hidden"
         animate="visible"

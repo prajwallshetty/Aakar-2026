@@ -5,7 +5,7 @@ import { baseFont } from "@/lib/font";
 import { BackgroundBeamsWrapper } from "@/components/(User)/Common/BackgroundBeamsWrapper";
 
 export const metadata: Metadata = {
-  title: "AAKAR 2026 | Brains, Guts and Glory",
+  title: "AAKAR 2026 | Vibe. Compete. Conquer.",
   description:
     "Experience the spirit of innovation, creativity, and competition at AAKAR 2026 – a premier TechnoCultural fest bringing together students, tech enthusiasts, and innovators for exciting events, workshops, and unforgettable memories.",
 };
