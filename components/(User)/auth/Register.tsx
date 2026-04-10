@@ -71,22 +71,22 @@ const labelStyle: React.CSSProperties = {
 };
 
 const inputBase: React.CSSProperties = {
-    width: "100%", padding: "12px 16px",
-    border: `1px solid ${ANIME_COLORS.primary}`, borderRadius: 6,
-    boxShadow: `0 0 8px ${ANIME_COLORS.primary}20, inset 0 0 4px ${ANIME_COLORS.primary}10`,
-    fontFamily: monoFont, fontSize: 14,
-    background: `${ANIME_COLORS.background}40`,
+    width: "100%", padding: "14px 18px",
+    border: `1px solid ${ANIME_COLORS.primary}60`, borderRadius: 8,
+    boxShadow: `0 2px 10px rgba(0,0,0,0.2), inset 0 2px 8px rgba(0,0,0,0.3)`,
+    fontFamily: monoFont, fontSize: 13, letterSpacing: 1,
+    background: `linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))`,
     color: ANIME_COLORS.text,
-    outline: "none", transition: "all 0.2s",
+    outline: "none", transition: "all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
     appearance: "none" as const,
-    backdropFilter: "blur(4px)"
+    backdropFilter: "blur(8px)"
 };
 
 const inputError: React.CSSProperties = {
     ...inputBase,
     border: `1px solid ${ANIME_COLORS.purple}`,
-    boxShadow: `0 0 12px ${ANIME_COLORS.purple}40, inset 0 0 6px ${ANIME_COLORS.purple}20`,
-    background: `${ANIME_COLORS.purple}10`
+    boxShadow: `0 0 15px ${ANIME_COLORS.purple}50, inset 0 2px 8px rgba(0,0,0,0.4)`,
+    background: `${ANIME_COLORS.purple}15`
 };
 
 const errorMsg: React.CSSProperties = {
@@ -109,19 +109,20 @@ const AnimeButton: React.FC<{
         <button type={type} onClick={onClick} disabled={disabled}
             onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
             style={{
-                background: disabled ? `${ANIME_COLORS.background}40` : `${bg}20`,
+                background: disabled ? `${ANIME_COLORS.background}40` : `linear-gradient(135deg, ${bg}40, ${bg}10)`,
                 color: disabled ? `${ANIME_COLORS.text}40` : fg,
-                border: `1px solid ${bg}`,
-                boxShadow: hov && !disabled ? `0 0 20px ${bg}60` : `0 0 8px ${bg}40`,
+                border: `1px solid ${disabled ? bg + '40' : bg}`,
+                boxShadow: hov && !disabled ? `0 0 25px ${bg}80` : `0 4px 15px rgba(0,0,0,0.3)`,
                 fontFamily: popFont, fontSize: 14, fontWeight: 900,
-                letterSpacing: 3, textTransform: "uppercase" as const,
-                padding: "14px 32px",
+                letterSpacing: 4, textTransform: "uppercase" as const,
+                padding: "16px 36px",
                 cursor: disabled ? "not-allowed" : "pointer",
-                transform: hov && !disabled ? "translateY(-2px)" : "none",
-                transition: "all 0.2s",
+                transform: hov && !disabled ? "translateY(-3px) scale(1.02)" : "translateY(0) scale(1)",
+                transition: "all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
                 display: "inline-flex", alignItems: "center", gap: 8, justifyContent: "center",
-                borderRadius: 6,
-                backdropFilter: "blur(4px)"
+                borderRadius: 8,
+                backdropFilter: "blur(8px)",
+                textShadow: hov && !disabled ? `0 0 8px ${fg}80` : "none"
             }}>
             {children}
         </button>
