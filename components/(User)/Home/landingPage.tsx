@@ -92,7 +92,7 @@ export default function HeroLanding() {
       >
         {/* ── VIDEO LAYER ── */}
         <div className="absolute inset-0 z-0">
-          <OptimizedVideo src="/aakarlandingvideo.mp4" />
+          <OptimizedVideo src="/aakarlandingvideo.mp4" poster="/video-poster.png" />
         </div>
 
         {/* ── OVERLAYS ── */}

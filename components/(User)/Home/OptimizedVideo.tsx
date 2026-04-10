@@ -4,11 +4,13 @@ import { useEffect, useRef } from "react";
 
 interface OptimizedVideoProps {
   src: string;
+  poster?: string;
   className?: string;
 }
 
 export default function OptimizedVideo({
   src,
+  poster = "",
   className = "",
 }: OptimizedVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -53,11 +55,14 @@ export default function OptimizedVideo({
     <div className={`relative w-full h-full overflow-hidden bg-black ${className}`}>
       <video
         ref={videoRef}
-        muted
+        muted={true}
         loop
         playsInline
         autoPlay
-        preload="metadata"
+        poster={poster}
+        preload="auto"
+        disablePictureInPicture
+        disableRemotePlayback
         className="w-full h-full object-cover"
         style={{
           willChange: "transform",
