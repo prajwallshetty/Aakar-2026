@@ -41,42 +41,101 @@ function AnimeEventCard({ event, index }: { event: ExtendedEvent; index: number 
   const imageSrc = imageCandidates[imageIndex] ?? "";
 
   return (
-    <AnimeCardWrapper
-      accentIndex={index}
-      className="anime-event-card"
-      style={{
-        aspectRatio: "1/1.414",
-        width: "100%",
-        position: "relative",
-        overflow: "hidden"
-      }}
-    >
-      <Link href={`/events/${generateEventSlug(event)}`} className="block w-full h-full">
-        {/* Background Image */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "#12030d",
-            borderRadius: "inherit",
-            zIndex: 1
-          }}
-        >
-          {imageSrc && (
-            <img
-              src={imageSrc}
-              alt={event.eventName}
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-              onError={() => {
-                setImageIndex((prev) => (prev < imageCandidates.length - 1 ? prev + 1 : prev));
+    <div className="group cursor-pointer">
+      <AnimeCardWrapper
+        accentIndex={index}
+        className="anime-event-card transition-transform duration-500 group-hover:-translate-y-2"
+        style={{
+          aspectRatio: "1/1.414",
+          width: "100%",
+          position: "relative",
+          overflow: "hidden"
+        }}
+      >
+        <Link href={`/events/${generateEventSlug(event)}`} className="block w-full h-full">
+          {/* Background Image */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "#12030d",
+              borderRadius: "inherit",
+              zIndex: 1
+            }}
+          >
+            {imageSrc && (
+              <img
+                src={imageSrc}
+                alt={event.eventName}
+                className="transition-transform duration-700 group-hover:scale-110"
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+                onError={() => {
+                  setImageIndex((prev) => (prev < imageCandidates.length - 1 ? prev + 1 : prev));
+                }}
+              />
+            )}
+            
+            {/* Gradient Overlay */}
+            <div 
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(to top, rgba(8,10,18,0.8) 0%, transparent 60%)",
+                zIndex: 2,
+                opacity: 0.8
               }}
             />
-          )}
+          </div>
+        </Link>
+      </AnimeCardWrapper>
+
+      {/* Event Name Below Card */}
+      <div className="mt-4 px-2">
+        <div 
+          className="text-center transition-all duration-300 transform group-hover:scale-105"
+          style={{ position: "relative" }}
+        >
+          <div 
+             className="mono uppercase"
+             style={{ 
+               fontSize: "10px", 
+               color: accent.primary, 
+               letterSpacing: "4px",
+               marginBottom: "4px",
+               opacity: 0.7
+             }}
+          >
+            EVENTID//00{event.id}
+          </div>
+          <h3 
+            className="orbitron font-black uppercase"
+            style={{ 
+              fontSize: "clamp(0.9rem, 1.2vw, 1.2rem)",
+              color: "#fff",
+              letterSpacing: "2px",
+              lineHeight: 1.2,
+              textShadow: `0 0 10px ${accent.glow}`
+            }}
+          >
+            {event.eventName}
+          </h3>
+          
+          <div 
+            className="mt-2 mx-auto transition-all duration-500"
+            style={{ 
+              height: "2px", 
+              width: "0%", 
+              background: `linear-gradient(90deg, transparent, ${accent.primary}, transparent)`,
+            }}
+          />
+          <style>{`
+            .group:hover .mt-2 {
+              width: 80%;
+            }
+          `}</style>
         </div>
-
-
-      </Link>
-    </AnimeCardWrapper>
+      </div>
+    </div>
   );
 }
 
