@@ -11,7 +11,9 @@ import {
   AnimeGlitchText,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
+  ACCENTS,
+  AnimeOrbField,
+  AnimeParticleField 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 import { cinzelFont } from "@/lib/font";
@@ -19,11 +21,12 @@ const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
 /* ─── palette ─────────────────────────────────────────────────── */
 /* ─── Anime Card Component ─────────────────────────────────── */
-function AnimeAboutCard({ children, accentIndex = 0, style, className }: { 
+function AnimeAboutCard({ children, accentIndex = 1, style, className, idLabel }: { 
   children: React.ReactNode; 
   accentIndex?: number;
   style?: React.CSSProperties; 
   className?: string;
+  idLabel?: string;
 }) {
   return (
     <AnimeCardWrapper 
@@ -32,9 +35,18 @@ function AnimeAboutCard({ children, accentIndex = 0, style, className }: {
       style={{
         padding: "clamp(1.4rem,3.5vw,2.5rem)",
         margin: "0",
+        position: "relative",
         ...style
       }}
     >
+      {/* Corner Brackets */}
+      <div className="about-bracket tl" />
+      <div className="about-bracket tr" />
+      <div className="about-bracket bl" />
+      <div className="about-bracket br" />
+      
+      {idLabel && <div className="about-id-tag">{idLabel}</div>}
+
       <div style={{
         position: "relative",
         zIndex: 10,
@@ -47,7 +59,7 @@ function AnimeAboutCard({ children, accentIndex = 0, style, className }: {
 }
 
 /* ─── Anime Section Heading ─────────────────────────────────── */
-function AnimeAboutSectionHeading({ children, center = false, index = 0 }: {
+function AnimeAboutSectionHeading({ children, center = false, index = 1 }: {
   children: React.ReactNode; center?: boolean; index?: number;
 }) {
   return (
@@ -109,18 +121,49 @@ export default function AboutPage() {
         .pop-in   { animation:popIn  0.55s cubic-bezier(.23,1.5,.7,1) both; }
         .play-icon{ animation:playPulse 1.8s ease-in-out infinite; }
         .img-hover{ transition:transform 0.25s ease, box-shadow 0.25s ease; }
-        .img-hover:hover{ transform:translate(-3px,-3px); box-shadow:0 0 20px ${ANIME_COLORS.primary}60, 0 0 40px ${ANIME_COLORS.primary}30 !important; }
-        
-        /* Anime about page specific styles */
-        .anime-about-card {
-          margin-bottom: 2rem;
-        }
-        .anime-about-text {
-          color: rgba(255,255,255,0.85);
-          font-family: 'Rajdhani', sans-serif;
-        }
         .anime-about-text strong {
-          color: ${ANIME_COLORS.primary};
+          color: ${ANIME_COLORS.secondary};
+        }
+
+        /* Atmospheric Decorative Elements */
+        .hero-side-label {
+          writing-mode: vertical-rl;
+          font-family: 'Cinzel', serif;
+          font-size: 8px;
+          letter-spacing: 0.6em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.25);
+          position: fixed;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 50;
+          pointer-events: none;
+        }
+
+        .scan-line {
+          position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
+          background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px);
+          animation: scanMove 8s linear infinite; z-index: 5;
+        }
+        @keyframes scanMove { from { background-position: 0 0; } to { background-position: 0 100%; } }
+
+        .about-bracket {
+          position: absolute; width: 15px; height: 15px; z-index: 20;
+          opacity: 0.4; transition: opacity 0.3s, scale 0.3s;
+        }
+        .about-bracket.tl { top: 12px; left: 12px; border-top: 1.5px solid ${ANIME_COLORS.secondary}; border-left: 1.5px solid ${ANIME_COLORS.secondary}; }
+        .about-bracket.tr { top: 12px; right: 12px; border-top: 1.5px solid ${ANIME_COLORS.secondary}; border-right: 1.5px solid ${ANIME_COLORS.secondary}; }
+        .about-bracket.bl { bottom: 12px; left: 12px; border-bottom: 1.5px solid ${ANIME_COLORS.secondary}; border-left: 1.5px solid ${ANIME_COLORS.secondary}; }
+        .about-bracket.br { bottom: 12px; right: 12px; border-bottom: 1.5px solid ${ANIME_COLORS.secondary}; border-right: 1.5px solid ${ANIME_COLORS.secondary}; }
+        
+        .anime-about-card:hover .about-bracket { opacity: 1; scale: 1.1; }
+
+        .about-id-tag {
+          position: absolute; top: 12px; right: 40px; z-index: 20;
+          font-family: 'Share Tech Mono', monospace; font-size: 8px;
+          color: ${ANIME_COLORS.secondary}bb; background: rgba(0,0,0,0.4);
+          border: 1px solid ${ANIME_COLORS.secondary}40; padding: 2px 6px;
+          border-radius: 4px; letter-spacing: 0.15em;
         }
       `}</style>
 
@@ -130,24 +173,41 @@ export default function AboutPage() {
         position:"relative", 
         zIndex:10, 
         padding:"clamp(3rem,8vh,6rem) clamp(1rem,5vw,3rem) clamp(3rem,8vh,5rem)",
-        minHeight: "100vh"
+        minHeight: "100vh",
+        background: "transparent"
       }}>
+        <AnimeOrbField />
+        <AnimeParticleField />
+        <div className="scan-line" />
+        <div style={{ position: "absolute", inset: 0, zIndex: -1, background: "rgba(0,0,0,0.15)" }} />
+
+        {/* Global Side Labels - Desktop Only */}
+        <div className="hidden xl:block">
+          <span className="hero-side-label left-8">Aakar 2026</span>
+          <span className="hero-side-label right-8 rotate-180">AJIET · Mangaluru</span>
+        </div>
         <div style={{maxWidth:1100,margin:"0 auto",display:"flex",flexDirection:"column",gap:"clamp(2rem,4vh,3rem)"}}>
 
           {/* ── PAGE TITLE ── */}
           <div className="fade-up" style={{textAlign:"center"}}>
             <div className={cinzelFont.className} style={{
-              fontSize:"clamp(2rem,8vw,5.5rem)",
-              lineHeight:0.88,
-              letterSpacing:"0.04em",
-              color:ANIME_COLORS.text,
+              fontSize: "clamp(2.5rem, 10vw, 6.5rem)",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              background: "linear-gradient(135deg, #fff 0%, #ccc 40%, #AE48FF 70%, #00E5FF 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              margin: 0,
+              lineHeight: 1.1,
+              filter: "drop-shadow(0 0 20px rgba(174,72,255,0.2))",
             }}>
               ABOUT
             </div>
           </div>
 
           {/* ── INSTITUTION CARD ── */}
-          <AnimeAboutCard accentIndex={0} style={{animationDelay:"0.05s"}} className="fade-up">
+          <AnimeAboutCard accentIndex={0} style={{animationDelay:"0.05s"}} className="fade-up" idLabel="DATA_01">
             <AnimeAboutSectionHeading index={0}>About Our Institution</AnimeAboutSectionHeading>
 
             <div style={{display:"flex",flexWrap:"wrap",gap:"clamp(1.2rem,3vw,2.5rem)",alignItems:"flex-start"}}>
@@ -160,8 +220,8 @@ export default function AboutPage() {
                   position:"relative",
                   borderRadius:12,
                   overflow:"hidden",
-                  border:`3px solid ${ANIME_COLORS.primary}`,
-                  boxShadow:`8px 8px 0 ${ANIME_COLORS.primary}, 12px 12px 0 ${ANIME_COLORS.secondary}`,
+                  border:`3px solid ${ANIME_COLORS.secondary}`,
+                  boxShadow:`8px 8px 0 ${ANIME_COLORS.secondary}, 12px 12px 0 ${ANIME_COLORS.purple}60`,
                   cursor:"pointer",
                   animationDelay:"0.15s",
                 }}
@@ -185,12 +245,13 @@ export default function AboutPage() {
                 >
                   <div className="play-icon" style={{
                     width:60,height:60,borderRadius:"50%",
-                    background:ANIME_COLORS.accent,
-                    border:`3px solid ${ANIME_COLORS.primary}`,
-                    boxShadow:`4px 4px 0 ${ANIME_COLORS.primary}`,
+                    background:ANIME_COLORS.secondary + "40",
+                    border:`3px solid ${ANIME_COLORS.secondary}`,
+                    boxShadow:`4px 4px 0 ${ANIME_COLORS.secondary}`,
                     display:"flex",alignItems:"center",justifyContent:"center",
+                    backdropFilter:"blur(8px)"
                   }}>
-                    <FaPlay style={{color:ANIME_COLORS.primary,fontSize:22,marginLeft:3}}/>
+                    <FaPlay style={{color:ANIME_COLORS.secondary,fontSize:22,marginLeft:3}}/>
                   </div>
                 </div>
               </div>
@@ -247,8 +308,8 @@ export default function AboutPage() {
           </AnimeAboutCard>
 
           {/* ── ABOUT AAKAR CARD ── */}
-          <AnimeAboutCard accentIndex={1} className="fade-up" style={{animationDelay:"0.12s"}}>
-            <AnimeAboutSectionHeading index={1} center>About AAKAR</AnimeAboutSectionHeading>
+          <AnimeAboutCard accentIndex={3} className="fade-up" style={{animationDelay:"0.12s"}} idLabel="DATA_02">
+            <AnimeAboutSectionHeading index={3} center>About AAKAR</AnimeAboutSectionHeading>
 
             {/* date + venue chips */}
             <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",marginBottom:"1.8rem"}}>
@@ -321,14 +382,14 @@ export default function AboutPage() {
                 width:"100%",
                 maxWidth:860,
                 background: `${ANIME_COLORS.background}40`,
-                border: `1px solid ${ANIME_COLORS.primary}`,
-                boxShadow: `0 0 20px ${ANIME_COLORS.primary}40`,
+                border: `1px solid ${ANIME_COLORS.secondary}`,
+                boxShadow: `0 0 20px ${ANIME_COLORS.secondary}40`,
               }}
             >
               {/* modal top bar */}
               <div style={{
-                background:`${ANIME_COLORS.accent}20`,
-                borderBottom:`1px solid ${ANIME_COLORS.primary}`,
+                background:`${ANIME_COLORS.secondary}20`,
+                borderBottom:`1px solid ${ANIME_COLORS.secondary}`,
                 padding:"6px 16px",
                 display:"flex",justifyContent:"space-between",alignItems:"center",
               }}>

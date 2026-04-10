@@ -7,7 +7,10 @@ import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
 import { buildElitePassEmail } from "./email-templates";
 
-const ELITE_PASS_PRICE = 999;
+function getElitePassPrice() {
+  const isEarlyBird = new Date() < new Date("2026-04-16T00:00:00+05:30");
+  return isEarlyBird ? 399 : 459;
+}
 
 type ElitePassOrderInput = {
   name: string;
@@ -255,7 +258,7 @@ async function syncParticipantWithElitePass(
         college: payload.college,
         department: payload.department,
         year: payload.year,
-        amount: (existingParticipant.amount || 0) + ELITE_PASS_PRICE,
+        amount: (existingParticipant.amount || 0) + getElitePassPrice(),
         transaction_ids: Array.from(new Set([...(existingParticipant.transaction_ids || []), payload.transactionId])),
         paymentScreenshotUrls: Array.from(
           new Set([...(existingParticipant.paymentScreenshotUrls || []), ...(payload.paymentScreenshotUrl ? [payload.paymentScreenshotUrl] : [])]),
@@ -276,7 +279,7 @@ async function syncParticipantWithElitePass(
       college: payload.college,
       department: payload.department,
       year: payload.year,
-      amount: ELITE_PASS_PRICE,
+      amount: getElitePassPrice(),
       transaction_ids: [payload.transactionId],
       paymentScreenshotUrls: payload.paymentScreenshotUrl ? [payload.paymentScreenshotUrl] : [],
       events: {
@@ -333,7 +336,7 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
         department: normalizedPayload.department,
         year: normalizedPayload.year,
         transactionId: normalizedPayload.transactionId,
-        amount: ELITE_PASS_PRICE,
+        amount: getElitePassPrice(),
         paymentScreenshotUrl: normalizedPayload.paymentScreenshotUrl,
       });
 
