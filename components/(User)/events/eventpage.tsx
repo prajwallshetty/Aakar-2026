@@ -16,6 +16,7 @@ import {
   ANIME_COLORS,
   ACCENTS
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 /* ─── palette ────────────────────────────────────────────────────────── */
 const P = {
@@ -251,7 +252,8 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
         }
       `}</style>
 
-      {/* Anime Background Layers */}<div
+      {/* Anime Background Layers */}
+<div
         style={{
           minHeight: "100vh",
           position: "relative",
@@ -268,6 +270,26 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
             position: "absolute", inset: 0, zIndex: 1,
           }}
         >
+          <CharacterDecoration 
+            image="/character7.png" 
+            position={{ top: "-2%", left: "-8%" }}
+            opacity={0.1}
+            size="clamp(200px, 30vw, 500px)"
+          />
+          <CharacterDecoration 
+            image="/character4.png" 
+            position={{ top: "15%", right: "-10%" }}
+            opacity={0.1}
+            size="clamp(400px, 50vw, 700px)"
+          />
+          {events.length >= 9 && (
+            <CharacterDecoration 
+              image="/character2.png" 
+              position={{ bottom: "0%", right: "-10%" }}
+              opacity={0.1}
+              size="clamp(400px, 50vw, 750px)"
+            />
+          )}
           <BackgroundBeams className="absolute inset-0 opacity-50" />
         </div>
 

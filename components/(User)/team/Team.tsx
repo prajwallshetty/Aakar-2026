@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useCallback, useEffect, useState } from "react";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 /* ─── data ────────────────────────────────────────────────────── */
 interface TeamMember { name: string; role: string; image: string; github?: string;}
@@ -651,7 +652,13 @@ const Team = () => (
     <OrbField />
     <ParticleField />
 
-    <main style={{ position: "relative", zIndex: 10, minHeight: "100vh", padding: "clamp(5rem, 12vh, 8rem) clamp(1rem, 5vw, 3rem)" }}>
+    <main style={{ position: "relative", zIndex: 10, minHeight: "100vh", padding: "clamp(5rem, 12vh, 8rem) clamp(1rem, 5vw, 3rem)", overflow: "hidden" }}>
+      <CharacterDecoration 
+        image="/character5.png" 
+        position={{ bottom: "-3%", right: "-15%" }}
+        opacity={0.18}
+        size="clamp(400px, 50vw, 700px)"
+      />
       <div style={{ maxWidth: 1380, margin: "0 auto", display: "flex", flexDirection: "column", gap: "clamp(4rem, 10vh, 7rem)" }}>
 
         {/* ── Page header ────────────────────────────────────── */}

@@ -13,8 +13,11 @@ import {
   AnimeGlitchText,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS
+  ACCENTS,
+  AnimeOrbField,
+  AnimeParticleField
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import { motion } from "framer-motion";
 
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
@@ -28,6 +31,7 @@ function TshirtModel({ modelUrl }: { modelUrl: string }) {
     </group>
   );
 }
+
 
 export default function MerchPage() {
   const [selectedVariantKey, setSelectedVariantKey] = useState(defaultMerchVariantKey);
@@ -43,10 +47,10 @@ export default function MerchPage() {
         @keyframes bannerGlitch {
           0%,92%,100% {
             transform: none;
-            text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40;
+            text-shadow: 0 0 18px ${ANIME_COLORS.purple}80, 0 0 40px ${ANIME_COLORS.purple}40;
           }
-          93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
-          95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
+          93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.purple}, 4px 0 ${ANIME_COLORS.secondary}; }
+          95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.secondary}, -4px 0 ${ANIME_COLORS.purple}; }
           97% { transform: none; }
         }
         @keyframes scanLine {
@@ -70,7 +74,7 @@ export default function MerchPage() {
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes neonBreath {
-          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.purple}50, inset 0 0 16px ${ANIME_COLORS.purple}18; }
           50%      { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
         }
         @keyframes featSlash {
@@ -105,11 +109,11 @@ export default function MerchPage() {
         /* ── CARD SKIN (shared) ───────────────────────── */
         .merch-card {
           background: linear-gradient(155deg,
-            rgba(8,3,18,.97) 0%,
-            rgba(12,5,24,.95) 55%,
-            rgba(9,3,18,.98) 100%
+            rgba(8,3,18,.96) 0%,
+            rgba(15,5,30,.94) 55%,
+            rgba(8,3,18,.97) 100%
           );
-          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          border: 1.5px solid ${ANIME_COLORS.purple}80;
           animation: neonBreath 5s ease-in-out infinite;
           position: relative;
           overflow: hidden;
@@ -122,8 +126,8 @@ export default function MerchPage() {
             0deg,
             transparent,
             transparent 3px,
-            ${ANIME_COLORS.primary}07 3px,
-            ${ANIME_COLORS.primary}07 4px
+            ${ANIME_COLORS.purple}07 3px,
+            ${ANIME_COLORS.purple}07 4px
           );
           pointer-events: none;
           z-index: 0;
@@ -133,7 +137,7 @@ export default function MerchPage() {
           position: absolute;
           left: 0; right: 0;
           height: 2px;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.purple}55, transparent);
           animation: scanLine 5s linear infinite;
           pointer-events: none;
           z-index: 5;
@@ -143,7 +147,7 @@ export default function MerchPage() {
         .street-banner {
           text-align: center;
           padding: 2.4rem 1rem 2rem;
-          border-bottom: 1.5px solid ${ANIME_COLORS.primary}44;
+          border-bottom: 1.5px solid ${ANIME_COLORS.purple}44;
           position: relative;
           z-index: 1;
         }
@@ -152,7 +156,7 @@ export default function MerchPage() {
           position: absolute;
           inset: 0;
           background:
-            radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+            radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.purple}1e 0%, transparent 70%),
             radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
           pointer-events: none;
         }
@@ -179,42 +183,26 @@ export default function MerchPage() {
           opacity: 0.7;
         }
         .banner-title {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.05em;
+          display: block;
+          font-size: clamp(2.2rem, 8vw, 3.8rem);
           line-height: 0.9;
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: #fff;
-          text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35;
+          text-shadow: 0 0 20px ${ANIME_COLORS.purple}75, 0 0 45px ${ANIME_COLORS.purple}35;
           animation: bannerGlitch 8s ease-in-out infinite;
           position: relative;
         }
-        .banner-line-1 {
-          font-size: clamp(3rem, 9vw, 7.2rem);
-          display: block;
-        }
-        .banner-line-2 {
-          font-size: clamp(1.5rem, 4.8vw, 4rem);
-          display: block;
-          letter-spacing: 0.28em;
-        }
-        .banner-line-2 .stroke-word {
-          -webkit-text-stroke: 1.5px ${ANIME_COLORS.primary};
-          color: transparent;
-          filter: drop-shadow(0 0 8px ${ANIME_COLORS.primary}cc);
-        }
         .banner-title .stroke-word {
-          -webkit-text-stroke: 2px ${ANIME_COLORS.primary};
+          -webkit-text-stroke: 2px ${ANIME_COLORS.purple};
           color: transparent;
-          filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc);
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.purple}cc);
         }
         .banner-sub {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
           letter-spacing: 0.5em;
-          color: ${ANIME_COLORS.secondary}bb;
+          color: ${ANIME_COLORS.secondary};
           margin-top: 0.9rem;
           text-transform: uppercase;
         }
@@ -222,7 +210,7 @@ export default function MerchPage() {
           width: 72px;
           height: 2px;
           margin: 0.8rem auto 0;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.purple}cc, transparent);
           animation: rubyPulse 2.8s ease-in-out infinite;
         }
 
@@ -258,9 +246,9 @@ export default function MerchPage() {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.58rem;
           letter-spacing: 0.38em;
-          color: ${ANIME_COLORS.text}88;
+          color: #ffffff;
           text-transform: uppercase;
-          border: 1px solid ${ANIME_COLORS.primary}44;
+          border: 1px solid ${ANIME_COLORS.purple}44;
           padding: 0.38rem 1.1rem;
           border-radius: 99px;
           background: rgba(0,0,0,.45);
@@ -289,24 +277,24 @@ export default function MerchPage() {
           text-transform: uppercase;
           padding: 0.4rem 1rem;
           border-radius: 4px;
-          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          border: 1.5px solid ${ANIME_COLORS.purple}55;
           background: transparent;
-          color: ${ANIME_COLORS.text}88;
+          color: #ffffff;
           cursor: pointer;
           transition: all .16s ease;
           position: relative;
           overflow: hidden;
         }
         .variant-pill:hover {
-          border-color: ${ANIME_COLORS.primary}cc;
-          color: ${ANIME_COLORS.text};
+          border-color: ${ANIME_COLORS.purple}cc;
+          color: #ffffff;
           transform: translateY(-1px);
-          box-shadow: 0 0 14px ${ANIME_COLORS.primary}35;
+          box-shadow: 0 0 14px ${ANIME_COLORS.purple}35;
         }
         .variant-pill.active {
           border-color: ${ANIME_COLORS.accent};
           background: ${ANIME_COLORS.accent}20;
-          color: ${ANIME_COLORS.text};
+          color: #ffffff;
           box-shadow: 0 0 18px ${ANIME_COLORS.accent}50;
         }
 
@@ -326,13 +314,13 @@ export default function MerchPage() {
           line-height: 0.9;
           margin-top: 0.4rem;
           text-transform: uppercase;
-          text-shadow: 0 0 30px ${ANIME_COLORS.primary}50;
+          text-shadow: 0 0 30px ${ANIME_COLORS.purple}50;
         }
         .info-desc {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.8rem;
           line-height: 1.8;
-          color: ${ANIME_COLORS.text}cc;
+          color: #ffffff;
           margin-top: 1.2rem;
           padding-left: 1.1rem;
           border-left: 2px solid ${ANIME_COLORS.accent};
@@ -352,8 +340,8 @@ export default function MerchPage() {
         .feat-card {
           position: relative;
           padding: 0.7rem 0.9rem 0.75rem;
-          border: 1px solid ${ANIME_COLORS.primary}40;
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%);
+          border: 1px solid ${ANIME_COLORS.purple}40;
+          background: linear-gradient(135deg, ${ANIME_COLORS.purple}0c 0%, transparent 70%);
           border-radius: 6px;
           overflow: hidden;
           animation: featIn .35s ease both;
@@ -367,7 +355,7 @@ export default function MerchPage() {
           position: absolute;
           bottom: 0; left: 0; right: 0;
           height: 1.5px;
-          background: linear-gradient(90deg, ${ANIME_COLORS.primary}00, ${ANIME_COLORS.primary}80, ${ANIME_COLORS.primary}00);
+          background: linear-gradient(90deg, ${ANIME_COLORS.purple}00, ${ANIME_COLORS.purple}80, ${ANIME_COLORS.purple}00);
           transform-origin: left;
           animation: featSlash .55s cubic-bezier(.22,1,.36,1) both;
           animation-delay: inherit;
@@ -384,7 +372,7 @@ export default function MerchPage() {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.76rem;
           letter-spacing: 0.04em;
-          color: ${ANIME_COLORS.text};
+          color: #ffffff;
           line-height: 1.35;
         }
         .feat-glyph {
@@ -440,11 +428,11 @@ export default function MerchPage() {
           letter-spacing: 0.28em;
           text-transform: uppercase;
           padding: 0.78rem 1.8rem;
-          border: 1.5px solid ${ANIME_COLORS.primary};
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30);
+          border: 1.5px solid ${ANIME_COLORS.purple};
+          background: linear-gradient(135deg, ${ANIME_COLORS.purple}55, ${ANIME_COLORS.purple}30);
           color: #fff;
           border-radius: 5px;
-          box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70;
+          box-shadow: 0 0 22px ${ANIME_COLORS.purple}50, inset 0 1px 0 ${ANIME_COLORS.purple}70;
           white-space: nowrap;
           text-decoration: none;
           display: inline-block;
@@ -463,31 +451,10 @@ export default function MerchPage() {
         }
         .buy-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary};
+          box-shadow: 0 0 34px ${ANIME_COLORS.purple}75, inset 0 1px 0 ${ANIME_COLORS.purple};
         }
         .buy-btn:active { transform: translateY(0); }
 
-        /* ── DIVIDER ─────────────────────────────────── */
-        .pane-divider {
-          display: none;
-        }
-        @media (min-width: 1024px) {
-          .pane-divider {
-            display: block;
-            position: absolute;
-            top: 5%;
-            bottom: 5%;
-            left: 50%;
-            width: 1.5px;
-            background: linear-gradient(180deg,
-              transparent 0%,
-              ${ANIME_COLORS.primary}55 20%,
-              ${ANIME_COLORS.primary}55 80%,
-              transparent 100%
-            );
-            pointer-events: none;
-          }
-        }
 
         /* ── MOBILE RESPONSIVE ───────────────────────── */
         @media (max-width: 640px) {
@@ -519,8 +486,7 @@ export default function MerchPage() {
 
         @media (max-width: 400px) {
           .feat-grid { grid-template-columns: 1fr; }
-          .banner-line-1 { font-size: clamp(2.4rem, 11vw, 3rem); }
-          .banner-line-2 { font-size: clamp(1.1rem, 5.5vw, 1.5rem); }
+          .banner-title { font-size: 1.8rem; letter-spacing: 0.04em; }
         }
 
         @media (min-width: 641px) and (max-width: 1023px) {
@@ -532,8 +498,11 @@ export default function MerchPage() {
         }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden">
-<div className="absolute inset-0 -z-0 bg-black/10" />
+      <main className="relative min-h-screen overflow-hidden bg-transparent text-white">
+        <AnimeOrbField />
+        <AnimeParticleField />
+        <div className="scan-line-global" />
+        <div style={{ position: "absolute", inset: 0, zIndex: -1, background: "rgba(0,0,0,0.12)" }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <div className="merch-shell space-y-5">
@@ -543,8 +512,7 @@ export default function MerchPage() {
               <div className="scan-line" />
               <span className="banner-ruby">Limited Drop · Fest Collection</span>
               <h2 className={`banner-title ${cinzelFont.className}`}>
-                <span className="banner-line-1">AAKAR</span>
-                <span className="banner-line-2"><span className="stroke-word">STREETWEAR</span>&nbsp;DROP</span>
+                AAKAR&nbsp;<span className="stroke-word">STREETWEAR</span>&nbsp;DROP
               </h2>
               <p className="banner-sub">wear the story &nbsp;·&nbsp; own the night &nbsp;·&nbsp; live the arc</p>
               <div className="banner-deco" />
@@ -553,15 +521,14 @@ export default function MerchPage() {
             {/* ── PRODUCT CARD ───────────────────────── */}
             <section className="merch-card overflow-hidden rounded-[1.5rem] relative">
               <div className="scan-line" />
-              <div className="pane-divider" />
               <div className="grid lg:grid-cols-[1fr_1fr]">
 
                 {/* LEFT — 3D MODEL */}
-                <div className="model-pane p-6 lg:p-10 border-b border-[rgba(255,100,0,0.18)] lg:border-b-0">
+                <div className="model-pane p-6 lg:p-10 border-b border-[rgba(176,38,255,0.18)] lg:border-b-0">
                   <div className="model-orb w-60 h-60 -top-16 -left-14"
-                    style={{ background: `${ANIME_COLORS.secondary}22` }} />
+                    style={{ background: `${ANIME_COLORS.purple}22` }} />
                   <div className="model-orb w-44 h-44 bottom-4 right-4"
-                    style={{ background: `${ANIME_COLORS.primary}1c`, animationDelay: '3.5s' }} />
+                    style={{ background: `${ANIME_COLORS.secondary}1c`, animationDelay: '3.5s' }} />
 
                   <div className="relative mx-auto flex h-[380px] md:h-[500px] w-full max-w-[500px] items-center justify-center">
                     <div className="w-full flex justify-center">

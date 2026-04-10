@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Montserrat } from "next/font/google";
 import { FaInstagram, FaPhone, FaEnvelope } from "react-icons/fa";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 const montserrat = Montserrat({
   weight: "600",
@@ -158,6 +159,15 @@ export default function Footer() {
       <div className="absolute inset-0 z-0">
         <EmberCanvas />
       </div>
+
+      <CharacterDecoration 
+        image="/character3.png" 
+        position={{ bottom: "-15%", left: "12%" }}
+        width="75%"
+        height="100%"
+        opacity={0.10}
+        style={{ transform: "translateX(-50%)" }}
+      />
 
       {/* Top glow line */}
       <div

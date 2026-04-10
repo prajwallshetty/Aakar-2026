@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { AnimeCardWrapper, AnimeGlitchText } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 /* ─── Mystery Reveal: DJ Night (Day 1) + Concert (Day 2) ───────── */
 
@@ -367,6 +368,12 @@ export default function MysteryReveal() {
         overflow: "hidden",
       }}
     >
+      <CharacterDecoration 
+        image="/character2.png" 
+        position={{ top: "10%", right: "-8%" }}
+        opacity={0.2}
+        size="clamp(250px, 45vw, 650px)"
+      />
       {/* Section heading */}
       <div style={{ textAlign: "center", marginBottom: "clamp(2rem, 5vh, 4rem)", position: "relative", zIndex: 5 }}>
         <p

@@ -4,6 +4,7 @@ import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from "ogl"
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ANIME_COLORS } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 type GL = Renderer["gl"];
 

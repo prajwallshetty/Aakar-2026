@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { AnimeGlitchText } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 export default function ElitePassPromo() {
   const ref = useRef<HTMLDivElement>(null);
@@ -17,8 +18,15 @@ export default function ElitePassPromo() {
         padding: "clamp(3rem, 8vh, 6rem) clamp(1rem, 4vw, 3rem)",
         display: "flex",
         justifyContent: "center",
+        overflow: "hidden",
       }}
     >
+      <CharacterDecoration 
+        image="/character5.png" 
+        position={{ bottom: "-10%", left: "-20%" }}
+        opacity={0.2}
+        size="clamp(450px, 60vw, 850px)"
+      />
       <motion.div
         ref={ref}
         initial={{ opacity: 0, scale: 0.95, y: 40 }}
