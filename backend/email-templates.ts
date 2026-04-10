@@ -1,35 +1,7 @@
 /**
  * Email templates for Aakar 2026.
- * Unified design system: "Simple, Good, and Premium".
- * Focus on "Pass" aesthetic for participant interactions.
+ * Using a cyberpunk/premium aesthetic consistent with registration emails.
  */
-
-const COLORS = {
-  primary: "#00ffff", // Cyan
-  secondary: "#ff0066", // Pink/Red
-  accent: "#cc00ff", // Purple
-  bg: "#050818",
-  cardBg: "#0a0a2e",
-  text: "#ffffff",
-  textMuted: "rgba(255, 255, 255, 0.6)",
-  border: "rgba(0, 255, 255, 0.2)",
-};
-
-const COMMON_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600&family=Share+Tech+Mono&display=swap');
-  body { margin: 0; padding: 0; background: ${COLORS.bg}; font-family: 'Inter', sans-serif; color: ${COLORS.text}; }
-  .pass-container { max-width: 600px; margin: 40px auto; border: 1px solid ${COLORS.border}; border-radius: 12px; overflow: hidden; background: ${COLORS.cardBg}; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .pass-header { padding: 32px; background: linear-gradient(135deg, #0a0a2e 0%, #1a0033 100%); text-align: center; border-bottom: 1px dashed ${COLORS.border}; position: relative; }
-  .pass-body { padding: 32px; position: relative; }
-  .pass-footer { padding: 20px; background: rgba(0,0,0,0.2); text-align: center; font-size: 12px; color: ${COLORS.textMuted}; border-top: 1px solid ${COLORS.border}; }
-  .orbitron { font-family: 'Orbitron', sans-serif; }
-  .mono { font-family: 'Share Tech Mono', monospace; }
-  .glitch-text { text-transform: uppercase; letter-spacing: 4px; color: ${COLORS.primary}; }
-  .badge { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-  .badge-elite { background: ${COLORS.secondary}; color: white; }
-  .badge-standard { background: ${COLORS.primary}; color: #000; }
-  .ticket-stub { border-left: 2px dashed ${COLORS.border}; padding-left: 24px; }
-`;
 
 export function buildElitePassEmail(name: string, usn: string, transactionId: string): string {
   return `<!DOCTYPE html>
@@ -37,194 +9,299 @@ export function buildElitePassEmail(name: string, usn: string, transactionId: st
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <style>${COMMON_STYLES}</style>
+  <title>Aakar 2026 – Elite Pass Confirmed!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.7; }
+      94% { opacity: 1; }
+      96% { opacity: 0.5; }
+      97% { opacity: 1; }
+    }
+    @keyframes glitch {
+      0%, 100% { text-shadow: 2px 0 #ff0066, -2px 0 #00ffff; }
+      25% { text-shadow: -2px 0 #ff0066, 2px 0 #00ffff; transform: translateX(1px); }
+      50% { text-shadow: 2px 0 #00ffff, -2px 0 #ff0066; transform: translateX(-1px); }
+      75% { text-shadow: 0 2px #ff0066, 0 -2px #00ffff; }
+    }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 8px #00ffff, 0 0 20px #00ffff44, inset 0 0 8px #00ffff22; }
+      50% { box-shadow: 0 0 16px #ff0066, 0 0 40px #ff006644, inset 0 0 16px #ff006622; }
+    }
+    @keyframes data-stream {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 200px; }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
 </head>
-<body>
-  <div class="pass-container" style="border: 2px solid ${COLORS.secondary};">
-    <div class="pass-header">
-      <div class="mono" style="font-size: 10px; color: ${COLORS.secondary}; letter-spacing: 4px; margin-bottom: 8px;">AAKAR 2026 // ELITE ACCESS</div>
-      <h1 class="orbitron" style="margin: 0; font-size: 36px; letter-spacing: 6px; color: #fff;">ELITE PASS</h1>
-      <div style="margin-top: 15px;">
-        <span class="badge badge-elite">PREMIUM MEMBER</span>
-      </div>
-    </div>
-    
-    <div class="pass-body">
-      <table width="100%" cellpadding="0" cellspacing="0">
+<body style="margin:0;padding:0;background:#050818;font-family:'Share Tech Mono',monospace;">
+
+<!-- Scanline overlay -->
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;overflow:hidden;">
+  <div style="position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(transparent,rgba(0,255,255,0.08),transparent);animation:scanline 6s linear infinite;"></div>
+</div>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="
+  background:#050818;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, #0d0d3320 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, #1a002620 0%, transparent 50%),
+    linear-gradient(#00ffff08 1px, transparent 1px),
+    linear-gradient(90deg, #00ffff08 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+  padding:48px 20px;
+  animation: flicker 8s infinite;
+">
+  <tr><td align="center">
+
+    <!-- OUTER GLOW FRAME -->
+    <div style="
+      max-width:620px;
+      width:100%;
+      position:relative;
+      animation: pulse-border 3s ease-in-out infinite;
+      border: 1px solid #00ffff44;
+      border-radius: 2px;
+    ">
+
+      <!-- Corner decorations -->
+      <div style="position:absolute;top:-2px;left:-2px;width:20px;height:20px;border-top:2px solid #00ffff;border-left:2px solid #00ffff;"></div>
+      <div style="position:absolute;top:-2px;right:-2px;width:20px;height:20px;border-top:2px solid #ff0066;border-right:2px solid #ff0066;"></div>
+      <div style="position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border-bottom:2px solid #ff0066;border-left:2px solid #ff0066;"></div>
+      <div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-bottom:2px solid #00ffff;border-right:2px solid #00ffff;"></div>
+
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:2px;overflow:hidden;">
+
+        <!-- ═══ HEADER ═══ -->
         <tr>
-          <td style="vertical-align: top;">
-            <div style="margin-bottom: 25px;">
-              <label class="mono" style="font-size: 10px; color: ${COLORS.textMuted}; display: block; margin-bottom: 4px;">PARTICIPANT NAME</label>
-              <div class="orbitron" style="font-size: 20px; color: ${COLORS.primary};">${name.toUpperCase()}</div>
-            </div>
-            
-            <div style="margin-bottom: 25px;">
-              <label class="mono" style="font-size: 10px; color: ${COLORS.textMuted}; display: block; margin-bottom: 4px;">CLEARANCE LEVEL</label>
-              <div style="font-size: 16px;">Full Event Access + Premium Perks</div>
+          <td style="
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a0033 50%, #0a0a2e 100%);
+            padding:32px 36px 28px;
+            text-align:center;
+            border-bottom: 1px solid #00ffff33;
+            position:relative;
+            overflow:hidden;
+          ">
+            <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,#ffffff04 10px,#ffffff04 11px);pointer-events:none;"></div>
+
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#00ffff88;letter-spacing:5px;margin-bottom:14px;position:relative;">
+              ▸ SYSTEM://ELITE.PASS/LEVEL_CLEAR ▸ ACCESS_GRANTED ▸
             </div>
 
-            <div style="font-size: 13px; color: ${COLORS.textMuted}; line-height: 1.6; margin-top: 30px;">
-              This pass grants you entry to all workshops, keynote sessions, and exclusive elite-only zones. Please keep your USN and Transaction ID ready for physical pass collection.
+            <div style="
+              font-family:'Orbitron',sans-serif;
+              font-size:48px;
+              font-weight:900;
+              color:#ffffff;
+              letter-spacing:8px;
+              text-transform:uppercase;
+              line-height:1;
+              animation: glitch 4s infinite;
+              position:relative;
+            ">ELITE PASS</div>
+
+            <div style="
+              display:inline-block;
+              background: transparent;
+              border: 1px solid #00ffff;
+              color:#00ffff;
+              font-family:'Share Tech Mono',monospace;
+              font-size:13px;
+              letter-spacing:10px;
+              padding:4px 18px;
+              margin:10px 0 12px;
+              position:relative;
+            ">
+              A A K A R 2 5
             </div>
           </td>
-          <td width="30%" class="ticket-stub" style="vertical-align: top; text-align: center;">
-            <div style="margin-bottom: 20px;">
-              <label class="mono" style="font-size: 9px; color: ${COLORS.textMuted}; display: block; margin-bottom: 4px;">USN</label>
-              <div class="mono" style="font-size: 14px; color: ${COLORS.secondary};">${usn.toUpperCase()}</div>
-            </div>
-            <div style="margin-bottom: 20px;">
-              <label class="mono" style="font-size: 9px; color: ${COLORS.textMuted}; display: block; margin-bottom: 4px;">TXN_ID</label>
-              <div class="mono" style="font-size: 10px; word-break: break-all;">${transactionId}</div>
-            </div>
-            <div style="margin-top: 40px; opacity: 0.5;">
-              <div style="height: 60px; background: repeating-linear-gradient(90deg, #fff 0, #fff 2px, transparent 2px, transparent 4px);"></div>
-              <div class="mono" style="font-size: 8px; margin-top: 5px;">VERIFIED ACCESS</div>
-            </div>
+        </tr>
+
+        <!-- ═══ BODY ═══ -->
+        <tr>
+          <td style="background:#06091a;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding:32px;">
+                  <div style="margin-bottom:24px;">
+                    <span style="
+                      background:#00ffff12;
+                      border:1px solid #00ffff;
+                      color:#00ffff;
+                      font-family:'Share Tech Mono',monospace;
+                      font-size:10px;
+                      letter-spacing:3px;
+                      padding:6px 14px;
+                    ">
+                      ELITE_STATUS: ACTIVE
+                    </span>
+                  </div>
+
+                  <div style="font-family:'Share Tech Mono',monospace;font-size:16px;color:#ffffff;line-height:1.6;margin-bottom:30px;">
+                    Greetings, <span style="color:#00ffff;font-weight:700;">${name}</span>.<br/><br/>
+                    Your Elite Pass for Aakar 2026 has been successfully processed. You now have full access to all premium events and amenities.
+                  </div>
+
+                  <div style="background:#00000044;border:1px solid #ffffff11;padding:20px;margin-bottom:30px;">
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#ffffff44;letter-spacing:2px;margin-bottom:12px;">◈ PASS_CERTIFICATE_DETAILS</div>
+                    <table width="100%" style="font-family:'Share Tech Mono',monospace;font-size:13px;color:#ffffff;">
+                      <tr><td width="40%" style="padding:6px 0;color:#ffffff44;">USN:</td><td style="padding:6px 0;color:#00ffff;">${usn}</td></tr>
+                      <tr><td style="padding:6px 0;color:#ffffff44;">TXN_ID:</td><td style="padding:6px 0;color:#ff0066;">${transactionId}</td></tr>
+                    </table>
+                  </div>
+
+                  <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#ffffff66;line-height:1.5;">
+                    Please present this email at the registration desk to collect your physical pass and welcome kit.
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ═══ FOOTER ═══ -->
+        <tr>
+          <td style="background:#0a0a2e;padding:24px 32px;border-top:1px solid #00ffff33;text-align:center;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#ffffff88;letter-spacing:2px;">AAKAR 2026 · THE CYBERNETIC ODYSSEY</div>
           </td>
         </tr>
       </table>
     </div>
-
-    <div class="pass-footer">
-      <div class="orbitron" style="letter-spacing: 2px;">AAKAR 2026 • AJIET MANGALURU</div>
-      <div style="margin-top: 8px; font-size: 10px;">This is a digital confirmation. Present this at the registration desk.</div>
-    </div>
-  </div>
-</body>
-</html>`;
-}
-
-export function buildRegistrationEmail(name: string, eventsText: string, uuid: string): string {
-  const eventItems = eventsText
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => {
-      const [eventName, ...dateParts] = line.split(" on ");
-      const date = dateParts.join(" on ");
-      return `
-        <div style="padding: 12px; background: rgba(255,255,255,0.05); border-left: 3px solid ${COLORS.primary}; margin-bottom: 10px;">
-          <div class="orbitron" style="font-size: 14px; color: #fff;">${eventName.toUpperCase()}</div>
-          ${date ? `<div class="mono" style="font-size: 11px; color: ${COLORS.primary}; margin-top: 4px;">${date}</div>` : ""}
-        </div>`;
-    })
-    .join("");
-
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <style>${COMMON_STYLES}</style>
-</head>
-<body>
-  <div class="pass-container">
-    <div class="pass-header" style="background: linear-gradient(135deg, #050818 0%, #0a0a2e 100%);">
-      <div class="mono" style="font-size: 10px; color: ${COLORS.primary}; letter-spacing: 4px; margin-bottom: 8px;">CONFIRMED ENTRANCE</div>
-      <h1 class="orbitron" style="margin: 0; font-size: 32px; letter-spacing: 4px; color: #fff;">REGISTRATION</h1>
-    </div>
-    
-    <div class="pass-body">
-      <div style="margin-bottom: 30px;">
-        <p style="font-size: 16px; margin-top: 0;">Welcome, <strong>${name}</strong>.</p>
-        <p style="font-size: 14px; color: ${COLORS.textMuted};">Your mission roster for Aakar 2026 has been updated. You are registered for the following events:</p>
-      </div>
-
-      <div style="margin-bottom: 30px;">
-        ${eventItems || '<div class="mono" style="color: rgba(255,255,255,0.2);">[ NO EVENTS LOGGED ]</div>'}
-      </div>
-
-      <div style="text-align: center; margin-top: 30px;">
-        <a href="https://aakar.live/addevents/${uuid}" style="display: inline-block; padding: 14px 24px; background: ${COLORS.primary}; color: #000; text-decoration: none; font-weight: bold; font-family: 'Orbitron', sans-serif; font-size: 12px; border-radius: 4px; letter-spacing: 1px;">+ ADD MORE EVENTS</a>
-      </div>
-    </div>
-
-    <div class="pass-footer">
-      <div class="mono" style="font-size: 10px; margin-bottom: 5px;">PASS_UUID: ${uuid.slice(0, 8).toUpperCase()}</div>
-      <div class="orbitron" style="letter-spacing: 2px;">AAKAR 2026 • THE FUTURE IS NOW</div>
-    </div>
-  </div>
+  </td></tr>
+</table>
 </body>
 </html>`;
 }
 
 export function buildMerchEmail(name: string, variant: string, size: string, transactionId: string): string {
-  const variantColor = variant.toLowerCase() === 'neon' ? COLORS.primary : variant.toLowerCase() === 'pro' ? COLORS.secondary : '#ffffff';
+  const variantDisplay = variant.charAt(0).toUpperCase() + variant.slice(1);
+  const variantColor = variant.toLowerCase() === 'neon' ? '#00ffff' : variant.toLowerCase() === 'pro' ? '#ff0066' : '#ffffff';
+
+  // Inferred price for display in email
   const price = variant.toLowerCase() === 'neon' ? '549' : variant.toLowerCase() === 'pro' ? '599' : '499';
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <style>${COMMON_STYLES}</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Aakar 2026 – Merch Order Confirmed!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.98); }
+    }
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 10px ${variantColor}88, 0 0 20px ${variantColor}44; }
+      50% { text-shadow: 0 0 15px ${variantColor}, 0 0 30px ${variantColor}88; }
+    }
+  </style>
 </head>
-<body>
-  <div class="pass-container" style="border-color: ${variantColor};">
-    <div class="pass-header" style="background: linear-gradient(135deg, #0a0a2e 0%, #000 100%);">
-      <div class="mono" style="font-size: 10px; color: ${variantColor}; letter-spacing: 4px; margin-bottom: 8px;">ARMORY ACCESS // SECURED</div>
-      <h1 class="orbitron" style="margin: 0; font-size: 32px; letter-spacing: 4px; color: #fff;">GEAR SECURED</h1>
-    </div>
+<body style="margin:0;padding:0;background:#050818;font-family:'Share Tech Mono',monospace;color:#ffffff;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#050818;padding:40px 10px;">
+  <tr><td align="center">
     
-    <div class="pass-body">
-      <p style="font-size: 15px;">Greetings, <strong>${name}</strong>. Your Aakar tactical gear has been logged.</p>
+    <div style="max-width:600px;width:100%;border: 1px solid ${variantColor}44;background:#0a0a2e;position:relative;overflow:hidden;border-radius:4px;">
       
-      <div style="background: rgba(0,0,0,0.3); border: 1px solid ${COLORS.border}; padding: 20px; margin-top: 25px;">
-        <table width="100%" style="font-size: 14px;">
-          <tr><td style="color: ${COLORS.textMuted}; padding: 8px 0;">VARIANT:</td><td style="color: ${variantColor}; font-weight: bold; text-transform: uppercase;">${variant}</td></tr>
-          <tr><td style="color: ${COLORS.textMuted}; padding: 8px 0;">SIZE:</td><td>${size}</td></tr>
-          <tr><td style="color: ${COLORS.textMuted}; padding: 8px 0;">CREDITS:</td><td>₹${price}</td></tr>
-          <tr><td style="color: ${COLORS.textMuted}; padding: 8px 0;">LOG_ID:</td><td class="mono" style="font-size: 11px;">${transactionId}</td></tr>
-        </table>
-      </div>
+      <!-- Scanline overlay effect -->
+      <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);"></div>
 
-      <p style="font-size: 13px; color: ${COLORS.textMuted}; margin-top: 25px; line-height: 1.6;">
-        Pick up your gear at the <strong>Aakar 2026 Tech Hub</strong> during the event. 
-        <br/>Contact: <strong>AMAN HASAN</strong> (+91 861 822 9502).
-      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="position:relative;z-index:2;">
+        <!-- HEADER -->
+        <tr>
+          <td style="background: linear-gradient(135deg, #0a0a2e 0%, #1a0033 100%); padding:40px 20px; text-align:center; border-bottom: 1px solid ${variantColor}22;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${variantColor};letter-spacing:5px;margin-bottom:10px;text-transform:uppercase;">▸ SYSTEM://ARMORY/LINK_ESTABLISHED ▸</div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;color:#ffffff;letter-spacing:4px;text-transform:uppercase;margin:0;">GEAR SECURED</div>
+            <div style="display:inline-block;margin-top:15px;padding:4px 15px;border:1px solid #ff0066;color:#ff0066;font-size:12px;letter-spacing:3px;">AAKAR 2026 MERCH</div>
+          </td>
+        </tr>
+
+        <!-- BODY -->
+        <tr>
+          <td style="padding:40px 30px;background:#06091a;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:16px;line-height:1.6;margin-bottom:30px;">
+              Greetings, <span style="color:${variantColor};font-weight:700;">${name}</span>. <br/><br/>
+              Your request for Aakar 2026 tactical apparel has been logged and encrypted. You are now part of the movement.
+            </div>
+
+            <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:25px;margin-bottom:30px;border-left:4px solid ${variantColor};">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:15px;">◈ ORDER_MANIFEST</div>
+              
+              <table width="100%" style="font-family:'Share Tech Mono',monospace;color:#ffffff;font-size:14px;">
+                <tr>
+                  <td width="40%" style="padding:8px 0;color:rgba(255,255,255,0.4);">ARMOR_CLASS:</td>
+                  <td style="padding:8px 0;color:${variantColor};font-weight:700;text-transform:uppercase;letter-spacing:1px;">${variantDisplay}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:rgba(255,255,255,0.4);">CHASSIS_SIZE:</td>
+                  <td style="padding:8px 0;">${size}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:rgba(255,255,255,0.4);">CREDITS:</td>
+                  <td style="padding:8px 0;">₹${price}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:rgba(255,255,255,0.4);">LOG_ID:</td>
+                  <td style="padding:8px 0;font-size:11px;color:rgba(255,255,255,0.6);">${transactionId}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;">
+            Verification in progress. Once the transmission is confirmed, your gear will be prepared for pickup at the <strong>Aakar 2026 Tech Hub</strong> during the event.
+            <br/><br/>
+            Collect T-shirt with <strong>AMAN HASAN</strong> (+91 861 822 9502).
+            </div>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style="background:#0a0a2e;padding:25px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
+            <div style="font-family:'Orbitron',sans-serif;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:3px;">
+              EQUIPMENT // APPAREL // AAKAR 26
+            </div>
+            <div style="margin-top:10px;font-size:9px;color:rgba(255,255,255,0.2);">
+              DO NOT REPLY TO THIS AUTOMATED UPLINK
+            </div>
+          </td>
+        </tr>
+      </table>
+
     </div>
 
-    <div class="pass-footer">
-      <div class="orbitron" style="font-size: 10px; letter-spacing: 2px;">EQUIPMENT // APPAREL // AAKAR 26</div>
+    <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;">
+      Powering the Future @ AJIET
     </div>
-  </div>
+
+  </td></tr>
+</table>
+
 </body>
 </html>`;
 }
-
-export function buildCertificateEmail(name: string, isElite: boolean = false): string {
-  const accent = isElite ? COLORS.secondary : COLORS.primary;
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <style>${COMMON_STYLES}</style>
-</head>
-<body>
-  <div class="pass-container" style="border-color: ${accent};">
-    <div class="pass-header">
-      <div class="mono" style="font-size: 10px; color: ${accent}; letter-spacing: 4px; margin-bottom: 8px;">MISSION ACCOMPLISHED</div>
-      <h1 class="orbitron" style="margin: 0; font-size: 28px; letter-spacing: 4px; color: #fff;">CERTIFICATE</h1>
-    </div>
-    
-    <div class="pass-body" style="text-align: center;">
-      <h2 class="orbitron" style="color: ${accent}; margin-bottom: 15px;">CONGRATULATIONS!</h2>
-      <p style="font-size: 16px; line-height: 1.6;">
-        Excellent work, <strong>${name}</strong>. Your participation in Aakar 2026 has been officially certified.
-      </p>
-      <p style="font-size: 14px; color: ${COLORS.textMuted}; margin-top: 20px;">
-        Your official digital certificate is attached to this transmission.
-      </p>
-      
-      <div style="margin-top: 40px; border-top: 1px solid ${COLORS.border}; padding-top: 20px;">
-        <p style="font-size: 12px; color: ${COLORS.textMuted};">
-          Thank you for being part of the cybernetic odyssey.
-        </p>
-      </div>
-    </div>
-
-    <div class="pass-footer">
-      <div class="orbitron" style="font-size: 10px; letter-spacing: 2px;">TEAM AAKAR • AJIET MANGALURU</div>
-    </div>
-  </div>
-</body>
-</html>`;
-}
-
 export function buildMerchAdminNotificationEmail(order: any): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -232,24 +309,24 @@ export function buildMerchAdminNotificationEmail(order: any): string {
   <meta charset="UTF-8"/>
   <title>New Merch Order - Aakar 2026</title>
 </head>
-<body style="font-family: sans-serif; background: #f4f4f4; padding: 20px; color: #333;">
-  <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-    <h2 style="color: ${COLORS.secondary}; border-bottom: 2px solid ${COLORS.secondary}; padding-bottom: 10px; margin-top: 0;">New Merch Order Received</h2>
+<body style="font-family:sans-serif; background:#f4f4f4; padding:20px;">
+  <div style="max-width:600px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd;">
+    <h2 style="color:#333; border-bottom:2px solid #ff0066; padding-bottom:10px;">New Merch Order Received</h2>
     
-    <table width="100%" style="border-collapse: collapse; margin-top: 20px;">
-      <tr><td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Name:</td><td style="padding: 12px; border-bottom: 1px solid #eee;">${order.name}</td></tr>
-      <tr><td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Email:</td><td style="padding: 12px; border-bottom: 1px solid #eee;">${order.email}</td></tr>
-      <tr><td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Phone:</td><td style="padding: 12px; border-bottom: 1px solid #eee;">${order.phone}</td></tr>
-      <tr><td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Variant:</td><td style="padding: 12px; border-bottom: 1px solid #eee; text-transform: uppercase;">${order.merchVariant || 'Classic'}</td></tr>
-      <tr><td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Size:</td><td style="padding: 12px; border-bottom: 1px solid #eee;">${order.size || 'N/A'}</td></tr>
-      <tr><td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">TXN ID:</td><td style="padding: 12px; border-bottom: 1px solid #eee; font-family: monospace;">${order.transactionId}</td></tr>
+    <table width="100%" style="border-collapse:collapse; margin-top:20px;">
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Name:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.name}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Email:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.email}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Phone:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.phone}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Variant:</td><td style="padding:8px; border-bottom:1px solid #eee; text-transform:uppercase;">${order.merchVariant || 'Ascend'}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Size:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.size}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">TXN ID:</td><td style="padding:8px; border-bottom:1px solid #eee; font-family:monospace;">${order.transactionId}</td></tr>
     </table>
 
-    <div style="margin-top: 30px; text-align: center;">
-      <a href="${order.paymentScreenshotUrl || '#'}" style="display: inline-block; padding: 14px 28px; background: ${COLORS.secondary}; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold;">View Payment Screenshot</a>
+    <div style="margin-top:30px; text-align:center;">
+      <a href="${order.paymentScreenshotUrl || '#'}" style="display:inline-block; padding:12px 25px; background:#ff0066; color:#fff; text-decoration:none; border-radius:4px; font-weight:bold;">View Payment Screenshot</a>
     </div>
 
-    <p style="margin-top: 30px; font-size: 13px; color: #777; text-align: center;">
+    <p style="margin-top:30px; font-size:12px; color:#666; text-align:center;">
       Access the admin panel to verify this transaction.
     </p>
   </div>

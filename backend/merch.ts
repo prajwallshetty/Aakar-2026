@@ -8,20 +8,26 @@ import { sendEmail } from "./nodemailer";
 import { buildMerchEmail, buildMerchAdminNotificationEmail } from "./email-templates";
 
 const variantPriceMap = {
-  classic: 499,
-  neon: 549,
-  pro: 599,
+  ascend: 399,
+  pulse: 399,
+  ignite: 399,
 } as const;
 
 function normalizeMerchVariant(variant: string | undefined) {
-  if (!variant) return "classic";
-  return variant in variantPriceMap ? (variant as keyof typeof variantPriceMap) : "classic";
+  if (!variant) return "ascend";
+
+  const normalized = variant.trim().toLowerCase();
+  if (normalized === "classic") return "ascend";
+  if (normalized === "neon") return "pulse";
+  if (normalized === "pro") return "ignite";
+
+  return normalized in variantPriceMap ? (normalized as keyof typeof variantPriceMap) : "ascend";
 }
 
 function inferVariantFromAmount(amount: number | null | undefined): keyof typeof variantPriceMap {
-  if (amount === 549) return "neon";
-  if (amount === 599) return "pro";
-  return "classic";
+  if (amount === 549) return "pulse";
+  if (amount === 599) return "ignite";
+  return "ascend";
 }
 
 
@@ -70,6 +76,7 @@ async function createMerchOrderRaw(client: any, baseData: {
   name: string;
   email: string;
   phone: string;
+  merchVariant: keyof typeof variantPriceMap;
   size: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "XXXXL";
   transactionId: string;
   amount: number;
@@ -77,15 +84,32 @@ async function createMerchOrderRaw(client: any, baseData: {
 }) {
   const now = new Date();
 
-  const inserted = await client.$queryRaw<Array<any>>`
-    INSERT INTO "MerchOrder"
-      ("uuid", "name", "email", "phone", "size", "transactionId", "amount", "paymentScreenshotUrl", "createdAt", "updatedAt")
-    VALUES
-      (${randomUUID()}, ${baseData.name}, ${baseData.email}, ${baseData.phone}, ${baseData.size}::"tshirtSize", ${baseData.transactionId}, ${baseData.amount}, ${baseData.paymentScreenshotUrl}, ${now}, ${now})
-    RETURNING *
-  `;
+  try {
+    const insertedWithVariant = await client.$queryRaw<Array<any>>`
+      INSERT INTO "MerchOrder"
+        ("uuid", "name", "email", "phone", "merchVariant", "size", "transactionId", "amount", "paymentScreenshotUrl", "createdAt", "updatedAt")
+      VALUES
+        (${randomUUID()}, ${baseData.name}, ${baseData.email}, ${baseData.phone}, ${baseData.merchVariant}, ${baseData.size}::"tshirtSize", ${baseData.transactionId}, ${baseData.amount}, ${baseData.paymentScreenshotUrl}, ${now}, ${now})
+      RETURNING *
+    `;
 
-  return inserted[0] ?? null;
+    return insertedWithVariant[0] ?? null;
+  } catch (error) {
+    const message = error instanceof Error ? error.message.toLowerCase() : "";
+    if (!message.includes("merchvariant")) {
+      throw error;
+    }
+
+    const insertedWithoutVariant = await client.$queryRaw<Array<any>>`
+      INSERT INTO "MerchOrder"
+        ("uuid", "name", "email", "phone", "size", "transactionId", "amount", "paymentScreenshotUrl", "createdAt", "updatedAt")
+      VALUES
+        (${randomUUID()}, ${baseData.name}, ${baseData.email}, ${baseData.phone}, ${baseData.size}::"tshirtSize", ${baseData.transactionId}, ${baseData.amount}, ${baseData.paymentScreenshotUrl}, ${now}, ${now})
+      RETURNING *
+    `;
+
+    return insertedWithoutVariant[0] ?? null;
+  }
 }
 
 export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [key: string]: string } | null> {
@@ -136,6 +160,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
       name: data.name.trim(),
       email: data.email.toLowerCase().trim(),
       phone: normalizePhone(data.phone),
+      merchVariant,
       size: data.size,
       transactionId: data.transactionId.trim(),
       amount: merchAmount,
@@ -154,7 +179,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
     const order = await createMerchOrderRaw(merchDb, baseData);
 
     if (order) {
-      const resolvedVariant = order.merchVariant || inferVariantFromAmount(order.amount);
+      const resolvedVariant = normalizeMerchVariant(order.merchVariant || merchVariant || inferVariantFromAmount(order.amount));
       const adminEmail = process.env.ADMIN_EMAIL;
 
       // Do not block the checkout response on SMTP/network latency.
@@ -231,7 +256,7 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
     `;
     const normalizedOrders = (orders || []).map((order: any) => ({
       ...order,
-      merchVariant: order.merchVariant || inferVariantFromAmount(order.amount),
+      merchVariant: normalizeMerchVariant(order.merchVariant || inferVariantFromAmount(order.amount)),
     }));
     return { data: normalizedOrders, error: null };
   } catch (error) {
