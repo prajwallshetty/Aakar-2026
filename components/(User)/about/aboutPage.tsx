@@ -15,6 +15,7 @@ import {
   AnimeOrbField,
   AnimeParticleField 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 import { cinzelFont } from "@/lib/font";
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
@@ -132,7 +133,7 @@ export default function AboutPage() {
           font-size: 8px;
           letter-spacing: 0.6em;
           text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.25);
+          color: #ffffff;
           position: fixed;
           top: 50%;
           transform: translateY(-50%);
@@ -169,7 +170,7 @@ export default function AboutPage() {
 
 
 
-      <main style={{
+      <main className="text-white" style={{
         position:"relative", 
         zIndex:10, 
         padding:"clamp(3rem,8vh,6rem) clamp(1rem,5vw,3rem) clamp(3rem,8vh,5rem)",
@@ -178,6 +179,12 @@ export default function AboutPage() {
       }}>
         <AnimeOrbField />
         <AnimeParticleField />
+        <CharacterDecoration 
+          image="/character6.png" 
+          position={{ bottom: "-2%", left: "-3%" }}
+          opacity={0.16}
+          size="clamp(200px, 30vw, 500px)"
+        />
         <div className="scan-line" />
         <div style={{ position: "absolute", inset: 0, zIndex: -1, background: "rgba(0,0,0,0.15)" }} />
 

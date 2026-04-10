@@ -12,7 +12,9 @@ import {
   AnimeGlitchText,
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  ACCENTS 
+  ACCENTS,
+  AnimeOrbField,
+  AnimeParticleField
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const merchUpiId = "amankm@slc";
@@ -20,6 +22,7 @@ const fixedMerchPrice = 399;
 const merchPayeeName = "Aakar Merch";
 
 import { Suspense } from "react";
+
 
 function MerchPaymentContent() {
   const params = useSearchParams();
@@ -131,7 +134,7 @@ function MerchPaymentContent() {
         ${ANIME_GLOBAL_STYLES}
         /* ── SHARED CARD SKIN (mirrors MerchPage .merch-card) ─── */
         @keyframes neonBreath {
-          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.purple}50, inset 0 0 16px ${ANIME_COLORS.purple}18; }
           50%      { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
         }
         @keyframes scanLine {
@@ -157,10 +160,10 @@ function MerchPaymentContent() {
         @keyframes bannerGlitch {
           0%,92%,100% {
             transform: none;
-            text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40;
+            text-shadow: 0 0 18px ${ANIME_COLORS.purple}80, 0 0 40px ${ANIME_COLORS.purple}40;
           }
-          93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
-          95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
+          93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.purple}, 4px 0 ${ANIME_COLORS.secondary}; }
+          95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.secondary}, -4px 0 ${ANIME_COLORS.purple}; }
           97% { transform: none; }
         }
         @keyframes shimmerBtn {
@@ -172,16 +175,16 @@ function MerchPaymentContent() {
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes inputGlow {
-          0%,100% { box-shadow: 0 0 12px ${ANIME_COLORS.primary}30, inset 0 0 6px ${ANIME_COLORS.primary}15; }
-          50%      { box-shadow: 0 0 20px ${ANIME_COLORS.primary}50, inset 0 0 10px ${ANIME_COLORS.primary}25; }
+          0%,100% { box-shadow: 0 0 12px ${ANIME_COLORS.purple}30, inset 0 0 6px ${ANIME_COLORS.purple}15; }
+          50%      { box-shadow: 0 0 20px ${ANIME_COLORS.purple}50, inset 0 0 10px ${ANIME_COLORS.purple}25; }
         }
 
         .merch-shell { animation: merchPanelIn .5s cubic-bezier(.22,1,.36,1) both; }
 
         /* ── CARD BASE ──────────────────────────────── */
         .merch-card {
-          background: linear-gradient(155deg, rgba(8,3,18,.97) 0%, rgba(12,5,24,.95) 55%, rgba(9,3,18,.98) 100%);
-          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          background: linear-gradient(155deg, rgba(8,3,18,.97) 0%, rgba(15,5,30,.95) 55%, rgba(8,3,18,.98) 100%);
+          border: 1.5px solid ${ANIME_COLORS.purple}80;
           animation: neonBreath 5s ease-in-out infinite;
           position: relative;
           overflow: hidden;
@@ -190,59 +193,68 @@ function MerchPaymentContent() {
           content: '';
           position: absolute;
           inset: 0;
-          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}07 3px, ${ANIME_COLORS.primary}07 4px);
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.purple}07 3px, ${ANIME_COLORS.purple}07 4px);
           pointer-events: none;
           z-index: 0;
           animation: crtScan 7s linear infinite;
         }
         .scan-line {
           position: absolute; left: 0; right: 0; height: 2px;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.purple}55, transparent);
           animation: scanLine 5s linear infinite; pointer-events: none; z-index: 5;
         }
 
         /* ── STREET BANNER ─────────────────────────── */
-        .street-banner { text-align: center; padding: 2.4rem 1rem 2rem; border-bottom: 1.5px solid ${ANIME_COLORS.primary}44; position: relative; z-index: 1; }
+        .street-banner { text-align: center; padding: 2.4rem 1rem 2rem; border-bottom: 1.5px solid ${ANIME_COLORS.purple}44; position: relative; z-index: 1; }
         .street-banner::before {
           content: ''; position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.purple}1e 0%, transparent 70%),
                       radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
         }
         .banner-ruby {
           display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.45em; color: ${ANIME_COLORS.accent}; text-transform: uppercase; padding: 0.22rem 1.1rem; border: 1px solid ${ANIME_COLORS.accent}80; background: ${ANIME_COLORS.accent}16; clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%); animation: rubyPulse 3s ease-in-out infinite; margin-bottom: 1rem;
         }
         .banner-ruby::before, .banner-ruby::after { content: '◆'; font-size: 0.35rem; opacity: 0.7; }
-        .banner-title { display: block; font-size: clamp(2.8rem, 7.5vw, 3.8rem); line-height: 0.88; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35; animation: bannerGlitch 8s ease-in-out infinite; }
-        .banner-title .stroke-word { -webkit-text-stroke: 2px ${ANIME_COLORS.primary}; color: transparent; filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc); }
-        .banner-sub { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.5em; color: ${ANIME_COLORS.secondary}bb; margin-top: 0.9rem; text-transform: uppercase; }
-        .banner-deco { width: 72px; height: 2px; margin: 0.8rem auto 0; background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent); animation: rubyPulse 2.8s ease-in-out infinite; }
-
-        /* ── DIVIDER ────────────────────────────────── */
-        .pane-divider { display: none; }
-        @media (min-width: 1024px) {
-          .pane-divider { display: block; position: absolute; top: 5%; bottom: 5%; left: 50%; width: 1.5px; background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.primary}55 20%, ${ANIME_COLORS.primary}55 80%, transparent 100%); pointer-events: none; }
+        .banner-title {
+          display: block;
+          font-size: clamp(2.2rem, 8vw, 3.8rem);
+          line-height: 0.9;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #fff;
+          text-shadow: 0 0 20px ${ANIME_COLORS.purple}75, 0 0 45px ${ANIME_COLORS.purple}35;
+          animation: bannerGlitch 8s ease-in-out infinite;
+          position: relative;
         }
+        .banner-title .stroke-word {
+          -webkit-text-stroke: 2px ${ANIME_COLORS.purple};
+          color: transparent;
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.purple}cc);
+        }
+        .banner-sub { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.5em; color: ${ANIME_COLORS.secondary}; margin-top: 0.9rem; text-transform: uppercase; }
+        .banner-deco { width: 72px; height: 2px; margin: 0.8rem auto 0; background: linear-gradient(90deg, transparent, ${ANIME_COLORS.purple}cc, transparent); animation: rubyPulse 2.8s ease-in-out infinite; }
+
 
         /* ── FORM PANE ──────────────────────────────── */
         .form-pane { position: relative; z-index: 1; }
         .info-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.57rem; letter-spacing: 0.5em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; animation: tagFlicker 9s ease-in-out infinite; }
-        .info-title { letter-spacing: 0.04em; color: #fff; line-height: 0.9; margin-top: 0.4rem; text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.primary}50; }
-        .info-desc { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; line-height: 1.8; color: ${ANIME_COLORS.text}cc; margin-top: 1.2rem; padding-left: 1.1rem; border-left: 2px solid ${ANIME_COLORS.accent}; letter-spacing: 0.02em; max-width: 44ch; }
+        .info-title { letter-spacing: 0.04em; color: #fff; line-height: 0.9; margin-top: 0.4rem; text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.purple}50; }
+        .info-desc { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; line-height: 1.8; color: ${ANIME_COLORS.text}; margin-top: 1.2rem; padding-left: 1.1rem; border-left: 2px solid ${ANIME_COLORS.accent}; letter-spacing: 0.02em; max-width: 44ch; }
         .field-label { font-family: 'Share Tech Mono', monospace; font-size: 0.54rem; letter-spacing: 0.44em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; display: block; margin-bottom: 0.4rem; }
 
         /* ── INPUTS ────────────────────────── */
-        .merch-input { width: 100%; background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88)); border: 1.5px solid ${ANIME_COLORS.primary}70; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.04em; padding: 0.72rem 1rem; border-radius: 6px; outline: none; transition: border-color .18s ease, box-shadow .18s ease; animation: inputGlow 5s ease-in-out infinite; }
-        .merch-input::placeholder { color: ${ANIME_COLORS.text}44; letter-spacing: 0.04em; }
+        .merch-input { width: 100%; background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88)); border: 1.5px solid ${ANIME_COLORS.purple}70; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.04em; padding: 0.72rem 1rem; border-radius: 6px; outline: none; transition: border-color .18s ease, box-shadow .18s ease; animation: inputGlow 5s ease-in-out infinite; }
+        .merch-input::placeholder { color: ${ANIME_COLORS.text}90; letter-spacing: 0.04em; }
         .merch-input:focus { border-color: ${ANIME_COLORS.accent}; box-shadow: 0 0 22px ${ANIME_COLORS.accent}45, inset 0 0 10px ${ANIME_COLORS.accent}20; animation: none; }
-        .merch-input[type="file"]::file-selector-button { background: linear-gradient(135deg, ${ANIME_COLORS.primary}40, ${ANIME_COLORS.primary}20); color: ${ANIME_COLORS.text}; border: 1px solid ${ANIME_COLORS.primary}; padding: 6px 10px; margin-right: 12px; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; }
-        .merch-input[type="file"]::file-selector-button:hover { background: linear-gradient(135deg, ${ANIME_COLORS.primary}50, ${ANIME_COLORS.primary}30); box-shadow: 0 0 12px ${ANIME_COLORS.primary}60; }
+        .merch-input[type="file"]::file-selector-button { background: linear-gradient(135deg, ${ANIME_COLORS.purple}40, ${ANIME_COLORS.purple}20); color: ${ANIME_COLORS.text}; border: 1px solid ${ANIME_COLORS.purple}; padding: 6px 10px; margin-right: 12px; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; }
+        .merch-input[type="file"]::file-selector-button:hover { background: linear-gradient(135deg, ${ANIME_COLORS.purple}50, ${ANIME_COLORS.purple}30); box-shadow: 0 0 12px ${ANIME_COLORS.purple}60; }
 
         .error-box { border: 1.5px solid ${ANIME_COLORS.accent}90; background: ${ANIME_COLORS.accent}18; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; padding: 0.7rem 1rem; border-radius: 6px; box-shadow: 0 0 14px ${ANIME_COLORS.accent}35; }
 
         /* ── BUTTONS ────────────────────────────────── */
-        .buy-btn { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; padding: 0.78rem 1.8rem; border: 1.5px solid ${ANIME_COLORS.primary}; background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30); color: #fff; border-radius: 5px; box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70; white-space: nowrap; cursor: pointer; position: relative; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
+        .buy-btn { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; padding: 0.78rem 1.8rem; border: 1.5px solid ${ANIME_COLORS.purple}; background: linear-gradient(135deg, ${ANIME_COLORS.purple}55, ${ANIME_COLORS.purple}30); color: #fff; border-radius: 5px; box-shadow: 0 0 22px ${ANIME_COLORS.purple}50, inset 0 1px 0 ${ANIME_COLORS.purple}70; white-space: nowrap; cursor: pointer; position: relative; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
         .buy-btn::after { content: ''; position: absolute; top: 0; left: -120%; width: 80%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent); animation: shimmerBtn 3.5s ease-in-out infinite; }
-        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary}; }
+        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.purple}75, inset 0 1px 0 ${ANIME_COLORS.purple}; }
         .buy-btn:active { transform: translateY(0); }
         .buy-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
@@ -250,18 +262,20 @@ function MerchPaymentContent() {
         .back-btn:hover { border-color: ${ANIME_COLORS.secondary}; color: ${ANIME_COLORS.text}; box-shadow: 0 0 16px ${ANIME_COLORS.secondary}35; transform: translateY(-1px); }
 
         /* ── ORDER SUMMARY PANE ─────────────────────── */
-        .summary-pane { position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.primary}44; background: linear-gradient(135deg, ${ANIME_COLORS.primary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%); }
-        @media (min-width: 1024px) { .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.primary}44; } }
-        .summary-card { border: 1.5px solid ${ANIME_COLORS.primary}55; background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92)); border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden; animation: neonBreath 5s ease-in-out infinite; }
-        .summary-card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px); pointer-events: none; animation: crtScan 7s linear infinite; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.primary}28; font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: ${ANIME_COLORS.text}cc; }
+        .summary-pane { position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.purple}44; background: linear-gradient(135deg, ${ANIME_COLORS.purple}0d 0%, rgba(15,5,30,.6) 60%, ${ANIME_COLORS.secondary}09 100%); }
+        @media (min-width: 1024px) { .summary-pane { border-top: none; } }
+        .summary-card { border: 1.5px solid ${ANIME_COLORS.purple}55; background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(15,5,30,.92)); border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden; animation: neonBreath 5s ease-in-out infinite; }
+        .summary-card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.purple}06 3px, ${ANIME_COLORS.purple}06 4px); pointer-events: none; animation: crtScan 7s linear infinite; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.purple}28; font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: ${ANIME_COLORS.text}; }
         .summary-row:last-child { border-bottom: none; }
         .summary-row span:last-child { color: ${ANIME_COLORS.text}; font-weight: 700; }
         .step-badge { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.56rem; letter-spacing: 0.42em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; padding: 0.2rem 0.9rem; border: 1px solid ${ANIME_COLORS.secondary}60; background: ${ANIME_COLORS.secondary}12; border-radius: 2px; margin-bottom: 0.9rem; }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden">
-<div className="absolute inset-0 -z-0 bg-black/10" />
+      <main className="relative min-h-screen overflow-hidden bg-transparent text-white">
+        <AnimeOrbField />
+        <AnimeParticleField />
+        <div style={{ position: "absolute", inset: 0, zIndex: -1, background: "rgba(0,0,0,0.14)" }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <div className="merch-shell space-y-5">
@@ -271,7 +285,7 @@ function MerchPaymentContent() {
               <div className="scan-line" />
               <span className="banner-ruby">Step 2 of 2 · Forge the Seal</span>
               <h2 className={`banner-title ${cinzelFont.className}`}>
-                AAKAR&nbsp;<span className="stroke-word">MERCHANT SEAL</span>
+                AAKAR&nbsp;<span className="stroke-word">STREETWEAR</span>&nbsp;DROP
               </h2>
               <p className="banner-sub">scan qr &nbsp;·&nbsp; enter id &nbsp;·&nbsp; secure the loot</p>
               <div className="banner-deco" />
@@ -280,7 +294,6 @@ function MerchPaymentContent() {
             {/* ── MAIN CARD ──────────────────────────── */}
             <section className="merch-card overflow-hidden rounded-[1.5rem] relative">
               <div className="scan-line" />
-              <div className="pane-divider" />
               <div className="grid lg:grid-cols-[1fr_1fr]">
 
                 {submitted ? (
@@ -313,7 +326,7 @@ function MerchPaymentContent() {
                 ) : (
                   <>
                   {/* LEFT — QR AND SUMMARY */}
-                  <div className="form-pane p-6 lg:p-10 border-b border-[rgba(255,100,0,0.18)] lg:border-b-0">
+                  <div className="form-pane p-6 lg:p-10 border-b border-[rgba(176,38,255,0.18)] lg:border-b-0">
                     <span className="step-badge">/ 02 &nbsp; Payment</span>
                     <p className="info-tag">Scan to Pay</p>
                     <h1 className={`info-title text-[clamp(2.2rem,5.5vw,3.8rem)] ${cinzelFont.className}`}>
@@ -325,9 +338,9 @@ function MerchPaymentContent() {
 
                     <div className="flex justify-center my-8 relative z-10">
                        <div className="summary-card w-full max-w-sm flex flex-col items-center">
-                         <img src={generatedQrImageUrl} alt="Merchant QR" className="h-48 w-48 border-2 mb-4 p-2 rounded-xl object-contain bg-white relative z-10" style={{ borderColor: ANIME_COLORS.primary }} />
-                         <div className="text-center font-mono text-[#00E5FF]/90 text-sm tracking-widest uppercase relative z-10 mb-2">Amount: ₹{fixedMerchPrice}</div>
-                         <div className="text-center font-mono text-[#00E5FF]/80 text-sm tracking-widest uppercase relative z-10">UPI ID: {merchUpiId}</div>
+                         <img src={generatedQrImageUrl} alt="Merchant QR" className="h-48 w-48 border-2 mb-4 p-2 rounded-xl object-contain bg-white relative z-10" style={{ borderColor: ANIME_COLORS.purple }} />
+                         <div className="text-center font-mono text-[#00E5FF] text-sm tracking-widest uppercase relative z-10 mb-2">Amount: ₹{fixedMerchPrice}</div>
+                         <div className="text-center font-mono text-[#00E5FF] text-sm tracking-widest uppercase relative z-10">UPI ID: {merchUpiId}</div>
                        </div>
                     </div>
 
@@ -419,7 +432,7 @@ function MerchPaymentContent() {
 export default function MerchPayment() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center font-mono text-[#00E5FF] tracking-[0.2em] uppercase text-sm">
+      <div className="flex min-h-screen items-center justify-center font-mono text-[#B026FF] tracking-[0.2em] uppercase text-sm">
         Initializing Secure Terminal...
       </div>
     }>
