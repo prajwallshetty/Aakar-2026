@@ -83,8 +83,46 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AAKAR 2026",
+    url: "https://aakar.live",
+    logo: "https://aakar.live/aklogo.png",
+    sameAs: [
+      "https://www.instagram.com/aakar__2026", // Use actual social links if available
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+91-XXXXXXXXXX", // Placeholder, user should update
+      contactType: "Events Coordinator",
+    },
+  };
+
+  const webSiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AAKAR 2026",
+    url: "https://aakar.live",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://aakar.live/events?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${baseFont.className} antialiased`}
@@ -109,4 +147,4 @@ export default async function RootLayout({
       </body>
     </html>
   );
-}
+}
