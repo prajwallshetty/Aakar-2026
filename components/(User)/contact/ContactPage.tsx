@@ -32,7 +32,8 @@ export default function ContactPage() {
         }
       `}</style>
 
-      <main style={{ position: "relative", minHeight: "100vh", overflow: "hidden", background: "#050505" }}><div style={{
+      <main style={{ position: "relative", minHeight: "100vh", overflow: "hidden", background: "#050505" }}>
+<div style={{
           position: "relative", zIndex: 6,
           maxWidth: 960,
           margin: "0 auto",
@@ -102,7 +103,7 @@ export default function ContactPage() {
                 {[
                   { icon: <FaEnvelope size={18} />, label: "EMAIL", href: "mailto:aakar2026@ajiet.edu.in", text: "aakar2026@ajiet.edu.in", color: ANIME_COLORS.primary },
                   { icon: <FaPhone size={18} />, label: "PHONE", href: "tel:+919611829800", text: "+91 96118 29800", color: ANIME_COLORS.secondary },
-                  { icon: <FaInstagram size={18} />, label: "INSTAGRAM", href: "https://www.instagram.com/aakar__2026/", text: "@aakar_25", color: ANIME_COLORS.accent },
+                  { icon: <FaInstagram size={18} />, label: "INSTAGRAM", href: "https://www.instagram.com/aakar__2026/", text: "@aakar_26", color: ANIME_COLORS.accent },
                 ].map((item, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
                     <div style={{
