@@ -247,7 +247,7 @@ export default function ElitePassSuccessPage() {
         .feat-text { font-family: 'Share Tech Mono', monospace; font-size: 0.74rem; letter-spacing: 0.04em; color: ${ANIME_COLORS.text}; }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden">
+      <main className="relative min-h-screen overflow-hidden bg-transparent">
         <AnimeOrbField />
         <AnimeParticleField />
         <div className="absolute inset-0 -z-0 bg-black/10" />

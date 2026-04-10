@@ -400,7 +400,7 @@ export default function AakarElitePage() {
 
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden">
+      <main className="relative min-h-screen overflow-hidden bg-transparent">
         <AnimeOrbField />
         <AnimeParticleField />
         <div className="absolute inset-0 -z-0 bg-black/10" />

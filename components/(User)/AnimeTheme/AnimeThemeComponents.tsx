@@ -30,7 +30,7 @@ export function AnimeParticleField() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false }); // Opt-out of transparency for performance
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
     let animFrame: number;
     const resize = () => {
@@ -56,8 +56,7 @@ export function AnimeParticleField() {
     }
     
     const draw = () => {
-      ctx.fillStyle = "#080a12"; // Match background
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       particles.forEach(p => {
         p.x += p.vx; p.y += p.vy;
