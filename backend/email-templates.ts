@@ -687,6 +687,7 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
 </body>
 </html>`;
 }
+
 export function buildMerchAdminNotificationEmail(order: any): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -715,44 +716,6 @@ export function buildMerchAdminNotificationEmail(order: any): string {
       Access the admin panel to verify this transaction.
     </p>
   </div>
-</body>
-</html>`;
-}
-
-export function buildRegistrationEmail(name: string, events: string, uuid: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Aakar 2026 – Registration Confirmed!</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-  </style>
-</head>
-<body style="margin:0;padding:0;background:#050818;font-family:'Share Tech Mono',monospace;color:#ffffff;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#050818;padding:40px 20px;">
-    <tr><td align="center">
-      <div style="max-width:600px;width:100%;border:1px solid #00ffff44;background:#0a0a2e;padding:40px;border-radius:4px;position:relative;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:#00ffff;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;">REGISTRATION SUCCESSFUL</div>
-        <div style="font-size:16px;line-height:1.6;margin-bottom:30px;">
-          Greetings, <span style="color:#00ffff;font-weight:700;">${name}</span>.<br/><br/>
-          Your entry into the Aakar 2026 system has been validated. You are now authorized to participate in the following events:
-        </div>
-        <div style="background:rgba(0,255,255,0.05);border:1px solid rgba(0,255,255,0.2);padding:20px;margin-bottom:30px;text-align:left;">
-          <div style="font-size:10px;color:#00ffff88;letter-spacing:2px;margin-bottom:10px;">◈ EVENT_MANIFEST</div>
-          <div style="font-size:14px;white-space:pre-wrap;">${events}</div>
-        </div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">
-          Your unique identifier: <span style="color:#ff0066;">${uuid}</span>
-        </div>
-        <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;">
-          AAKAR 2026 · AJIET MANGALORE
-        </div>
-      </div>
-    </td></tr>
-  </table>
 </body>
 </html>`;
 }
