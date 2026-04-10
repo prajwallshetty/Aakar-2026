@@ -61,7 +61,7 @@ export default function MerchOrders() {
     const grouped: Record<string, MerchOrderRow[]> = {};
     filteredOrders.forEach((order) => {
       const key = groupingOption === "variant"
-        ? (order.merchVariant || "classic").toUpperCase()
+        ? (order.merchVariant || "ascend").toUpperCase()
         : (order.size || "UNKNOWN").toUpperCase();
 
       if (!grouped[key]) grouped[key] = [];
@@ -98,7 +98,7 @@ export default function MerchOrders() {
       <React.Fragment key={order.id}>
         <TableRow>
           <TableCell className="font-medium text-zinc-900">{order.name}</TableCell>
-          <TableCell className="uppercase">{order.merchVariant || "classic"}</TableCell>
+          <TableCell className="uppercase">{order.merchVariant || "ascend"}</TableCell>
           <TableCell>{order.size}</TableCell>
           <TableCell>{order.email}</TableCell>
           <TableCell>{order.phone}</TableCell>

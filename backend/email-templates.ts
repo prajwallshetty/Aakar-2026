@@ -317,7 +317,7 @@ export function buildMerchAdminNotificationEmail(order: any): string {
       <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Name:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.name}</td></tr>
       <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Email:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.email}</td></tr>
       <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Phone:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.phone}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Variant:</td><td style="padding:8px; border-bottom:1px solid #eee; text-transform:uppercase;">${order.merchVariant || 'Classic'}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Variant:</td><td style="padding:8px; border-bottom:1px solid #eee; text-transform:uppercase;">${order.merchVariant || 'Ascend'}</td></tr>
       <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">Size:</td><td style="padding:8px; border-bottom:1px solid #eee;">${order.size}</td></tr>
       <tr><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">TXN ID:</td><td style="padding:8px; border-bottom:1px solid #eee; font-family:monospace;">${order.transactionId}</td></tr>
     </table>
