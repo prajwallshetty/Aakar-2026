@@ -532,7 +532,8 @@ export default function MerchPage() {
         }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden"><div className="absolute inset-0 -z-0 bg-black/10" />
+      <main className="relative min-h-screen overflow-hidden">
+<div className="absolute inset-0 -z-0 bg-black/10" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <div className="merch-shell space-y-5">

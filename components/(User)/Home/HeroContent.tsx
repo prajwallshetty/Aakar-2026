@@ -111,4 +111,3 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
     </motion.div>
   );
 }
-

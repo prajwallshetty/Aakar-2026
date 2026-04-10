@@ -185,7 +185,8 @@ const Field: React.FC<{ label: string; error?: string; children: React.ReactNode
 // ─── Loading Skeleton ────────────────────────────────────────────────────────────
 function LoadingSkeleton() {
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}><AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+<AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
                 <AnimeSectionHeading index={1}>INITIALIZING AJIET SYSTEM</AnimeSectionHeading>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
                     {[...Array(4)].map((_, i) => (
@@ -605,7 +606,8 @@ const AjietRegister = () => {
                     background: #ffd70060 !important;
                     color: #ffffff !important;
                 }
-            `}</style><div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
+            `}</style>
+<div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
 
                 {/* Header */}
                 <div style={{ marginBottom: "3rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, textAlign: "center" }}>

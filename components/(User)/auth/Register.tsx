@@ -174,7 +174,8 @@ const AnimeField: React.FC<{ label: string; error?: string; children: React.Reac
 // ─── Anime Loading skeleton ─────────────────────────────────────────────────────────
 function AnimeLoadingSkeleton() {
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}><AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+<AnimeCardWrapper accentIndex={0} style={{ padding: 40, width: "min(600px,90vw)", position: "relative", zIndex: 1 }}>
                 <div style={{ height: 4, background: `linear-gradient(90deg, ${ANIME_COLORS.primary}, ${ANIME_COLORS.secondary})`, marginBottom: 24, borderRadius: 2 }} />
                 <AnimeSectionHeading index={0}>Loading Events…</AnimeSectionHeading>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 20 }}>
@@ -820,7 +821,8 @@ const Register = () => {
                     background: #ffd70060 !important;
                     color: #ffffff !important;
                 }
-            `}</style><div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 1, padding: "0 16px" }}>
+            `}</style>
+<div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 1, padding: "0 16px" }}>
 
                 {/* Header */}
                 <div style={{ marginBottom: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, animation: "popIn 0.7s cubic-bezier(.175,.885,.32,1.275) both" }}>

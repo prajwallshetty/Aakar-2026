@@ -14,6 +14,7 @@ import {
 import { Suspense } from "react";
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"] as const;
+const fixedMerchPrice = 399;
 
 function MerchBuyContent() {
   const router = useRouter();
@@ -32,7 +33,7 @@ function MerchBuyContent() {
 
   const summary = useMemo(() => ({
     title: selectedVariant.title,
-    price: `₹${selectedVariant.price}`,
+    price: `₹${fixedMerchPrice}`,
     tag: selectedVariant.tag,
   }), [selectedVariant]);
 
@@ -561,7 +562,8 @@ function MerchBuyContent() {
         }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden"><div className="absolute inset-0 -z-0 bg-black/10" />
+      <main className="relative min-h-screen overflow-hidden">
+<div className="absolute inset-0 -z-0 bg-black/10" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <div className="merch-shell space-y-5">

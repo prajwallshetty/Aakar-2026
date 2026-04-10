@@ -15,8 +15,9 @@ import {
   ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const merchUpiId = "aakar2026@upi";
-const merchQrImageUrl ="/merch-qr.jpeg";
+const merchUpiId = "amankm@slc";
+const fixedMerchPrice = 399;
+const merchPayeeName = "Aakar Merch";
 
 import { Suspense } from "react";
 
@@ -36,6 +37,16 @@ function MerchPaymentContent() {
     size: params.get("size") || "M",
     variant: getMerchVariant(params.get("variant")),
   }), [params]);
+
+  const upiPaymentUrl = useMemo(() => {
+    const amount = fixedMerchPrice.toFixed(2);
+    const note = `${order.variant.title} (${order.size})`;
+    return `upi://pay?pa=${encodeURIComponent(merchUpiId)}&pn=${encodeURIComponent(merchPayeeName)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(note)}`;
+  }, [order.size, order.variant.title]);
+
+  const generatedQrImageUrl = useMemo(() => {
+    return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiPaymentUrl)}`;
+  }, [upiPaymentUrl]);
 
   const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -249,7 +260,8 @@ function MerchPaymentContent() {
         .step-badge { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.56rem; letter-spacing: 0.42em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; padding: 0.2rem 0.9rem; border: 1px solid ${ANIME_COLORS.secondary}60; background: ${ANIME_COLORS.secondary}12; border-radius: 2px; margin-bottom: 0.9rem; }
       `}</style>
 
-      <main className="relative min-h-screen overflow-hidden"><div className="absolute inset-0 -z-0 bg-black/10" />
+      <main className="relative min-h-screen overflow-hidden">
+<div className="absolute inset-0 -z-0 bg-black/10" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
           <div className="merch-shell space-y-5">
@@ -308,16 +320,13 @@ function MerchPaymentContent() {
                       Tribute
                     </h1>
                     <p className="info-desc mb-6">
-                      Scan the QR below to pay ₹{order.variant.price} via UPI to Aakar Admin.
+                      Scan the QR below to pay a fixed amount of ₹{fixedMerchPrice}
                     </p>
 
                     <div className="flex justify-center my-8 relative z-10">
                        <div className="summary-card w-full max-w-sm flex flex-col items-center">
-                         {merchQrImageUrl ? (
-                           <img src={merchQrImageUrl} alt="Merchant QR" className="h-48 w-48 border-2 mb-4 p-2 rounded-xl object-contain bg-white relative z-10" style={{ borderColor: ANIME_COLORS.primary }} />
-                         ) : (
-                           <div className="h-48 w-48 border-2 mb-4 p-2 flex items-center justify-center font-mono text-[#00E5FF] relative z-10">QR MISSING</div>
-                         )}
+                         <img src={generatedQrImageUrl} alt="Merchant QR" className="h-48 w-48 border-2 mb-4 p-2 rounded-xl object-contain bg-white relative z-10" style={{ borderColor: ANIME_COLORS.primary }} />
+                         <div className="text-center font-mono text-[#00E5FF]/90 text-sm tracking-widest uppercase relative z-10 mb-2">Amount: ₹{fixedMerchPrice}</div>
                          <div className="text-center font-mono text-[#00E5FF]/80 text-sm tracking-widest uppercase relative z-10">UPI ID: {merchUpiId}</div>
                        </div>
                     </div>
@@ -335,6 +344,10 @@ function MerchPaymentContent() {
                        <div className="summary-row relative z-10">
                          <span>Size</span>
                          <span>{order.size || "—"}</span>
+                       </div>
+                       <div className="summary-row relative z-10">
+                         <span>Payable</span>
+                         <span>₹{fixedMerchPrice}</span>
                        </div>
                     </div>
                   </div>
