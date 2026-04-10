@@ -260,7 +260,7 @@ export default function ElitePassBuyPage() {
         ${ANIME_GLOBAL_STYLES}
 
         @keyframes bannerGlitch {
-          0%,92%,100% { transform: none; text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40; }
+          0%,92%,100% { transform: none; text-shadow: 0 0 18px ${ANIME_COLORS.secondary}80, 0 0 40px ${ANIME_COLORS.secondary}40; }
           93% { transform: translate(-3px,0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
           95% { transform: translate(3px,0) skewX(2deg); text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
           97% { transform: none; }
@@ -275,7 +275,7 @@ export default function ElitePassBuyPage() {
           50% { opacity: 1; transform: scaleX(1.03); }
         }
         @keyframes neonBreath {
-          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.secondary}50, inset 0 0 16px ${ANIME_COLORS.secondary}18; }
           50% { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
         }
         @keyframes crtScan {
@@ -305,28 +305,28 @@ export default function ElitePassBuyPage() {
         .merch-shell { animation: merchPanelIn .5s cubic-bezier(.22,1,.36,1) both; }
         .merch-card {
           background: linear-gradient(155deg, rgba(8,3,18,.97) 0%, rgba(12,5,24,.95) 55%, rgba(9,3,18,.98) 100%);
-          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          border: 1.5px solid ${ANIME_COLORS.secondary}80;
           animation: neonBreath 5s ease-in-out infinite;
           position: relative; overflow: hidden;
         }
         .merch-card::after {
           content: ''; position: absolute; inset: 0;
-          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}07 3px, ${ANIME_COLORS.primary}07 4px);
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.secondary}07 3px, ${ANIME_COLORS.secondary}07 4px);
           pointer-events: none; z-index: 0; animation: crtScan 7s linear infinite;
         }
         .scan-line {
           position: absolute; left: 0; right: 0; height: 2px;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.secondary}55, transparent);
           animation: scanLine 5s linear infinite; pointer-events: none; z-index: 5;
         }
         .street-banner {
           text-align: center; padding: 2.4rem 1rem 2rem;
-          border-bottom: 1.5px solid ${ANIME_COLORS.primary}44;
+          border-bottom: 1.5px solid ${ANIME_COLORS.secondary}44;
           position: relative; z-index: 1;
         }
         .street-banner::before {
           content: ''; position: absolute; inset: 0;
-          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.secondary}1e 0%, transparent 70%),
                       radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
           pointer-events: none;
         }
@@ -343,12 +343,12 @@ export default function ElitePassBuyPage() {
         .banner-title {
           display: block; font-size: clamp(2.8rem, 7.5vw, 3.8rem); line-height: 0.88;
           letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
-          text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35;
+          text-shadow: 0 0 20px ${ANIME_COLORS.secondary}75, 0 0 45px ${ANIME_COLORS.secondary}35;
           animation: bannerGlitch 8s ease-in-out infinite;
         }
         .banner-title .stroke-word {
-          -webkit-text-stroke: 2px ${ANIME_COLORS.primary}; color: transparent;
-          filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc);
+          -webkit-text-stroke: 2px ${ANIME_COLORS.secondary}; color: transparent;
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.secondary}cc);
         }
         .banner-sub {
           font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.5em;
@@ -356,7 +356,7 @@ export default function ElitePassBuyPage() {
         }
         .banner-deco {
           width: 72px; height: 2px; margin: 0.8rem auto 0;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.secondary}cc, transparent);
           animation: rubyPulse 2.8s ease-in-out infinite;
         }
         .pane-divider { display: none; }
@@ -364,7 +364,7 @@ export default function ElitePassBuyPage() {
           .pane-divider {
             display: block; position: absolute; top: 5%; bottom: 5%; left: 50%;
             width: 1.5px;
-            background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.primary}55 20%, ${ANIME_COLORS.primary}55 80%, transparent 100%);
+            background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.secondary}55 20%, ${ANIME_COLORS.secondary}55 80%, transparent 100%);
             pointer-events: none;
           }
         }
@@ -376,7 +376,7 @@ export default function ElitePassBuyPage() {
         }
         .info-title {
           letter-spacing: 0.04em; color: #fff; line-height: 0.9; margin-top: 0.4rem;
-          text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.primary}50;
+          text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.secondary}50;
         }
         .step-badge {
           display: inline-flex; align-items: center; gap: 0.6rem;
@@ -392,7 +392,7 @@ export default function ElitePassBuyPage() {
         .merch-input {
           width: 100%;
           background: linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88));
-          border: 1.5px solid ${ANIME_COLORS.primary}70; color: ${ANIME_COLORS.text};
+          border: 1.5px solid ${ANIME_COLORS.secondary}70; color: ${ANIME_COLORS.text};
           font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 0.04em;
           padding: 0.72rem 1rem; border-radius: 6px; outline: none;
           transition: border-color .18s ease, box-shadow .18s ease;
@@ -411,26 +411,26 @@ export default function ElitePassBuyPage() {
           box-shadow: 0 0 14px ${ANIME_COLORS.purple}35;
         }
         .summary-pane {
-          position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.primary}44;
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%);
+          position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.secondary}44;
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%);
         }
         @media (min-width: 1024px) {
-          .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.primary}44; }
+          .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.secondary}44; }
         }
         .summary-card {
-          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          border: 1.5px solid ${ANIME_COLORS.secondary}55;
           background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92));
           border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden;
           animation: neonBreath 5s ease-in-out infinite;
         }
         .summary-card::after {
           content: ''; position: absolute; inset: 0;
-          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px);
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.secondary}06 3px, ${ANIME_COLORS.secondary}06 4px);
           pointer-events: none; animation: crtScan 7s linear infinite;
         }
         .summary-row {
           display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-          padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.primary}28;
+          padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.secondary}28;
           font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em;
           color: ${ANIME_COLORS.text}cc;
         }
@@ -458,10 +458,10 @@ export default function ElitePassBuyPage() {
         .buy-btn {
           font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em;
           text-transform: uppercase; padding: 0.78rem 1.8rem;
-          border: 1.5px solid ${ANIME_COLORS.primary};
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30);
+          border: 1.5px solid ${ANIME_COLORS.secondary};
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}55, ${ANIME_COLORS.secondary}30);
           color: #fff; border-radius: 5px;
-          box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70;
+          box-shadow: 0 0 22px ${ANIME_COLORS.secondary}50, inset 0 1px 0 ${ANIME_COLORS.secondary}70;
           white-space: nowrap; cursor: pointer; position: relative; overflow: hidden;
           transition: transform .16s ease, box-shadow .16s ease;
         }
@@ -470,7 +470,7 @@ export default function ElitePassBuyPage() {
           background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
           animation: shimmerBtn 3.5s ease-in-out infinite;
         }
-        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary}; }
+        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.secondary}75, inset 0 1px 0 ${ANIME_COLORS.secondary}; }
         .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .back-btn {
           font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
@@ -487,7 +487,7 @@ export default function ElitePassBuyPage() {
         }
         .review-row {
           display: flex; gap: 1rem; padding: 0.6rem 0;
-          border-bottom: 1px dashed ${ANIME_COLORS.primary}30;
+          border-bottom: 1px dashed ${ANIME_COLORS.secondary}30;
           font-family: 'Share Tech Mono', monospace; font-size: 0.78rem;
         }
         .review-row:last-child { border-bottom: none; }
@@ -531,8 +531,8 @@ export default function ElitePassBuyPage() {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          border: 1px solid ${ANIME_COLORS.primary}75;
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}16 0%, rgba(8,3,18,.78) 100%);
+          border: 1px solid ${ANIME_COLORS.secondary}75;
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}16 0%, rgba(8,3,18,.78) 100%);
           color: ${ANIME_COLORS.text};
           border-radius: 999px;
           padding: 0.32rem 0.7rem;
@@ -727,7 +727,7 @@ export default function ElitePassBuyPage() {
                         {qrImageUrl ? (
                           <img src={qrImageUrl} alt="Elite Pass UPI QR" className="w-52 h-52 object-cover" style={{ border: `2px solid ${ANIME_COLORS.accent}`, borderRadius: 8 }} />
                         ) : (
-                          <div className="w-52 h-52 flex items-center justify-center font-mono text-xs" style={{ border: `1.5px dashed ${ANIME_COLORS.primary}44` }}>
+                          <div className="w-52 h-52 flex items-center justify-center font-mono text-xs" style={{ border: `1.5px dashed ${ANIME_COLORS.secondary}44` }}>
                             Initializing Transponder...
                           </div>
                         )}
@@ -755,7 +755,7 @@ export default function ElitePassBuyPage() {
                           {formErrors.paymentScreenshot && <span className="err-msg">⚡ {formErrors.paymentScreenshot}</span>}
                         </label>
                         {screenshotPreview && (
-                          <div className="rounded-lg p-2" style={{ border: `1px solid ${ANIME_COLORS.primary}40` }}>
+                          <div className="rounded-lg p-2" style={{ border: `1px solid ${ANIME_COLORS.secondary}40` }}>
                             <img src={screenshotPreview} alt="Preview" className="h-32 w-full object-cover rounded" />
                           </div>
                         )}
@@ -779,7 +779,7 @@ export default function ElitePassBuyPage() {
                       <p className="info-tag">Confirm & Submit</p>
                       <h1 className={`info-title text-[clamp(2rem,5vw,3.2rem)] ${cinzelFont.className}`}>Review Details</h1>
 
-                      <div className="mt-6 space-y-0" style={{ border: `1.5px solid ${ANIME_COLORS.primary}40`, borderRadius: 8, padding: "1rem" }}>
+                      <div className="mt-6 space-y-0" style={{ border: `1.5px solid ${ANIME_COLORS.secondary}40`, borderRadius: 8, padding: "1rem" }}>
                         {([
                           ["Name", formData.name], ["Email", formData.email], ["Phone", formData.phone],
                           ["USN", formData.usn], ["College", formData.college], ["Department", formData.department],
@@ -844,7 +844,7 @@ export default function ElitePassBuyPage() {
                   {/* FEAT CARDS */}
                   <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
                     {[["/ 01", "Solo Quests Unlocked"], ["/ 02", "Boss Battle Access"]].map(([num, text], i) => (
-                      <div key={num} className="relative p-3 rounded" style={{ border: `1px solid ${ANIME_COLORS.primary}40`, background: `linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%)`, animationDelay: `${i * 0.08 + 0.06}s` }}>
+                      <div key={num} className="relative p-3 rounded" style={{ border: `1px solid ${ANIME_COLORS.secondary}40`, background: `linear-gradient(135deg, ${ANIME_COLORS.secondary}0c 0%, transparent 70%)`, animationDelay: `${i * 0.08 + 0.06}s` }}>
                         <span className="field-label">{num}</span>
                         <span className="font-mono text-sm" style={{ color: ANIME_COLORS.text, letterSpacing: "0.04em" }}>{text}</span>
                       </div>
