@@ -86,29 +86,28 @@ export default function HeroContent({ isMobile, logoY, textY, textMX }: HeroCont
 
         {/* ── CTA ── */}
         <motion.div
-          className="flex flex-wrap items-center gap-3 mt-8"
+          className="flex flex-wrap items-center gap-4 mt-8"
           variants={fadeUp}
           initial="hidden"
           animate="visible"
           custom={1.4}
         >
           <a
-            href="/Rulebook.pdf"
-            download
-            className="bg-gradient-to-br from-neutral-900/90 to-orange-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(255,100,0,0.2)] transition-shadow active:scale-95 no-underline flex items-center gap-2"
+            href="/Aakar%202k26%20RuleBook.pdf"
+            download="Aakar_2026_Rulebook.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/20 rounded-md text-sm font-medium tracking-wide text-white/90 hover:text-white transition-all backdrop-blur-sm active:scale-95 no-underline"
           >
-            <span className="text-[14px]">📕</span> Rulebook
-          </a>
-          <a
-            href="/Aakar_2026_brochure.pdf"
-            download
-            className="bg-gradient-to-br from-neutral-900/90 to-purple-950/80 border border-white/20 px-5 py-2 rounded-sm text-[10px] tracking-[0.2em] text-white uppercase hover:shadow-[0_0_20px_rgba(99,68,245,0.25)] transition-shadow active:scale-95 no-underline flex items-center gap-2"
-          >
-            <span className="text-[14px]">📄</span> Brochure
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 group-hover:opacity-100 transition-opacity">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" x2="12" y1="15" y2="3"/>
+            </svg>
+            Download Rulebook
           </a>
         </motion.div>
       </div>
     </motion.div>
   );
 }
-

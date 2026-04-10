@@ -186,7 +186,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
       void Promise.allSettled([
         sendEmail(
           order.email,
-          `Merch Order Confirmed – Aakar 2025! 👕`,
+          `Merch Order Confirmed – Aakar 2026! 👕`,
           buildMerchEmail(order.name, resolvedVariant, order.size, order.transactionId)
         ),
         ...(adminEmail
