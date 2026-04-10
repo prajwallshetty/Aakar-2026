@@ -1,168 +1,129 @@
-# 🎭⚙️ AAKAR 2026
+# 🎭⚙️ AAKAR 2026: THE CYBERNETIC ODYSSEY
 
 <p align="center">
-Official Techno-Cultural Fest Website of <b>AJIET Mangalore</b>
+  <b>The official digital gateway to AJIET's flagship Techno-Cultural Fest.</b><br>
+  Experience the convergence of innovation, creativity, and elite competition.
 </p>
 
 <p align="center">
-
-![Next.js](https://img.shields.io/badge/Next.js-App_Router-black?logo=next.js)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Styling-38BDF8?logo=tailwindcss)
-![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase)
-![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)
-![Vercel](https://img.shields.io/badge/Vercel-Deployment-black?logo=vercel)
-![Razorpay](https://img.shields.io/badge/Razorpay-Payments-02042B?logo=razorpay)
-
+  <img src="https://img.shields.io/badge/System-ONLINE-00ffff?style=for-the-badge&logo=opsgenie" alt="System Status">
+  <img src="https://img.shields.io/badge/Next.js-16.1_--_Beta-black?style=for-the-badge&logo=next.js" alt="Next.js">
+  <img src="https://img.shields.io/badge/Auth.js-V5_BETA-FF0066?style=for-the-badge&logo=next.js" alt="Auth.js">
+  <img src="https://img.shields.io/badge/Tailwind-V4-38BDF8?style=for-the-badge&logo=tailwindcss" alt="Tailwind">
 </p>
 
 ---
 
-# 📌 About AAKAR
+## ◈ PROJECT MANIFESTO
 
-**AAKAR 2026** is the official **Techno-Cultural Festival of AJIET Mangalore**, bringing together innovation, creativity, and talent through:
+**AAKAR 2026** is not just a fest; it's a high-performance digital ecosystem designed to handle thousands of registrations, secure deep-link payments, and automated participant management. Built with a "Cyber-Anime" aesthetic, the platform provides a seamless, immersive experience for participants and administrators alike.
 
-- 💻 Technical Competitions  
-- 🎭 Cultural Events  
-- 🧠 Workshops & Talks  
-- 🎮 Interactive Activities  
-- 🌐 Online Event Management System  
+## ◈ COLLABORATORS
 
-This project is the **fullstack platform** powering the entire event ecosystem including **registrations, payments, scheduling, and real-time updates**.
-
----
-
-# 🚀 Tech Stack
-
-### 🖥️ Frontend
-- **Next.js (App Router)**
-- **Tailwind CSS**
-- **React Hook Form**
-- **Zod Validation**
-
-### ⚙️ Backend
-- **Next.js Server Actions / API Routes**
-- **Supabase Authentication**
-- **Prisma ORM**
-
-### 🗄️ Database
-- **Supabase PostgreSQL**
-
-### 💳 Payments
-- **Razorpay Integration**
-
-### ☁️ Deployment
-- **Vercel**
+<div align="center">
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/prajwallshetty">
+        <img src="https://github.com/prajwallshetty.png" width="100px;" alt="Prajwal Shetty"/><br />
+        <sub><b>Prajwal Shetty</b></sub>
+      </a><br />
+      <sub>Lead Architect / Fullstack</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/kishanBhandary">
+        <img src="https://github.com/kishanBhandary.png" width="100px;" alt="Kishan Bhandary"/><br />
+        <sub><b>Kishan Bhandary</b></sub>
+      </a><br />
+      <sub>Software Engineer</sub>
+    </td>
+    <td align="center">
+      <a href="#">
+        <img src="https://ui-avatars.com/api/?name=Pahima+Uchil&background=FF0066&color=fff&size=100" width="100px;" alt="Pahima R Uchil"/><br />
+        <sub><b>Pahima R Uchil</b></sub>
+      </a><br />
+      <sub>Software Engineer</sub>
+    </td>
+  </tr>
+</table>
+</div>
 
 ---
 
-# 📂 Project Structure
+## 🚀 CORE SYSTEMS
 
-```
+### 🖥️ Frontend Framework
+- **Next.js 16 (Turbopack)**: State-of-the-art fast builds and routing.
+- **Tailwind CSS V4**: Modern utility-first styling with enhanced CSS variables.
+- **Framer Motion**: Premium micro-interactions and anime-style transitions.
+- **Background Beams (Aceternity)**: Immersive global UI effects.
+
+### ⚙️ Backend Architecture
+- **Auth.js V5 (Beta)**: Secure, edge-compatible authentication.
+- **Prisma ORM**: Type-safe database management.
+- **Supabase**: Powering our PostgreSQL core and file storage.
+- **Razorpay**: Integrated deep-link payments for mobile apps (GPay, PhonePe).
+
+---
+
+## 📂 DIRECTORY STRUCTURE
+
+```bash
 aakar2026/
-│
-├── app/                # Next.js App Router pages
-├── components/         # Reusable UI components
-├── lib/                # Utilities, Prisma config, Supabase client
-├── public/             # Static assets
-└── README.md           # Documentation
+├── app/
+│   ├── (Admin)/      # Protected Admin Portal & CRUD Operations
+│   ├── (Users)/      # Public Landing, Registration, & Events
+│   └── api/          # Secure REST Endpoints & Webhooks
+├── backend/          # Database Clients & Email Logic
+├── components/       # Custom "Cyber-Anime" UI Library
+├── public/           # Static Assets & Dynamic Media
+└── prisma/           # Schema Definitions
 ```
 
 ---
 
-# 🛠️ Getting Started
+## 🛠️ OPERATIONAL SETUP
 
-## 1️⃣ Clone the Repository
-
+### 1. Initialize Uplink
 ```bash
-git clone <repository-url>
-cd aakar2026
-```
-
----
-
-## 2️⃣ Install Dependencies
-
-```bash
+git clone https://github.com/prajwallshetty/Aakar-26.git
+cd Aakar-26
 npm install
 ```
 
----
-
-## 3️⃣ Setup Environment Variables
-
-Create a `.env.local` file:
-
+### 2. Configure Environment
+Create a `.env` file in the root directory:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-AUTH_SECRET="randomlyGeneratedSecretKey=="
-MAIL_USER=
-MAIL_CLIENT_ID=
-MAIL_CLIENT_SECRET=
-MAIL_ACCESS_TOKEN=
-MAIL_REFRESH_TOKEN=
-NODE_ENV="development"
-DATABASE_URL=
+DATABASE_URL="postgresql://..."
+AUTH_SECRET="your-secret-key"
+NEXT_PUBLIC_RAZORPAY_KEY_ID="rzp_..."
 ADMIN_EMAIL="admin@ajiet.edu.in"
-ADMIN_PASSWORD="admin@123"
+# ... See auth.config.ts for full manifest
 ```
 
----
+### 3. Synchronize Database
+```bash
+npx prisma generate
+```
 
-## 4️⃣ Run Development Server
-
+### 4. Deploy Local Terminal
 ```bash
 npm run dev
 ```
 
-Open:
-
-```
-http://localhost:3000
-```
-
 ---
 
-# 🔥 Features
+## 🔥 MISSION CAPABILITIES
 
-✔ User Authentication (Supabase Auth)  
-✔ Event Registration System  
-✔ Admin Dashboard  
-✔ Razorpay Payment Integration  
-✔ Dynamic Event Scheduling  
-✔ Live Updates & Event Tracking  
-✔ Responsive Mobile UI  
-✔ Secure PostgreSQL Database  
-✔ Automatic Deployment with Vercel  
+- **Elite Pass Ecosystem**: Premium priority access and merch integration.
+- **Real-Time Statistics**: Live dashboards for college and event performance.
+- **Automated Certification**: Dynamic PDF generation for all participants.
+- **Deep-Link Payments**: Redirecting directly to mobile payment apps (GPay/PhonePe).
+- **Cyber-System Design**: Custom fonts (Orbitron, Share Tech Mono) and high-fidelity overlays.
 
 ---
-
-# 📈 Deployment
-
-The project is deployed using:
-
-- **Vercel** → Frontend + Server
-- **Supabase** → Database + Authentication
-- **Prisma** → Database ORM & migrations
-
----
-
-# 🎯 Future Improvements
-
-- 📱 Dedicated Mobile Experience
-- 📊 Analytics Dashboard
-- 🎟 QR Based Event Entry
-- 📢 Real-Time Notifications
-
-
----
-
-# 🎭 AAKAR 2026
 
 <p align="center">
-Bringing Technology, Creativity, and Culture Together
-</p>
-
-<p align="center">
-🚀 Let's make <b>AAKAR 2026</b> unforgettable!
+  <b>AAKAR 2026 // ADAPT. EVOLVE. CONQUER.</b><br>
+  Built with ❤️ by the AAKAR Dev Team @ AJIET
 </p>
