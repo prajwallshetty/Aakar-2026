@@ -202,6 +202,7 @@ const Register = () => {
     const [totalAmount, setTotalAmount] = useState(0);
     const [showQRCode, setShowQRCode] = useState(false);
     const [qrImageUrl, setQrImageUrl] = useState("");
+    const [upiDeepLink, setUpiDeepLink] = useState("");
     const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "verification">("details");
 
     const [formData, setFormData] = useState({
@@ -311,6 +312,7 @@ const Register = () => {
             : 0;
         setTotalAmount(amount);
         const upiUrl = `upi://pay?pa=${encodeURIComponent("ajiet@cnrb")}&pn=${encodeURIComponent("Aakar 2026 Registration")}&am=${amount}&cu=INR&tn=${encodeURIComponent("Aakar 2026 Registration")}`;
+        setUpiDeepLink(upiUrl);
         setQrImageUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`);
         setShowQRCode(true);
     };
@@ -1002,12 +1004,38 @@ const Register = () => {
                                     Scan QR code to pay via UPI · <strong style={{ color: ANIME_COLORS.accent }}>ajiet@cnrb</strong>
                                 </div>
                                 {showQRCode ? (
-                                    <AnimeCardWrapper accentIndex={0} style={{ padding: 16 }}>
-                                        <img src={qrImageUrl || "/logo.svg"} alt="UPI QR Code" style={{ width: 200, height: 200, display: "block", margin: "0 auto" }} />
-                                        <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 3, marginTop: 12, textTransform: "uppercase", color: ANIME_COLORS.secondary }}>
-                                            UPI · ajiet@cnrb
-                                        </div>
-                                    </AnimeCardWrapper>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                                        <AnimeCardWrapper accentIndex={0} style={{ padding: 16 }}>
+                                            <img src={qrImageUrl || "/logo.svg"} alt="UPI QR Code" style={{ width: 200, height: 200, display: "block", margin: "0 auto" }} />
+                                            <div style={{ textAlign: "center", fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 3, marginTop: 12, textTransform: "uppercase", color: ANIME_COLORS.secondary }}>
+                                                UPI · ajiet@cnrb
+                                            </div>
+                                        </AnimeCardWrapper>
+                                        {/* UPI deep-link — opens GPay/PhonePe with amount pre-filled */}
+                                        <a
+                                            href={upiDeepLink}
+                                            style={{
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: 8,
+                                                background: "rgba(255,255,255,0.05)",
+                                                border: "1px solid rgba(255,255,255,0.15)",
+                                                color: "rgba(255,255,255,0.85)",
+                                                fontFamily: monoFont,
+                                                fontSize: 13,
+                                                padding: "10px 20px",
+                                                borderRadius: 6,
+                                                textDecoration: "none",
+                                                cursor: "pointer",
+                                                transition: "background 0.2s",
+                                            }}
+                                        >
+                                            📱 Pay via UPI App
+                                        </a>
+                                        <p style={{ fontFamily: monoFont, fontSize: 11, color: `${ANIME_COLORS.text}60`, textAlign: "center", margin: 0 }}>
+                                            Opens GPay / PhonePe with ₹{totalAmount} pre-filled · return here to upload screenshot
+                                        </p>
+                                    </div>
                                 ) : (
                                     <AnimeButton bg={ANIME_COLORS.secondary} fg={ANIME_COLORS.text} onClick={generateQRCode}>GENERATE QR CODE</AnimeButton>
                                 )}
