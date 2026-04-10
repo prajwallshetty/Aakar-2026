@@ -19,6 +19,11 @@ export default function OptimizedVideo({
     const video = videoRef.current;
     if (!video) return;
 
+    // iOS Safari specific fixes: forcefully re-affirm muted policy
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+
     // Play on mount
     video.play().catch(() => {});
 
@@ -55,6 +60,7 @@ export default function OptimizedVideo({
     <div className={`relative w-full h-full overflow-hidden bg-black ${className}`}>
       <video
         ref={videoRef}
+        src={src}
         muted={true}
         loop
         playsInline
@@ -68,9 +74,7 @@ export default function OptimizedVideo({
           willChange: "transform",
           transform: "translateZ(0)",
         }}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
+      />
     </div>
   );
 }
