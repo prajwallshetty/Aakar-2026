@@ -19,7 +19,7 @@ export default function AakarElitePage() {
         @keyframes bannerGlitch {
           0%,92%,100% {
             transform: none;
-            text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40;
+            text-shadow: 0 0 18px ${ANIME_COLORS.secondary}80, 0 0 40px ${ANIME_COLORS.secondary}40;
           }
           93% { transform: translate(-3px, 0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
           95% { transform: translate(3px, 0) skewX(2deg);  text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
@@ -46,7 +46,7 @@ export default function AakarElitePage() {
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes neonBreath {
-          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.secondary}50, inset 0 0 16px ${ANIME_COLORS.secondary}18; }
           50%      { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
         }
         @keyframes hologramPulse {
@@ -80,7 +80,7 @@ export default function AakarElitePage() {
             rgba(12,5,24,.95) 55%,
             rgba(9,3,18,.98) 100%
           );
-          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          border: 1.5px solid ${ANIME_COLORS.secondary}80;
           animation: neonBreath 5s ease-in-out infinite;
           position: relative;
           overflow: hidden;
@@ -93,8 +93,8 @@ export default function AakarElitePage() {
             0deg,
             transparent,
             transparent 3px,
-            ${ANIME_COLORS.primary}07 3px,
-            ${ANIME_COLORS.primary}07 4px
+            ${ANIME_COLORS.secondary}07 3px,
+            ${ANIME_COLORS.secondary}07 4px
           );
           pointer-events: none;
           z-index: 0;
@@ -104,7 +104,7 @@ export default function AakarElitePage() {
           position: absolute;
           left: 0; right: 0;
           height: 2px;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.secondary}55, transparent);
           animation: scanLine 5s linear infinite;
           pointer-events: none;
           z-index: 5;
@@ -114,7 +114,7 @@ export default function AakarElitePage() {
         .street-banner {
           text-align: center;
           padding: 2.4rem 1rem 2rem;
-          border-bottom: 1.5px solid ${ANIME_COLORS.primary}44;
+          border-bottom: 1.5px solid ${ANIME_COLORS.secondary}44;
           position: relative;
           z-index: 1;
         }
@@ -123,7 +123,7 @@ export default function AakarElitePage() {
           position: absolute;
           inset: 0;
           background:
-            radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+            radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.secondary}1e 0%, transparent 70%),
             radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
           pointer-events: none;
         }
@@ -152,13 +152,13 @@ export default function AakarElitePage() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: #fff;
-          text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35;
+          text-shadow: 0 0 20px ${ANIME_COLORS.secondary}75, 0 0 45px ${ANIME_COLORS.secondary}35;
           animation: bannerGlitch 8s ease-in-out infinite;
         }
         .banner-title .stroke-word {
-          -webkit-text-stroke: 2px ${ANIME_COLORS.primary};
+          -webkit-text-stroke: 2px ${ANIME_COLORS.secondary};
           color: transparent;
-          filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc);
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.secondary}cc);
         }
         .banner-sub {
           font-family: 'Share Tech Mono', monospace;
@@ -171,7 +171,7 @@ export default function AakarElitePage() {
         .banner-deco {
           width: 72px; height: 2px;
           margin: 0.8rem auto 0;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.secondary}cc, transparent);
           animation: rubyPulse 2.8s ease-in-out infinite;
         }
 
@@ -185,104 +185,21 @@ export default function AakarElitePage() {
             width: 1.5px;
             background: linear-gradient(180deg,
               transparent 0%,
-              ${ANIME_COLORS.primary}55 20%,
-              ${ANIME_COLORS.primary}55 80%,
+              ${ANIME_COLORS.secondary}55 20%,
+              ${ANIME_COLORS.secondary}55 80%,
               transparent 100%
             );
             pointer-events: none;
           }
         }
 
-        /* ── HOLOGRAPHIC PASS CARD (Left Pane) ────────────────── */
+        /* ── STRIPPED HOLOGRAM CSS ───────────────────────── */
         .hologram-pass {
           position: relative;
           width: 100%;
           max-width: 320px;
-          aspect-ratio: 0.6 / 1;
           margin: 0 auto;
-          background: linear-gradient(145deg, ${ANIME_COLORS.primary}20 0%, ${ANIME_COLORS.purple}20 100%);
-          border: 2px solid ${ANIME_COLORS.accent};
-          border-radius: 12px;
-          box-shadow: 0 0 20px ${ANIME_COLORS.accent}50, inset 0 0 30px ${ANIME_COLORS.accent}20;
-          overflow: hidden;
           animation: hologramPulse 4s infinite alternate ease-in-out;
-        }
-        .hologram-header {
-          background: ${ANIME_COLORS.accent}30;
-          padding: 1rem;
-          text-align: center;
-          border-bottom: 2px solid ${ANIME_COLORS.accent}80;
-        }
-        .hologram-title {
-          font-family: 'Cinzel', serif;
-          font-size: 1.8rem;
-          font-weight: bold;
-          color: #fff;
-          text-transform: uppercase;
-          text-shadow: 0 0 10px ${ANIME_COLORS.accent};
-          letter-spacing: 0.1em;
-        }
-        .hologram-level {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.4em;
-          color: ${ANIME_COLORS.secondary};
-        }
-        .hologram-body {
-          padding: 2rem 1.5rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1.5rem;
-        }
-        .hologram-icon {
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          border: 1.5px solid ${ANIME_COLORS.accent};
-          background: radial-gradient(circle, ${ANIME_COLORS.accent}20 0%, transparent 60%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          color: #fff;
-          text-shadow: 0 0 10px ${ANIME_COLORS.accent};
-          animation: spin 10s linear infinite;
-        }
-        .hologram-icon::after {
-            content: 'AAKAR 2026';
-            font-size: 0.8rem;
-            letter-spacing: 0.1em;
-            animation: spin 10s linear infinite reverse;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .hologram-barcode {
-          width: 100%;
-          height: 45px;
-          background: repeating-linear-gradient(
-            90deg,
-            ${ANIME_COLORS.accent}80,
-            ${ANIME_COLORS.accent}80 2px,
-            transparent 2px,
-            transparent 4px,
-            ${ANIME_COLORS.accent}a0 4px,
-            ${ANIME_COLORS.accent}a0 7px,
-            transparent 7px,
-            transparent 10px
-          );
-          opacity: 0.8;
-        }
-        .hologram-bottom {
-          position: absolute;
-          bottom: 0; left: 0; right: 0;
-          background: ${ANIME_COLORS.background}90;
-          padding: 0.8rem;
-          text-align: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          color: ${ANIME_COLORS.secondary};
-          border-top: 1px solid ${ANIME_COLORS.accent}50;
         }
 
         /* ── SUMMARY RIGHT PANE ─────────────────────── */
@@ -300,7 +217,7 @@ export default function AakarElitePage() {
           line-height: 0.9;
           margin-top: 0.4rem;
           text-transform: uppercase;
-          text-shadow: 0 0 30px ${ANIME_COLORS.primary}50;
+          text-shadow: 0 0 30px ${ANIME_COLORS.secondary}50;
         }
         .info-desc {
           font-family: 'Share Tech Mono', monospace;
@@ -316,9 +233,9 @@ export default function AakarElitePage() {
         .summary-pane {
           position: relative;
           z-index: 1;
-          border-top: 1.5px solid ${ANIME_COLORS.primary}44;
+          border-top: 1.5px solid ${ANIME_COLORS.secondary}44;
           background: linear-gradient(135deg,
-            ${ANIME_COLORS.primary}0d 0%,
+            ${ANIME_COLORS.secondary}0d 0%,
             rgba(8,3,18,.6) 60%,
             ${ANIME_COLORS.secondary}09 100%
           );
@@ -326,11 +243,11 @@ export default function AakarElitePage() {
         @media (min-width: 1024px) {
           .summary-pane {
             border-top: none;
-            border-left: 1.5px solid ${ANIME_COLORS.primary}44;
+            border-left: 1.5px solid ${ANIME_COLORS.secondary}44;
           }
         }
         .summary-card {
-          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          border: 1.5px solid ${ANIME_COLORS.secondary}55;
           background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92));
           border-radius: 1rem;
           padding: 1.6rem;
@@ -344,7 +261,7 @@ export default function AakarElitePage() {
           inset: 0;
           background: repeating-linear-gradient(
             0deg, transparent, transparent 3px,
-            ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px
+            ${ANIME_COLORS.secondary}06 3px, ${ANIME_COLORS.secondary}06 4px
           );
           pointer-events: none;
           animation: crtScan 7s linear infinite;
@@ -355,13 +272,6 @@ export default function AakarElitePage() {
           display: flex;
           align-items: center;
           gap: 1.2rem;
-        }
-        .price-old {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.2rem;
-          color: ${ANIME_COLORS.text}50;
-          text-decoration: line-through;
-          letter-spacing: 0.1em;
         }
         .price-row {
           display: flex;
@@ -396,20 +306,6 @@ export default function AakarElitePage() {
           line-height: 1;
           animation: priceIn .4s ease both;
         }
-        .limited-tag {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          color: ${ANIME_COLORS.accent};
-          background: ${ANIME_COLORS.accent}20;
-          padding: 0.3rem 0.6rem;
-          border-radius: 4px;
-          border: 1px solid ${ANIME_COLORS.accent};
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          margin-bottom: 0.5rem;
-          display: inline-block;
-          animation: rubyPulse 2s infinite;
-        }
 
         .summary-row {
           display: flex;
@@ -417,7 +313,7 @@ export default function AakarElitePage() {
           align-items: center;
           gap: 1rem;
           padding: 0.6rem 0;
-          border-bottom: 1px solid ${ANIME_COLORS.primary}28;
+          border-bottom: 1px solid ${ANIME_COLORS.secondary}28;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.76rem;
           letter-spacing: 0.04em;
@@ -429,8 +325,8 @@ export default function AakarElitePage() {
         .feat-card {
           position: relative;
           padding: 0.7rem 0.9rem 0.75rem;
-          border: 1px solid ${ANIME_COLORS.primary}40;
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%);
+          border: 1px solid ${ANIME_COLORS.secondary}40;
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}0c 0%, transparent 70%);
           border-radius: 6px;
           overflow: hidden;
           animation: featIn .35s ease both;
@@ -440,7 +336,7 @@ export default function AakarElitePage() {
           position: absolute;
           bottom: 0; left: 0; right: 0;
           height: 1.5px;
-          background: linear-gradient(90deg, ${ANIME_COLORS.primary}00, ${ANIME_COLORS.primary}80, ${ANIME_COLORS.primary}00);
+          background: linear-gradient(90deg, ${ANIME_COLORS.secondary}00, ${ANIME_COLORS.secondary}80, ${ANIME_COLORS.secondary}00);
           transform-origin: left;
         }
         .feat-pill-num {
@@ -468,11 +364,11 @@ export default function AakarElitePage() {
           display: inline-block;
           width: 100%;
           text-align: center;
-          border: 1.5px solid ${ANIME_COLORS.primary};
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30);
+          border: 1.5px solid ${ANIME_COLORS.secondary};
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}55, ${ANIME_COLORS.secondary}30);
           color: #fff;
           border-radius: 5px;
-          box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70;
+          box-shadow: 0 0 22px ${ANIME_COLORS.secondary}50, inset 0 1px 0 ${ANIME_COLORS.secondary}70;
           cursor: pointer;
           position: relative;
           overflow: hidden;
@@ -488,7 +384,7 @@ export default function AakarElitePage() {
         }
         .buy-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary};
+          box-shadow: 0 0 34px ${ANIME_COLORS.secondary}75, inset 0 1px 0 ${ANIME_COLORS.secondary};
         }
         .buy-btn:active { transform: translateY(0); }
 
@@ -519,22 +415,9 @@ export default function AakarElitePage() {
               <div className="pane-divider" />
               <div className="grid lg:grid-cols-2">
 
-                {/* LEFT PANE — HOLOGRAPHIC PASS */}
-                <div className="p-6 lg:p-10 border-b border-[rgba(255,77,0,0.18)] lg:border-b-0 lg:border-r border-[rgba(255,77,0,0.18)] flex items-center justify-center relative z-10">
-                    <div className="hologram-pass">
-                        <div className="hologram-header">
-                            <div className="hologram-title">Aakar 2026</div>
-                            <div className="hologram-level">S-CLASS CLEARANCE</div>
-                        </div>
-                        <div className="hologram-body">
-                            <div className="hologram-icon"></div>
-                            <div className="hologram-barcode"></div>
-                            <div style={{fontFamily: "'Share Tech Mono', monospace", color: "#fff", fontSize: "1rem", letterSpacing: "0.2em", textShadow: `0 0 10px ${ANIME_COLORS.accent}`}}>ELITE ACCESS</div>
-                        </div>
-                        <div className="hologram-bottom">
-                            ID: AKR-2026-X19
-                        </div>
-                    </div>
+                {/* LEFT PANE — PASS */}
+                <div className="p-6 lg:p-10 border-b border-[rgba(0,229,255,0.18)] lg:border-b-0 lg:border-r flex items-center justify-center relative z-10">
+                    <img src="/elite-pass.png" alt="Aakar Elite Pass" className="hologram-pass object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]" />
                 </div>
 
                 {/* RIGHT PANE — DETAILS & ORDER SUMMARY */}
@@ -568,10 +451,8 @@ export default function AakarElitePage() {
                     <div className="price-section relative z-10">
                         <div className="price-row">
                             <div>
-                                <span className="limited-tag">Limited Offer till 15th!</span>
                                 <span className="price-label">Cost</span>
                                 <div className="flex items-center gap-3">
-                                    <span className="price-old">₹699</span>
                                     <span className="price-val">₹399</span>
                                 </div>
                             </div>

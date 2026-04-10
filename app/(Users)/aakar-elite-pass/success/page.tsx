@@ -16,7 +16,7 @@ export default function ElitePassSuccessPage() {
         ${ANIME_GLOBAL_STYLES}
 
         @keyframes bannerGlitch {
-          0%,92%,100% { transform: none; text-shadow: 0 0 18px ${ANIME_COLORS.primary}80, 0 0 40px ${ANIME_COLORS.primary}40; }
+          0%,92%,100% { transform: none; text-shadow: 0 0 18px ${ANIME_COLORS.secondary}80, 0 0 40px ${ANIME_COLORS.secondary}40; }
           93% { transform: translate(-3px,0) skewX(-2deg); text-shadow: -4px 0 ${ANIME_COLORS.accent}, 4px 0 ${ANIME_COLORS.secondary}; }
           95% { transform: translate(3px,0) skewX(2deg); text-shadow: 4px 0 ${ANIME_COLORS.accent}, -4px 0 ${ANIME_COLORS.secondary}; }
           97% { transform: none; }
@@ -31,7 +31,7 @@ export default function ElitePassSuccessPage() {
           50% { opacity: 1; transform: scaleX(1.03); }
         }
         @keyframes neonBreath {
-          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.primary}50, inset 0 0 16px ${ANIME_COLORS.primary}18; }
+          0%,100% { box-shadow: 0 0 28px ${ANIME_COLORS.secondary}50, inset 0 0 16px ${ANIME_COLORS.secondary}18; }
           50% { box-shadow: 0 0 44px ${ANIME_COLORS.secondary}65, inset 0 0 22px ${ANIME_COLORS.secondary}28; }
         }
         @keyframes crtScan {
@@ -67,28 +67,28 @@ export default function ElitePassSuccessPage() {
         .merch-shell { animation: merchPanelIn .5s cubic-bezier(.22,1,.36,1) both; }
         .merch-card {
           background: linear-gradient(155deg, rgba(8,3,18,.97) 0%, rgba(12,5,24,.95) 55%, rgba(9,3,18,.98) 100%);
-          border: 1.5px solid ${ANIME_COLORS.primary}80;
+          border: 1.5px solid ${ANIME_COLORS.secondary}80;
           animation: neonBreath 5s ease-in-out infinite;
           position: relative; overflow: hidden;
         }
         .merch-card::after {
           content: ''; position: absolute; inset: 0;
-          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}07 3px, ${ANIME_COLORS.primary}07 4px);
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.secondary}07 3px, ${ANIME_COLORS.secondary}07 4px);
           pointer-events: none; z-index: 0; animation: crtScan 7s linear infinite;
         }
         .scan-line {
           position: absolute; left: 0; right: 0; height: 2px;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}55, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.secondary}55, transparent);
           animation: scanLine 5s linear infinite; pointer-events: none; z-index: 5;
         }
         .street-banner {
           text-align: center; padding: 2.4rem 1rem 2rem;
-          border-bottom: 1.5px solid ${ANIME_COLORS.primary}44;
+          border-bottom: 1.5px solid ${ANIME_COLORS.secondary}44;
           position: relative; z-index: 1;
         }
         .street-banner::before {
           content: ''; position: absolute; inset: 0;
-          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.primary}1e 0%, transparent 70%),
+          background: radial-gradient(ellipse 72% 90% at 50% 115%, ${ANIME_COLORS.secondary}1e 0%, transparent 70%),
                       radial-gradient(ellipse 38% 55% at 18% 50%, ${ANIME_COLORS.accent}12 0%, transparent 60%);
           pointer-events: none;
         }
@@ -105,12 +105,12 @@ export default function ElitePassSuccessPage() {
         .banner-title {
           display: block; font-size: clamp(2.8rem, 7.5vw, 3.8rem); line-height: 0.88;
           letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
-          text-shadow: 0 0 20px ${ANIME_COLORS.primary}75, 0 0 45px ${ANIME_COLORS.primary}35;
+          text-shadow: 0 0 20px ${ANIME_COLORS.secondary}75, 0 0 45px ${ANIME_COLORS.secondary}35;
           animation: bannerGlitch 8s ease-in-out infinite;
         }
         .banner-title .stroke-word {
-          -webkit-text-stroke: 2px ${ANIME_COLORS.primary}; color: transparent;
-          filter: drop-shadow(0 0 10px ${ANIME_COLORS.primary}cc);
+          -webkit-text-stroke: 2px ${ANIME_COLORS.secondary}; color: transparent;
+          filter: drop-shadow(0 0 10px ${ANIME_COLORS.secondary}cc);
         }
         .banner-sub {
           font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.5em;
@@ -118,7 +118,7 @@ export default function ElitePassSuccessPage() {
         }
         .banner-deco {
           width: 72px; height: 2px; margin: 0.8rem auto 0;
-          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}cc, transparent);
+          background: linear-gradient(90deg, transparent, ${ANIME_COLORS.secondary}cc, transparent);
           animation: rubyPulse 2.8s ease-in-out infinite;
         }
         .pane-divider { display: none; }
@@ -126,7 +126,7 @@ export default function ElitePassSuccessPage() {
           .pane-divider {
             display: block; position: absolute; top: 5%; bottom: 5%; left: 50%;
             width: 1.5px;
-            background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.primary}55 20%, ${ANIME_COLORS.primary}55 80%, transparent 100%);
+            background: linear-gradient(180deg, transparent 0%, ${ANIME_COLORS.secondary}55 20%, ${ANIME_COLORS.secondary}55 80%, transparent 100%);
             pointer-events: none;
           }
         }
@@ -135,7 +135,7 @@ export default function ElitePassSuccessPage() {
         .hologram-pass {
           position: relative; width: 100%; max-width: 300px; aspect-ratio: 0.6/1;
           margin: 0 auto;
-          background: linear-gradient(145deg, ${ANIME_COLORS.primary}20 0%, ${ANIME_COLORS.purple}20 100%);
+          background: linear-gradient(145deg, ${ANIME_COLORS.secondary}20 0%, ${ANIME_COLORS.purple}20 100%);
           border: 2px solid ${ANIME_COLORS.accent}; border-radius: 12px;
           box-shadow: 0 0 20px ${ANIME_COLORS.accent}50, inset 0 0 30px ${ANIME_COLORS.accent}20;
           overflow: hidden; animation: hologramPulse 4s infinite alternate ease-in-out;
@@ -180,11 +180,11 @@ export default function ElitePassSuccessPage() {
 
         /* right side */
         .summary-pane {
-          position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.primary}44;
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%);
+          position: relative; z-index: 1; border-top: 1.5px solid ${ANIME_COLORS.secondary}44;
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}0d 0%, rgba(8,3,18,.6) 60%, ${ANIME_COLORS.secondary}09 100%);
         }
         @media (min-width: 1024px) {
-          .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.primary}44; }
+          .summary-pane { border-top: none; border-left: 1.5px solid ${ANIME_COLORS.secondary}44; }
         }
         .info-tag {
           font-family: 'Share Tech Mono', monospace; font-size: 0.57rem; letter-spacing: 0.5em;
@@ -192,22 +192,22 @@ export default function ElitePassSuccessPage() {
         }
         .info-title {
           letter-spacing: 0.04em; color: #fff; line-height: 0.9; margin-top: 0.4rem;
-          text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.primary}50;
+          text-transform: uppercase; text-shadow: 0 0 30px ${ANIME_COLORS.secondary}50;
         }
         .summary-card {
-          border: 1.5px solid ${ANIME_COLORS.primary}55;
+          border: 1.5px solid ${ANIME_COLORS.secondary}55;
           background: linear-gradient(155deg, rgba(8,3,18,.95), rgba(12,5,24,.92));
           border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden;
           animation: neonBreath 5s ease-in-out infinite;
         }
         .summary-card::after {
           content: ''; position: absolute; inset: 0;
-          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.primary}06 3px, ${ANIME_COLORS.primary}06 4px);
+          background: repeating-linear-gradient(0deg, transparent, transparent 3px, ${ANIME_COLORS.secondary}06 3px, ${ANIME_COLORS.secondary}06 4px);
           pointer-events: none; animation: crtScan 7s linear infinite;
         }
         .summary-row {
           display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-          padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.primary}28;
+          padding: 0.6rem 0; border-bottom: 1px solid ${ANIME_COLORS.secondary}28;
           font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: ${ANIME_COLORS.text}cc;
         }
         .summary-row:last-child { border-bottom: none; }
@@ -215,10 +215,10 @@ export default function ElitePassSuccessPage() {
         .buy-btn {
           font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em;
           text-transform: uppercase; padding: 0.78rem 1.8rem;
-          border: 1.5px solid ${ANIME_COLORS.primary};
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}55, ${ANIME_COLORS.primary}30);
+          border: 1.5px solid ${ANIME_COLORS.secondary};
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}55, ${ANIME_COLORS.secondary}30);
           color: #fff; border-radius: 5px;
-          box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70;
+          box-shadow: 0 0 22px ${ANIME_COLORS.secondary}50, inset 0 1px 0 ${ANIME_COLORS.secondary}70;
           white-space: nowrap; cursor: pointer; position: relative; overflow: hidden;
           transition: transform .16s ease, box-shadow .16s ease; text-decoration: none; display: inline-block;
         }
@@ -227,7 +227,7 @@ export default function ElitePassSuccessPage() {
           background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
           animation: shimmerBtn 3.5s ease-in-out infinite;
         }
-        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.primary}75; }
+        .buy-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.secondary}75; }
         .back-btn {
           font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
           padding: 0.78rem 1.6rem; border: 1.5px solid ${ANIME_COLORS.secondary}80;
@@ -237,8 +237,8 @@ export default function ElitePassSuccessPage() {
         .back-btn:hover { border-color: ${ANIME_COLORS.secondary}; color: ${ANIME_COLORS.text}; box-shadow: 0 0 16px ${ANIME_COLORS.secondary}35; transform: translateY(-1px); }
         .feat-card {
           position: relative; padding: 0.7rem 0.9rem 0.75rem;
-          border: 1px solid ${ANIME_COLORS.primary}40;
-          background: linear-gradient(135deg, ${ANIME_COLORS.primary}0c 0%, transparent 70%);
+          border: 1px solid ${ANIME_COLORS.secondary}40;
+          background: linear-gradient(135deg, ${ANIME_COLORS.secondary}0c 0%, transparent 70%);
           border-radius: 6px; overflow: hidden;
         }
         .field-label {
@@ -274,24 +274,8 @@ export default function ElitePassSuccessPage() {
               <div className="grid lg:grid-cols-2">
 
                 {/* LEFT — ACTIVATED PASS */}
-                <div className="p-6 lg:p-10 border-b border-[rgba(255,77,0,0.18)] lg:border-b-0 lg:border-r border-[rgba(255,77,0,0.18)] flex items-center justify-center relative z-10">
-                  <div className="hologram-pass">
-                    <div className="hologram-header">
-                      <div className="hologram-title">Aakar 2026</div>
-                      <div className="hologram-level">S-CLASS · ACTIVE</div>
-                    </div>
-                    <div className="hologram-body">
-                      <div className="hologram-check">✓</div>
-                      <div className="hologram-status">PASS ACTIVATED</div>
-                      <div className="hologram-barcode"></div>
-                      <div style={{ fontFamily: "'Share Tech Mono', monospace", color: "#fff", fontSize: "1rem", letterSpacing: "0.2em", textShadow: `0 0 10px ${ANIME_COLORS.accent}`, textAlign: "center" }}>
-                        ELITE ACCESS
-                      </div>
-                    </div>
-                    <div className="hologram-bottom">
-                      STATUS: REGISTERED · PENDING VERIFICATION
-                    </div>
-                  </div>
+                <div className="p-6 lg:p-10 border-b border-[rgba(0,229,255,0.18)] lg:border-b-0 lg:border-r flex items-center justify-center relative z-10">
+                  <img src="/elite-pass.png" alt="Aakar Elite Pass" className="hologram-pass object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]" />
                 </div>
 
                 {/* RIGHT — SUCCESS SUMMARY */}
