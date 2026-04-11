@@ -287,7 +287,7 @@ export default function ElitePassSuccessPage() {
                         justifyContent: "center",
                         alignItems: "center"
                     }} className="hologram-pass">
-                        <img src="/elite-pass.png" alt="Aakar Elite Pass" className="w-full object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.5)]" />
+                        <img src="/elitepass.png" alt="Aakar Elite Pass" className="w-full object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.5)]" />
                     </div>
                 </div>
 

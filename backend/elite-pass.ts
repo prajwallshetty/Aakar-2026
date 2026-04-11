@@ -361,8 +361,13 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        const target = Array.isArray((error.meta as any)?.target) ? (error.meta as any).target.join(" ") : "";
-        if (target.includes("transactionId")) {
+        const target = Array.isArray((error.meta as any)?.target) 
+          ? (error.meta as any).target.join(" ").toLowerCase() 
+          : typeof (error.meta as any)?.target === "string"
+          ? ((error.meta as any).target as string).toLowerCase()
+          : "";
+          
+        if (target.includes("transactionid")) {
           return { data: null, error: { transactionId: "This transaction ID already exists" } };
         }
         if (target.includes("usn")) {
@@ -383,10 +388,10 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
       }
     }
 
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return {
       data: null,
-      error:
-        "Failed to create Elite Pass order",
+      error: `Failed to create Elite Pass order: ${errorMessage}`,
     };
   }
 }
