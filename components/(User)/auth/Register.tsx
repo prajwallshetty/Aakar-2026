@@ -8,6 +8,7 @@ import {
 } from "@/backend/participant";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { getAllEvents, getEventOptions } from "@/backend/events";
 import {
     CartEvents,
@@ -879,15 +880,20 @@ const Register = () => {
                                 ))}
                                 <div style={{ gridColumn: "1/-1" }}>
                                     <AnimeField label="College Name" error={formErrors.college}>
-                                        <input type="text" id="college" list="collegeList"
-                                            value={formData.college} onChange={handleChange}
-                                            placeholder="Search or type your college" required
-                                            className="anime-input"
-                                            style={formErrors.college ? inputError : inputBase}
+                                        <CreatableSelect
+                                            id="college"
+                                            instanceId="college-select"
+                                            isClearable
+                                            options={colleges.map(c => ({ value: c, label: c }))}
+                                            value={formData.college ? { value: formData.college, label: formData.college } : null}
+                                            onChange={(selected: any) => {
+                                                setFormData(prev => ({ ...prev, college: selected ? selected.value : "" }));
+                                                if (formErrors.college) setFormErrors(prev => ({ ...prev, college: undefined }));
+                                            }}
+                                            placeholder="Search or type your college..."
+                                            styles={selectStyles}
+                                            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                                         />
-                                        <datalist id="collegeList">
-                                            {colleges.map((c) => <option key={c} value={c} />)}
-                                        </datalist>
                                     </AnimeField>
                                 </div>
                             </div>
