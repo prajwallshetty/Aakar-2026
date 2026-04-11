@@ -16,7 +16,7 @@ export const ElitePassCard: React.FC = () => {
     const [currentPrice, setCurrentPrice] = React.useState(399);
 
     React.useEffect(() => {
-        const isEarlyBird = new Date() < new Date("2026-04-16T00:00:00+05:30");
+        const isEarlyBird = new Date() < new Date("2026-04-21T00:00:00+05:30");
         setCurrentPrice(isEarlyBird ? 399 : 459);
     }, []);
 
@@ -30,9 +30,12 @@ export const ElitePassCard: React.FC = () => {
                     overflow: "hidden",
                 }}
             >
-                <AnimeCardWrapper accentIndex={0} style={{
+                <AnimeCardWrapper accentIndex={3} style={{
                     padding: "24px",
                     cursor: "pointer",
+                    background: `linear-gradient(145deg, rgba(45, 35, 65, 0.9), rgba(25, 20, 35, 0.95))`,
+                    border: `1px solid rgba(176, 38, 255, 0.5)`,
+                    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.6), inset 0 2px 10px rgba(176, 38, 255, 0.2)`,
                     transform: hov ? "translate(-4px, -4px)" : "none",
                 }}>
                 <div

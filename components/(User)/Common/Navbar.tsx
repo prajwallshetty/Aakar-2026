@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { FaChevronDown } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import { IconMenu2, IconX, IconCalendarEvent } from "@tabler/icons-react";
 import { AnimeGlitchText } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const eventCategories = [
@@ -192,6 +192,31 @@ export default function Navbar() {
 
           {/* CTA Desktop */}
           <div className="flex items-center gap-3 ml-auto z-20">
+            {/* Schedule Download Button */}
+            <motion.a
+              href="/event_schedule.pdf"
+              download="event_schedule.pdf"
+              initial="initial"
+              whileHover="hover"
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "relative flex items-center justify-center rounded-md border border-[#18CCFC]/50 bg-transparent text-[#18CCFC] transition-all duration-300 cursor-pointer shadow-[0_0_10px_rgba(24,204,252,0.1)] hover:shadow-[0_0_15px_rgba(24,204,252,0.3)] hover:border-[#18CCFC] overflow-hidden whitespace-nowrap",
+                visible ? "px-2.5 py-2" : "px-3 py-2.5"
+              )}
+            >
+              <IconCalendarEvent className={visible ? "w-4 h-4 shrink-0" : "w-5 h-5 shrink-0"} />
+              <motion.span
+                variants={{
+                  initial: { width: 0, opacity: 0, marginLeft: 0 },
+                  hover: { width: "auto", opacity: 1, marginLeft: 10 }
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="text-[11px] font-mono font-bold uppercase tracking-widest overflow-hidden"
+              >
+                Schedule
+              </motion.span>
+            </motion.a>
+
             <Link href="/register" style={{ textDecoration: "none" }}>
               <motion.button
                 initial="initial"
@@ -312,8 +337,32 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  <div className="flex w-full flex-col mt-5 px-1">
-                    <Link href="/register" className="w-full block" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className="flex w-full items-center gap-2 mt-5 px-1">
+                    <motion.a
+                      href="/event_schedule.pdf"
+                      download="event_schedule.pdf"
+                      initial="initial"
+                      animate="hover"
+                      whileTap={{ scale: 0.95 }}
+                      className="relative flex items-center justify-center p-3 rounded-md border border-[#18CCFC]/50 bg-transparent text-[#18CCFC] cursor-pointer shadow-[0_0_10px_rgba(24,204,252,0.1)] hover:shadow-[0_0_15px_rgba(24,204,252,0.3)] hover:border-[#18CCFC] transition-all duration-300 overflow-hidden whitespace-nowrap"
+                    >
+                      <IconCalendarEvent className="w-5 h-5 shrink-0" />
+                      <motion.span
+                        variants={{
+                          initial: { width: 0, opacity: 0, marginLeft: 0 },
+                          hover: { 
+                            width: "auto", 
+                            opacity: 1, 
+                            marginLeft: 8,
+                            transition: { delay: 0.5, duration: 0.4, ease: "easeOut" }
+                          }
+                        }}
+                        className="text-[10px] font-mono font-bold uppercase tracking-wider overflow-hidden"
+                      >
+                        Schedule
+                      </motion.span>
+                    </motion.a>
+                    <Link href="/register" className="flex-1" onClick={() => setIsMobileMenuOpen(false)}>
                       <motion.button
                         initial="initial"
                         whileHover="hover"

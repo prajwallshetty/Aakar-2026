@@ -44,11 +44,11 @@ const displayFont = "'Cinzel', Impact, serif";
 
 // ─── Anime Style helpers ────────────────────────────────────────────────────────────
 const cardStyle: React.CSSProperties = {
-    background: `${ANIME_COLORS.background}20`,
-    border: `1px solid ${ANIME_COLORS.primary}`,
-    boxShadow: `0 0 20px ${ANIME_COLORS.primary}40, inset 0 0 8px ${ANIME_COLORS.primary}20`,
-    borderRadius: 8,
-    backdropFilter: "blur(8px)",
+    background: `linear-gradient(145deg, rgba(45, 35, 65, 0.85), rgba(25, 20, 40, 0.9))`,
+    border: `1px solid rgba(176, 38, 255, 0.4)`,
+    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.7), inset 0 2px 15px rgba(176, 38, 255, 0.15)`,
+    borderRadius: 12,
+    backdropFilter: "blur(12px)",
 };
 
 const sectionHeaderStyle = (bg: string): React.CSSProperties => ({
@@ -75,10 +75,10 @@ const labelStyle: React.CSSProperties = {
 
 const inputBase: React.CSSProperties = {
     width: "100%", padding: "14px 18px",
-    border: `1px solid ${ANIME_COLORS.primary}60`, borderRadius: 8,
-    boxShadow: `0 2px 10px rgba(0,0,0,0.2), inset 0 2px 8px rgba(0,0,0,0.3)`,
+    border: `1px solid rgba(0, 229, 255, 0.4)`, borderRadius: 8,
+    boxShadow: `0 2px 10px rgba(0,0,0,0.4), inset 0 2px 8px rgba(0, 229, 255, 0.05)`,
     fontFamily: monoFont, fontSize: 13, letterSpacing: 1,
-    background: `linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))`,
+    background: `rgba(15, 10, 25, 0.6)`,
     color: ANIME_COLORS.text,
     outline: "none", transition: "all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
     appearance: "none" as const,
@@ -134,35 +134,52 @@ const AnimeButton: React.FC<{
 
 // ─── Anime Step indicator ───────────────────────────────────────────────────────────
 const AnimeStepPill: React.FC<{ label: string; num: number; active: boolean; done: boolean }> = ({ label, num, active, done }) => (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, position: "relative", zIndex: 10 }}>
         <div style={{
             width: "clamp(32px, 10vw, 44px)", height: "clamp(32px, 10vw, 44px)",
-            background: done ? `${ANIME_COLORS.secondary}40` : active ? `${ANIME_COLORS.accent}40` : `${ANIME_COLORS.background}40`,
-            border: `1px solid ${done ? ANIME_COLORS.secondary : active ? ANIME_COLORS.accent : ANIME_COLORS.primary}`,
-            boxShadow: active ? `0 0 16px ${ANIME_COLORS.accent}60` : `0 0 8px ${ANIME_COLORS.primary}40`,
+            background: done ? `rgba(0, 229, 255, 0.3)` : active ? `rgba(176, 38, 255, 0.4)` : `rgba(255, 255, 255, 0.05)`,
+            border: `2px solid ${done ? ANIME_COLORS.secondary : active ? ANIME_COLORS.purple : "rgba(255,255,255,0.15)"}`,
+            boxShadow: active ? `0 0 20px rgba(176, 38, 255, 0.6), inset 0 0 10px rgba(176, 38, 255, 0.3)` : done ? `0 0 15px rgba(0, 229, 255, 0.4)` : "none",
             fontFamily: popFont, fontSize: "clamp(12px, 4vw, 18px)", fontWeight: 900, color: ANIME_COLORS.text,
             display: "flex", alignItems: "center", justifyContent: "center",
-            transform: active ? "rotate(-4deg)" : "none",
-            borderRadius: 8,
-            backdropFilter: "blur(4px)"
+            transform: active ? "rotate(-4deg) scale(1.1)" : "none",
+            borderRadius: 10,
+            backdropFilter: "blur(6px)",
+            transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
         }}>
             {done ? "✓" : num}
         </div>
-        <span style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" as const, color: ANIME_COLORS.secondary }}>
+        <span style={{ 
+            fontFamily: monoFont, fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" as const, 
+            color: active ? ANIME_COLORS.secondary : done ? ANIME_COLORS.secondary : "rgba(255,255,255,0.4)",
+            textShadow: active ? `0 0 8px ${ANIME_COLORS.secondary}80` : "none"
+        }}>
             {label}
         </span>
     </div>
 );
 
 const AnimeStepConnector: React.FC<{ done: boolean }> = ({ done }) => (
-    <div style={{ flex: 1, height: 2, marginBottom: 20, borderTop: `2px dashed ${done ? ANIME_COLORS.secondary : ANIME_COLORS.primary}`, opacity: done ? 0.8 : 0.4 }} />
+    <div style={{ 
+        flex: 1, height: 2, marginBottom: 20, 
+        background: done ? `linear-gradient(90deg, ${ANIME_COLORS.secondary}, ${ANIME_COLORS.purple})` : "rgba(255,255,255,0.1)", 
+        opacity: done ? 1 : 0.3,
+        boxShadow: done ? `0 0 10px ${ANIME_COLORS.secondary}40` : "none",
+        transition: "all 0.6s ease"
+    }} />
 );
 
 // ─── Anime Section card ─────────────────────────────────────────────────────────────
 const AnimeSectionCard: React.FC<{ title: string; color: string; children: React.ReactNode }> = ({ title, color, children }) => (
-    <AnimeCardWrapper accentIndex={0} style={{ padding: "min(28px, 6vw)", marginBottom: 24 }}>
+    <AnimeCardWrapper accentIndex={3} style={{ 
+        ...cardStyle,
+        padding: "min(28px, 6vw)", 
+        marginBottom: 24,
+    }}>
         <AnimeSectionHeading index={0}>{title}</AnimeSectionHeading>
-        {children}
+        <div style={{ position: "relative", zIndex: 1 }}>
+            {children}
+        </div>
     </AnimeCardWrapper>
 );
 
@@ -661,13 +678,13 @@ const Register = () => {
     const selectStyles = {
         control: (base: any, state: any) => ({
             ...base,
-            border: `1px solid ${ANIME_COLORS.primary} !important`,
+            border: `1px solid rgba(0, 229, 255, 0.4) !important`,
             borderRadius: 6,
-            boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}60 !important` : `0 0 8px ${ANIME_COLORS.primary}40 !important`,
+            boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}80 !important` : `0 0 8px rgba(0,0,0,0.4) !important`,
             fontFamily: monoFont,
             fontSize: 14,
             minHeight: 48,
-            background: `#080a12 !important`,
+            background: `rgba(15, 10, 25, 0.6) !important`,
             color: `#ffffff !important`,
             "&:hover": { borderColor: `${ANIME_COLORS.secondary} !important` },
             backdropFilter: "blur(4px)"
@@ -692,18 +709,18 @@ const Register = () => {
         }),
         menu: (base: any) => ({
             ...base,
-            border: `1px solid ${ANIME_COLORS.primary} !important`,
+            border: `1px solid rgba(176, 38, 255, 0.5) !important`,
             borderRadius: 8,
-            boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`,
+            boxShadow: `0 0 20px rgba(0,0,0,0.8) !important`,
             fontFamily: monoFont,
             fontSize: 13,
-            background: `#080a12 !important`,
-            backdropFilter: "blur(8px)",
+            background: `rgba(45, 35, 65, 0.95) !important`,
+            backdropFilter: "blur(12px)",
             zIndex: 50
         }),
         option: (base: any, state: any) => ({
             ...base,
-            background: state.isSelected ? `#00e5ff40 !important` : state.isFocused ? `#ffd70040 !important` : `#080a12 !important`,
+            background: state.isSelected ? `#00e5ff60 !important` : state.isFocused ? `rgba(176, 38, 255, 0.4) !important` : `transparent !important`,
             color: `#ffffff !important`,
             fontFamily: monoFont,
             fontSize: 13,
@@ -732,14 +749,20 @@ const Register = () => {
                 <CharacterDecoration 
                     image="/character7.png" 
                     position={{ top: "-2%", left: "-8%" }}
+                    mobilePosition={{ top: "0%", left: "-5%" }}
                     opacity={0.15}
+                    mobileOpacity={0.08}
                     size="clamp(200px, 30vw, 500px)"
+                    mobileSize="150px"
                 />
                 <CharacterDecoration 
                     image="/character4.png" 
                     position={{ top: "15%", right: "-10%" }}
+                    mobilePosition={{ top: "20%", right: "-15%" }}
                     opacity={0.15}
+                    mobileOpacity={0.08}
                     size="clamp(400px, 50vw, 700px)"
+                    mobileSize="250px"
                 />
                 <BackgroundBeams className="absolute inset-0 opacity-40" />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(8, 10, 18, 0.8) 80%)" }} />
@@ -777,7 +800,7 @@ const Register = () => {
                     font-family: 'Share Tech Mono', monospace !important;
                 }
                 div[class*="css-"][class*="control"] {
-                    background: #080a12 !important;
+                    background: rgba(15, 10, 25, 0.6) !important;
                     color: #ffffff !important;
                 }
                 div[class*="css-"][class*="placeholder"] {
@@ -795,10 +818,10 @@ const Register = () => {
                 div[class*="css-"][class*="option"] {
                     color: #ffffff !important;
                     font-family: 'Share Tech Mono', monospace !important;
-                    background: #080a12 !important;
+                    background: transparent !important;
                 }
                 div[class*="css-"][class*="option"]:hover {
-                    background: #ffd70040 !important;
+                    background: rgba(176, 38, 255, 0.4) !important;
                     color: #ffffff !important;
                 }
                 div[class*="css-"][class*="option"][class*="selected"] {
@@ -822,8 +845,8 @@ const Register = () => {
                 }
                 /* Force dropdown menu visibility */
                 div[class*="css-"][class*="menu"] {
-                    background: #080a12 !important;
-                    border: 1px solid #ff4d00 !important;
+                    background: rgba(45, 35, 65, 0.95) !important;
+                    border: 1px solid rgba(176, 38, 255, 0.5) !important;
                     z-index: 9999 !important;
                 }
                 /* Additional overrides for stubborn elements */
@@ -835,11 +858,11 @@ const Register = () => {
                 }
                 [class*="css-"][class*="option"] {
                     color: #ffffff !important;
-                    background: #080a12 !important;
+                    background: transparent !important;
                 }
                 [class*="css-"][class*="option"]:hover,
                 [class*="css-"][class*="option"]:focus {
-                    background: #ffd70060 !important;
+                    background: rgba(176, 38, 255, 0.4) !important;
                     color: #ffffff !important;
                 }
             `}</style>
@@ -847,16 +870,30 @@ const Register = () => {
 
                 {/* Header */}
                 <div style={{ marginBottom: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, animation: "popIn 0.7s cubic-bezier(.175,.885,.32,1.275) both" }}>
-                    <AnimeCardWrapper accentIndex={0} style={{ padding: "clamp(8px, 2vw, 12px) clamp(16px, 5vw, 48px)" }}>
-                        <span style={{ fontFamily: displayFont, fontSize: "clamp(24px,5vw,56px)", letterSpacing: "clamp(2px, 1vw, 8px)", color: ANIME_COLORS.text }}>
-                            REGISTER
-                        </span>
-                    </AnimeCardWrapper>
+                    <div style={{
+                      fontFamily: displayFont,
+                      fontSize: "clamp(2.5rem, 10vw, 5rem)",
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      background: "linear-gradient(135deg, #fff 0%, #ccc 40%, #AE48FF 70%, #00E5FF 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      margin: 0,
+                      lineHeight: 1.1,
+                      filter: "drop-shadow(0 0 20px rgba(174,72,255,0.2))",
+                    }}>
+                      REGISTER
+                    </div>
                 </div>
 
                 {/* Step indicator */}
-                <AnimeCardWrapper accentIndex={1} style={{ padding: "24px min(40px, 4vw)", marginBottom: 40 }}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                <AnimeCardWrapper accentIndex={3} style={{ 
+                    ...cardStyle,
+                    padding: "24px min(40px, 4vw)", 
+                    marginBottom: 40 
+                }}>
+                    <div style={{ display: "flex", alignItems: "center", position: "relative", zIndex: 1 }}>
                         <AnimeStepPill label="Details" num={1} active={stepNum === 1} done={stepNum > 1} />
                         <AnimeStepConnector done={stepNum > 1} />
                         <AnimeStepPill label="Payment" num={2} active={stepNum === 2} done={stepNum > 2} />
@@ -1011,7 +1048,7 @@ const Register = () => {
                         })}
 
                         <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-                            <AnimeButton type="submit" bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text}>PROCEED TO PAYMENT →</AnimeButton>
+                            <AnimeButton type="submit" bg={ANIME_COLORS.purple} fg={ANIME_COLORS.text}>PROCEED TO PAYMENT →</AnimeButton>
                         </div>
                     </form>
                 )}
@@ -1086,9 +1123,13 @@ const Register = () => {
                                 </div>
                             </div>
                         </AnimeSectionCard>
-                        <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", marginTop: 32 }}>
-                            <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("details")}>← BACK</AnimeButton>
-                            <AnimeButton bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} onClick={proceedToVerification}>VERIFY PAYMENT →</AnimeButton>
+                        <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
+                            <AnimeButton bg={ANIME_COLORS.purple} fg={ANIME_COLORS.text} onClick={proceedToVerification} disabled={isRegistering}>
+                                {isRegistering ? "Processing..." : "Verify Payment →"}
+                            </AnimeButton>
+                            <AnimeButton bg={`rgba(255,255,255,0.05)`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("details")}>
+                                ← Back to Details
+                            </AnimeButton>
                         </div>
                     </div>
                 )}
@@ -1144,8 +1185,8 @@ const Register = () => {
                             ))}
                         </AnimeSectionCard>
                         <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", marginTop: 32 }}>
-                            <AnimeButton bg={`${ANIME_COLORS.background}40`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("payment")}>← BACK</AnimeButton>
-                            <AnimeButton bg={ANIME_COLORS.primary} fg={ANIME_COLORS.text} type="submit" disabled={isRegistering}>
+                            <AnimeButton bg={`rgba(255, 255, 255, 0.05)`} fg={ANIME_COLORS.text} onClick={() => setPaymentStep("payment")}>← BACK</AnimeButton>
+                            <AnimeButton bg={ANIME_COLORS.purple} fg={ANIME_COLORS.text} type="submit" disabled={isRegistering}>
                                 {isRegistering ? (
                                     <>
                                         <svg style={{ animation: "spin 1s linear infinite", width: 16, height: 16 }} viewBox="0 0 24 24" fill="none">

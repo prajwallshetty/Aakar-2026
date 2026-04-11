@@ -273,21 +273,30 @@ const Eventpage = ({ eventCategory }: { eventCategory: eventCategory }) => {
           <CharacterDecoration 
             image="/character7.png" 
             position={{ top: "-2%", left: "-8%" }}
+            mobilePosition={{ top: "0%", left: "-5%" }}
             opacity={0.1}
+            mobileOpacity={0.06}
             size="clamp(200px, 30vw, 500px)"
+            mobileSize="150px"
           />
           <CharacterDecoration 
             image="/character4.png" 
             position={{ top: "15%", right: "-10%" }}
+            mobilePosition={{ top: "18%", right: "-12%" }}
             opacity={0.1}
+            mobileOpacity={0.06}
             size="clamp(400px, 50vw, 700px)"
+            mobileSize="240px"
           />
           {events.length >= 9 && (
             <CharacterDecoration 
               image="/character2.png" 
               position={{ bottom: "0%", right: "-10%" }}
+              mobilePosition={{ bottom: "0%", right: "-12%" }}
               opacity={0.1}
+              mobileOpacity={0.06}
               size="clamp(400px, 50vw, 750px)"
+              mobileSize="260px"
             />
           )}
           <BackgroundBeams className="absolute inset-0 opacity-50" />

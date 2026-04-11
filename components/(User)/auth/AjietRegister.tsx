@@ -44,20 +44,20 @@ const displayFont = "'Cinzel', Impact, serif";
 
 // ─── Anime Style helpers ────────────────────────────────────────────────────────────
 const cardStyle: React.CSSProperties = {
-    background: `${ANIME_COLORS.background}20`,
-    border: `1px solid ${ANIME_COLORS.primary}`,
-    boxShadow: `0 0 20px ${ANIME_COLORS.primary}40, inset 0 0 8px ${ANIME_COLORS.primary}20`,
-    borderRadius: 8,
-    backdropFilter: "blur(8px)",
+    background: `linear-gradient(145deg, rgba(45, 35, 65, 0.85), rgba(25, 20, 30, 0.9))`,
+    border: `1px solid rgba(176, 38, 255, 0.4)`,
+    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.7), inset 0 2px 15px rgba(176, 38, 255, 0.15)`,
+    borderRadius: 12,
+    backdropFilter: "blur(12px)",
     padding: "clamp(1.4rem,3.5vw,2.5rem)",
     position: "relative",
 };
 
 const inputStyle: React.CSSProperties = {
     width: "100%", padding: "14px 18px",
-    background: `linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))`,
-    border: `1px solid ${ANIME_COLORS.primary}60`, borderRadius: 8,
-    boxShadow: `0 2px 10px rgba(0,0,0,0.2), inset 0 2px 8px rgba(0,0,0,0.3)`,
+    background: `rgba(15, 10, 25, 0.6)`,
+    border: `1px solid rgba(0, 229, 255, 0.4)`, borderRadius: 8,
+    boxShadow: `0 2px 10px rgba(0,0,0,0.4), inset 0 2px 8px rgba(0, 229, 255, 0.05)`,
     fontFamily: monoFont, fontSize: 13, letterSpacing: 1,
     color: ANIME_COLORS.text,
     outline: "none", transition: "all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
@@ -488,13 +488,14 @@ const AjietRegister = () => {
     const selectStyles = {
         control: (base: any, state: any) => ({
             ...base, 
-            background: `#080a12 !important`,
-            border: state.isFocused ? `1px solid ${ANIME_COLORS.primary} !important` : `1px solid ${ANIME_COLORS.primary}40`,
+            background: `rgba(15, 10, 25, 0.6) !important`,
+            border: `1px solid rgba(0, 229, 255, 0.4) !important`,
             borderRadius: "6px",
-            boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.primary}40 !important` : `0 0 8px ${ANIME_COLORS.primary}20`,
+            boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}80 !important` : `0 0 8px rgba(0,0,0,0.4)`,
             fontFamily: monoFont, fontSize: 13, minHeight: 44,
             color: `#ffffff !important`,
-            "&:hover": { borderColor: ANIME_COLORS.primary },
+            "&:hover": { borderColor: ANIME_COLORS.secondary },
+            backdropFilter: "blur(4px)"
         }),
         placeholder: (base: any) => ({
             ...base,
@@ -516,17 +517,17 @@ const AjietRegister = () => {
         }),
         menu: (base: any) => ({
             ...base, 
-            background: `#080a12 !important`, 
-            border: `1px solid ${ANIME_COLORS.primary}`, 
+            background: `rgba(45, 35, 65, 0.95) !important`, 
+            border: `1px solid rgba(176, 38, 255, 0.5) !important`, 
             borderRadius: "6px",
-            boxShadow: `0 10px 30px ${ANIME_COLORS.background}60`,
+            boxShadow: `0 10px 30px rgba(0,0,0,0.8)`,
             position: "absolute",
             zIndex: 1000,
-            backdropFilter: "blur(10px)",
+            backdropFilter: "blur(12px)",
         }),
         option: (base: any, state: any) => ({
             ...base,
-            background: state.isSelected ? `#00e5ff40 !important` : state.isFocused ? `#ffd70040 !important` : `#080a12 !important`,
+            background: state.isSelected ? `#00e5ff60 !important` : state.isFocused ? `rgba(176, 38, 255, 0.4) !important` : `transparent !important`,
             color: `#ffffff !important`, fontFamily: monoFont, fontSize: 12, cursor: "pointer",
         }),
         multiValue: (base: any) => ({
@@ -552,14 +553,20 @@ const AjietRegister = () => {
                 <CharacterDecoration 
                     image="/character7.png" 
                     position={{ top: "-2%", left: "-8%" }}
+                    mobilePosition={{ top: "0%", left: "-5%" }}
                     opacity={0.15}
+                    mobileOpacity={0.08}
                     size="clamp(200px, 30vw, 500px)"
+                    mobileSize="150px"
                 />
                 <CharacterDecoration 
                     image="/character4.png" 
                     position={{ top: "15%", right: "-10%" }}
+                    mobilePosition={{ top: "20%", right: "-15%" }}
                     opacity={0.15}
+                    mobileOpacity={0.08}
                     size="clamp(400px, 50vw, 700px)"
+                    mobileSize="250px"
                 />
                 <BackgroundBeams className="absolute inset-0 opacity-40" />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(8, 10, 18, 0.8) 80%)" }} />
@@ -571,7 +578,7 @@ const AjietRegister = () => {
                     font-family: 'Share Tech Mono', monospace !important;
                 }
                 div[class*="css-"][class*="control"] {
-                    background: #080a12 !important;
+                    background: rgba(15, 10, 25, 0.6) !important;
                     color: #ffffff !important;
                 }
                 div[class*="css-"][class*="placeholder"] {
@@ -589,10 +596,10 @@ const AjietRegister = () => {
                 div[class*="css-"][class*="option"] {
                     color: #ffffff !important;
                     font-family: 'Share Tech Mono', monospace !important;
-                    background: #080a12 !important;
+                    background: transparent !important;
                 }
                 div[class*="css-"][class*="option"]:hover {
-                    background: #ffd70040 !important;
+                    background: rgba(176, 38, 255, 0.4) !important;
                     color: #ffffff !important;
                 }
                 div[class*="css-"][class*="option"][class*="selected"] {
@@ -616,8 +623,8 @@ const AjietRegister = () => {
                 }
                 /* Force dropdown menu visibility */
                 div[class*="css-"][class*="menu"] {
-                    background: #080a12 !important;
-                    border: 1px solid #ff4d00 !important;
+                    background: rgba(45, 35, 65, 0.95) !important;
+                    border: 1px solid rgba(176, 38, 255, 0.5) !important;
                     z-index: 9999 !important;
                 }
                 /* Additional overrides for stubborn elements */
@@ -629,43 +636,27 @@ const AjietRegister = () => {
                 }
                 [class*="css-"][class*="option"] {
                     color: #ffffff !important;
-                    background: #080a12 !important;
+                    background: transparent !important;
                 }
                 [class*="css-"][class*="option"]:hover,
                 [class*="css-"][class*="option"]:focus {
-                    background: #ffd70060 !important;
+                    background: rgba(176, 38, 255, 0.4) !important;
                     color: #ffffff !important;
                 }
             `}</style><div style={{ maxWidth: 840, margin: "0 auto", position: "relative", zIndex: 10 }}>
 
                 {/* Header */}
                 <div style={{ marginBottom: "3rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, textAlign: "center" }}>
-                    <AnimeCardWrapper accentIndex={0} style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 8,
-                        padding: "6px 22px",
-                        background: `${ANIME_COLORS.background}60`,
-                        border: `1px solid ${ANIME_COLORS.primary}`,
-                        borderRadius: 30,
-                        backdropFilter: "blur(6px)",
-                    }}>
-                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: ANIME_COLORS.primary }} />
-                        <span style={{
-                            fontFamily: monoFont,
-                            fontSize: "clamp(0.65rem, 2vw, 0.85rem)",
-                            letterSpacing: "0.22em",
-                            color: ANIME_COLORS.primary,
-                            textTransform: "uppercase",
-                        }}>
-                            AJIET_PORTAL // REGISTRATION
-                        </span>
-                    </AnimeCardWrapper>
+
                     
                     <h1 style={{ 
-                        fontFamily: displayFont, fontSize: "clamp(1.8rem, 6vw, 4rem)", 
-                        letterSpacing: "0.05em", color: ANIME_COLORS.text, margin: 0, lineHeight: 1,
-                        textShadow: `0 0 30px ${ANIME_COLORS.primary}45`
+                        fontFamily: displayFont, fontSize: "clamp(2.5rem, 10vw, 5rem)", 
+                        letterSpacing: "0.1em", fontWeight: 700, margin: 0, lineHeight: 1,
+                        background: "linear-gradient(135deg, #fff 0%, #ccc 40%, #AE48FF 70%, #00E5FF 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        filter: "drop-shadow(0 0 20px rgba(174,72,255,0.2))",
                     }}>
                         AJIET PORTAL
                     </h1>
@@ -680,46 +671,62 @@ const AjietRegister = () => {
                 </div>
 
                 {/* Step indicator */}
-                <AnimeCardWrapper accentIndex={1} style={{ padding: "20px 30px", marginBottom: "2.5rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        {/* Step pills would go here - simplified for now */}
+                <AnimeCardWrapper accentIndex={3} style={{ 
+                    ...cardStyle,
+                    padding: "24px 30px", 
+                    marginBottom: "2.5rem" 
+                }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
                         <div style={{
                             display: "flex",
                             alignItems: "center",
                             gap: 16,
+                            width: "100%",
+                            maxWidth: 500,
                             fontFamily: monoFont,
                             fontSize: 12,
                             color: ANIME_COLORS.text,
                         }}>
+                            {/* Step 1 */}
                             <div style={{
                                 width: 44, height: 44,
-                                background: stepNum >= 1 ? `${ANIME_COLORS.primary}40` : `${ANIME_COLORS.background}40`,
-                                border: `1px solid ${stepNum >= 1 ? ANIME_COLORS.primary : ANIME_COLORS.background}`,
-                                borderRadius: "50%",
+                                background: stepNum >= 1 ? `rgba(176, 38, 255, 0.4)` : `rgba(255, 255, 255, 0.05)`,
+                                border: `2px solid ${stepNum >= 1 ? ANIME_COLORS.purple : "rgba(255,255,255,0.15)"}`,
+                                borderRadius: "10px",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                color: stepNum >= 1 ? ANIME_COLORS.primary : ANIME_COLORS.text,
+                                color: "#fff",
+                                boxShadow: stepNum === 1 ? `0 0 15px rgba(176, 38, 255, 0.5)` : "none",
+                                transition: "all 0.4s ease"
                             }}>
                                 {stepNum > 1 ? "✓" : "1"}
                             </div>
-                            <div style={{ flex: 1, height: 2, background: stepNum > 1 ? ANIME_COLORS.primary : `${ANIME_COLORS.background}40` }} />
+                            <div style={{ flex: 1, height: 2, background: stepNum > 1 ? `linear-gradient(90deg, ${ANIME_COLORS.purple}, ${ANIME_COLORS.secondary})` : "rgba(255,255,255,0.1)" }} />
+                            
+                            {/* Step 2 */}
                             <div style={{
                                 width: 44, height: 44,
-                                background: stepNum >= 2 ? `${ANIME_COLORS.primary}40` : `${ANIME_COLORS.background}40`,
-                                border: `1px solid ${stepNum >= 2 ? ANIME_COLORS.primary : ANIME_COLORS.background}`,
-                                borderRadius: "50%",
+                                background: stepNum >= 2 ? `rgba(176, 38, 255, 0.4)` : `rgba(255, 255, 255, 0.05)`,
+                                border: `2px solid ${stepNum >= 2 ? ANIME_COLORS.purple : "rgba(255,255,255,0.15)"}`,
+                                borderRadius: "10px",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                color: stepNum >= 2 ? ANIME_COLORS.primary : ANIME_COLORS.text,
+                                color: "#fff",
+                                boxShadow: stepNum === 2 ? `0 0 15px rgba(176, 38, 255, 0.5)` : "none",
+                                transition: "all 0.4s ease"
                             }}>
                                 {stepNum > 2 ? "✓" : "2"}
                             </div>
-                            <div style={{ flex: 1, height: 2, background: stepNum > 2 ? ANIME_COLORS.primary : `${ANIME_COLORS.background}40` }} />
+                            <div style={{ flex: 1, height: 2, background: stepNum > 2 ? `linear-gradient(90deg, ${ANIME_COLORS.purple}, ${ANIME_COLORS.secondary})` : "rgba(255,255,255,0.1)" }} />
+                            
+                            {/* Step 3 */}
                             <div style={{
                                 width: 44, height: 44,
-                                background: stepNum >= 3 ? `${ANIME_COLORS.primary}40` : `${ANIME_COLORS.background}40`,
-                                border: `1px solid ${stepNum >= 3 ? ANIME_COLORS.primary : ANIME_COLORS.background}`,
-                                borderRadius: "50%",
+                                background: stepNum >= 3 ? `rgba(176, 38, 255, 0.4)` : `rgba(255, 255, 255, 0.05)`,
+                                border: `2px solid ${stepNum >= 3 ? ANIME_COLORS.purple : "rgba(255,255,255,0.15)"}`,
+                                borderRadius: "10px",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                color: stepNum >= 3 ? ANIME_COLORS.primary : ANIME_COLORS.text,
+                                color: "#fff",
+                                boxShadow: stepNum === 3 ? `0 0 15px rgba(176, 38, 255, 0.5)` : "none",
+                                transition: "all 0.4s ease"
                             }}>
                                 3
                             </div>
@@ -749,7 +756,10 @@ const AjietRegister = () => {
                 {/* ── STEP 1 ── */}
                 {paymentStep === "details" && (
                     <form onSubmit={proceedToPayment} style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                        <AnimeCardWrapper accentIndex={0} style={cardStyle}>
+                        <AnimeCardWrapper accentIndex={3} style={{
+                            ...cardStyle,
+                            padding: "clamp(1.5rem, 4vw, 3rem)",
+                        }}>
                             <AnimeSectionHeading index={0}>Personal Details</AnimeSectionHeading>
                             
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 16, marginBottom: 16 }}>
@@ -864,8 +874,8 @@ const AjietRegister = () => {
 
                                     {groupData.members.map((member, index) => (
                                         <div key={index} style={{ 
-                                            background: `${ANIME_COLORS.background}40`, 
-                                            border: `1px solid ${ANIME_COLORS.primary}40`, 
+                                            background: `rgba(176, 38, 255, 0.05)`, 
+                                            border: `1px solid rgba(176, 38, 255, 0.3)`, 
                                             padding: 16, 
                                             borderRadius: 8, 
                                             marginTop: 16,
@@ -875,7 +885,7 @@ const AjietRegister = () => {
                                                 fontFamily: monoFont, 
                                                 fontSize: 10, 
                                                 letterSpacing: 2, 
-                                                color: ANIME_COLORS.primary,
+                                                color: ANIME_COLORS.secondary,
                                                 marginBottom: 12,
                                                 textTransform: "uppercase"
                                             }}>
@@ -956,13 +966,13 @@ const AjietRegister = () => {
                                     <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                                         {selectedEvents.map((event) => (
                                             <div key={event.id} style={{
-                                                background: `${ANIME_COLORS.primary}40`,
-                                                border: `1px solid ${ANIME_COLORS.primary}`,
+                                                background: `rgba(176, 38, 255, 0.2)`,
+                                                border: `1px solid rgba(176, 38, 255, 0.5)`,
                                                 padding: "4px 12px",
                                                 borderRadius: 20,
                                                 fontFamily: monoFont,
                                                 fontSize: 11,
-                                                color: ANIME_COLORS.text
+                                                color: "#fff"
                                             }}>
                                                 {event.label}
                                             </div>
@@ -973,14 +983,14 @@ const AjietRegister = () => {
 
                             {totalAmount > 0 && (
                                 <div style={{
-                                    background: `${ANIME_COLORS.accent}40`,
-                                    border: `1px solid ${ANIME_COLORS.accent}`,
+                                    background: `rgba(176, 38, 255, 0.15)`,
+                                    border: `1px solid ${ANIME_COLORS.purple}`,
                                     padding: "16px",
                                     borderRadius: 8,
                                     marginTop: 16,
                                     textAlign: "center"
                                 }}>
-                                    <div style={{ fontFamily: popFont, fontSize: 16, color: ANIME_COLORS.accent, letterSpacing: 2 }}>
+                                    <div style={{ fontFamily: popFont, fontSize: 16, color: ANIME_COLORS.text, letterSpacing: 2 }}>
                                         Total Amount: ₹{totalAmount}
                                     </div>
                                 </div>
@@ -988,7 +998,7 @@ const AjietRegister = () => {
                         </AnimeCardWrapper>
 
                         <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-                            <AnimeButton type="submit" disabled={isRegistering}>
+                            <AnimeButton type="submit" bg={ANIME_COLORS.purple} fg={ANIME_COLORS.text} disabled={isRegistering}>
                                 {isRegistering ? "Processing..." : totalAmount === 0 ? "Register Now" : "Proceed to Payment"}
                             </AnimeButton>
                         </div>
@@ -1107,11 +1117,11 @@ const AjietRegister = () => {
                         </div>
 
                         <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 24 }}>
-                            <AnimeButton onClick={() => setPaymentStep("details")} bg={ANIME_COLORS.background}>
-                                Back
+                            <AnimeButton onClick={() => setPaymentStep("details")} bg="rgba(255,255,255,0.05)" fg={ANIME_COLORS.text}>
+                                ← Back
                             </AnimeButton>
-                            <AnimeButton onClick={proceedToVerification} disabled={isRegistering}>
-                                Verify & Submit
+                            <AnimeButton onClick={proceedToVerification} bg={ANIME_COLORS.purple} fg={ANIME_COLORS.text} disabled={isRegistering}>
+                                Verify & Submit →
                             </AnimeButton>
                         </div>
                     </AnimeCardWrapper>
@@ -1165,10 +1175,10 @@ const AjietRegister = () => {
 
                         <form onSubmit={handleSubmit}>
                             <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
-                                <AnimeButton type="button" onClick={() => setPaymentStep("details")} bg={ANIME_COLORS.background}>
-                                    Back
+                                <AnimeButton type="button" onClick={() => setPaymentStep("details")} bg="rgba(255,255,255,0.05)" fg={ANIME_COLORS.text}>
+                                    ← Back
                                 </AnimeButton>
-                                <AnimeButton type="submit" disabled={isRegistering}>
+                                <AnimeButton type="submit" bg={ANIME_COLORS.secondary} fg="#000" disabled={isRegistering}>
                                     {isRegistering ? (
                                         <>
                                             <svg style={{ animation: "spin 1s linear infinite", width: 16, height: 16 }} viewBox="0 0 24 24" fill="none">

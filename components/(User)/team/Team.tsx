@@ -656,8 +656,11 @@ const Team = () => (
       <CharacterDecoration 
         image="/character5.png" 
         position={{ bottom: "-3%", right: "-15%" }}
+        mobilePosition={{ bottom: "0%", right: "-10%" }}
         opacity={0.18}
+        mobileOpacity={0.1}
         size="clamp(400px, 50vw, 700px)"
+        mobileSize="220px"
       />
       <div style={{ maxWidth: 1380, margin: "0 auto", display: "flex", flexDirection: "column", gap: "clamp(4rem, 10vh, 7rem)" }}>
 

@@ -113,7 +113,7 @@ export default function ElitePassBuyPage() {
     let cancelled = false;
 
     // Check early bird pricing safely
-    const early = new Date() < new Date("2026-04-16T00:00:00+05:30");
+    const early = new Date() < new Date("2026-04-21T00:00:00+05:30");
     if (!cancelled) {
       setIsEarlyBird(early);
       setCurrentPrice(early ? PASS_PRICE_EARLY : PASS_PRICE_REGULAR);
@@ -878,7 +878,7 @@ export default function ElitePassBuyPage() {
 
                     <div className="price-row relative z-10">
                       <div>
-                        {isEarlyBird && <span className="limited-tag">Early Bird — Till 15th!</span>}
+                        {isEarlyBird && <span className="limited-tag">Early Bird — Till 20th!</span>}
                         <span className="price-label">Amount</span>
                         <div className="flex items-baseline gap-2">
                           <span className="price-val">₹{currentPrice}</span>

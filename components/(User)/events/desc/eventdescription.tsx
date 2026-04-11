@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Clock, Wallet, Phone, ArrowRight, User, ShieldCheck } from "lucide-react";
+import { Calendar, Clock, Wallet, Phone, ArrowRight, User, ShieldCheck, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedEvent } from "@/types";
 import {
@@ -520,6 +520,9 @@ const EventDescription = ({
                         </AnimeStatChip>
                         <AnimeStatChip icon={Clock} color={ANIME_COLORS.purple}>
                           {eventData.time || "CHRONO_TBA"}
+                        </AnimeStatChip>
+                        <AnimeStatChip icon={MapPin} color={ANIME_COLORS.primary}>
+                          {eventData.venue || "LOC_UNKNOWN"}
                         </AnimeStatChip>
                         <AnimeStatChip icon={Wallet} color={catAccent}>
                           {eventData.fee ? `CREDITS: ₹${eventData.fee}` : "FEE_TBA"}

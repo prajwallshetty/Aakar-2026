@@ -24,8 +24,11 @@ export default function ElitePassPromo() {
       <CharacterDecoration 
         image="/character5.png" 
         position={{ bottom: "-10%", left: "-20%" }}
+        mobilePosition={{ bottom: "-5%", left: "-15%" }}
         opacity={0.2}
+        mobileOpacity={0.12}
         size="clamp(450px, 60vw, 850px)"
+        mobileSize="280px"
       />
       <motion.div
         ref={ref}

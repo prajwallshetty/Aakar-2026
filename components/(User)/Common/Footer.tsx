@@ -163,9 +163,12 @@ export default function Footer() {
       <CharacterDecoration 
         image="/character3.png" 
         position={{ bottom: "-15%", left: "12%" }}
+        mobilePosition={{ bottom: "0%", left: "50%" }}
         width="75%"
         height="100%"
         opacity={0.10}
+        mobileOpacity={0.06}
+        mobileSize="280px"
         style={{ transform: "translateX(-50%)" }}
       />
 

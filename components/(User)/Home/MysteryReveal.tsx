@@ -371,8 +371,11 @@ export default function MysteryReveal() {
       <CharacterDecoration 
         image="/character2.png" 
         position={{ top: "10%", right: "-8%" }}
+        mobilePosition={{ top: "15%", right: "-12%" }}
         opacity={0.2}
+        mobileOpacity={0.12}
         size="clamp(250px, 45vw, 650px)"
+        mobileSize="150px"
       />
       {/* Section heading */}
       <div style={{ textAlign: "center", marginBottom: "clamp(2rem, 5vh, 4rem)", position: "relative", zIndex: 5 }}>
