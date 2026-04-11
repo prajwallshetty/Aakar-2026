@@ -57,32 +57,32 @@ export default function CharacterDecoration({
     <>
       <style>{`
         .char-deco-${id} {
+          --char-opacity: ${opacity};
           width: ${finalWidth};
           height: ${finalHeight};
           top: ${position.top ?? "auto"};
           bottom: ${position.bottom ?? "auto"};
           left: ${position.left ?? "auto"};
           right: ${position.right ?? "auto"};
-          opacity: ${opacity};
           display: block;
         }
 
         @media (max-width: 768px) {
           .char-deco-${id} {
+            --char-opacity: ${mobileOpacity !== undefined ? mobileOpacity : opacity};
             ${hideOnMobile ? "display: none !important;" : ""}
             ${mobileSize ? `width: ${mobileSize} !important; height: ${mobileSize} !important;` : ""}
             ${mobilePosition?.top !== undefined ? `top: ${mobilePosition.top} !important;` : ""}
             ${mobilePosition?.bottom !== undefined ? `bottom: ${mobilePosition.bottom} !important;` : ""}
             ${mobilePosition?.left !== undefined ? `left: ${mobilePosition.left} !important;` : ""}
             ${mobilePosition?.right !== undefined ? `right: ${mobilePosition.right} !important;` : ""}
-            ${mobileOpacity !== undefined ? `opacity: ${mobileOpacity} !important;` : ""}
           }
         }
       `}</style>
       <motion.div
         className={`char-deco-${id}`}
         initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ scale: 1 }}
+        whileInView={{ opacity: "var(--char-opacity)", scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.2, delay, ease: "easeOut" }}
         style={{
