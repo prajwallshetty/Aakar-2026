@@ -7,6 +7,7 @@ import { ExtendedEvent, ExtendedParticipant, ExtendedParticipantCreateInput } fr
 import { sendEmail } from "./nodemailer";
 import { getEventById, getEventsOfUser } from "./events";
 import { buildRegistrationEmail } from "./email-templates";
+import { checkRateLimit } from "./ratelimit";
 
 type ServiceResponse<T> = {
   data: T | null;
@@ -56,6 +57,10 @@ export async function validateParticipantData(data: ExtendedParticipantCreateInp
 
 export async function createParticipant(data: ExtendedParticipantCreateInput): Promise<ServiceResponse<ExtendedParticipant>> {
   try {
+    if (!(await checkRateLimit(10, 60000))) {
+      return { data: null, error: { rateLimit: "Too many requests. Please try again later." } };
+    }
+
     const validationErrors = await validateParticipantData(data);
     if (validationErrors) {
       return { data: null, error: validationErrors };

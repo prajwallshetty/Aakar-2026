@@ -6,6 +6,7 @@ import { db } from ".";
 import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
 import { buildElitePassEmail } from "./email-templates";
+import { checkRateLimit } from "./ratelimit";
 
 function getElitePassPrice() {
   const isEarlyBird = new Date() < new Date("2026-04-21T00:00:00+05:30");
@@ -167,6 +168,10 @@ export async function validateElitePassOrderData(data: ElitePassOrderInput): Pro
 }
 
 export async function checkElitePassDuplicates(input: ElitePassDuplicateCheckInput): Promise<{ [key: string]: string } | null> {
+  if (!(await checkRateLimit(15, 60000))) {
+    return { _rateLimit: "Too many duplicate check requests." };
+  }
+
   const errors: { [key: string]: string } = {};
 
   const normalizedEmail = input.email?.toLowerCase().trim();
@@ -291,6 +296,10 @@ async function syncParticipantWithElitePass(
 
 export async function createElitePassOrder(data: ElitePassOrderInput): Promise<ServiceResponse<any>> {
   try {
+    if (!(await checkRateLimit(10, 60000))) {
+      return { data: null, error: "Too many requests. Please try again later." };
+    }
+
     const passDb = db as any;
 
     const validationErrors = await validateElitePassOrderData(data);

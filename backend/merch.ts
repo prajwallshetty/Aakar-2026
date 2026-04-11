@@ -7,6 +7,7 @@ import { db } from ".";
 import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
 import { buildMerchEmail, buildMerchAdminNotificationEmail, buildMerchConfirmedEmail } from "./email-templates";
+import { checkRateLimit } from "./ratelimit";
 
 const variantPriceMap = {
   ascend: 399,
@@ -147,6 +148,10 @@ export async function validateMerchOrderData(data: MerchOrderInput): Promise<{ [
 
 export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceResponse<any>> {
   try {
+    if (!(await checkRateLimit(10, 60000))) {
+      return { data: null, error: { rateLimit: "Too many requests. Please try again later." } };
+    }
+
     const merchDb = db as any;
 
     const validationErrors = await validateMerchOrderData(data);
