@@ -342,7 +342,7 @@ export default function Navbar() {
                       href="/event_schedule.pdf"
                       download="event_schedule.pdf"
                       initial="initial"
-                      whileHover="hover"
+                      animate="hover"
                       whileTap={{ scale: 0.95 }}
                       className="relative flex items-center justify-center p-3 rounded-md border border-[#18CCFC]/50 bg-transparent text-[#18CCFC] cursor-pointer shadow-[0_0_10px_rgba(24,204,252,0.1)] hover:shadow-[0_0_15px_rgba(24,204,252,0.3)] hover:border-[#18CCFC] transition-all duration-300 overflow-hidden whitespace-nowrap"
                     >
@@ -350,7 +350,12 @@ export default function Navbar() {
                       <motion.span
                         variants={{
                           initial: { width: 0, opacity: 0, marginLeft: 0 },
-                          hover: { width: "auto", opacity: 1, marginLeft: 8 }
+                          hover: { 
+                            width: "auto", 
+                            opacity: 1, 
+                            marginLeft: 8,
+                            transition: { delay: 0.5, duration: 0.4, ease: "easeOut" }
+                          }
                         }}
                         className="text-[10px] font-mono font-bold uppercase tracking-wider overflow-hidden"
                       >
