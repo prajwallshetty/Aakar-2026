@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CreatableSelect from "react-select/creatable";
 import { checkElitePassDuplicates, createElitePassOrder } from "@/backend/elite-pass";
 import { cinzelFont } from "@/lib/font";
 import {
@@ -58,6 +59,41 @@ export default function ElitePassBuyPage() {
   const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "confirm">("details");
   const [isEarlyBird, setIsEarlyBird] = useState(true);
   const [currentPrice, setCurrentPrice] = useState(PASS_PRICE_EARLY);
+
+  const selectStyles = {
+    control: (base: any, state: any) => ({
+      ...base,
+      border: `1.5px solid ${ANIME_COLORS.secondary}70 !important`,
+      borderRadius: 6,
+      boxShadow: state.isFocused ? `0 0 22px ${ANIME_COLORS.accent}45, inset 0 0 10px ${ANIME_COLORS.accent}20 !important` : "none",
+      fontFamily: "'Share Tech Mono', monospace",
+      fontSize: "0.8rem",
+      minHeight: 48,
+      background: `linear-gradient(135deg, rgba(8,3,18,.92), rgba(12,5,24,.88)) !important`,
+      color: `${ANIME_COLORS.text} !important`,
+      "&:hover": { borderColor: `${ANIME_COLORS.accent} !important` },
+      backdropFilter: "blur(4px)"
+    }),
+    placeholder: (base: any) => ({
+      ...base, color: `${ANIME_COLORS.text}44 !important`, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.8rem",
+    }),
+    input: (base: any) => ({
+      ...base, color: `${ANIME_COLORS.text} !important`, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.8rem",
+    }),
+    singleValue: (base: any) => ({
+      ...base, color: `${ANIME_COLORS.text} !important`, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.8rem",
+    }),
+    menu: (base: any) => ({
+      ...base, border: `1.5px solid ${ANIME_COLORS.secondary}70 !important`, borderRadius: 6,
+      boxShadow: `0 0 20px ${ANIME_COLORS.primary}60 !important`, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.8rem",
+      background: `rgba(8,3,18,.95) !important`, backdropFilter: "blur(8px)", zIndex: 50
+    }),
+    option: (base: any, state: any) => ({
+      ...base, background: state.isSelected ? `#00e5ff40 !important` : state.isFocused ? `#ffd70040 !important` : `transparent !important`,
+      color: `#ffffff !important`, fontFamily: "'Share Tech Mono', monospace", fontSize: "0.8rem", cursor: "pointer",
+    }),
+    menuPortal: (base: any) => ({ ...base, zIndex: 1000 }),
+  };
   const [soloEvents, setSoloEvents] = useState<SoloEventOption[]>([]);
   const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
   const [eventToAdd, setEventToAdd] = useState("");
@@ -611,19 +647,24 @@ export default function ElitePassBuyPage() {
                             {formErrors[id] && <span className="err-msg">⚡ {formErrors[id]}</span>}
                           </label>
                         ))}
-                        <label className="space-y-0 md:col-span-2">
-                          <span className="field-label">College</span>
-                          <input
-                            type="text" id="college" list="collegeList"
-                            className={`merch-input${formErrors.college ? " err" : ""}`}
-                            value={formData.college} onChange={handleChange}
+                        <div className="space-y-0 md:col-span-2 text-left">
+                          <span className="field-label block mb-[0.4rem]">College</span>
+                          <CreatableSelect
+                            id="college"
+                            instanceId="college-select"
+                            isClearable
+                            options={COLLEGES.map((c) => ({ value: c, label: c }))}
+                            value={formData.college ? { value: formData.college, label: formData.college } : null}
+                            onChange={(selected: any) => {
+                              setFormData((prev) => ({ ...prev, college: selected ? selected.value : "" }));
+                              if (formErrors.college) setFormErrors((prev) => ({ ...prev, college: undefined }));
+                            }}
                             placeholder="Search or type your college"
+                            styles={selectStyles}
+                            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                           />
-                          <datalist id="collegeList">
-                            {COLLEGES.map((c) => <option key={c} value={c} />)}
-                          </datalist>
-                          {formErrors.college && <span className="err-msg">⚡ {formErrors.college}</span>}
-                        </label>
+                          {formErrors.college && <span className="err-msg block mt-[3px]">⚡ {formErrors.college}</span>}
+                        </div>
 
                         <div className="space-y-2 md:col-span-2">
                           <span className="field-label">Select Solo Events</span>
