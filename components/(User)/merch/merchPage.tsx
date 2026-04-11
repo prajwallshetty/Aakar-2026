@@ -459,6 +459,7 @@ export default function MerchPage() {
         /* ── MOBILE RESPONSIVE ───────────────────────── */
         @media (max-width: 640px) {
           .street-banner { padding: 1.6rem 0.9rem 1.4rem; }
+          .banner-title { font-size: 1.8rem !important; letter-spacing: 0.04em; }
           .banner-ruby { font-size: 0.5rem; letter-spacing: 0.3em; padding: 0.2rem 0.8rem; }
           .banner-sub { font-size: 0.5rem; letter-spacing: 0.3em; }
           .banner-deco { width: 48px; }
@@ -472,9 +473,10 @@ export default function MerchPage() {
           .variant-pill { font-size: 0.55rem; padding: 0.36rem 0.75rem; letter-spacing: 0.15em; }
 
           .info-tag { font-size: 0.5rem; letter-spacing: 0.38em; }
+          .info-title { font-size: 2.2rem !important; }
           .info-desc { font-size: 0.74rem; max-width: 100%; padding-left: 0.75rem; }
 
-          .feat-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1.2rem; }
+          .feat-grid { gap: 0.5rem; margin-top: 1.2rem; }
           .feat-card { padding: 0.6rem 0.7rem; }
           .feat-pill-num { font-size: 0.45rem; }
           .feat-text { font-size: 0.68rem; }
@@ -482,6 +484,10 @@ export default function MerchPage() {
           .price-row { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.1rem 1.2rem; margin-top: 1.4rem; }
           .price-val { font-size: 2rem; }
           .buy-btn { width: 100%; text-align: center; padding: 0.75rem 1rem; font-size: 0.65rem; }
+        }
+        @media (max-width: 480px) {
+          .feat-grid { grid-template-columns: 1fr !important; }
+          .banner-title { font-size: 1.6rem !important; }
         }
 
         @media (max-width: 400px) {
@@ -512,7 +518,7 @@ export default function MerchPage() {
               <div className="scan-line" />
               <span className="banner-ruby">Limited Drop · Fest Collection</span>
               <h2 className={`banner-title ${cinzelFont.className}`}>
-                AAKAR&nbsp;<span className="stroke-word">STREETWEAR</span>&nbsp;DROP
+                AAKAR <span className="stroke-word">STREETWEAR</span> DROP
               </h2>
               <p className="banner-sub">wear the story &nbsp;·&nbsp; own the night &nbsp;·&nbsp; live the arc</p>
               <div className="banner-deco" />

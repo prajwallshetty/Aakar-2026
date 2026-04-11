@@ -26,6 +26,8 @@ import {
   ANIME_COLORS,
   ACCENTS 
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import CharacterDecoration from "@/components/(User)/Common/CharacterDecoration";
 
 // ─── Anime Design tokens ────────────────────────────────────────────────────────────
 const C = {
@@ -545,6 +547,23 @@ const AjietRegister = () => {
 
     return (
         <div style={{ minHeight: "100vh", position: "relative", padding: "clamp(3rem, 5vh, 6rem) clamp(1rem, 3vw, 2rem)", overflow: "hidden" }}>
+            {/* ── LAYER 2: Aceternity Background Beams ── */}
+            <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+                <CharacterDecoration 
+                    image="/character7.png" 
+                    position={{ top: "-2%", left: "-8%" }}
+                    opacity={0.15}
+                    size="clamp(200px, 30vw, 500px)"
+                />
+                <CharacterDecoration 
+                    image="/character4.png" 
+                    position={{ top: "15%", right: "-10%" }}
+                    opacity={0.15}
+                    size="clamp(400px, 50vw, 700px)"
+                />
+                <BackgroundBeams className="absolute inset-0 opacity-40" />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(8, 10, 18, 0.8) 80%)" }} />
+            </div>
             <style>{`${ANIME_GLOBAL_STYLES}
                 /* Dropdown specific overrides to prevent global styles interference */
                 div[class*="css-"][class*="control"], 

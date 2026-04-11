@@ -270,6 +270,31 @@ function MerchPaymentContent() {
         .summary-row:last-child { border-bottom: none; }
         .summary-row span:last-child { color: ${ANIME_COLORS.text}; font-weight: 700; }
         .step-badge { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Share Tech Mono', monospace; font-size: 0.56rem; letter-spacing: 0.42em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; padding: 0.2rem 0.9rem; border: 1px solid ${ANIME_COLORS.secondary}60; background: ${ANIME_COLORS.secondary}12; border-radius: 2px; margin-bottom: 0.9rem; }
+
+        /* ── MOBILE RESPONSIVE ───────────────────────── */
+        @media (max-width: 640px) {
+          .street-banner { padding: 1.6rem 0.9rem 1.4rem; }
+          .banner-title { font-size: 1.8rem !important; letter-spacing: 0.04em; }
+          .banner-ruby { font-size: 0.5rem; letter-spacing: 0.3em; padding: 0.2rem 0.8rem; }
+          .banner-sub { font-size: 0.5rem; letter-spacing: 0.3em; margin-top: 0.5rem; }
+          .banner-deco { width: 48px; }
+
+          .form-pane { padding: 1.2rem 1rem; }
+          .summary-pane { padding: 1.2rem 1rem; }
+
+          .info-title { font-size: 2.2rem !important; }
+          .info-desc { font-size: 0.74rem; max-width: 100%; padding-left: 0.75rem; }
+          
+          .grid { grid-template-columns: 1fr; }
+
+          .buy-btn, .back-btn { width: 100%; text-align: center; font-size: 0.65rem; padding: 0.75rem 1rem; }
+          .merch-input { font-size: 0.75rem; padding: 0.6rem 0.8rem; }
+          .summary-card { padding: 1.2rem; }
+        }
+        @media (min-width: 641px) and (max-width: 1023px) {
+          .form-pane { padding: 2rem; }
+          .summary-pane  { padding: 2rem; }
+        }
       `}</style>
 
       <main className="relative min-h-screen overflow-hidden bg-transparent text-white">
@@ -285,7 +310,7 @@ function MerchPaymentContent() {
               <div className="scan-line" />
               <span className="banner-ruby">Step 2 of 2 · Forge the Seal</span>
               <h2 className={`banner-title ${cinzelFont.className}`}>
-                AAKAR&nbsp;<span className="stroke-word">STREETWEAR</span>&nbsp;DROP
+                AAKAR <span className="stroke-word">STREETWEAR</span> DROP
               </h2>
               <p className="banner-sub">scan qr &nbsp;·&nbsp; enter id &nbsp;·&nbsp; secure the loot</p>
               <div className="banner-deco" />
@@ -314,7 +339,7 @@ function MerchPaymentContent() {
                         </div>
                         <div className="summary-row">
                           <span>Transaction ID</span>
-                          <span>{transactionId}</span>
+                          <span style={{ wordBreak: 'break-all', textAlign: 'right', paddingLeft: '1rem' }}>{transactionId}</span>
                         </div>
                       </div>
                       <div className="mt-8 flex justify-center gap-3 relative z-10">
