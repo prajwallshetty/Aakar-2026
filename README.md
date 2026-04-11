@@ -125,5 +125,5 @@ npm run dev
 
 <p align="center">
   <b>AAKAR 2026 // ADAPT. EVOLVE. CONQUER.</b><br>
-  Built with ❤️ by the AAKAR Dev Team @ AJIET
+  Built with ❤️ by the AAKAR Dev Team AJIET
 </p>
