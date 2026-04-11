@@ -97,7 +97,7 @@ Create a `.env` file in the root directory:
 DATABASE_URL="postgresql://..."
 AUTH_SECRET="your-secret-key"
 NEXT_PUBLIC_RAZORPAY_KEY_ID="rzp_..."
-ADMIN_EMAIL="admin@ajiet.edu.in"
+ADMIN_EMAIL=""
 # ... See auth.config.ts for full manifest
 ```
 
