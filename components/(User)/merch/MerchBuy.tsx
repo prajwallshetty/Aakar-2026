@@ -547,7 +547,6 @@ function MerchBuyContent() {
           animation: rubyPulse 2.5s ease-in-out infinite;
         }
 
-        /* ── STEP BADGE ─────────────────────────────── */
         .step-badge {
           display: inline-flex;
           align-items: center;
@@ -562,6 +561,37 @@ function MerchBuyContent() {
           background: ${ANIME_COLORS.secondary}12;
           border-radius: 2px;
           margin-bottom: 0.9rem;
+        }
+
+        /* ── MOBILE RESPONSIVE ───────────────────────── */
+        @media (max-width: 640px) {
+          .street-banner { padding: 1.6rem 0.9rem 1.4rem; }
+          .banner-title { font-size: 1.8rem !important; letter-spacing: 0.04em; }
+          .banner-ruby { font-size: 0.5rem; letter-spacing: 0.3em; padding: 0.2rem 0.8rem; }
+          .banner-sub { font-size: 0.5rem; letter-spacing: 0.3em; margin-top: 0.5rem; }
+          .banner-deco { width: 48px; }
+
+          .form-pane { padding: 1.2rem 1rem; }
+          .summary-pane { padding: 1.2rem 1rem; }
+
+          .info-title { font-size: 2.2rem !important; }
+          .info-desc { font-size: 0.74rem; max-width: 100%; padding-left: 0.75rem; }
+          
+          .grid { grid-template-columns: 1fr; }
+          .price-row { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.1rem 1.2rem; }
+          .price-val { font-size: 1.8rem; }
+
+          .buy-btn, .back-btn { width: 100%; text-align: center; font-size: 0.65rem; padding: 0.75rem 1rem; }
+          .size-pill { font-size: 0.55rem; padding: 0.36rem 0.6rem; letter-spacing: 0.15em; }
+          .merch-input, .merch-select { font-size: 0.75rem; padding: 0.6rem 0.8rem; }
+
+          .feat-card { padding: 0.6rem 0.7rem; }
+          .feat-pill-num { font-size: 0.45rem; }
+          .feat-text { font-size: 0.68rem; }
+        }
+        @media (min-width: 641px) and (max-width: 1023px) {
+          .form-pane { padding: 2rem; }
+          .summary-pane  { padding: 2rem; }
         }
       `}</style>
 
@@ -578,7 +608,7 @@ function MerchBuyContent() {
               <div className="scan-line" />
               <span className="banner-ruby">Step 1 of 2 · Armor Up</span>
               <h2 className={`banner-title ${cinzelFont.className}`}>
-                AAKAR&nbsp;<span className="stroke-word">STREETWEAR</span>&nbsp;DROP
+                AAKAR <span className="stroke-word">STREETWEAR</span> DROP
               </h2>
               <p className="banner-sub">add details &nbsp;·&nbsp; lock the size &nbsp;·&nbsp; proceed to payment</p>
               <div className="banner-deco" />
@@ -703,7 +733,7 @@ function MerchBuyContent() {
                   </div>
 
                   {/* MINI FEATURE CARDS */}
-                  <div className="mt-5 grid grid-cols-2 gap-3 relative z-10">
+                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
                     {[
                       ["/ 01", "Limited Drop"],
                       ["/ 02", "S-Rank Material"],
