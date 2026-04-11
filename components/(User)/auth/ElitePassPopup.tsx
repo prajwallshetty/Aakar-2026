@@ -76,12 +76,12 @@ export const ElitePassPopup = () => {
                 </button>
                 
                 <div style={{
-                    background: `${ANIME_COLORS.background}95`,
+                    background: `linear-gradient(145deg, rgba(45, 35, 65, 0.95), rgba(25, 20, 35, 0.98))`,
                     borderRadius: "12px",
-                    border: `1px solid ${ANIME_COLORS.primary}`,
-                    boxShadow: `0 10px 40px ${ANIME_COLORS.background}, 0 0 20px ${ANIME_COLORS.primary}40`,
+                    border: `1px solid rgba(176, 38, 255, 0.5)`,
+                    boxShadow: `0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(176, 38, 255, 0.3)`,
                     overflow: "hidden",
-                    backdropFilter: "blur(10px)",
+                    backdropFilter: "blur(12px)",
                 }}>
                     <div style={{ 
                         padding: "8px", 
@@ -103,9 +103,9 @@ export const ElitePassPopup = () => {
             <style>
                 {`
                 @keyframes elite-pulse {
-                    0% { box-shadow: 0 0 0 0 ${ANIME_COLORS.primary}80; }
-                    70% { box-shadow: 0 0 0 15px ${ANIME_COLORS.primary}00; }
-                    100% { box-shadow: 0 0 0 0 ${ANIME_COLORS.primary}00; }
+                    0% { box-shadow: 0 0 0 0 rgba(176, 38, 255, 0.6); }
+                    70% { box-shadow: 0 0 0 15px rgba(176, 38, 255, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(176, 38, 255, 0); }
                 }
                 @keyframes elite-glint {
                     0% { background-position: -200% center; }
@@ -113,8 +113,8 @@ export const ElitePassPopup = () => {
                 }
                 .elite-offer-btn {
                     animation: elite-pulse 2s infinite;
-                    background: linear-gradient(135deg, ${ANIME_COLORS.background} 0%, #1a0b2e 100%);
-                    border: 1px solid ${ANIME_COLORS.primary};
+                    background: linear-gradient(135deg, rgba(45, 35, 65, 0.9) 0%, #1a0b2e 100%);
+                    border: 1px solid rgba(176, 38, 255, 0.6);
                     background-size: 200% auto;
                     position: relative;
                     overflow: hidden;
@@ -179,7 +179,7 @@ export const ElitePassPopup = () => {
                 <span style={{ 
                     position: "relative", 
                     zIndex: 2,
-                    textShadow: `0 0 8px ${ANIME_COLORS.primary}80`,
+                    textShadow: `0 0 8px rgba(176, 38, 255, 0.8)`,
                     fontSize: "14px",
                 }}>
                     UPGRADE TO ELITE

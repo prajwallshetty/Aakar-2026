@@ -182,8 +182,11 @@ export default function AboutPage() {
         <CharacterDecoration 
           image="/character6.png" 
           position={{ bottom: "-2%", left: "-3%" }}
+          mobilePosition={{ bottom: "0%", left: "-10%" }}
           opacity={0.16}
+          mobileOpacity={0.12}
           size="clamp(200px, 30vw, 500px)"
+          mobileSize="180px"
         />
         <div className="scan-line" />
         <div style={{ position: "absolute", inset: 0, zIndex: -1, background: "rgba(0,0,0,0.15)" }} />

@@ -8,7 +8,6 @@ import { cinzelFont } from "@/lib/font";
 import {
   ANIME_GLOBAL_STYLES,
   ANIME_COLORS,
-  AnimeCardWrapper,
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const monoFont = "'Share Tech Mono', monospace";
@@ -98,8 +97,8 @@ export default function RegistrationSuccess() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: "60px 20px 100px",
-      minHeight: "calc(100vh - 80px)",
+      minHeight: "100vh",
+      background: "#080a12", // Original background
     }}>
       <style>{`
         ${ANIME_GLOBAL_STYLES}
@@ -192,13 +191,13 @@ export default function RegistrationSuccess() {
               width: "80px",
               height: "80px",
               borderRadius: "50%",
-              background: `linear-gradient(135deg, ${ANIME_COLORS.primary}40, ${ANIME_COLORS.secondary}40)`,
-              border: `2px solid ${ANIME_COLORS.secondary}`,
+              background: `${ANIME_COLORS.primary}20`,
+              border: `2px solid ${ANIME_COLORS.primary}`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: `0 0 30px ${ANIME_COLORS.secondary}40, inset 0 0 15px ${ANIME_COLORS.secondary}20`,
-              color: ANIME_COLORS.secondary,
+              boxShadow: `0 0 30px ${ANIME_COLORS.primary}40, inset 0 0 15px ${ANIME_COLORS.primary}20`,
+              color: ANIME_COLORS.primary,
             }}>
               <CheckCircle2 size={42} strokeWidth={2} />
             </div>
@@ -215,7 +214,7 @@ export default function RegistrationSuccess() {
               Target Secured
             </h2>
             <h1 className={`${cinzelFont.className} rs-glitch-text`} style={{
-              fontSize: "clamp(2rem, 8vw, 3.5rem)",
+              fontSize: "clamp(2.5rem, 8vw, 4.5rem)",
               fontWeight: 800,
               letterSpacing: "0.05em",
               lineHeight: 1,
@@ -228,7 +227,15 @@ export default function RegistrationSuccess() {
 
         {/* ── INTERACTIVE PASS ── */}
         <motion.div variants={itemVariants} style={{ width: "100%" }}>
-          <AnimeCardWrapper accentIndex={1} style={{ padding: "0" }}>
+          <div style={{ 
+            padding: "0", 
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "16px",
+            position: "relative",
+            overflow: "hidden",
+            backdropFilter: "blur(10px)",
+          }}>
             <div className="pass-bracket tl" style={{ "--accent": ANIME_COLORS.secondary } as any} />
             <div className="pass-bracket tr" style={{ "--accent": ANIME_COLORS.secondary } as any} />
             <div className="pass-bracket bl" style={{ "--accent": ANIME_COLORS.secondary } as any} />
@@ -336,7 +343,7 @@ export default function RegistrationSuccess() {
                 </div>
               </div>
             </div>
-          </AnimeCardWrapper>
+          </div>
         </motion.div>
 
         {/* ── NEXT STEPS ── */}

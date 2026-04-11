@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { FaChevronDown } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import { IconMenu2, IconX, IconCalendarEvent } from "@tabler/icons-react";
 import { AnimeGlitchText } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 const eventCategories = [
@@ -192,6 +192,21 @@ export default function Navbar() {
 
           {/* CTA Desktop */}
           <div className="flex items-center gap-3 ml-auto z-20">
+            {/* Schedule Download Button */}
+            <motion.a
+              href="/event_schedule.pdf"
+              download="event_schedule.pdf"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "relative flex items-center justify-center rounded-md border border-[#18CCFC]/50 bg-transparent text-[#18CCFC] transition-all duration-300 cursor-pointer shadow-[0_0_10px_rgba(24,204,252,0.1)] hover:shadow-[0_0_15px_rgba(24,204,252,0.3)] hover:border-[#18CCFC]",
+                visible ? "p-2" : "p-2.5"
+              )}
+              title="Download Event Schedule"
+            >
+              <IconCalendarEvent className={visible ? "w-4 h-4" : "w-5 h-5"} />
+            </motion.a>
+
             <Link href="/register" style={{ textDecoration: "none" }}>
               <motion.button
                 initial="initial"
@@ -312,8 +327,17 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  <div className="flex w-full flex-col mt-5 px-1">
-                    <Link href="/register" className="w-full block" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className="flex w-full items-center gap-2 mt-5 px-1">
+                    <motion.a
+                      href="/event_schedule.pdf"
+                      download="event_schedule.pdf"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative flex items-center justify-center p-3 rounded-md border border-[#18CCFC]/50 bg-transparent text-[#18CCFC] cursor-pointer shadow-[0_0_10px_rgba(24,204,252,0.1)] hover:shadow-[0_0_15px_rgba(24,204,252,0.3)] hover:border-[#18CCFC] transition-all duration-300"
+                    >
+                      <IconCalendarEvent className="w-5 h-5" />
+                    </motion.a>
+                    <Link href="/register" className="flex-1" onClick={() => setIsMobileMenuOpen(false)}>
                       <motion.button
                         initial="initial"
                         whileHover="hover"

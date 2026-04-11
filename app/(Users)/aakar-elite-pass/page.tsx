@@ -15,7 +15,7 @@ export default function AakarElitePage() {
   const [currentPrice, setCurrentPrice] = useState(399);
 
   useEffect(() => {
-    const early = new Date() < new Date("2026-04-16T00:00:00+05:30");
+    const early = new Date() < new Date("2026-04-21T00:00:00+05:30");
     setIsEarlyBird(early);
     setCurrentPrice(early ? 399 : 459);
   }, []);
@@ -483,7 +483,7 @@ export default function AakarElitePage() {
                                     borderRadius: "4px", border: `1px solid ${ANIME_COLORS.secondary}`,
                                     textTransform: "uppercase", letterSpacing: "0.1em",
                                     marginBottom: "0.5rem", display: "inline-block",
-                                }}>Early Bird — Till 15th!</span>
+                                }}>Early Bird — Till 20th!</span>
                                 )}
                                 <span className="price-label">Cost</span>
                                 <div className="flex items-baseline gap-3">
