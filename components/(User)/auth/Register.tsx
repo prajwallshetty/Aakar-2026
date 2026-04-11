@@ -16,7 +16,7 @@ import {
 } from "@/types";
 import { eventType } from "@prisma/client";
 import { uploadFile } from "@/backend/supabase";
-import { ElitePassCard } from "@/components/(User)/auth/ElitePassCard";
+import { ElitePassPopup } from "@/components/(User)/auth/ElitePassPopup";
 import {
     AnimeCardWrapper,
     AnimeSectionHeading,
@@ -893,10 +893,6 @@ const Register = () => {
                             </div>
                         </AnimeSectionCard>
 
-                        <div style={{ marginBottom: 32, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: 24 }}>
-                            <ElitePassCard />
-                        </div>
-
                         <AnimeSectionCard title="02 · Pick Your Events" color={ANIME_COLORS.primary}>
                             {selectedEvents.length > 0 && (
                                 <div style={{ marginBottom: 16 }}>
@@ -1139,6 +1135,9 @@ const Register = () => {
                     </form>
                 )}
             </div>
+            
+            {/* Shopify-like 3s delay collapsible popup */}
+            <ElitePassPopup />
         </div>
     );
 };
