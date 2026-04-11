@@ -365,7 +365,29 @@ function MerchPaymentContent() {
                        <div className="summary-card w-full max-w-sm flex flex-col items-center">
                          <img src={generatedQrImageUrl} alt="Merchant QR" className="h-48 w-48 border-2 mb-4 p-2 rounded-xl object-contain bg-white relative z-10" style={{ borderColor: ANIME_COLORS.purple }} />
                          <div className="text-center font-mono text-[#00E5FF] text-sm tracking-widest uppercase relative z-10 mb-2">Amount: ₹{fixedMerchPrice}</div>
-                         <div className="text-center font-mono text-[#00E5FF] text-sm tracking-widest uppercase relative z-10">UPI ID: {merchUpiId}</div>
+                         <div className="text-center font-mono text-[#00E5FF] text-sm tracking-widest uppercase relative z-10 mb-4">UPI ID: {merchUpiId}</div>
+                         {upiPaymentUrl && (
+                           <a
+                             href={upiPaymentUrl}
+                             className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs font-mono tracking-wider transition-all w-[80%] mx-auto"
+                             style={{
+                               background: "rgba(0, 229, 255, 0.1)",
+                               border: "1px solid rgba(0, 229, 255, 0.3)",
+                               color: "#00e5ff",
+                               textDecoration: "none",
+                             }}
+                             onMouseEnter={(e) => {
+                               (e.currentTarget as HTMLElement).style.background = "rgba(0, 229, 255, 0.2)";
+                               (e.currentTarget as HTMLElement).style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.3)";
+                             }}
+                             onMouseLeave={(e) => {
+                               (e.currentTarget as HTMLElement).style.background = "rgba(0, 229, 255, 0.1)";
+                               (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                             }}
+                           >
+                             📱 Pay via UPI App
+                           </a>
+                         )}
                        </div>
                     </div>
 

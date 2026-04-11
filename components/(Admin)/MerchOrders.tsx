@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Download, Search, Shirt } from "lucide-react";
-import { getMerchOrders } from "@/backend/merch";
+import { getMerchOrders, sendMerchConfirmationEmail } from "@/backend/merch";
 import { Button } from "@/components/ui/button";
 import { downloadCsv } from "@/lib/downloadCsv";
 
@@ -20,6 +20,7 @@ type MerchOrderRow = {
   size: string;
   transactionId: string;
   paymentScreenshotUrl?: string | null;
+  confirmationSent?: boolean;
 };
 
 type GroupingOption = "none" | "variant" | "size";
@@ -31,6 +32,7 @@ export default function MerchOrders() {
   const [groupingOption, setGroupingOption] = useState<GroupingOption>("none");
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [loadedScreenshots, setLoadedScreenshots] = useState<Record<number, boolean>>({});
+  const [sendingEmailIds, setSendingEmailIds] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     (async () => {
@@ -104,15 +106,41 @@ export default function MerchOrders() {
           <TableCell>{order.phone}</TableCell>
           <TableCell className="font-mono text-xs">{order.transactionId}</TableCell>
           <TableCell>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 text-xs"
-              onClick={() => toggleOrderScreenshots(order.id)}
-              disabled={!order.paymentScreenshotUrl}
-            >
-              {expandedOrderId === order.id ? "Hide Screenshot" : "Load Screenshot"}
-            </Button>
+            <div className="flex gap-2 items-center">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => toggleOrderScreenshots(order.id)}
+                disabled={!order.paymentScreenshotUrl}
+              >
+                {expandedOrderId === order.id ? "Hide" : "Image"}
+              </Button>
+              {order.confirmationSent ? (
+                <Badge variant="outline" className="h-8 text-emerald-600 bg-emerald-50 border-emerald-200">
+                  Confirmed
+                </Badge>
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="h-8 text-xs"
+                  onClick={async () => {
+                    setSendingEmailIds(p => ({ ...p, [order.id]: true }));
+                    const res = await sendMerchConfirmationEmail(order.id);
+                    if (!res.error) {
+                      setOrders(orders.map(o => o.id === order.id ? { ...o, confirmationSent: true } : o));
+                    } else {
+                      alert(res.error);
+                    }
+                    setSendingEmailIds(p => ({ ...p, [order.id]: false }));
+                  }}
+                  disabled={sendingEmailIds[order.id]}
+                >
+                  {sendingEmailIds[order.id] ? "Sending..." : "Confirm Order"}
+                </Button>
+              )}
+            </div>
           </TableCell>
         </TableRow>
 
@@ -240,7 +268,7 @@ export default function MerchOrders() {
                             <TableHead>Email</TableHead>
                             <TableHead>Phone</TableHead>
                             <TableHead>Transaction ID</TableHead>
-                            <TableHead>Screenshot</TableHead>
+                            <TableHead>Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>{renderOrderRows(groupRows)}</TableBody>

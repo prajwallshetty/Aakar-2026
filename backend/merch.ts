@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
-import { buildMerchEmail, buildMerchAdminNotificationEmail } from "./email-templates";
+import { buildMerchEmail, buildMerchAdminNotificationEmail, buildMerchConfirmedEmail } from "./email-templates";
 
 const variantPriceMap = {
   ascend: 399,
@@ -239,6 +239,10 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
     }
 
     const merchDb = db as any;
+    try {
+      await merchDb.$executeRawUnsafe(`ALTER TABLE "MerchOrder" ADD COLUMN IF NOT EXISTS "confirmationSent" BOOLEAN DEFAULT false;`);
+    } catch {}
+
     const orders = await merchDb.$queryRaw<Array<any>>`
       SELECT
         "id",
@@ -251,7 +255,8 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
         "amount",
         "paymentScreenshotUrl",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "confirmationSent"
       FROM "MerchOrder"
       ORDER BY "createdAt" DESC
     `;
@@ -273,4 +278,43 @@ export async function getMerchOrdersCount(): Promise<number> {
     FROM "MerchOrder"
   `;
   return Number(result[0]?.count ?? 0);
+}
+
+export async function sendMerchConfirmationEmail(orderId: number): Promise<ServiceResponse<any>> {
+  try {
+    if (!(await isAdmin())) {
+      return { data: null, error: "Unauthorized" };
+    }
+
+    const merchDb = db as any;
+
+    try {
+      await merchDb.$executeRawUnsafe(`ALTER TABLE "MerchOrder" ADD COLUMN IF NOT EXISTS "confirmationSent" BOOLEAN DEFAULT false;`);
+    } catch {}
+
+    const orders = await merchDb.$queryRaw<Array<any>>`SELECT * FROM "MerchOrder" WHERE "id" = ${orderId}`;
+    const order = orders[0];
+    
+    if (!order) {
+      return { data: null, error: "Order not found" };
+    }
+    if (order.confirmationSent) {
+      return { data: null, error: "Confirmation email already sent" };
+    }
+
+    const resolvedVariant = normalizeMerchVariant(order.merchVariant || inferVariantFromAmount(order.amount));
+
+    await sendEmail(
+      order.email,
+      "Aakar 2026 - Merch Order Confirmed! 🚀",
+      buildMerchConfirmedEmail(order.name, resolvedVariant)
+    );
+
+    await merchDb.$executeRawUnsafe(`UPDATE "MerchOrder" SET "confirmationSent" = true WHERE "id" = ${orderId}`);
+
+    return { data: { success: true }, error: null };
+  } catch (error) {
+    console.error("Error sending confirmation email:", error);
+    return { data: null, error: "Failed to send confirmation email" };
+  }
 }

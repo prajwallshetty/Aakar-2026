@@ -688,6 +688,76 @@ export function buildMerchEmail(name: string, variant: string, size: string, tra
 </html>`;
 }
 
+export function buildMerchConfirmedEmail(name: string, variant: string): string {
+  const variantColor = variant.toLowerCase() === 'neon' ? '#00ffff' : variant.toLowerCase() === 'pro' ? '#ff0066' : '#ffffff';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Aakar 2026 – Order Confirmed!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#050818;font-family:'Share Tech Mono',monospace;color:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#050818;padding:40px 10px;">
+  <tr><td align="center">
+    
+    <div style="max-width:600px;width:100%;border: 1px solid ${variantColor}44;background:#0a0a2e;position:relative;overflow:hidden;border-radius:4px;">
+      
+      <!-- Scanline overlay effect -->
+      <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);"></div>
+
+      <table width="100%" cellpadding="0" cellspacing="0" style="position:relative;z-index:2;">
+        <!-- HEADER -->
+        <tr>
+          <td style="background: linear-gradient(135deg, #0a0a2e 0%, #1a0033 100%); padding:40px 20px; text-align:center; border-bottom: 1px solid ${variantColor}22;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${variantColor};letter-spacing:5px;margin-bottom:10px;text-transform:uppercase;">▸ SYSTEM://ARMORY/PAYMENT_VERIFIED ▸</div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:#ffffff;letter-spacing:4px;text-transform:uppercase;margin:0;">ORDER CONFIRMED</div>
+          </td>
+        </tr>
+
+        <!-- BODY -->
+        <tr>
+          <td style="padding:40px 30px;background:#06091a;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:16px;line-height:1.6;margin-bottom:30px;">
+              Greetings, <span style="color:${variantColor};font-weight:700;">${name}</span>. <br/><br/>
+              Your payment has been verified and your Aakar 2026 tactical apparel order is now officially confirmed.
+            </div>
+
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:30px;">
+            Your gear will be prepared for pickup at the Aakar 2026 Tech Hub during the event. Stay tuned for further updates.
+            </div>
+            
+            <div style="border-left: 2px solid ${variantColor}; padding-left: 15px; color: ${variantColor}; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">
+              STATUS: PAYMENT VERIFIED
+            </div>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style="background:#0a0a2e;padding:25px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
+            <div style="font-family:'Orbitron',sans-serif;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:3px;">
+              EQUIPMENT // APPAREL // AAKAR 26
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;">
+      Powering the Future @ AJIET
+    </div>
+
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
 export function buildMerchAdminNotificationEmail(order: any): string {
   return `<!DOCTYPE html>
 <html lang="en">
