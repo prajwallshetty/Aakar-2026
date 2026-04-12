@@ -26,13 +26,13 @@ export async function generateCertificate(participantName: string, eventName: st
         
         // Draw Name - Positioned roughly in the middle
         // Note: These coordinates might need adjustment based on the actual visual design of certificate_template.pdf
-        const nameFontSize = 36;
+        const nameFontSize = 30;
         const nameText = participantName.toUpperCase();
         const nameWidth = fontBold.widthOfTextAtSize(nameText, nameFontSize);
         
         firstPage.drawText(nameText, {
             x: width / 2 - nameWidth / 2,
-            y: height / 2 + 20,
+            y: height / 2 - 70,
             size: nameFontSize,
             font: fontBold,
             color: rgb(0, 0, 0),
@@ -40,12 +40,12 @@ export async function generateCertificate(participantName: string, eventName: st
 
         // Draw Event Name
         const eventFontSize = 24;
-        const eventText = `for successfully participating in ${eventName}`;
+        const eventText = eventName;
         const eventWidth = fontRegular.widthOfTextAtSize(eventText, eventFontSize);
         
         firstPage.drawText(eventText, {
-            x: width / 2 - eventWidth / 2,
-            y: height / 2 - 30,
+            x: (width / 2 - eventWidth / 2) + 180,
+            y: height / 2 - 112,
             size: eventFontSize,
             font: fontRegular,
             color: rgb(0.1, 0.1, 0.1),
@@ -53,7 +53,7 @@ export async function generateCertificate(participantName: string, eventName: st
 
         // Draw Certificate ID for verification (bottom left)
         firstPage.drawText(`Certificate ID: ${certificateId}`, {
-            x: 60,
+            x: 40,
             y: 50,
             size: 10,
             font: fontRegular,
@@ -69,7 +69,7 @@ export async function generateCertificate(participantName: string, eventName: st
         // Position QR code in bottom right corner
         const qrSize = 75;
         firstPage.drawImage(qrImage, {
-            x: width - qrSize - 60,
+            x: width - qrSize - 40,
             y: 50,
             width: qrSize,
             height: qrSize,
@@ -77,7 +77,7 @@ export async function generateCertificate(participantName: string, eventName: st
 
         // Draw Verification URL text under QR
         firstPage.drawText('aakar.live/verify', {
-            x: width - qrSize - 60,
+            x: width - qrSize - 40,
             y: 35,
             size: 8,
             font: fontRegular,
