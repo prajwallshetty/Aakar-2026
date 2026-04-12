@@ -98,6 +98,8 @@ export default function RegistrationSuccess() {
       alignItems: "center",
       justifyContent: "center",
       minHeight: "100vh",
+      paddingTop: "120px",
+      paddingBottom: "80px",
       background: "#080a12", // Original background
     }}>
       <style>{`
