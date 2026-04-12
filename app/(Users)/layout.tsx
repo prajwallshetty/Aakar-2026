@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/(User)/Common/Navbar";
 import Footer from "@/components/(User)/Common/Footer";
+import SmoothScroll from "@/components/(User)/Common/SmoothScroll";
+import ScrollToTop from "@/components/(User)/Common/ScrollToTop";
 import { baseFont } from "@/lib/font";
 import { BackgroundBeamsWrapper } from "@/components/(User)/Common/BackgroundBeamsWrapper";
 
@@ -26,14 +28,19 @@ export default function RootLayout({
         <BackgroundBeamsWrapper />
       </div>
 
-      <Navbar />
+      <SmoothScroll>
+        <Navbar />
 
-      {/* Page Content */}
-      <main className="flex-grow relative font-sans">
-        {children}
-      </main>
+        {/* Page Content */}
+        <main className="flex-grow relative font-sans">
+          {children}
+        </main>
 
-      <Footer />
+        <Footer />
+      </SmoothScroll>
+
+      {/* Scroll to Top — positioned above the audio mute button */}
+      <ScrollToTop />
 
     </div>
   );
