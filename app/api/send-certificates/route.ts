@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
                 }
 
                 const attachments = [];
+                const membersData: any = participant.groupMembersData || {};
 
                 for (const event of participant.events) {
                     const certId = `${participant.uuid.slice(0, 8)}-${event.id}`;
@@ -74,6 +75,28 @@ export async function POST(req: NextRequest) {
                         content: pdfBuffer,
                         contentType: 'application/pdf'
                     });
+
+                    // Check for group members for this event
+                    const groupEventData = membersData[event.id.toString()];
+                    if (groupEventData && Array.isArray(groupEventData.members)) {
+                        for (let i = 0; i < groupEventData.members.length; i++) {
+                            const member = groupEventData.members[i];
+                            if (!member.name) continue;
+
+                            const memberCertId = `${participant.uuid.slice(0, 8)}-${event.id}-M${i}`;
+                            const memberPdfBuffer = await generateCertificate(
+                                member.name,
+                                event.eventName,
+                                memberCertId
+                            );
+
+                            attachments.push({
+                                filename: `Certificate_${member.name.replace(/\s+/g, '_')}_${event.eventName.replace(/\s+/g, '_')}.pdf`,
+                                content: memberPdfBuffer,
+                                contentType: 'application/pdf'
+                            });
+                        }
+                    }
                 }
 
                 await sendEmail(

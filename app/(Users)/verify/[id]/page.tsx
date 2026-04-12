@@ -29,11 +29,12 @@ export default async function VerifyPage(props: { params: Promise<{ id: string }
         };
       }
     } else {
-      // Normal registration: format [8_char_uuid]-[event_id]
+      // Normal registration: format [8_char_uuid]-[event_id] or [8_char_uuid]-[event_id]-[M_index]
       const parts = id.split("-");
       if (parts.length >= 2) {
         const shortUuid = parts[0];
         const eventId = parseInt(parts[1], 10);
+        const memberTag = parts.length === 3 ? parts[2] : null;
         
         const participant = await db.participant.findFirst({
           where: { uuid: { startsWith: shortUuid } },
@@ -41,8 +42,19 @@ export default async function VerifyPage(props: { params: Promise<{ id: string }
         });
         
         if (participant && participant.events.length > 0) {
+          let verifiedName = participant.name;
+          
+          if (memberTag && memberTag.startsWith("M")) {
+              const memberIndex = parseInt(memberTag.slice(1), 10);
+              const membersData: any = participant.groupMembersData || {};
+              const groupEventData = membersData[eventId.toString()];
+              if (groupEventData && Array.isArray(groupEventData.members) && groupEventData.members[memberIndex]) {
+                  verifiedName = groupEventData.members[memberIndex].name;
+              }
+          }
+
           details = {
-            name: participant.name,
+            name: verifiedName,
             eventName: participant.events[0].eventName,
             issueDate: participant.updatedAt,
             type: "Event Participation"
