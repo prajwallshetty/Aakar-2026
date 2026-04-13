@@ -11,7 +11,7 @@ const FEATURED_ACTS = [
     id: "dj",
     title: "DJ Lineup",
     subtitle: "DJ EVE",
-    image: "/night/DJ.png",
+    image: "/night/dj.png",
     video: "/night/DJ.mp4",
     tag: "Pro-Nite",
     accent: "#22d3ee",    // cyan
@@ -20,7 +20,7 @@ const FEATURED_ACTS = [
   {
     id: "concert",
     title: "Live Concert",
-    subtitle: "The Midnight Echoes",
+    subtitle: "Vortex blr",
     image: "/night/vortex.png",
     video: "/night/vortex.mp4",
     tag: "Headliner",
