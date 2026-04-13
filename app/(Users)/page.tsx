@@ -13,7 +13,7 @@ export default function Home() {
       <LandingPage />
       <MarqueeStrip />
       <Eventcards />
-      <MysteryReveal />
+      <FeaturedActs />
       <ElitePassPromo />
       <CountdownRegister />
     </>
