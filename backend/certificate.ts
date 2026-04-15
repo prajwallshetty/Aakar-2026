@@ -26,7 +26,7 @@ export async function generateCertificate(participantName: string, eventName: st
         
         // Draw Name - Positioned roughly in the middle
         // Note: These coordinates might need adjustment based on the actual visual design of certificate_template.pdf
-        const nameFontSize = 30;
+        const nameFontSize = 24;
         const nameText = participantName.toUpperCase();
         const nameWidth = fontBold.widthOfTextAtSize(nameText, nameFontSize);
         
@@ -39,7 +39,7 @@ export async function generateCertificate(participantName: string, eventName: st
         });
 
         // Draw Event Name
-        const eventFontSize = 24;
+        const eventFontSize = 18;
         const eventText = eventName;
         const eventWidth = fontRegular.widthOfTextAtSize(eventText, eventFontSize);
         
@@ -54,7 +54,7 @@ export async function generateCertificate(participantName: string, eventName: st
         // Draw Certificate ID for verification (bottom left)
         firstPage.drawText(`Certificate ID: ${certificateId}`, {
             x: 40,
-            y: 50,
+            y: 35,
             size: 10,
             font: fontRegular,
             color: rgb(0.4, 0.4, 0.4),
@@ -67,10 +67,10 @@ export async function generateCertificate(participantName: string, eventName: st
         const qrImage = await pdfDoc.embedPng(qrImageBytes);
         
         // Position QR code in bottom right corner
-        const qrSize = 75;
+        const qrSize = 55;
         firstPage.drawImage(qrImage, {
             x: width - qrSize - 40,
-            y: 50,
+            y: 35,
             width: qrSize,
             height: qrSize,
         });
@@ -78,7 +78,7 @@ export async function generateCertificate(participantName: string, eventName: st
         // Draw Verification URL text under QR
         firstPage.drawText('aakar.live/verify', {
             x: width - qrSize - 40,
-            y: 35,
+            y: 22,
             size: 8,
             font: fontRegular,
             color: rgb(0.5, 0.5, 0.5),
