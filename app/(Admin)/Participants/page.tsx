@@ -93,6 +93,7 @@ export default function ParticipantsPage() {
 
             if (response.error) {
                 setError(typeof response.error === "string" ? response.error : "Failed to fetch participants");
+                setIsLoading(false);
                 return;
             }
 
@@ -100,35 +101,34 @@ export default function ParticipantsPage() {
                 const sortedData = sortParticipantsByNewest(response.data);
                 setParticipants(sortedData);
                 setFilteredParticipants(sortedData);
+                setIsLoading(false); // Stop loading to show initial results immediately
 
                 if (isInitialLoad) {
-                    try {
-                        const allResponse = await getParticipantsWithEvents();
-                        const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
-                        if (allResponse.data) {
-                            setAllParticipants(allSortedParticipants);
-                            setTotalItems(allSortedParticipants.length);
-                            setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
-
-                            const startIndex = (page - 1) * pageSize;
-                            const endIndex = page * pageSize;
-                            const paginatedData = allSortedParticipants.slice(startIndex, endIndex);
-                            setParticipants(paginatedData);
-                            setFilteredParticipants(paginatedData);
-
-                            const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[];
-                            setColleges(uniqueColleges);
-                        }
-                    } catch (err) {
-                        console.error("Error fetching all participants for stats:", err);
-                    }
                     setIsInitialLoad(false);
+                    // Fetch all participants asynchronously in the background for filtering and stats
+                    getParticipantsWithEvents().then((allResponse) => {
+                        try {
+                            if (allResponse.data) {
+                                const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
+                                setAllParticipants(allSortedParticipants);
+                                setTotalItems(allSortedParticipants.length);
+                                setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
+
+                                const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[];
+                                setColleges(uniqueColleges);
+                                
+                                // In case the page was changed while background loading, update the current view
+                                setFilteredParticipants(allSortedParticipants.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+                            }
+                        } catch (err) {
+                            console.error("Error fetching all participants for stats:", err);
+                        }
+                    }).catch(err => console.error("Error fetching all participants:", err));
                 }
             }
         } catch (err) {
             setError("An error occurred while fetching participants");
             console.error(err);
-        } finally {
             setIsLoading(false);
         }
     };

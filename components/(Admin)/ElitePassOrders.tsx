@@ -44,9 +44,21 @@ export default function ElitePassOrders() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const response = await getElitePassOrders();
-      if (response.data) setOrders(response.data as ElitePassOrderRow[]);
+      
+      // Fast Initial Load
+      const response = await getElitePassOrders(0, 50);
+      if (response.data) {
+        setOrders(response.data as ElitePassOrderRow[]);
+      }
       setLoading(false);
+      
+      // Async Background Full Load (for searching / complete data)
+      getElitePassOrders().then((allResponse) => {
+        if (allResponse.data) {
+          setOrders(allResponse.data as ElitePassOrderRow[]);
+        }
+      }).catch(err => console.error("Error fetching all elite pass orders:", err));
+      
     })();
   }, []);
 

@@ -37,9 +37,21 @@ export default function MerchOrders() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const response = await getMerchOrders();
-      if (response.data) setOrders(response.data as MerchOrderRow[]);
+      
+      // Fast Initial Load
+      const response = await getMerchOrders(0, 50);
+      if (response.data) {
+        setOrders(response.data as MerchOrderRow[]);
+      }
       setLoading(false);
+      
+      // Async Background Full Load
+      getMerchOrders().then((allResponse) => {
+        if (allResponse.data) {
+          setOrders(allResponse.data as MerchOrderRow[]);
+        }
+      }).catch(err => console.error("Error fetching all merch orders:", err));
+      
     })();
   }, []);
 

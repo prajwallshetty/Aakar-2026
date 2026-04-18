@@ -237,7 +237,7 @@ export async function createMerchOrder(data: MerchOrderInput): Promise<ServiceRe
   }
 }
 
-export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
+export async function getMerchOrders(index?: number, limit?: number): Promise<ServiceResponse<any[]>> {
   try {
     if (!(await isAdmin())) {
       return { data: null, error: "Unauthorized" };
@@ -248,7 +248,12 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
       await merchDb.$executeRawUnsafe(`ALTER TABLE "MerchOrder" ADD COLUMN IF NOT EXISTS "confirmationSent" BOOLEAN DEFAULT false;`);
     } catch {}
 
-    const orders = await merchDb.$queryRaw<Array<any>>`
+    let limitClause = "";
+    if (index !== undefined && limit !== undefined) {
+       limitClause = `LIMIT ${limit} OFFSET ${index * limit}`;
+    }
+
+    const orders = await merchDb.$queryRawUnsafe(`
       SELECT
         "id",
         "uuid",
@@ -264,7 +269,8 @@ export async function getMerchOrders(): Promise<ServiceResponse<any[]>> {
         "confirmationSent"
       FROM "MerchOrder"
       ORDER BY "createdAt" DESC
-    `;
+      ${limitClause}
+    `);
     const normalizedOrders = (orders || []).map((order: any) => ({
       ...order,
       merchVariant: normalizeMerchVariant(order.merchVariant || inferVariantFromAmount(order.amount)),

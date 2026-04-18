@@ -124,20 +124,29 @@ async function createElitePassOrderRecord(client: any, data: {
   return inserted[0] ?? null;
 }
 
-async function listElitePassOrders(client: any) {
+async function listElitePassOrders(client: any, index?: number, limit?: number) {
   const elitePassOrder = getElitePassOrderDelegate(client);
 
   if (elitePassOrder) {
+    if (index !== undefined && limit !== undefined) {
+      return elitePassOrder.findMany({ orderBy: { createdAt: "desc" }, skip: index * limit, take: limit });
+    }
     return elitePassOrder.findMany({ orderBy: { createdAt: "desc" } });
   }
 
   await ensureElitePassOrderTable(client);
 
-  return client.$queryRaw<Array<any>>`
+  let limitClause = "";
+  if (index !== undefined && limit !== undefined) {
+    limitClause = `LIMIT ${limit} OFFSET ${index * limit}`;
+  }
+
+  return client.$queryRawUnsafe(`
     SELECT *
     FROM "ElitePassOrder"
     ORDER BY "createdAt" DESC
-  `;
+    ${limitClause}
+  `);
 }
 
 function normalizePhone(phone: string): string {
@@ -465,14 +474,14 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
   }
 }
 
-export async function getElitePassOrders(): Promise<ServiceResponse<any[]>> {
+export async function getElitePassOrders(index?: number, limit?: number): Promise<ServiceResponse<any[]>> {
   try {
     if (!(await isAdmin())) {
       return { data: null, error: "Unauthorized" };
     }
 
     const passDb = db as any;
-    const orders = await listElitePassOrders(passDb);
+    const orders = await listElitePassOrders(passDb, index, limit);
     return { data: orders, error: null };
   } catch (error) {
     console.error("Error fetching Elite Pass orders:", error);
