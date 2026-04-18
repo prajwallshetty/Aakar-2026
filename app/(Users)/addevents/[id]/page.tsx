@@ -128,15 +128,22 @@ export default function AddAdditionalEvents({
         data: typeof selectedEvents,
         groupData: typeof groupEventData
     ): Promise<void> {
-        let fileUrl = await uploadFile(
-            paymentScreenshot!,
-            "paymentscreenshots"
-        );
-        if (!fileUrl) return;
+        let fileUrl = "";
+        if (totalAmount > 0) {
+            const url = await uploadFile(
+                paymentScreenshot!,
+                "paymentscreenshots"
+            );
+            if (!url) return;
+            fileUrl = url;
+        }
+
         await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
-            paymentScreenshotUrls: { push: fileUrl },
-            transaction_ids: { push: transactionId },
+            ...(totalAmount > 0 ? {
+                paymentScreenshotUrls: { push: fileUrl },
+                transaction_ids: { push: transactionId },
+            } : {}),
             groupMembersData: groupData
                 ? { ...(userInfo!.groupMembersData || {}), ...groupData }
                 : userInfo!.groupMembersData || {},
@@ -290,6 +297,15 @@ export default function AddAdditionalEvents({
                 }
             }
         });
+
+        if (totalAmount > 0) {
+            if (!transactionId || transactionId.trim() === "") {
+                errors.transactionId = "Transaction ID is required";
+            }
+            if (!paymentScreenshot) {
+                errors.paymentScreenshot = "Payment screenshot is required";
+            }
+        }
 
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -622,59 +638,61 @@ export default function AddAdditionalEvents({
                             <div style={{ height: '1px', background: `linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}44, transparent)` }} />
 
                             {/* QR & Payment */}
-                            <div className="ae-qr-card">
-                                <div className="ae-scan" />
-                                <div className="relative z-10">
-                                    <p className="ae-tag mb-1">Tribute</p>
-                                    <p className={`ae-section-title mb-5 ${cinzelFont.className}`}>Payment</p>
+                            {totalAmount > 0 && (
+                                <div className="ae-qr-card">
+                                    <div className="ae-scan" />
+                                    <div className="relative z-10">
+                                        <p className="ae-tag mb-1">Tribute</p>
+                                        <p className={`ae-section-title mb-5 ${cinzelFont.className}`}>Payment</p>
 
-                                    <div className="ae-price-row mb-6">
-                                        <div>
-                                            <p className="ae-label" style={{ marginBottom: '0.2rem' }}>Total Amount</p>
-                                            <span className="ae-price-val">₹{totalAmount}</span>
+                                        <div className="ae-price-row mb-6">
+                                            <div>
+                                                <p className="ae-label" style={{ marginBottom: '0.2rem' }}>Total Amount</p>
+                                                <span className="ae-price-val">₹{totalAmount}</span>
+                                            </div>
+                                            {!showQRCode && (
+                                                <button type="button" onClick={generateQRCode} className="ae-btn" style={{ fontSize: '0.6rem' }}>
+                                                    Generate QR
+                                                </button>
+                                            )}
                                         </div>
-                                        {!showQRCode && (
-                                            <button type="button" onClick={generateQRCode} className="ae-btn" style={{ fontSize: '0.6rem' }}>
-                                                Generate QR
-                                            </button>
+
+                                        {showQRCode ? (
+                                            <div className="flex justify-center mb-6">
+                                                <img src={qrImageUrl || "/placeholder.svg"} alt="Payment QR Code" className="w-52 h-52 border-2 p-2 rounded-xl bg-white" style={{ borderColor: ANIME_COLORS.primary }} />
+                                            </div>
+                                        ) : (
+                                            <p className="ae-label text-center mb-6">Select events above, then generate QR to pay.</p>
                                         )}
-                                    </div>
 
-                                    {showQRCode ? (
-                                        <div className="flex justify-center mb-6">
-                                            <img src={qrImageUrl || "/placeholder.svg"} alt="Payment QR Code" className="w-52 h-52 border-2 p-2 rounded-xl bg-white" style={{ borderColor: ANIME_COLORS.primary }} />
-                                        </div>
-                                    ) : (
-                                        <p className="ae-label text-center mb-6">Select events above, then generate QR to pay.</p>
-                                    )}
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label htmlFor="transactionId" className="ae-label">Transaction ID / Reference</label>
-                                            <input
-                                                type="text"
-                                                id="transactionId"
-                                                value={transactionId}
-                                                onChange={(e) => setTransactionId(e.target.value)}
-                                                placeholder="Enter transaction ID"
-                                                className={`ae-input ${formErrors.transactionId ? "error" : ""}`}
-                                            />
-                                            {formErrors.transactionId && <p className="ae-error">{formErrors.transactionId}</p>}
-                                        </div>
-                                        <div>
-                                            <label htmlFor="paymentScreenshot" className="ae-label">Payment Screenshot</label>
-                                            <input
-                                                type="file"
-                                                id="paymentScreenshot"
-                                                accept="image/*"
-                                                onChange={(e) => setPaymentScreenshot(e.target.files![0])}
-                                                className={`ae-input cursor-pointer ${formErrors.paymentScreenshot ? "error" : ""}`}
-                                            />
-                                            {formErrors.paymentScreenshot && <p className="ae-error">{formErrors.paymentScreenshot}</p>}
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label htmlFor="transactionId" className="ae-label">Transaction ID / Reference</label>
+                                                <input
+                                                    type="text"
+                                                    id="transactionId"
+                                                    value={transactionId}
+                                                    onChange={(e) => setTransactionId(e.target.value)}
+                                                    placeholder="Enter transaction ID"
+                                                    className={`ae-input ${formErrors.transactionId ? "error" : ""}`}
+                                                />
+                                                {formErrors.transactionId && <p className="ae-error">{formErrors.transactionId}</p>}
+                                            </div>
+                                            <div>
+                                                <label htmlFor="paymentScreenshot" className="ae-label">Payment Screenshot</label>
+                                                <input
+                                                    type="file"
+                                                    id="paymentScreenshot"
+                                                    accept="image/*"
+                                                    onChange={(e) => setPaymentScreenshot(e.target.files![0])}
+                                                    className={`ae-input cursor-pointer ${formErrors.paymentScreenshot ? "error" : ""}`}
+                                                />
+                                                {formErrors.paymentScreenshot && <p className="ae-error">{formErrors.paymentScreenshot}</p>}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
 
                             {formErrors.submit && (
                                 <div className="ae-error" style={{ border: `1.5px solid ${ANIME_COLORS.accent}90`, background: `${ANIME_COLORS.accent}18`, padding: '0.7rem 1rem', borderRadius: '6px' }}>
