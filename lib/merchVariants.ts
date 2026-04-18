@@ -16,7 +16,7 @@ export const merchVariants: MerchVariant[] = [
     title: "Aakar Ascend",
     tag: "CORE DROP",
     price: 399,
-    modelUrl: "/model/aakarmodel1.glb",
+    modelUrl: "/model/aakarnew1.glb",
     description:
       "A unified visual bringing together multiple anime identities into one powerful composition, designed to represent diversity, strength, and character-driven expression",
     features: [
@@ -31,7 +31,7 @@ export const merchVariants: MerchVariant[] = [
     title: "Aakar Pulse",
     tag: "NIGHT EDIT",
     price: 399,
-    modelUrl: "/model/aakarmodel2.glb",
+    modelUrl: "/model/aakarnew2.glb",
     description:
       "A high-impact composition driven by anime intensity and sharp visual contrast, built for bold presence and statement-driven styling.",
     features: [
@@ -46,7 +46,7 @@ export const merchVariants: MerchVariant[] = [
     title: "Aakar Ignite",
     tag: "LIMITED CUT",
     price: 399,
-    modelUrl: "/model/aakarmodel3.glb",
+    modelUrl: "/model/aakarnew3.glb",
     description:
       "Subtle composition with bold cultural influence, blending Japanese wave motion with sharp contrast elements for a refined streetwear presence.",
     features: [

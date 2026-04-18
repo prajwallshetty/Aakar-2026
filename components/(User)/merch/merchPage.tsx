@@ -4,8 +4,9 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { cinzelFont } from "@/lib/font";
 import { useMemo, useState } from "react";
+import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { Bounds, Center, Environment, OrbitControls, useGLTF } from "@react-three/drei";
+import { Bounds, Center, OrbitControls, useGLTF } from "@react-three/drei";
 import { defaultMerchVariantKey, getMerchVariant, merchVariants } from "@/lib/merchVariants";
 import {
   AnimeCardWrapper,
@@ -21,12 +22,43 @@ import { motion } from "framer-motion";
 
 function TshirtModel({ modelUrl }: { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
-  const centeredScene = scene.clone(true);
+  
+  const clonedScene = useMemo(() => {
+    const cloned = scene.clone(true);
+    cloned.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        const oldMat = child.material;
+        
+        let map = null;
+        let color = new THREE.Color(0xffffff);
+
+        if (oldMat) {
+          if (oldMat.map) map = oldMat.map;
+          if (oldMat.color) color = oldMat.color;
+        }
+
+        const newMat = new THREE.MeshStandardMaterial({
+          map: map,
+          color: color,
+          roughness: 1,
+          metalness: 0,
+          side: THREE.FrontSide,
+          transparent: false,
+          opacity: 1,
+          emissiveIntensity: 0,
+          emissive: new THREE.Color(0x000000)
+        });
+        
+        child.material = newMat;
+      }
+    });
+    return cloned;
+  }, [scene]);
 
   return (
     <group rotation={[0.02, -0.32, 0]}>
       <Center>
-        <primitive object={centeredScene} scale={0.9} position={[0, 0, 0]} />
+        <primitive object={clonedScene} scale={0.9} position={[0, 0, 0]} />
       </Center>
     </group>
   );
@@ -541,14 +573,20 @@ export default function MerchPage() {
                       {merchModelUrl ? (
                         <div className="h-[340px] md:h-[450px] w-full max-w-[400px] overflow-hidden">
                           <Canvas camera={{ position: [0, 0, 6.6], fov: 34 }} dpr={[1, 1.5]}>
-                            <ambientLight intensity={0.9} />
-                            <hemisphereLight intensity={0.95} groundColor="#cdd6ff" />
-                            <directionalLight position={[4, 8, 5]} intensity={1.35} />
+                            <ambientLight intensity={1.5} />
+                            <hemisphereLight intensity={1.2} color="#ffffff" groundColor="#aaaaaa" />
+                            {/* Key Front Lights */}
+                            <directionalLight position={[5, 10, 8]} intensity={2.0} />
+                            <directionalLight position={[-5, 10, 8]} intensity={2.0} />
+                            <directionalLight position={[0, -5, 8]} intensity={1.0} />
+                            {/* Heavy Back Lights to eliminate darkness */}
+                            <directionalLight position={[5, 10, -10]} intensity={3.0} />
+                            <directionalLight position={[-5, 10, -10]} intensity={3.0} />
+                            <directionalLight position={[0, 0, -12]} intensity={2.5} />
                             <Suspense fallback={null}>
                               <Bounds fit clip observe margin={5.8}>
                                 <TshirtModel modelUrl={merchModelUrl} />
                               </Bounds>
-                              <Environment preset="studio" frames={1} />
                             </Suspense>
                             <OrbitControls
                               enablePan={false}
