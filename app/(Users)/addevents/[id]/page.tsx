@@ -144,17 +144,25 @@ export default function AddAdditionalEvents({
         });
     }
 
+    const calculateTotalAmount = (eventsToCalc: typeof selectedEvents) => {
+        const isAjiet = userInfo?.usn?.trim().toUpperCase().startsWith("4JK");
+        return eventsToCalc.reduce((sum, ev) => {
+            const eventDetails = events.find((e) => e.id === ev.id);
+            if (!eventDetails) return sum;
+            if (isAjiet && eventDetails.eventType === "Solo") {
+                return sum; // Free for AJIET students
+            }
+            return sum + (eventDetails.fee || 0);
+        }, 0);
+    };
+
     const handleEventSelection = (selected: any) => {
         const selectedOptions: typeof selectedEvents = selected || [];
         setSelectedEvents([...selectedOptions]);
         setShowQRCode(false);
         setQrImageUrl("");
 
-        const amount = selectedOptions.reduce(
-            (sum: number, event) =>
-                sum + (events.find((e) => e.id === event.id)?.fee || 0),
-            0
-        );
+        const amount = calculateTotalAmount(selectedOptions);
         setTotalAmount(amount);
 
         selectedOptions.forEach((event) => {
@@ -171,14 +179,7 @@ export default function AddAdditionalEvents({
     };
 
     const generateQRCode = () => {
-        const amount =
-            selectedEvents.length > 0
-                ? events
-                    .filter((event) =>
-                        selectedEvents.find((e) => e.id === event.id)
-                    )
-                    .reduce((sum, event) => sum + (event.fee || 0), 0)
-                : 0;
+        const amount = calculateTotalAmount(selectedEvents);
 
         setTotalAmount(amount);
 
@@ -540,7 +541,7 @@ export default function AddAdditionalEvents({
                                                                 return updated;
                                                             });
                                                         }
-                                                        const amount = updatedSelection.reduce((sum, event) => sum + (events.find((e) => e.id === event.id)?.fee || 0), 0);
+                                                        const amount = calculateTotalAmount(updatedSelection);
                                                         setTotalAmount(amount);
                                                     }}
                                                 >×</button>
