@@ -133,16 +133,16 @@ export default async function RootLayout({
         <SpeedInsights />
 
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-EXY2XKHRKM"
+          src="https://www.googletagmanager.com/gtag/js?id=G-7QQM5FM7FQ"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
-          {`
+          {\`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-EXY2XKHRKM');
-          `}
+            gtag('config', 'G-7QQM5FM7FQ');
+          \`}
         </Script>
       </body>
     </html>
