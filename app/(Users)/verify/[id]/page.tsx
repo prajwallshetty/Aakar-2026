@@ -16,7 +16,8 @@ export default async function VerifyPage(props: { params: Promise<{ id: string }
 
   try {
     if (id.startsWith("ELITE-")) {
-      const shortUuid = id.replace("ELITE-", "");
+      // Normalize to lowercase — UUIDs in the DB are lowercase
+      const shortUuid = id.replace("ELITE-", "").toLowerCase();
       const order = await db.elitePassOrder.findFirst({
         where: { uuid: { startsWith: shortUuid } }
       });

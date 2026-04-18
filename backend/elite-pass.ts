@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import { db } from ".";
 import { isAdmin } from "./admin";
 import { sendEmail } from "./nodemailer";
-import { buildElitePassEmail } from "./email-templates";
+import { generateElitePassPDF } from "./elite-pass-pdf";
 import { checkRateLimit } from "./ratelimit";
 
 function getElitePassPrice() {
@@ -357,10 +357,70 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
     });
 
     if (order) {
+      // Fetch event names for the email
+      let eventNames: string[] = [];
+      try {
+        const events = await db.event.findMany({
+          where: { id: { in: normalizedEventIds } },
+          select: { eventName: true },
+        });
+        eventNames = events.map((e) => e.eventName);
+      } catch (err) {
+        console.error('Failed to fetch event names for email:', err);
+      }
+
+      // Generate personalized Elite Pass PDF with unique verification QR
+      let pdfBuffer: Buffer | null = null;
+      try {
+        pdfBuffer = await generateElitePassPDF(order.name, order.usn, order.uuid);
+      } catch (pdfError) {
+        console.error('Failed to generate Elite Pass PDF, sending email without attachment:', pdfError);
+      }
+
+      const attachments = pdfBuffer
+        ? [{
+            filename: `Aakar2026_ElitePass_${order.name.replace(/\s+/g, '_')}.pdf`,
+            content: pdfBuffer,
+            contentType: 'application/pdf',
+          }]
+        : undefined;
+
+      // Build a simple, clean email body
+      const eventListHtml = eventNames.length > 0
+        ? eventNames.map((name) => `<li>${name}</li>`).join('')
+        : '<li>Events will be confirmed shortly</li>';
+
+      const emailHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
+          <div style="background: linear-gradient(135deg, #0a0a2e, #1a0033); padding: 32px 24px; text-align: center;">
+            <h1 style="margin: 0; color: #ffffff; font-size: 24px; letter-spacing: 2px;">ELITE PASS CONFIRMED</h1>
+            <p style="margin: 8px 0 0; color: #a78bfa; font-size: 13px; letter-spacing: 1px;">AAKAR 2026</p>
+          </div>
+          <div style="padding: 28px 24px;">
+            <p style="margin: 0 0 20px; color: #1f2937; font-size: 15px; line-height: 1.6;">
+              Hi <strong>${order.name}</strong>,<br/>Your Elite Pass for Aakar 2026 has been received. Your pass is attached to this email as a PDF.
+            </p>
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
+              <p style="margin: 0 0 10px; font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Registered Events</p>
+              <ul style="margin: 0; padding-left: 18px; color: #374151; font-size: 14px; line-height: 1.8;">
+                ${eventListHtml}
+              </ul>
+            </div>
+            <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5;">
+              Please present the attached Elite Pass at the registration desk during the event.
+            </p>
+          </div>
+          <div style="background: #f3f4f6; padding: 16px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; color: #9ca3af; font-size: 11px;">Aakar 2026 &bull; A.J. Institute of Engineering &amp; Technology</p>
+          </div>
+        </div>
+      `;
+
       await sendEmail(
         order.email,
-        "Elite Pass Confirmed – Aakar 2026! ⚡",
-        buildElitePassEmail(order.name, order.usn, order.transactionId)
+        "Elite Pass Confirmed - Aakar 2026",
+        emailHtml,
+        attachments
       );
     }
 
