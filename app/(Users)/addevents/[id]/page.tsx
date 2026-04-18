@@ -339,7 +339,7 @@ export default function AddAdditionalEvents({
     if (!userInfo) return <Error statusCode={404} />;
 
     return (
-        <main className="relative min-h-screen overflow-hidden">
+        <main className="relative min-h-screen overflow-x-hidden">
             <style>{`
                 ${ANIME_GLOBAL_STYLES}
                 @keyframes neonBreath {
@@ -440,7 +440,7 @@ export default function AddAdditionalEvents({
                 /* react-select override */
                 .ae-select .select__control { background: linear-gradient(135deg,rgba(8,3,18,.92),rgba(12,5,24,.88)) !important; border: 1.5px solid ${ANIME_COLORS.primary}70 !important; border-radius: 6px !important; color: ${ANIME_COLORS.text} !important; font-family: 'Share Tech Mono',monospace !important; font-size: 0.8rem !important; box-shadow: none !important; }
                 .ae-select .select__control--is-focused { border-color: ${ANIME_COLORS.accent} !important; box-shadow: 0 0 18px ${ANIME_COLORS.accent}40 !important; }
-                .ae-select .select__menu { background: rgba(8,3,18,.98) !important; border: 1.5px solid ${ANIME_COLORS.primary}60 !important; border-radius: 8px !important; font-family: 'Share Tech Mono',monospace !important; }
+                .ae-select .select__menu { background: rgba(8,3,18,.98) !important; border: 1.5px solid ${ANIME_COLORS.primary}60 !important; border-radius: 8px !important; font-family: 'Share Tech Mono',monospace !important; z-index: 50 !important; }
                 .ae-select .select__option { background: transparent !important; color: ${ANIME_COLORS.text}cc !important; font-size: 0.78rem !important; }
                 .ae-select .select__option--is-focused { background: ${ANIME_COLORS.primary}25 !important; color: ${ANIME_COLORS.text} !important; }
                 .ae-select .select__option--is-selected { background: ${ANIME_COLORS.accent}30 !important; color: ${ANIME_COLORS.text} !important; }
@@ -515,6 +515,8 @@ export default function AddAdditionalEvents({
                                         placeholder="Choose quests to undertake..."
                                         className={`${montserrat.className} ${formErrors.events ? "error" : ""} w-full`}
                                         classNamePrefix="select"
+                                        menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                 </div>
                                 {formErrors.events && <p className="ae-error mt-1">⚠ {formErrors.events}</p>}
