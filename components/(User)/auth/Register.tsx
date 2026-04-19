@@ -492,6 +492,7 @@ const Register = () => {
         "Sri Mahaveera College, Kodangallu, Moodbidri",
         "Sri Taralabalu Jagadguru Institute of Technology",
         "Srinivas Institute of Engineering and Technology, Mukka",
+        "Srinivas Institute of Engineering and Technology, valachil",
         "Srinivas Institute of Medical Sciences and Research Center, Mukka",
         "St Joseph Engineering College, Vamanjoor, Mangaluru",
         "St. Raymond's Degree College, Vamanjoor, Kudupu, Karnataka",
