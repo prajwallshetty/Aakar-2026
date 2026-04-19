@@ -12,12 +12,12 @@ import {
 
 export default function AakarElitePage() {
   const [isEarlyBird, setIsEarlyBird] = useState(true);
-  const [currentPrice, setCurrentPrice] = useState(399);
+  const [currentPrice, setCurrentPrice] = useState(299);
 
   useEffect(() => {
     const early = new Date() < new Date("2026-04-21T00:00:00+05:30");
     setIsEarlyBird(early);
-    setCurrentPrice(early ? 399 : 459);
+    setCurrentPrice(early ? 299 : 459);
   }, []);
 
   return (

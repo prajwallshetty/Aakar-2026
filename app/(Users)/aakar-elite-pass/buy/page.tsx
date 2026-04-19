@@ -13,7 +13,7 @@ import {
   ANIME_COLORS,
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const PASS_PRICE_EARLY = 399;
+const PASS_PRICE_EARLY = 299;
 const PASS_PRICE_REGULAR = 459;
 
 type SoloEventOption = {
