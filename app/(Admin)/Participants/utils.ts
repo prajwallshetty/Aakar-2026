@@ -1,4 +1,4 @@
-import { getEventsOfAllUsers, getEventsOfUser } from "@/backend/events"
+import { getAllEvents, getEventsOfAllUsers, getEventsOfUser } from "@/backend/events"
 import { ExtendedParticipant } from "@/types"
 import JSZip from "jszip"
 
@@ -547,13 +547,11 @@ export async function downloadEventRegistrationsByCollege(
 ): Promise<void> {
   try {
     const events = await getEventsOfAllUsers()
+    const allEvents = await getAllEvents()
     const eventNameMap: Record<string, string> = {}
 
-    Object.values(events).forEach((userEvents) => {
-      userEvents.forEach((event) => {
-        const eventId = event.id.toString()
-        eventNameMap[eventId] = event.eventName
-      })
+    allEvents.forEach((event) => {
+      eventNameMap[event.id.toString()] = event.eventName
     })
 
     const eventCounts: Record<
@@ -583,11 +581,12 @@ export async function downloadEventRegistrationsByCollege(
     })
 
     const csvData = []
-    for (let id = 2; id <= 41; id++) {
-      const eventId = id.toString()
+    let slNo = 1
+    for (const event of allEvents) {
+      const eventId = event.id.toString()
       csvData.push({
-        "Sl No": eventId,
-        "Event Name": eventNameMap[eventId] || "",
+        "Sl No": slNo++,
+        "Event Name": event.eventName,
         "Total Registrations": eventCounts[eventId]?.total || 0,
         [`Registration of college AJ`]: eventCounts[eventId]?.collegeCount || 0,
         [`Registrations except AJ`]: eventCounts[eventId]?.otherCount || 0,
