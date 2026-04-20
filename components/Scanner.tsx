@@ -147,17 +147,17 @@ const Scanner: React.FC<ScannerProps> = ({ onScan, cooldown = 2000 }) => {
       {/* Scanner Overlay UI */}
       {!error && (
         <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
-          <div className="w-64 h-64 border-2 border-white/50 rounded-3xl relative">
+          <div className="w-1/2 sm:w-64 aspect-square border-2 border-white/50 rounded-2xl sm:rounded-3xl relative">
             {/* Corner Indicators */}
-            <div className="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl"></div>
-            <div className="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl"></div>
-            <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl"></div>
-            <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl"></div>
+            <div className="absolute -top-1 -left-1 w-6 h-6 sm:w-8 sm:h-8 border-t-4 border-l-4 border-white rounded-tl-lg sm:rounded-tl-xl"></div>
+            <div className="absolute -top-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 border-t-4 border-r-4 border-white rounded-tr-lg sm:rounded-tr-xl"></div>
+            <div className="absolute -bottom-1 -left-1 w-6 h-6 sm:w-8 sm:h-8 border-b-4 border-l-4 border-white rounded-bl-lg sm:rounded-bl-xl"></div>
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 border-b-4 border-r-4 border-white rounded-br-lg sm:rounded-br-xl"></div>
             
             {/* Scanning Line Animation */}
             <div className="absolute top-0 left-0 w-full h-1 bg-white/40 animate-scan-line"></div>
           </div>
-          <p className="mt-8 text-white/70 text-sm tracking-widest font-medium uppercase">
+          <p className="mt-8 text-white/70 text-[10px] sm:text-sm tracking-widest font-medium uppercase px-4 text-center">
             Align QR Code within frame
           </p>
         </div>

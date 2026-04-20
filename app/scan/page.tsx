@@ -104,14 +104,14 @@ export default function ScanPage() {
 
             {!loading && error && (
               <div className="text-center w-full max-w-md animate-in fade-in zoom-in duration-300">
-                <XCircle size={100} className="mx-auto mb-6 opacity-80" />
-                <h2 className="text-5xl font-black mb-4 uppercase tracking-tighter">
+                <XCircle size={80} className="mx-auto mb-4 opacity-80 sm:w-24 sm:h-24" />
+                <h2 className="text-3xl sm:text-5xl font-black mb-2 sm:mb-4 uppercase tracking-tighter">
                   {error === "Invalid QR" ? "INVALID QR" : "ERROR"}
                 </h2>
-                <p className="text-xl mb-12 opacity-80">{error}</p>
+                <p className="text-lg sm:text-xl mb-8 sm:mb-12 opacity-80">{error}</p>
                 <button 
                   onClick={resetScanner}
-                  className="w-full py-5 bg-white text-black text-xl font-bold rounded-2xl shadow-2xl flex items-center justify-center gap-3 active:scale-95 transition-transform"
+                  className="w-full py-4 sm:py-5 bg-white text-black text-lg sm:text-xl font-bold rounded-xl sm:rounded-2xl shadow-2xl flex items-center justify-center gap-3 active:scale-95 transition-transform"
                 >
                   <RefreshCw size={24} /> Scan Next
                 </button>
@@ -119,40 +119,40 @@ export default function ScanPage() {
             )}
 
             {!loading && result && (
-              <div className="w-full max-w-lg flex flex-col items-center animate-in slide-in-from-bottom duration-500">
+              <div className="w-full max-w-lg flex flex-col items-center animate-in slide-in-from-bottom duration-500 overflow-y-auto no-scrollbar max-h-full py-4">
                 {/* Large Result Icon */}
                 {React.createElement(statusConfig[result.paymentStatus].icon, {
-                    size: 80,
-                    className: "mb-6 opacity-30 absolute top-1/4 -right-8 -rotate-12 pointer-events-none"
+                    size: 60,
+                    className: "mb-4 opacity-20 absolute top-10 -right-4 -rotate-12 pointer-events-none sm:size-[100px]"
                 })}
 
-                <div className="w-full text-center mb-10">
-                    <p className="text-sm font-bold uppercase tracking-[0.3em] opacity-60 mb-2">Participant Name</p>
-                    <h2 className="text-5xl font-black leading-tight break-words uppercase">
+                <div className="w-full text-center mb-6 sm:mb-10">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-60 mb-1 sm:mb-2 italic">Participant Name</p>
+                    <h2 className="text-3xl sm:text-5xl font-black leading-tight break-words uppercase">
                         {result.name}
                     </h2>
                 </div>
 
-                <div className="w-full grid grid-cols-1 gap-6 mb-12">
+                <div className="w-full grid grid-cols-1 gap-4 sm:gap-6 mb-8 sm:mb-12">
                     <DetailItem label="College" value={result.college} />
-                    <div className="grid grid-cols-2 gap-6 w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
                         <DetailItem label="USN" value={result.usn} />
                         <DetailItem label="Phone" value={result.phone} />
                     </div>
-                    <div className="p-6 bg-white/10 rounded-2xl backdrop-blur-sm flex items-center justify-between">
+                    <div className="p-4 sm:p-6 bg-white/10 rounded-xl sm:rounded-2xl backdrop-blur-sm flex items-center justify-between border border-white/5">
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">Payment Status</p>
-                            <p className="text-2xl font-black uppercase tracking-wide">{result.paymentStatus}</p>
+                            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-60 mb-1">Payment Status</p>
+                            <p className="text-xl sm:text-2xl font-black uppercase tracking-wide">{result.paymentStatus}</p>
                         </div>
-                        {React.createElement(statusConfig[result.paymentStatus].icon, { size: 40 })}
+                        {React.createElement(statusConfig[result.paymentStatus].icon, { size: 32, className: "sm:size-10" })}
                     </div>
                 </div>
 
                 <button 
                   onClick={resetScanner}
-                  className="w-full py-6 bg-white text-black text-2xl font-black rounded-3xl shadow-xl flex items-center justify-center gap-4 active:scale-95 transition-transform uppercase tracking-tighter"
+                  className="w-full py-5 sm:py-6 bg-white text-black text-xl sm:text-2xl font-black rounded-2xl sm:rounded-3xl shadow-xl flex items-center justify-center gap-4 active:scale-95 transition-transform uppercase tracking-tighter sticky bottom-0"
                 >
-                  <RefreshCw size={28} /> Next Verification
+                  <RefreshCw size={24} className="sm:size-7" /> Next Verification
                 </button>
               </div>
             )}
@@ -172,9 +172,9 @@ export default function ScanPage() {
 
 function DetailItem({ label, value }: { label: string; value: string }) {
     return (
-        <div className="w-full text-left p-6 bg-black/20 rounded-2xl border border-white/10 backdrop-blur-sm">
-            <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">{label}</p>
-            <p className="text-xl font-bold truncate tracking-tight">{value}</p>
+        <div className="w-full text-left p-4 sm:p-6 bg-black/20 rounded-xl sm:rounded-2xl border border-white/10 backdrop-blur-sm">
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-60 mb-1">{label}</p>
+            <p className="text-lg sm:text-xl font-bold truncate tracking-tight">{value}</p>
         </div>
     );
 }
