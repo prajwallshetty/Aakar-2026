@@ -531,3 +531,39 @@ export async function updateElitePassOrder(id: number, data: any): Promise<Servi
     return { data: null, error: "Failed to update Elite Pass order" };
   }
 }
+
+export async function verifyElitePass(passId: string): Promise<ServiceResponse<any>> {
+  try {
+    const passDb = db as any;
+
+    // The passId is in format "ELITE-<8-char-uuid-prefix>"
+    const uuidPrefix = passId.startsWith("ELITE-") 
+      ? passId.replace("ELITE-", "") 
+      : passId;
+
+    const order = await passDb.elitePassOrder.findFirst({
+      where: {
+        uuid: {
+          startsWith: uuidPrefix,
+          mode: 'insensitive' // Be safe with casing
+        }
+      },
+      select: {
+        name: true,
+        usn: true,
+        college: true,
+        phone: true,
+        paymentStatus: true,
+      },
+    });
+
+    if (!order) {
+      return { data: null, error: "Invalid QR" };
+    }
+
+    return { data: order, error: null };
+  } catch (error) {
+    console.error("Error verifying Elite Pass:", error);
+    return { data: null, error: "Verification failed" };
+  }
+}
