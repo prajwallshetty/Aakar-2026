@@ -9,8 +9,7 @@ import { generateElitePassPDF } from "./elite-pass-pdf";
 import { checkRateLimit } from "./ratelimit";
 
 function getElitePassPrice() {
-  const isEarlyBird = new Date() < new Date("2026-04-21T00:00:00+05:30");
-  return isEarlyBird ? 299 : 459;
+  return 299;
 }
 
 type ElitePassOrderInput = {

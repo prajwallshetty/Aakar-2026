@@ -11,14 +11,7 @@ import {
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
 export default function AakarElitePage() {
-  const [isEarlyBird, setIsEarlyBird] = useState(true);
-  const [currentPrice, setCurrentPrice] = useState(299);
-
-  useEffect(() => {
-    const early = new Date() < new Date("2026-04-21T00:00:00+05:30");
-    setIsEarlyBird(early);
-    setCurrentPrice(early ? 299 : 459);
-  }, []);
+  const currentPrice = 299;
 
   return (
     <>
@@ -475,20 +468,9 @@ export default function AakarElitePage() {
                     <div className="price-section relative z-10">
                         <div className="price-row">
                             <div>
-                                {isEarlyBird && (
-                                <span className="limited-tag" style={{
-                                    fontFamily: "'Share Tech Mono', monospace",
-                                    fontSize: "0.6rem", color: ANIME_COLORS.secondary,
-                                    background: `${ANIME_COLORS.secondary}20`, padding: "0.3rem 0.6rem",
-                                    borderRadius: "4px", border: `1px solid ${ANIME_COLORS.secondary}`,
-                                    textTransform: "uppercase", letterSpacing: "0.1em",
-                                    marginBottom: "0.5rem", display: "inline-block",
-                                }}>Early Bird — Till 20th!</span>
-                                )}
                                 <span className="price-label">Cost</span>
                                 <div className="flex items-baseline gap-3">
                                     <span className="price-val">₹{currentPrice}</span>
-                                    {isEarlyBird && <span className="font-mono text-[1.2rem] line-through text-zinc-500">₹459</span>}
                                 </div>
                             </div>
                         </div>

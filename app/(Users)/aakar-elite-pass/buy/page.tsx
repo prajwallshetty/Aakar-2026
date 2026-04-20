@@ -13,8 +13,7 @@ import {
   ANIME_COLORS,
 } from "@/components/(User)/AnimeTheme/AnimeThemeComponents";
 
-const PASS_PRICE_EARLY = 299;
-const PASS_PRICE_REGULAR = 459;
+const PASS_PRICE = 299;
 
 type SoloEventOption = {
   id: number;
@@ -301,8 +300,7 @@ export default function ElitePassBuyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
   const [paymentStep, setPaymentStep] = useState<"details" | "payment" | "confirm">("details");
-  const [isEarlyBird, setIsEarlyBird] = useState(true);
-  const [currentPrice, setCurrentPrice] = useState(PASS_PRICE_EARLY);
+  const [currentPrice, setCurrentPrice] = useState(PASS_PRICE);
 
   const selectStyles = {
     control: (base: any, state: any) => ({
@@ -356,12 +354,8 @@ export default function ElitePassBuyPage() {
   useEffect(() => {
     let cancelled = false;
 
-    // Check early bird pricing safely
-    const early = new Date() < new Date("2026-04-21T00:00:00+05:30");
-    if (!cancelled) {
-      setIsEarlyBird(early);
-      setCurrentPrice(early ? PASS_PRICE_EARLY : PASS_PRICE_REGULAR);
-    }
+    // Set price
+    setCurrentPrice(PASS_PRICE);
 
     async function loadSoloEvents() {
       setIsLoadingSoloEvents(true);
@@ -1003,7 +997,7 @@ export default function ElitePassBuyPage() {
                           <div className="font-mono text-sm" style={{ color: ANIME_COLORS.text }}>ajiet@cnrb</div>
                         </div>
                         <div className="font-mono text-xs" style={{ color: `${ANIME_COLORS.secondary}bb`, letterSpacing: "0.2em" }}>
-                          Pay ₹{currentPrice} {isEarlyBird && "(Early Bird)"}
+                          Pay ₹{currentPrice}
                         </div>
                         
                         {upiDeepLink && (
@@ -1122,11 +1116,9 @@ export default function ElitePassBuyPage() {
 
                     <div className="price-row relative z-10">
                       <div>
-                        {isEarlyBird && <span className="limited-tag">Early Bird — Till 20th!</span>}
                         <span className="price-label">Amount</span>
                         <div className="flex items-baseline gap-2">
                           <span className="price-val">₹{currentPrice}</span>
-                          {isEarlyBird && <span className="price-old">₹{PASS_PRICE_REGULAR}</span>}
                         </div>
                       </div>
                     </div>

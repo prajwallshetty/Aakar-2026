@@ -83,18 +83,6 @@ export const ElitePassPopup = () => {
                     overflow: "hidden",
                     backdropFilter: "blur(12px)",
                 }}>
-                    <div style={{ 
-                        padding: "8px", 
-                        background: `linear-gradient(90deg, ${ANIME_COLORS.primary}40, ${ANIME_COLORS.secondary}40)`,
-                        textAlign: "center", 
-                        fontFamily: "'Cinzel', serif", 
-                        fontSize: "12px", 
-                        fontWeight: "bold",
-                        letterSpacing: "2px", 
-                        color: ANIME_COLORS.text 
-                    }}>
-                        ⚡ SPECIAL OFFER ⚡
-                    </div>
                     <ElitePassCard />
                 </div>
             </div>
