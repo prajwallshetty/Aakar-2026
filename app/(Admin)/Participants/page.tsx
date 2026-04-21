@@ -36,8 +36,10 @@ import {
     ChevronLeft,
     ChevronFirst,
     ChevronLast,
+    UserPlus,
 } from "lucide-react";
 import React from "react";
+import Link from "next/link";
 import { getParticipantsWithEvents } from "@/backend/participant";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -434,6 +436,12 @@ export default function ParticipantsPage() {
                                     </div>
 
                                     <div className="flex flex-col sm:flex-row gap-2">
+                                        <Button asChild className="cursor-pointer">
+                                            <Link href="/Participants/add">
+                                                <UserPlus className="mr-2 h-4 w-4" />
+                                                <span className="whitespace-nowrap">Add Participant</span>
+                                            </Link>
+                                        </Button>
                                         <Button
                                             onClick={handleDownloadAll}
                                             className="cursor-pointer"
