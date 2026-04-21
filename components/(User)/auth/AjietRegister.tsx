@@ -284,9 +284,10 @@ const AjietRegister = () => {
         selectedOptions.forEach((event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
 
-            // FREE ONLY if SOLO AND NOT SPECIAL
+            // FREE ONLY if SOLO or if event is ID 32
             if (
-                eventObj?.eventType === "Solo"
+                eventObj?.eventType === "Solo" ||
+                eventObj?.id === 32
             ) {
                 return;
             }
