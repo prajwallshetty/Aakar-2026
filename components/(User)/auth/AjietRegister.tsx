@@ -283,18 +283,21 @@ const AjietRegister = () => {
 
         selectedOptions.forEach((event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
+            const fee = eventObj?.fee || 0;
+            
+            // Add to original total regardless
+            calculatedOriginalTotal += fee;
 
             // FREE ONLY if SOLO or if event is ID 32
             if (
                 eventObj?.eventType === "Solo" ||
                 eventObj?.id === 32
             ) {
+                // adds 0 to calculatedTotal
                 return;
             }
 
-            const fee = eventObj?.fee || 0;
-            calculatedOriginalTotal += fee;
-            calculatedTotal += eventObj?.eventType === "Team" ? fee * 0.5 : fee;
+            calculatedTotal += eventObj?.eventType === "Team" ? Math.round(fee * 0.5) : fee;
         });
 
         setOriginalTotal(calculatedOriginalTotal);
@@ -495,14 +498,13 @@ const AjietRegister = () => {
     const selectStyles = {
         control: (base: any, state: any) => ({
             ...base, 
-            background: `rgba(15, 10, 25, 0.6) !important`,
+            background: `#080312 !important`,
             border: `1px solid rgba(0, 229, 255, 0.4) !important`,
             borderRadius: "6px",
             boxShadow: state.isFocused ? `0 0 12px ${ANIME_COLORS.secondary}80 !important` : `0 0 8px rgba(0,0,0,0.4)`,
             fontFamily: monoFont, fontSize: 13, minHeight: 44,
             color: `#ffffff !important`,
-            "&:hover": { borderColor: ANIME_COLORS.secondary },
-            backdropFilter: "blur(4px)"
+            "&:hover": { borderColor: ANIME_COLORS.secondary }
         }),
         placeholder: (base: any) => ({
             ...base,
@@ -524,7 +526,7 @@ const AjietRegister = () => {
         }),
         menu: (base: any) => ({
             ...base, 
-            background: `rgba(45, 35, 65, 0.95) !important`, 
+            background: "#0a0516 !important", 
             border: `1px solid rgba(176, 38, 255, 0.5) !important`, 
             borderRadius: "6px",
             boxShadow: `0 10px 30px rgba(0,0,0,0.8)`,

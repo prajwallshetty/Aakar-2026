@@ -365,7 +365,7 @@ export default function RegistrationSuccess() {
           </motion.p>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <InfoChip icon={Mail} text="Quest pass sent to your visual interface (Email)" color={ANIME_COLORS.secondary} />
-            <InfoChip icon={Home} text="Present this digitial signature at the gate" color={ANIME_COLORS.purple} />
+            <InfoChip icon={Home} text="Present this digital signature at the gate" color={ANIME_COLORS.purple} />
             <InfoChip icon={Instagram} text="Follow the official broadcast for updates" color={ANIME_COLORS.primary} />
           </div>
         </div>
