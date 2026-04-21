@@ -201,6 +201,7 @@ const AjietRegister = () => {
     const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({});
     const [generalError, setGeneralError] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
+    const [originalTotal, setOriginalTotal] = useState(0);
     const [showQRCode, setShowQRCode] = useState(false);
     const [qrImageUrl, setQrImageUrl] = useState("");
     const [upiDeepLink, setUpiDeepLink] = useState("");
@@ -277,21 +278,26 @@ const AjietRegister = () => {
         setGroupEventData(newGroupData);
 
         // SOLO FREE LOGIC
-        const total = selectedOptions.reduce((sum: number, event: any) => {
+        let calculatedOriginalTotal = 0;
+        let calculatedTotal = 0;
+
+        selectedOptions.forEach((event: any) => {
             const eventObj = events.find((e) => e.id === event.id);
 
             // FREE ONLY if SOLO AND NOT SPECIAL
             if (
-                eventObj?.eventType === "Solo" &&
-                eventObj?.eventCategory !== "Special"
+                eventObj?.eventType === "Solo"
             ) {
-                return sum;
+                return;
             }
 
-            return sum + (eventObj?.fee || 0);
-        }, 0);
+            const fee = eventObj?.fee || 0;
+            calculatedOriginalTotal += fee;
+            calculatedTotal += eventObj?.eventType === "Team" ? fee * 0.5 : fee;
+        });
 
-        setTotalAmount(total);
+        setOriginalTotal(calculatedOriginalTotal);
+        setTotalAmount(calculatedTotal);
     };
 
     const handleParticipantCountChange = (groupId: string | number, count: number) => {
@@ -991,7 +997,24 @@ const AjietRegister = () => {
                                     textAlign: "center"
                                 }}>
                                     <div style={{ fontFamily: popFont, fontSize: 16, color: ANIME_COLORS.text, letterSpacing: 2 }}>
-                                        Total Amount: ₹{totalAmount}
+                                        {originalTotal > totalAmount ? (
+                                            <>
+                                                <span style={{ textDecoration: 'line-through', opacity: 0.6, marginRight: 8 }}>₹{originalTotal}</span>
+                                                Total Amount: ₹{totalAmount}
+                                                <div style={{ 
+                                                    fontFamily: monoFont, 
+                                                    fontSize: 12, 
+                                                    color: ANIME_COLORS.secondary, 
+                                                    marginTop: 8,
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: 1
+                                                }}>
+                                                    ✨ 50% Group Event Discount Applied! ✨
+                                                </div>
+                                            </>
+                                        ) : (
+                                            `Total Amount: ₹${totalAmount}`
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -1011,9 +1034,32 @@ const AjietRegister = () => {
                         <AnimeSectionHeading index={2}>Payment Details</AnimeSectionHeading>
                         
                         <div style={{ textAlign: "center", marginBottom: 24 }}>
+                            {originalTotal > totalAmount && (
+                                <div style={{ 
+                                    fontFamily: monoFont, 
+                                    fontSize: 14, 
+                                    color: ANIME_COLORS.text, 
+                                    opacity: 0.6, 
+                                    textDecoration: "line-through",
+                                    marginBottom: 4 
+                                }}>
+                                    Original Price: ₹{originalTotal}
+                                </div>
+                            )}
                             <div style={{ fontFamily: popFont, fontSize: 24, color: ANIME_COLORS.accent, letterSpacing: 2 }}>
                                 Amount to Pay: ₹{totalAmount}
                             </div>
+                            {originalTotal > totalAmount && (
+                                <div style={{ 
+                                    fontFamily: monoFont, 
+                                    fontSize: 12, 
+                                    color: ANIME_COLORS.secondary, 
+                                    marginTop: 8,
+                                    letterSpacing: 1
+                                }}>
+                                    Includes 50% Group Discount ✨
+                                </div>
+                            )}
                         </div>
 
                         {showQRCode && qrImageUrl && (
@@ -1168,7 +1214,8 @@ const AjietRegister = () => {
                             )}
                             {totalAmount > 0 && (
                                 <div style={{ fontFamily: monoFont, fontSize: 13, color: ANIME_COLORS.accent, marginTop: 8 }}>
-                                    <strong>Amount:</strong> ₹{totalAmount}
+                                    <strong>Amount to Pay:</strong> ₹{totalAmount}
+                                    {originalTotal > totalAmount && <span style={{ opacity: 0.6, marginLeft: 8 }}>(Discounted from ₹{originalTotal})</span>}
                                 </div>
                             )}
                         </div>
