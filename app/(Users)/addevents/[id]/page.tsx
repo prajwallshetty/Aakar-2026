@@ -68,6 +68,7 @@ export default function AddAdditionalEvents({
         ExtendedParticipant["groupMembersData"]
     >({});
     const [totalAmount, setTotalAmount] = useState<number>(0);
+    const [originalTotal, setOriginalTotal] = useState<number>(0);
     const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -128,22 +129,15 @@ export default function AddAdditionalEvents({
         data: typeof selectedEvents,
         groupData: typeof groupEventData
     ): Promise<void> {
-        let fileUrl = "";
-        if (totalAmount > 0) {
-            const url = await uploadFile(
-                paymentScreenshot!,
-                "paymentscreenshots"
-            );
-            if (!url) return;
-            fileUrl = url;
-        }
-
+        let fileUrl = await uploadFile(
+            paymentScreenshot!,
+            "paymentscreenshots"
+        );
+        if (!fileUrl) return;
         await updateParticipantWithNotify(userId, {
             events: { connect: data.map((e) => ({ id: e.id })) },
-            ...(totalAmount > 0 ? {
-                paymentScreenshotUrls: { push: fileUrl },
-                transaction_ids: { push: transactionId },
-            } : {}),
+            paymentScreenshotUrls: { push: fileUrl },
+            transaction_ids: { push: transactionId },
             groupMembersData: groupData
                 ? { ...(userInfo!.groupMembersData || {}), ...groupData }
                 : userInfo!.groupMembersData || {},
@@ -151,16 +145,32 @@ export default function AddAdditionalEvents({
         });
     }
 
-    const calculateTotalAmount = (eventsToCalc: typeof selectedEvents) => {
+    const calculateAmounts = (eventsToCalc: typeof selectedEvents) => {
         const isAjiet = userInfo?.usn?.trim().toUpperCase().startsWith("4JK");
-        return eventsToCalc.reduce((sum, ev) => {
+        let total = 0;
+        let original = 0;
+
+        eventsToCalc.forEach((ev) => {
             const eventDetails = events.find((e) => e.id === ev.id);
-            if (!eventDetails) return sum;
-            if (isAjiet && eventDetails.eventType === "Solo") {
-                return sum; // Free for AJIET students
+            if (!eventDetails) return;
+
+            const fee = eventDetails.fee || 0;
+            original += fee;
+
+            if (isAjiet) {
+                if (eventDetails.eventType === "Solo" || eventDetails.id === 32) {
+                    // Free for AJIET students
+                } else if (eventDetails.eventType === "Team") {
+                    total += Math.round(fee * 0.5); // 50% off for AJIET students
+                } else {
+                    total += fee;
+                }
+            } else {
+                total += fee;
             }
-            return sum + (eventDetails.fee || 0);
-        }, 0);
+        });
+
+        return { total, original };
     };
 
     const handleEventSelection = (selected: any) => {
@@ -169,8 +179,9 @@ export default function AddAdditionalEvents({
         setShowQRCode(false);
         setQrImageUrl("");
 
-        const amount = calculateTotalAmount(selectedOptions);
-        setTotalAmount(amount);
+        const { total, original } = calculateAmounts(selectedOptions);
+        setTotalAmount(total);
+        setOriginalTotal(original);
 
         selectedOptions.forEach((event) => {
             if (event.type === "Team" && !groupEventData?.[event.id]) {
@@ -186,9 +197,10 @@ export default function AddAdditionalEvents({
     };
 
     const generateQRCode = () => {
-        const amount = calculateTotalAmount(selectedEvents);
+        const { total, original } = calculateAmounts(selectedEvents);
 
-        setTotalAmount(amount);
+        setTotalAmount(total);
+        setOriginalTotal(original);
 
         const upiId = "ajiet@cnrb";
         const payeeName = "Aakar 2026 Registration";
@@ -198,7 +210,7 @@ export default function AddAdditionalEvents({
             upiId
         )}&pn=${encodeURIComponent(
             payeeName
-        )}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+        )}&am=${total}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
 
         setQrImageUrl(
             `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
@@ -298,15 +310,6 @@ export default function AddAdditionalEvents({
             }
         });
 
-        if (totalAmount > 0) {
-            if (!transactionId || transactionId.trim() === "") {
-                errors.transactionId = "Transaction ID is required";
-            }
-            if (!paymentScreenshot) {
-                errors.paymentScreenshot = "Payment screenshot is required";
-            }
-        }
-
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -355,7 +358,7 @@ export default function AddAdditionalEvents({
     if (!userInfo) return <Error statusCode={404} />;
 
     return (
-        <main className="relative min-h-screen overflow-x-hidden">
+        <main className="relative min-h-screen overflow-hidden">
             <style>{`
                 ${ANIME_GLOBAL_STYLES}
                 @keyframes neonBreath {
@@ -419,7 +422,7 @@ export default function AddAdditionalEvents({
                 .ae-deco { width: 72px; height: 2px; margin: 0.8rem auto 0; background: linear-gradient(90deg,transparent,${ANIME_COLORS.primary}cc,transparent); animation: rubyPulse 2.8s ease-in-out infinite; }
 
                 .ae-label { font-family: 'Share Tech Mono',monospace; font-size: 0.54rem; letter-spacing: 0.44em; color: ${ANIME_COLORS.secondary}; text-transform: uppercase; display: block; margin-bottom: 0.4rem; }
-                .ae-input { width: 100%; background: linear-gradient(135deg,rgba(8,3,18,.92),rgba(12,5,24,.88)); border: 1.5px solid ${ANIME_COLORS.primary}70; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono',monospace; font-size: 0.8rem; letter-spacing: 0.04em; padding: 0.72rem 1rem; border-radius: 6px; outline: none; transition: border-color .18s ease, box-shadow .18s ease; animation: inputGlow 5s ease-in-out infinite; }
+                .ae-input { width: 100%; background: #080312; border: 1.5px solid ${ANIME_COLORS.primary}70; color: ${ANIME_COLORS.text}; font-family: 'Share Tech Mono',monospace; font-size: 0.8rem; letter-spacing: 0.04em; padding: 0.72rem 1rem; border-radius: 6px; outline: none; transition: border-color .18s ease, box-shadow .18s ease; animation: inputGlow 5s ease-in-out infinite; }
                 .ae-input::placeholder { color: ${ANIME_COLORS.text}44; }
                 .ae-input:focus { border-color: ${ANIME_COLORS.accent}; box-shadow: 0 0 22px ${ANIME_COLORS.accent}45, inset 0 0 10px ${ANIME_COLORS.accent}20; animation: none; }
                 .ae-input[type="file"]::file-selector-button { background: linear-gradient(135deg,${ANIME_COLORS.primary}40,${ANIME_COLORS.primary}20); color: ${ANIME_COLORS.text}; border: 1px solid ${ANIME_COLORS.primary}; padding: 6px 10px; margin-right: 12px; border-radius: 4px; font-family: 'Share Tech Mono',monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; }
@@ -433,11 +436,11 @@ export default function AddAdditionalEvents({
                 .ae-pill-x { cursor: pointer; color: ${ANIME_COLORS.accent}; font-size: 0.8rem; line-height: 1; transition: color .15s; }
                 .ae-pill-x:hover { color: #fff; }
 
-                .ae-team-card { border: 1.5px solid ${ANIME_COLORS.primary}44; background: linear-gradient(135deg,${ANIME_COLORS.primary}0c 0%,rgba(8,3,18,.7) 100%); border-radius: 10px; padding: 1.2rem; position: relative; overflow: hidden; margin-bottom: 1.2rem; }
+                .ae-team-card { border: 1.5px solid ${ANIME_COLORS.primary}44; background: #0a0516; border-radius: 10px; padding: 1.2rem; position: relative; overflow: hidden; margin-bottom: 1.2rem; }
                 .ae-team-card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg,transparent,transparent 3px,${ANIME_COLORS.primary}05 3px,${ANIME_COLORS.primary}05 4px); pointer-events: none; }
-                .ae-member-card { border: 1px solid ${ANIME_COLORS.secondary}40; background: rgba(8,3,18,.6); border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem; position: relative; z-index: 1; }
+                .ae-member-card { border: 1px solid ${ANIME_COLORS.secondary}40; background: #0a0516; border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem; position: relative; z-index: 1; }
 
-                .ae-btn { font-family: 'Share Tech Mono',monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; padding: 0.78rem 1.8rem; border: 1.5px solid ${ANIME_COLORS.primary}; background: linear-gradient(135deg,${ANIME_COLORS.primary}55,${ANIME_COLORS.primary}30); color: #fff; border-radius: 5px; box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70; white-space: nowrap; cursor: pointer; position: relative; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
+                .ae-btn { font-family: 'Share Tech Mono',monospace; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; padding: 0.78rem 1.8rem; border: 1.5px solid ${ANIME_COLORS.primary}; background: linear-gradient(135deg,${ANIME_COLORS.primary}BB,${ANIME_COLORS.primary}80); color: #fff; border-radius: 5px; box-shadow: 0 0 22px ${ANIME_COLORS.primary}50, inset 0 1px 0 ${ANIME_COLORS.primary}70; white-space: nowrap; cursor: pointer; position: relative; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
                 .ae-btn::after { content: ''; position: absolute; top: 0; left: -120%; width: 80%; height: 100%; background: linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent); animation: shimmerBtn 3.5s ease-in-out infinite; }
                 .ae-btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px ${ANIME_COLORS.primary}75, inset 0 1px 0 ${ANIME_COLORS.primary}; }
                 .ae-btn:active { transform: translateY(0); }
@@ -447,27 +450,28 @@ export default function AddAdditionalEvents({
 
                 .ae-error { font-family: 'Share Tech Mono',monospace; font-size: 0.72rem; color: ${ANIME_COLORS.accent}; margin-top: 0.3rem; letter-spacing: 0.04em; }
 
-                .ae-qr-card { border: 1.5px solid ${ANIME_COLORS.primary}55; background: linear-gradient(155deg,rgba(8,3,18,.95),rgba(12,5,24,.92)); border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden; animation: neonBreath 5s ease-in-out infinite; }
+                .ae-qr-card { border: 1.5px solid ${ANIME_COLORS.primary}55; background: #0a0516; border-radius: 1rem; padding: 1.6rem; position: relative; overflow: hidden; animation: neonBreath 5s ease-in-out infinite; }
                 .ae-qr-card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg,transparent,transparent 3px,${ANIME_COLORS.primary}06 3px,${ANIME_COLORS.primary}06 4px); pointer-events: none; animation: crtScan 7s linear infinite; }
 
-                .ae-price-row { display: flex; align-items: center; justify-content: space-between; border: 1.5px solid ${ANIME_COLORS.accent}80; background: linear-gradient(135deg,${ANIME_COLORS.accent}18 0%,rgba(8,3,18,.9) 55%,${ANIME_COLORS.accent}0e 100%); border-radius: 10px; padding: 1rem 1.4rem; box-shadow: 0 0 24px ${ANIME_COLORS.accent}28; }
+                .ae-price-row { display: flex; align-items: center; justify-content: space-between; border: 1.5px solid ${ANIME_COLORS.accent}80; background: #0a0516; border-radius: 10px; padding: 1rem 1.4rem; box-shadow: 0 0 24px ${ANIME_COLORS.accent}28; }
                 .ae-price-val { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: 0.04em; line-height: 1; }
 
                 /* react-select override */
-                .ae-select .select__control { background: linear-gradient(135deg,rgba(8,3,18,.92),rgba(12,5,24,.88)) !important; border: 1.5px solid ${ANIME_COLORS.primary}70 !important; border-radius: 6px !important; color: ${ANIME_COLORS.text} !important; font-family: 'Share Tech Mono',monospace !important; font-size: 0.8rem !important; box-shadow: none !important; }
-                .ae-select .select__control--is-focused { border-color: ${ANIME_COLORS.accent} !important; box-shadow: 0 0 18px ${ANIME_COLORS.accent}40 !important; }
-                .ae-select .select__menu { background: rgba(8,3,18,.98) !important; border: 1.5px solid ${ANIME_COLORS.primary}60 !important; border-radius: 8px !important; font-family: 'Share Tech Mono',monospace !important; z-index: 50 !important; }
-                .ae-select .select__option { background: transparent !important; color: ${ANIME_COLORS.text}cc !important; font-size: 0.78rem !important; }
-                .ae-select .select__option--is-focused { background: ${ANIME_COLORS.primary}25 !important; color: ${ANIME_COLORS.text} !important; }
-                .ae-select .select__option--is-selected { background: ${ANIME_COLORS.accent}30 !important; color: ${ANIME_COLORS.text} !important; }
-                .ae-select .select__multi-value { background: ${ANIME_COLORS.primary}30 !important; border: 1px solid ${ANIME_COLORS.primary}60 !important; border-radius: 4px !important; }
-                .ae-select .select__multi-value__label { color: ${ANIME_COLORS.text} !important; font-size: 0.7rem !important; }
-                .ae-select .select__multi-value__remove:hover { background: ${ANIME_COLORS.accent}40 !important; color: ${ANIME_COLORS.text} !important; }
-                .ae-select .select__placeholder { color: ${ANIME_COLORS.text}44 !important; font-size: 0.78rem !important; }
-                .ae-select .select__input-container { color: ${ANIME_COLORS.text} !important; }
-                .ae-select .select__group-heading { color: ${ANIME_COLORS.secondary} !important; font-size: 0.55rem !important; letter-spacing: 0.4em !important; text-transform: uppercase !important; }
-                .ae-select .select__indicator svg { color: ${ANIME_COLORS.secondary}80 !important; }
-                .ae-select .select__indicator-separator { background: ${ANIME_COLORS.primary}40 !important; }
+                .select__control { background: #080312 !important; border: 1.5px solid ${ANIME_COLORS.primary}70 !important; border-radius: 6px !important; color: ${ANIME_COLORS.text} !important; font-family: 'Share Tech Mono',monospace !important; font-size: 0.8rem !important; box-shadow: none !important; }
+                .select__control--is-focused { border-color: ${ANIME_COLORS.accent} !important; box-shadow: 0 0 18px ${ANIME_COLORS.accent}40 !important; }
+                .select__menu { background: #0a0516 !important; border: 1.5px solid ${ANIME_COLORS.primary}60 !important; border-radius: 8px !important; font-family: 'Share Tech Mono',monospace !important; }
+                .select__menu-portal { z-index: 9999 !important; }
+                .select__option { background: transparent !important; color: ${ANIME_COLORS.text}cc !important; font-size: 0.78rem !important; }
+                .select__option--is-focused { background: ${ANIME_COLORS.primary}25 !important; color: ${ANIME_COLORS.text} !important; }
+                .select__option--is-selected { background: ${ANIME_COLORS.accent}30 !important; color: ${ANIME_COLORS.text} !important; }
+                .select__multi-value { background: ${ANIME_COLORS.primary}30 !important; border: 1px solid ${ANIME_COLORS.primary}60 !important; border-radius: 4px !important; }
+                .select__multi-value__label { color: ${ANIME_COLORS.text} !important; font-size: 0.7rem !important; }
+                .select__multi-value__remove:hover { background: ${ANIME_COLORS.accent}40 !important; color: ${ANIME_COLORS.text} !important; }
+                .select__placeholder { color: ${ANIME_COLORS.text}44 !important; font-size: 0.78rem !important; }
+                .select__input-container { color: ${ANIME_COLORS.text} !important; }
+                .select__group-heading { color: ${ANIME_COLORS.secondary} !important; font-size: 0.55rem !important; letter-spacing: 0.4em !important; text-transform: uppercase !important; }
+                .select__indicator svg { color: ${ANIME_COLORS.secondary}80 !important; }
+                .select__indicator-separator { background: ${ANIME_COLORS.primary}40 !important; }
             `}</style>
 
             <AnimeOrbField />
@@ -532,7 +536,7 @@ export default function AddAdditionalEvents({
                                         className={`${montserrat.className} ${formErrors.events ? "error" : ""} w-full`}
                                         classNamePrefix="select"
                                         menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        menuShouldScrollIntoView={false}
                                     />
                                 </div>
                                 {formErrors.events && <p className="ae-error mt-1">⚠ {formErrors.events}</p>}
@@ -559,8 +563,9 @@ export default function AddAdditionalEvents({
                                                                 return updated;
                                                             });
                                                         }
-                                                        const amount = calculateTotalAmount(updatedSelection);
-                                                        setTotalAmount(amount);
+                                                        const { total, original } = calculateAmounts(updatedSelection);
+                                                        setTotalAmount(total);
+                                                        setOriginalTotal(original);
                                                     }}
                                                 >×</button>
                                             </span>
@@ -638,61 +643,69 @@ export default function AddAdditionalEvents({
                             <div style={{ height: '1px', background: `linear-gradient(90deg, transparent, ${ANIME_COLORS.primary}44, transparent)` }} />
 
                             {/* QR & Payment */}
-                            {totalAmount > 0 && (
-                                <div className="ae-qr-card">
-                                    <div className="ae-scan" />
-                                    <div className="relative z-10">
-                                        <p className="ae-tag mb-1">Tribute</p>
-                                        <p className={`ae-section-title mb-5 ${cinzelFont.className}`}>Payment</p>
+                            <div className="ae-qr-card">
+                                <div className="ae-scan" />
+                                <div className="relative z-10">
+                                    <p className="ae-tag mb-1">Tribute</p>
+                                    <p className={`ae-section-title mb-5 ${cinzelFont.className}`}>Payment</p>
 
-                                        <div className="ae-price-row mb-6">
-                                            <div>
-                                                <p className="ae-label" style={{ marginBottom: '0.2rem' }}>Total Amount</p>
+                                    <div className="ae-price-row mb-6">
+                                        <div>
+                                            <p className="ae-label" style={{ marginBottom: '0.2rem' }}>Total Amount</p>
+                                            {originalTotal > totalAmount ? (
+                                                <div className="flex flex-col">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="ae-price-val" style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '1.2rem' }}>₹{originalTotal}</span>
+                                                        <span className="ae-price-val">₹{totalAmount}</span>
+                                                    </div>
+                                                    <span className="ae-tag" style={{ fontSize: '0.5rem', color: ANIME_COLORS.accent, marginTop: '2px' }}>✨ AJIET Special Discount Applied ✨</span>
+                                                </div>
+                                            ) : (
                                                 <span className="ae-price-val">₹{totalAmount}</span>
-                                            </div>
-                                            {!showQRCode && (
-                                                <button type="button" onClick={generateQRCode} className="ae-btn" style={{ fontSize: '0.6rem' }}>
-                                                    Generate QR
-                                                </button>
                                             )}
                                         </div>
-
-                                        {showQRCode ? (
-                                            <div className="flex justify-center mb-6">
-                                                <img src={qrImageUrl || "/placeholder.svg"} alt="Payment QR Code" className="w-52 h-52 border-2 p-2 rounded-xl bg-white" style={{ borderColor: ANIME_COLORS.primary }} />
-                                            </div>
-                                        ) : (
-                                            <p className="ae-label text-center mb-6">Select events above, then generate QR to pay.</p>
+                                        {!showQRCode && (
+                                            <button type="button" onClick={generateQRCode} className="ae-btn" style={{ fontSize: '0.6rem' }}>
+                                                Generate QR
+                                            </button>
                                         )}
+                                    </div>
 
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label htmlFor="transactionId" className="ae-label">Transaction ID / Reference</label>
-                                                <input
-                                                    type="text"
-                                                    id="transactionId"
-                                                    value={transactionId}
-                                                    onChange={(e) => setTransactionId(e.target.value)}
-                                                    placeholder="Enter transaction ID"
-                                                    className={`ae-input ${formErrors.transactionId ? "error" : ""}`}
-                                                />
-                                                {formErrors.transactionId && <p className="ae-error">{formErrors.transactionId}</p>}
-                                            </div>
-                                            <div>
-                                                <label htmlFor="paymentScreenshot" className="ae-label">Payment Screenshot</label>
-                                                <input
-                                                    type="file"
-                                                    id="paymentScreenshot"
-                                                    accept="image/*"
-                                                    onChange={(e) => setPaymentScreenshot(e.target.files![0])}
-                                                    className={`ae-input cursor-pointer ${formErrors.paymentScreenshot ? "error" : ""}`}
-                                                />
-                                                {formErrors.paymentScreenshot && <p className="ae-error">{formErrors.paymentScreenshot}</p>}
-                                            </div>
+                                    {showQRCode ? (
+                                        <div className="flex justify-center mb-6">
+                                            <img src={qrImageUrl || "/placeholder.svg"} alt="Payment QR Code" className="w-52 h-52 border-2 p-2 rounded-xl bg-white" style={{ borderColor: ANIME_COLORS.primary }} />
+                                        </div>
+                                    ) : (
+                                        <p className="ae-label text-center mb-6">Select events above, then generate QR to pay.</p>
+                                    )}
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label htmlFor="transactionId" className="ae-label">Transaction ID / Reference</label>
+                                            <input
+                                                type="text"
+                                                id="transactionId"
+                                                value={transactionId}
+                                                onChange={(e) => setTransactionId(e.target.value)}
+                                                placeholder="Enter transaction ID"
+                                                className={`ae-input ${formErrors.transactionId ? "error" : ""}`}
+                                            />
+                                            {formErrors.transactionId && <p className="ae-error">{formErrors.transactionId}</p>}
+                                        </div>
+                                        <div>
+                                            <label htmlFor="paymentScreenshot" className="ae-label">Payment Screenshot</label>
+                                            <input
+                                                type="file"
+                                                id="paymentScreenshot"
+                                                accept="image/*"
+                                                onChange={(e) => setPaymentScreenshot(e.target.files![0])}
+                                                className={`ae-input cursor-pointer ${formErrors.paymentScreenshot ? "error" : ""}`}
+                                            />
+                                            {formErrors.paymentScreenshot && <p className="ae-error">{formErrors.paymentScreenshot}</p>}
                                         </div>
                                     </div>
                                 </div>
-                            )}
+                            </div>
 
                             {formErrors.submit && (
                                 <div className="ae-error" style={{ border: `1.5px solid ${ANIME_COLORS.accent}90`, background: `${ANIME_COLORS.accent}18`, padding: '0.7rem 1rem', borderRadius: '6px' }}>
