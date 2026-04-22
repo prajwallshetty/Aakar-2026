@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
     Card,
     CardContent,
@@ -40,7 +40,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import Link from "next/link";
-import { getParticipantsWithEvents } from "@/backend/participant";
+import { getParticipantsPaginated, getParticipantColleges, getAllParticipantsForExport } from "@/backend/participant";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,174 +52,147 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 
 export default function ParticipantsPage() {
     const [participants, setParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
-    const [filteredParticipants, setFilteredParticipants] = useState<
-        (ExtendedParticipant & { events: ExtendedEvent[] })[]
-    >([]);
-    const [allParticipants, setAllParticipants] = useState<(ExtendedParticipant & { events: ExtendedEvent[] })[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDownloading, setIsDownloading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [selectedCollege, setSelectedCollege] = useState<string>("");
     const [filterType, setFilterType] = useState<"include" | "exclude" | "all">("all");
     const [colleges, setColleges] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [expandedParticipant, setExpandedParticipant] = useState<
-        string | null
-    >(null);
+    const [expandedParticipant, setExpandedParticipant] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(20);
     const [totalItems, setTotalItems] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const sortParticipantsByNewest = (participants: any) => {
-        return [...participants].sort((a, b) => b.id - a.id)
-    }
+    // Debounce search input (400ms)
+    const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+    useEffect(() => {
+        if (searchTimerRef.current) {
+            clearTimeout(searchTimerRef.current);
+        }
+        searchTimerRef.current = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setCurrentPage(1); // Reset to page 1 on new search
+        }, 400);
 
-    const fetchParticipants = async (page = 1, pageSize = itemsPerPage) => {
+        return () => {
+            if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+        };
+    }, [searchQuery]);
+
+    // Fetch colleges once on mount
+    useEffect(() => {
+        getParticipantColleges().then(setColleges).catch(console.error);
+    }, []);
+
+    // Main data fetch — triggered by pagination, search, or filter changes
+    const fetchParticipants = useCallback(async () => {
         try {
-            setIsLoading(true)
+            setIsLoading(true);
+            setError(null);
 
-            if (allParticipants.length > 0) {
-                const sortedParticipants = sortParticipantsByNewest(allParticipants)
-                const startIndex = (page - 1) * pageSize;
-                const endIndex = page * pageSize;
-                const data = sortedParticipants.slice(startIndex, endIndex);
-                setParticipants(data);
-                setFilteredParticipants(data);
-                setIsLoading(false);
-                return;
-            }
-
-            const index = page - 1;
-            const response = await getParticipantsWithEvents(index, pageSize);
+            const response = await getParticipantsPaginated({
+                page: currentPage,
+                limit: itemsPerPage,
+                search: debouncedSearch,
+                college: selectedCollege,
+                collegeFilterType: filterType,
+            });
 
             if (response.error) {
                 setError(typeof response.error === "string" ? response.error : "Failed to fetch participants");
-                setIsLoading(false);
-                return;
-            }
-
-            if (response.data) {
-                const sortedData = sortParticipantsByNewest(response.data);
-                setParticipants(sortedData);
-                setFilteredParticipants(sortedData);
-                setIsLoading(false); // Stop loading to show initial results immediately
-
-                if (isInitialLoad) {
-                    setIsInitialLoad(false);
-                    // Fetch all participants asynchronously in the background for filtering and stats
-                    getParticipantsWithEvents().then((allResponse) => {
-                        try {
-                            if (allResponse.data) {
-                                const allSortedParticipants = sortParticipantsByNewest(allResponse.data);
-                                setAllParticipants(allSortedParticipants);
-                                setTotalItems(allSortedParticipants.length);
-                                setTotalPages(Math.ceil(allSortedParticipants.length / pageSize));
-
-                                const uniqueColleges = Array.from(new Set(allSortedParticipants.map((p) => p.college))) as string[];
-                                setColleges(uniqueColleges);
-                                
-                                // In case the page was changed while background loading, update the current view
-                                setFilteredParticipants(allSortedParticipants.slice((currentPage - 1) * pageSize, currentPage * pageSize));
-                            }
-                        } catch (err) {
-                            console.error("Error fetching all participants for stats:", err);
-                        }
-                    }).catch(err => console.error("Error fetching all participants:", err));
-                }
+                setParticipants([]);
+                setTotalItems(0);
+                setTotalPages(1);
+            } else if (response.data) {
+                setParticipants(response.data);
+                setTotalItems(response.totalCount);
+                setTotalPages(response.totalPages || 1);
             }
         } catch (err) {
             setError("An error occurred while fetching participants");
             console.error(err);
+        } finally {
             setIsLoading(false);
+        }
+    }, [currentPage, itemsPerPage, debouncedSearch, selectedCollege, filterType]);
+
+    useEffect(() => {
+        fetchParticipants();
+    }, [fetchParticipants]);
+
+    // Download helpers — fetch all data on-demand
+    const fetchAllForExport = async () => {
+        setIsDownloading(true);
+        try {
+            const response = await getAllParticipantsForExport();
+            if (response.error || !response.data) {
+                setError("Failed to fetch data for download");
+                return null;
+            }
+            return response.data;
+        } catch (err) {
+            console.error("Error fetching for export:", err);
+            setError("Failed to fetch data for download");
+            return null;
+        } finally {
+            setIsDownloading(false);
         }
     };
 
-    useEffect(() => {
-        fetchParticipants(currentPage, itemsPerPage);
-    }, [currentPage, itemsPerPage]);
-
-    useEffect(() => {
-        if (allParticipants.length === 0) return;
-
-        let filteredResults = [...allParticipants];
-
-        if (selectedCollege && filterType !== "all") {
-            if (filterType === "include") {
-                filteredResults = filteredResults.filter(p => p.college === selectedCollege);
-            } else if (filterType === "exclude") {
-                filteredResults = filteredResults.filter(p => p.college !== selectedCollege);
-            }
-        }
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filteredResults = filteredResults.filter(
-                (p) =>
-                    p.name.toLowerCase().includes(query) ||
-                    p.email.toLowerCase().includes(query) ||
-                    p.phone.includes(query) ||
-                    p.college.toLowerCase().includes(query) ||
-                    p.usn.toLowerCase().includes(query) ||
-                    (p.groupMembersData &&
-                        Object.values(p.groupMembersData).some((group) =>
-                            group.members.some(
-                                (m) =>
-                                    m.name.toLowerCase().includes(query) ||
-                                    m.usn.toLowerCase().includes(query)
-                            )
-                        )) ||
-                    (p.events &&
-                        p.events.some((e) =>
-                            e.eventName.toLowerCase().includes(query) ||
-                            e.eventType.toLowerCase().includes(query)
-                        ))
-            );
-        }
-
-        setTotalItems(filteredResults.length);
-        setTotalPages(Math.ceil(filteredResults.length / itemsPerPage));
-
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = Math.min(startIndex + itemsPerPage, filteredResults.length);
-
-        if (startIndex >= filteredResults.length && filteredResults.length > 0) {
-            setCurrentPage(1);
-            setFilteredParticipants(filteredResults.slice(0, itemsPerPage));
-        } else {
-            setFilteredParticipants(filteredResults.slice(startIndex, endIndex));
-        }
-    }, [searchQuery, selectedCollege, filterType, allParticipants, currentPage, itemsPerPage]);
-
     const handleDownloadAll = async () => {
-        try {
-            await downloadParticipantData(allParticipants);
-        } catch (error) {
-            console.error("Error downloading data:", error);
-            setError("Failed to download participant data");
+        const data = await fetchAllForExport();
+        if (data) {
+            try {
+                await downloadParticipantData(data);
+            } catch (error) {
+                console.error("Error downloading data:", error);
+                setError("Failed to download participant data");
+            }
         }
     };
 
     const handleDownloadByCollege = async () => {
-        try {
-            await downloadParticipantData(allParticipants, true);
-        } catch (error) {
-            console.error("Error downloading data by college:", error);
-            setError("Failed to download participant data by college");
+        const data = await fetchAllForExport();
+        if (data) {
+            try {
+                await downloadParticipantData(data, true);
+            } catch (error) {
+                console.error("Error downloading data by college:", error);
+                setError("Failed to download participant data by college");
+            }
         }
     };
 
     const handleDownloadByEvent = async () => {
-        try {
-            await downloadParticipantDataByEvents(allParticipants);
-        } catch (error) {
-            console.error("Error downloading data by events:", error);
-            setError("Failed to download participant data by events");
+        const data = await fetchAllForExport();
+        if (data) {
+            try {
+                await downloadParticipantDataByEvents(data);
+            } catch (error) {
+                console.error("Error downloading data by events:", error);
+                setError("Failed to download participant data by events");
+            }
+        }
+    };
+
+    const handleDownloadEventCounts = async () => {
+        const data = await fetchAllForExport();
+        if (data) {
+            try {
+                await downloadEventRegistrationsByCollege(data, "A J Institute of Engineering and Technology, Mangalore");
+            } catch (error) {
+                console.error("Error downloading event counts:", error);
+                setError("Failed to download event counts");
+            }
         }
     };
 
     const resetFilters = () => {
         setSearchQuery("");
+        setDebouncedSearch("");
         setSelectedCollege("");
         setFilterType("all");
         setCurrentPage(1);
@@ -319,7 +292,7 @@ export default function ParticipantsPage() {
                     variant="outline"
                     size="icon"
                     onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages || isLoading}
+                    disabled={currentPage >= totalPages || isLoading}
                     className="cursor-pointer h-8 w-8"
                 >
                     <ChevronRight className="h-4 w-4" />
@@ -328,7 +301,7 @@ export default function ParticipantsPage() {
                     variant="outline"
                     size="icon"
                     onClick={() => handlePageChange(totalPages)}
-                    disabled={currentPage === totalPages || isLoading}
+                    disabled={currentPage >= totalPages || isLoading}
                     className="cursor-pointer h-8 w-8"
                 >
                     <ChevronLast className="h-4 w-4" />
@@ -377,7 +350,10 @@ export default function ParticipantsPage() {
                                         <div className="flex items-center flex-col md:flex-row gap-2">
                                             <Select
                                                 value={filterType}
-                                                onValueChange={(value: "include" | "exclude" | "all") => setFilterType(value)}
+                                                onValueChange={(value: "include" | "exclude" | "all") => {
+                                                    setFilterType(value);
+                                                    setCurrentPage(1);
+                                                }}
                                             >
                                                 <SelectTrigger className="w-[100px] cursor-pointer">
                                                     <SelectValue placeholder="Filter type" />
@@ -391,7 +367,10 @@ export default function ParticipantsPage() {
 
                                             <Select
                                                 value={selectedCollege}
-                                                onValueChange={setSelectedCollege}
+                                                onValueChange={(value) => {
+                                                    setSelectedCollege(value);
+                                                    setCurrentPage(1);
+                                                }}
                                                 disabled={filterType === "all"}
                                             >
                                                 <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
@@ -445,16 +424,18 @@ export default function ParticipantsPage() {
                                         <Button
                                             onClick={handleDownloadAll}
                                             className="cursor-pointer"
+                                            disabled={isDownloading}
                                         >
                                             <DownloadCloud className="mr-2 h-4 w-4" />
                                             <span className="whitespace-nowrap">
-                                                Download Data
+                                                {isDownloading ? "Loading..." : "Download Data"}
                                             </span>
                                         </Button>
                                         <Button
                                             variant="outline"
-                                            onClick={() => downloadEventRegistrationsByCollege(allParticipants, "A J Institute of Engineering and Technology, Mangalore")}
+                                            onClick={handleDownloadEventCounts}
                                             className="cursor-pointer"
+                                            disabled={isDownloading}
                                         >
                                             <FileSpreadsheet className="mr-2 h-4 w-4" />
                                             <span className="whitespace-nowrap">Download Event Counts</span>
@@ -463,6 +444,7 @@ export default function ParticipantsPage() {
                                             variant="outline"
                                             onClick={handleDownloadByCollege}
                                             className="cursor-pointer"
+                                            disabled={isDownloading}
                                         >
                                             <FileSpreadsheet className="mr-2 h-4 w-4" />
                                             <span className="whitespace-nowrap">
@@ -473,6 +455,7 @@ export default function ParticipantsPage() {
                                             variant="outline"
                                             onClick={handleDownloadByEvent}
                                             className="cursor-pointer"
+                                            disabled={isDownloading}
                                         >
                                             <FileSpreadsheet className="mr-2 h-4 w-4" />
                                             <span className="whitespace-nowrap">
@@ -504,18 +487,18 @@ export default function ParticipantsPage() {
                                         <TableBody>
                                             {isLoading ? (
                                                 <TableSkeleton />
-                                            ) : filteredParticipants.length ===
+                                            ) : participants.length ===
                                                 0 ? (
                                                 <TableRow>
                                                     <TableCell
-                                                        colSpan={5}
+                                                        colSpan={7}
                                                         className="text-center py-10"
                                                     >
                                                         No participants found
                                                     </TableCell>
                                                 </TableRow>
                                             ) : (
-                                                filteredParticipants.map(
+                                                participants.map(
                                                     (participant) => (
                                                         <React.Fragment
                                                             key={participant.id}
@@ -637,7 +620,7 @@ export default function ParticipantsPage() {
                                                                     <TableRow className="bg-muted/50">
                                                                         <TableCell
                                                                             colSpan={
-                                                                                5
+                                                                                7
                                                                             }
                                                                             className="py-2"
                                                                         >

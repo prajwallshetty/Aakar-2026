@@ -204,6 +204,111 @@ export async function getParticipantWithEvents(id: number): Promise<ServiceRespo
   }
 }
 
+type PaginatedResponse = {
+  data: (ExtendedParticipant & { events: ExtendedEvent[] })[] | null;
+  error: { [key: string]: string } | string | null;
+  totalCount: number;
+  totalPages: number;
+};
+
+export async function getParticipantsPaginated({
+  page = 1,
+  limit = 20,
+  search = "",
+  college = "",
+  collegeFilterType = "all" as "all" | "include" | "exclude",
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  college?: string;
+  collegeFilterType?: "all" | "include" | "exclude";
+}): Promise<PaginatedResponse> {
+  try {
+    const isUserAdmin = await isAdmin();
+    if (!isUserAdmin) {
+      return { data: null, error: "Not authorized", totalCount: 0, totalPages: 0 };
+    }
+
+    // Build where clause for filtering
+    const where: any = {};
+    const andConditions: any[] = [];
+
+    // Search filter
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      andConditions.push({
+        OR: [
+          { name: { contains: searchTerm, mode: "insensitive" } },
+          { email: { contains: searchTerm, mode: "insensitive" } },
+          { usn: { contains: searchTerm, mode: "insensitive" } },
+          { phone: { contains: searchTerm } },
+          { college: { contains: searchTerm, mode: "insensitive" } },
+          { events: { some: { eventName: { contains: searchTerm, mode: "insensitive" } } } },
+        ],
+      });
+    }
+
+    // College filter
+    if (college && collegeFilterType !== "all") {
+      if (collegeFilterType === "include") {
+        andConditions.push({ college });
+      } else if (collegeFilterType === "exclude") {
+        andConditions.push({ college: { not: college } });
+      }
+    }
+
+    if (andConditions.length > 0) {
+      where.AND = andConditions;
+    }
+
+    const skip = (page - 1) * limit;
+
+    // Run count and findMany in parallel for performance
+    const [totalCount, participants] = await Promise.all([
+      db.participant.count({ where }),
+      db.participant.findMany({
+        where,
+        include: { events: true },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[],
+      error: null,
+      totalCount,
+      totalPages,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated participants:", error);
+    return { data: null, error: "Failed to fetch participants", totalCount: 0, totalPages: 0 };
+  }
+}
+
+// Fetch distinct college names for the filter dropdown
+export async function getParticipantColleges(): Promise<string[]> {
+  try {
+    const isUserAdmin = await isAdmin();
+    if (!isUserAdmin) return [];
+
+    const results = await db.participant.findMany({
+      select: { college: true },
+      distinct: ["college"],
+      orderBy: { college: "asc" },
+    });
+    return results.map((r) => r.college);
+  } catch (error) {
+    console.error("Error fetching colleges:", error);
+    return [];
+  }
+}
+
+// Keep the old function signature for backward compatibility (used by other pages)
 export async function getParticipantsWithEvents(index?: number, limit?: number): Promise<ServiceResponse<(ExtendedParticipant & { events: ExtendedEvent[] })[]>> {
   try {
     const isUserAdmin = await isAdmin();
@@ -217,6 +322,7 @@ export async function getParticipantsWithEvents(index?: number, limit?: number):
     if (index !== undefined && limit !== undefined) {
       const participants = await db.participant.findMany({
         include: { events: true },
+        orderBy: { createdAt: "desc" },
         skip: index * limit,
         take: limit
       });
@@ -224,6 +330,7 @@ export async function getParticipantsWithEvents(index?: number, limit?: number):
     } else {
       const participants = await db.participant.findMany({
         include: { events: true },
+        orderBy: { createdAt: "desc" },
       });
 
       return { data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[], error: null, hasNext: false };
@@ -231,6 +338,26 @@ export async function getParticipantsWithEvents(index?: number, limit?: number):
   } catch (error) {
     console.error("Error fetching participants:", error);
     return { data: null, error: "Failed to fetch participant" };
+  }
+}
+
+// For download/export - fetches all data on demand (not called on page load)
+export async function getAllParticipantsForExport(): Promise<ServiceResponse<(ExtendedParticipant & { events: ExtendedEvent[] })[]>> {
+  try {
+    const isUserAdmin = await isAdmin();
+    if (!isUserAdmin) {
+      return { data: null, error: "Not authorized" };
+    }
+
+    const participants = await db.participant.findMany({
+      include: { events: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return { data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[], error: null };
+  } catch (error) {
+    console.error("Error fetching all participants for export:", error);
+    return { data: null, error: "Failed to fetch participants" };
   }
 }
 
