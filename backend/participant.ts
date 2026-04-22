@@ -281,7 +281,24 @@ export async function getParticipantsPaginated({
       db.participant.count({ where }),
       db.participant.findMany({
         where,
-        include: { events: true },
+        select: {
+          id: true,
+          uuid: true,
+          name: true,
+          email: true,
+          phone: true,
+          college: true,
+          paymentStatus: true,
+          createdAt: true,
+          groupMembersData: true,
+          events: {
+            select: {
+              id: true,
+              eventName: true,
+              date: true,
+            }
+          }
+        },
         orderBy: { createdAt: "desc" },
         skip,
         take: limit,
@@ -291,7 +308,7 @@ export async function getParticipantsPaginated({
     const totalPages = Math.ceil(totalCount / limit);
 
     const result = {
-      data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[],
+      data: participants as any, // Typed specifically for the UI
       error: null,
       totalCount,
       totalPages,

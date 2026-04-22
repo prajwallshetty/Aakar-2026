@@ -58,5 +58,6 @@ export const config = {
         '/Participants/:id',
         "/EventStatistics",
         "/CollegeStatistics",
+        "/api/:path*",
     ]
 }
