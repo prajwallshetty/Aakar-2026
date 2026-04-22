@@ -211,6 +211,10 @@ type PaginatedResponse = {
   totalPages: number;
 };
 
+// Simple in-memory cache
+const CACHE_TTL = 30 * 1000; // 30 seconds
+const participantsCache: Record<string, { data: PaginatedResponse; timestamp: number }> = {};
+
 export async function getParticipantsPaginated({
   page = 1,
   limit = 20,
@@ -224,6 +228,14 @@ export async function getParticipantsPaginated({
   college?: string;
   collegeFilterType?: "all" | "include" | "exclude";
 }): Promise<PaginatedResponse> {
+  const cacheKey = JSON.stringify({ page, limit, search, college, collegeFilterType });
+  const now = Date.now();
+
+  // Return cached data if fresh
+  if (participantsCache[cacheKey] && (now - participantsCache[cacheKey].timestamp < CACHE_TTL)) {
+    return participantsCache[cacheKey].data;
+  }
+
   try {
     const isUserAdmin = await isAdmin();
     if (!isUserAdmin) {
@@ -278,12 +290,17 @@ export async function getParticipantsPaginated({
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    return {
+    const result = {
       data: participants as (ExtendedParticipant & { events: ExtendedEvent[] })[],
       error: null,
       totalCount,
       totalPages,
     };
+
+    // Update cache
+    participantsCache[cacheKey] = { data: result, timestamp: Date.now() };
+
+    return result;
   } catch (error) {
     console.error("Error fetching paginated participants:", error);
     return { data: null, error: "Failed to fetch participants", totalCount: 0, totalPages: 0 };
