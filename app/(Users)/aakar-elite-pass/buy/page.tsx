@@ -76,6 +76,7 @@ const COLLEGES = [
         "Pompeii College, Aikala",
         "Sahyadri College of Engineering and Management",
         "SDM College of Engineering and Technology (SDMC)",
+        "SDM College of business management, Mangalore UG",
         "SDM Polytechnic, Ujire",
         "SDPT First Grade College, Kateel",
         "Shirdi Sai Degree College, Karkala",

@@ -367,7 +367,8 @@ const AjietRegister = () => {
     const proceedToPayment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const errors = (await validateParticipantData(formData)) || {};
+        const { transactionId, paymentScreenshot, ...safeData } = formData;
+        const errors = (await validateParticipantData(safeData as any)) || {};
 
         if (!formData.usn.toUpperCase().startsWith("4JK")) {
             errors.usn = "Only AJIET students allowed (4JK)";

@@ -341,7 +341,8 @@ const Register = () => {
 
     const proceedToPayment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const errors = (await validateParticipantData(formData)) || {};
+        const { transactionId, paymentScreenshot, ...safeData } = formData;
+        const errors = (await validateParticipantData(safeData as any)) || {};
         if (Object.keys(errors).length > 0) { setFormErrors(errors); alert("Check for the errors in the form."); return; }
         if (selectedEvents.length === 0) errors.events = "Please select at least one event";
         Object.keys(groupEventData).forEach((groupId) => {
@@ -556,6 +557,7 @@ const Register = () => {
         "SDM College of Business Management (MBA), Mangalore",
         "SDM Law College, Mangalore",
         "SDM PG College Ujire",
+        "SDM College of business management, Mangalore UG",
         "SDM Institute of Technology (SDMIT) Ujire",
         "Canara College (MCA Program), Mangalore",
         "Minerva College, Mangalore",

@@ -18,37 +18,17 @@
 
 **AAKAR 2026** is not just a fest; it's a high-performance digital ecosystem designed to handle thousands of registrations, secure deep-link payments, and automated participant management. Built with a "Cyber-Anime" aesthetic, the platform provides a seamless, immersive experience for participants and administrators alike.
 
-## ◈ COLLABORATORS
 
-<div align="center">
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/prajwallshetty">
-        <img src="https://github.com/prajwallshetty.png" width="100px;" alt="Prajwal Shetty"/><br />
-        <sub><b>Prajwal Shetty</b></sub>
-      </a><br />
-      <sub>Lead Architect / Fullstack</sub>
-    </td>
-    <td align="center">
-      <a href="https://github.com/kishanBhandary">
-        <img src="https://github.com/kishanBhandary.png" width="100px;" alt="Kishan Bhandary"/><br />
-        <sub><b>Kishan Bhandary</b></sub>
-      </a><br />
-      <sub>Software Engineer</sub>
-    </td>
-    <td align="center">
-      <a href="#">
-        <img src="https://ui-avatars.com/api/?name=Pahima+Uchil&background=FF0066&color=fff&size=100" width="100px;" alt="Pahima R Uchil"/><br />
-        <sub><b>Pahima R Uchil</b></sub>
-      </a><br />
-      <sub>Software Engineer</sub>
-    </td>
-  </tr>
-</table>
-</div>
+## 🙏 Attribution
 
----
+Some parts of this project include small code snippets inspired by
+publicly available resources and open-source projects.
+
+-   Source: https://github.com/Ajiet-DevNation/Aakar2025
+-   Author: Ajiet-DevNation
+
+These snippets have been modified and adapted to fit the needs of this
+project.
 
 ## 🚀 CORE SYSTEMS
 
