@@ -273,6 +273,12 @@ export default function ParticipantDetailPage() {
                         Back to Participants
                     </Link>
                 </Button>
+                <Button asChild className="cursor-pointer bg-black hover:bg-black/90 text-white">
+                    <Link href={`/addevents/${participant.uuid}`}>
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Add Events
+                    </Link>
+                </Button>
             </div>
 
             <Card>
