@@ -297,7 +297,7 @@ const AjietRegister = () => {
                 return;
             }
 
-            calculatedTotal += eventObj?.eventType === "Team" ? Math.round(fee * 0.5) : fee;
+            calculatedTotal += fee;
         });
 
         setOriginalTotal(calculatedOriginalTotal);
@@ -1001,24 +1001,7 @@ const AjietRegister = () => {
                                     textAlign: "center"
                                 }}>
                                     <div style={{ fontFamily: popFont, fontSize: 16, color: ANIME_COLORS.text, letterSpacing: 2 }}>
-                                        {originalTotal > totalAmount ? (
-                                            <>
-                                                <span style={{ textDecoration: 'line-through', opacity: 0.6, marginRight: 8 }}>₹{originalTotal}</span>
-                                                Total Amount: ₹{totalAmount}
-                                                <div style={{ 
-                                                    fontFamily: monoFont, 
-                                                    fontSize: 12, 
-                                                    color: ANIME_COLORS.secondary, 
-                                                    marginTop: 8,
-                                                    textTransform: 'uppercase',
-                                                    letterSpacing: 1
-                                                }}>
-                                                    ✨ 50% Group Event Discount Applied! ✨
-                                                </div>
-                                            </>
-                                        ) : (
-                                            `Total Amount: ₹${totalAmount}`
-                                        )}
+                                        {`Total Amount: ₹${totalAmount}`}
                                     </div>
                                 </div>
                             )}
@@ -1038,32 +1021,9 @@ const AjietRegister = () => {
                         <AnimeSectionHeading index={2}>Payment Details</AnimeSectionHeading>
                         
                         <div style={{ textAlign: "center", marginBottom: 24 }}>
-                            {originalTotal > totalAmount && (
-                                <div style={{ 
-                                    fontFamily: monoFont, 
-                                    fontSize: 14, 
-                                    color: ANIME_COLORS.text, 
-                                    opacity: 0.6, 
-                                    textDecoration: "line-through",
-                                    marginBottom: 4 
-                                }}>
-                                    Original Price: ₹{originalTotal}
-                                </div>
-                            )}
                             <div style={{ fontFamily: popFont, fontSize: 24, color: ANIME_COLORS.accent, letterSpacing: 2 }}>
                                 Amount to Pay: ₹{totalAmount}
                             </div>
-                            {originalTotal > totalAmount && (
-                                <div style={{ 
-                                    fontFamily: monoFont, 
-                                    fontSize: 12, 
-                                    color: ANIME_COLORS.secondary, 
-                                    marginTop: 8,
-                                    letterSpacing: 1
-                                }}>
-                                    Includes 50% Group Discount ✨
-                                </div>
-                            )}
                         </div>
 
                         {showQRCode && qrImageUrl && (
@@ -1219,7 +1179,6 @@ const AjietRegister = () => {
                             {totalAmount > 0 && (
                                 <div style={{ fontFamily: monoFont, fontSize: 13, color: ANIME_COLORS.accent, marginTop: 8 }}>
                                     <strong>Amount to Pay:</strong> ₹{totalAmount}
-                                    {originalTotal > totalAmount && <span style={{ opacity: 0.6, marginLeft: 8 }}>(Discounted from ₹{originalTotal})</span>}
                                 </div>
                             )}
                         </div>

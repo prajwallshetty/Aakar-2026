@@ -146,7 +146,6 @@ export default function AddAdditionalEvents({
     }
 
     const calculateAmounts = (eventsToCalc: typeof selectedEvents) => {
-        const isAjiet = userInfo?.usn?.trim().toUpperCase().startsWith("4JK");
         let total = 0;
         let original = 0;
 
@@ -157,14 +156,9 @@ export default function AddAdditionalEvents({
             const fee = eventDetails.fee || 0;
             original += fee;
 
-            if (isAjiet) {
-                if (eventDetails.eventType === "Solo" || eventDetails.id === 32) {
-                    // Free for AJIET students
-                } else if (eventDetails.eventType === "Team") {
-                    total += Math.round(fee * 0.5); // 50% off for AJIET students
-                } else {
-                    total += fee;
-                }
+            const isAjiet = userInfo?.usn?.trim().toUpperCase().startsWith("4JK");
+            if (isAjiet && (eventDetails.eventType === "Solo" || eventDetails.id === 32)) {
+                // Free for AJIET students
             } else {
                 total += fee;
             }
@@ -652,17 +646,7 @@ export default function AddAdditionalEvents({
                                     <div className="ae-price-row mb-6">
                                         <div>
                                             <p className="ae-label" style={{ marginBottom: '0.2rem' }}>Total Amount</p>
-                                            {originalTotal > totalAmount ? (
-                                                <div className="flex flex-col">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="ae-price-val" style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '1.2rem' }}>₹{originalTotal}</span>
-                                                        <span className="ae-price-val">₹{totalAmount}</span>
-                                                    </div>
-                                                    <span className="ae-tag" style={{ fontSize: '0.5rem', color: ANIME_COLORS.accent, marginTop: '2px' }}>✨ AJIET Special Discount Applied ✨</span>
-                                                </div>
-                                            ) : (
-                                                <span className="ae-price-val">₹{totalAmount}</span>
-                                            )}
+                                            <span className="ae-price-val">₹{totalAmount}</span>
                                         </div>
                                         {!showQRCode && (
                                             <button type="button" onClick={generateQRCode} className="ae-btn" style={{ fontSize: '0.6rem' }}>
