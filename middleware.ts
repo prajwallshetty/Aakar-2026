@@ -5,8 +5,16 @@ import { authConfig } from "./auth.config";
 const { auth } = NextAuth(authConfig);
 
 export default auth(async (req) => {
-    if(!req.auth?.user?.email && !req.nextUrl.pathname.toLowerCase().startsWith("/adminlogin")) {
-        return NextResponse.redirect(req.nextUrl.origin + "/AdminLogin");
+    const { nextUrl } = req;
+    const isAuthApiRoute = nextUrl.pathname.startsWith("/api/auth");
+    const isAdminLoginRoute = nextUrl.pathname.toLowerCase().startsWith("/adminlogin");
+
+    if (isAuthApiRoute || isAdminLoginRoute) {
+        return NextResponse.next();
+    }
+
+    if (!req.auth?.user?.email) {
+        return NextResponse.redirect(new URL("/AdminLogin", nextUrl));
     }
     return NextResponse.next();
 });
