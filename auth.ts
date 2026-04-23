@@ -1,18 +1,30 @@
-import NextAuth from "next-auth"
+import NextAuth, { type DefaultSession } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { db } from "@/backend"
 import { authConfig } from "./auth.config"
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+    } & DefaultSession["user"];
+  }
+}
+
 async function verifyAdmin(email: string, password: string) {
     try {
+        const trimmedEmail = email.trim().toLowerCase();
+        const trimmedPassword = password.trim();
+        
         const configuredEmail = process.env.ADMIN_EMAIL?.toLowerCase();
         const configuredPassword = process.env.ADMIN_PASSWORD;
 
         // 1. Check Env Credentials
         if (configuredEmail && configuredPassword) {
-            if (email.toLowerCase() === configuredEmail && password === configuredPassword) {
+            if (trimmedEmail === configuredEmail && trimmedPassword === configuredPassword) {
                 return {
-                    id: 1,
+                    id: "1",
                     name: "Admin",
                     email: configuredEmail,
                     phone: "",
@@ -23,13 +35,13 @@ async function verifyAdmin(email: string, password: string) {
         // 2. Check Database Credentials
         const dbAdmin = await db.admin.findUnique({
             where: {
-                email: email.toLowerCase()
+                email: trimmedEmail
             }
         });
 
-        if (dbAdmin && dbAdmin.password === password) {
+        if (dbAdmin && dbAdmin.password === trimmedPassword) {
             return {
-                id: dbAdmin.id,
+                id: `${dbAdmin.id}`,
                 name: dbAdmin.name,
                 email: dbAdmin.email,
                 phone: dbAdmin.phone,
@@ -56,7 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         let adm = await verifyAdmin(credentials.email as string, credentials.password as string);
         if (adm)
           return {
-            id: `${adm.id}`,
+            id: adm.id,
             email: adm.email,
             name: adm.name,
             role: "admin"
@@ -65,4 +77,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ]
-})
+})
