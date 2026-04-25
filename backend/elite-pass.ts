@@ -365,6 +365,9 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
     });
 
     if (order) {
+      const userEmail = order.email || (order as any).email;
+      const userName = order.name || (order as any).name;
+
       // Fetch event names for the email
       let eventNames: string[] = [];
       try {
@@ -389,19 +392,20 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
 
       const attachments = pdfBuffer
         ? [{
-            filename: `Aakar2026_ElitePass_${order.name.replace(/\s+/g, '_')}.pdf`,
+            filename: `Aakar2026_ElitePass_${userName.replace(/\s+/g, '_')}.pdf`,
             content: pdfBuffer,
             contentType: 'application/pdf',
           }]
         : undefined;
+
+      console.log(`[ElitePass] PDF Attachment status: ${pdfBuffer ? `Generated (${pdfBuffer.length} bytes)` : 'Failed/Missing'}`);
 
       // Build a simple, clean email body
       const eventListHtml = eventNames.length > 0
         ? eventNames.map((name) => `<li>${name}</li>`).join('')
         : '<li>Events will be confirmed shortly</li>';
 
-      const userEmail = order.email || (order as any).email;
-      const userName = order.name || (order as any).name;
+
 
       const emailHtml = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">

@@ -68,7 +68,7 @@ export default function ElitePassOrders() {
     college: "",
     department: "",
     year: 1,
-    transactionId: "ADMIN_MANUAL_ENTRY",
+    transactionId: `ADMIN_MANUAL_${Date.now()}`,
     eventIds: [] as number[],
   });
 
@@ -195,7 +195,12 @@ export default function ElitePassOrders() {
       });
 
       if (response.error) {
-        toast.error(typeof response.error === "string" ? response.error : "Failed to add user");
+        if (typeof response.error === "object") {
+          const errorMsg = Object.values(response.error).join(", ");
+          toast.error(errorMsg || "Failed to add user");
+        } else {
+          toast.error(response.error);
+        }
       } else {
         toast.success("User added successfully!");
         setIsAddDialogOpen(false);
@@ -213,7 +218,7 @@ export default function ElitePassOrders() {
           college: "",
           department: "",
           year: 1,
-          transactionId: "ADMIN_MANUAL_ENTRY",
+          transactionId: `ADMIN_MANUAL_${Date.now()}`,
           eventIds: [],
         });
       }

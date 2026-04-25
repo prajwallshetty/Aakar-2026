@@ -19,6 +19,10 @@ export async function generateElitePassPDF(
   _usn: string,
   uuid: string,
 ): Promise<Buffer> {
+  if (!uuid) {
+    console.error('[ElitePassPDF] Error: No UUID provided for PDF generation');
+    throw new Error('UUID is required for Elite Pass PDF generation');
+  }
   try {
     // ── Load template ──────────────────────────────────────────────
     const templatePath = path.join(process.cwd(), 'public', 'elitepass-template.pdf');
