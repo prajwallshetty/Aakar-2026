@@ -380,7 +380,9 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
       // Generate personalized Elite Pass PDF with unique verification QR
       let pdfBuffer: Buffer | null = null;
       try {
-        pdfBuffer = await generateElitePassPDF(order.name, order.usn, order.uuid);
+        const userUsn = order.usn || (order as any).usn;
+        const userUuid = order.uuid || (order as any).uuid;
+        pdfBuffer = await generateElitePassPDF(userName, userUsn, userUuid);
       } catch (pdfError) {
         console.error('Failed to generate Elite Pass PDF, sending email without attachment:', pdfError);
       }
@@ -398,6 +400,9 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
         ? eventNames.map((name) => `<li>${name}</li>`).join('')
         : '<li>Events will be confirmed shortly</li>';
 
+      const userEmail = order.email || (order as any).email;
+      const userName = order.name || (order as any).name;
+
       const emailHtml = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
           <div style="background: linear-gradient(135deg, #0a0a2e, #1a0033); padding: 32px 24px; text-align: center;">
@@ -406,7 +411,7 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
           </div>
           <div style="padding: 28px 24px;">
             <p style="margin: 0 0 20px; color: #1f2937; font-size: 15px; line-height: 1.6;">
-              Hi <strong>${order.name}</strong>,<br/>Your Elite Pass for Aakar 2026 has been received. Your pass is attached to this email as a PDF.
+              Hi <strong>${userName}</strong>,<br/>Your Elite Pass for Aakar 2026 has been received. Your pass is attached to this email as a PDF.
             </p>
             <div style="background: #f8f9fa; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
               <p style="margin: 0 0 10px; font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Registered Events</p>
@@ -424,12 +429,18 @@ export async function createElitePassOrder(data: ElitePassOrderInput): Promise<S
         </div>
       `;
 
-      await sendEmail(
-        order.email,
-        "Elite Pass Confirmed - Aakar 2026",
-        emailHtml,
-        attachments
-      );
+      console.log(`[ElitePass] Attempting to send confirmation email to: ${userEmail}`);
+      if (userEmail) {
+        await sendEmail(
+          userEmail,
+          "Elite Pass Confirmed - Aakar 2026",
+          emailHtml,
+          attachments
+        );
+        console.log(`[ElitePass] Confirmation email task triggered for: ${userEmail}`);
+      } else {
+        console.error('[ElitePass] Cannot send email: userEmail is missing from order object', order);
+      }
     }
 
     return { data: order, error: null };

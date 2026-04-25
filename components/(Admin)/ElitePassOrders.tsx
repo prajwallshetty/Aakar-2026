@@ -18,6 +18,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { UserPlus } from "lucide-react";
+import { createElitePassOrder } from "@/backend/elite-pass";
+import { getSoloEvents } from "@/backend/events";
+import ReactSelect from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 type ElitePassOrderRow = {
   id: number;
@@ -40,6 +55,22 @@ export default function ElitePassOrders() {
   const [search, setSearch] = useState("");
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [loadedScreenshots, setLoadedScreenshots] = useState<Record<number, boolean>>({});
+  
+  // Add User Dialog State
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [soloEvents, setSoloEvents] = useState<{ id: number; eventName: string; fee: number }[]>([]);
+  const [newOrder, setNewOrder] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    usn: "",
+    college: "",
+    department: "",
+    year: 1,
+    transactionId: "ADMIN_MANUAL_ENTRY",
+    eventIds: [] as number[],
+  });
 
   useEffect(() => {
     (async () => {
@@ -60,6 +91,13 @@ export default function ElitePassOrders() {
       }).catch(err => console.error("Error fetching all elite pass orders:", err));
       
     })();
+
+    // Fetch Solo Events for the Add User dialog
+    getSoloEvents().then(response => {
+      if (response.data) {
+        setSoloEvents(response.data as any[]);
+      }
+    });
   }, []);
 
   const filteredOrders = useMemo(() => {
@@ -131,6 +169,62 @@ export default function ElitePassOrders() {
     downloadCsv(rows, "elite_pass_orders.csv");
   };
 
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Detailed validation
+    const errors: string[] = [];
+    if (!newOrder.name) errors.push("Name");
+    if (!newOrder.email) errors.push("Email");
+    if (!newOrder.phone) errors.push("Phone");
+    if (!newOrder.usn) errors.push("USN");
+    if (!newOrder.college) errors.push("College");
+    if (!newOrder.department) errors.push("Department");
+    if (newOrder.eventIds.length === 0) errors.push("at least one Solo Event");
+
+    if (errors.length > 0) {
+      toast.error(`Please provide: ${errors.join(", ")}`);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await createElitePassOrder({
+        ...newOrder,
+        paymentScreenshotUrl: "", // Admin entries don't need screenshot
+      });
+
+      if (response.error) {
+        toast.error(typeof response.error === "string" ? response.error : "Failed to add user");
+      } else {
+        toast.success("User added successfully!");
+        setIsAddDialogOpen(false);
+        // Refresh orders
+        const updatedOrders = await getElitePassOrders();
+        if (updatedOrders.data) {
+          setOrders(updatedOrders.data as ElitePassOrderRow[]);
+        }
+        // Reset form
+        setNewOrder({
+          name: "",
+          email: "",
+          phone: "",
+          usn: "",
+          college: "",
+          department: "",
+          year: 1,
+          transactionId: "ADMIN_MANUAL_ENTRY",
+          eventIds: [],
+        });
+      }
+    } catch (err) {
+      console.error("Error adding user:", err);
+      toast.error("An error occurred while adding user");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50/50">
       <div className="mx-auto max-w-7xl px-6 py-8 space-y-8">
@@ -165,6 +259,157 @@ export default function ElitePassOrders() {
                   <Download size={13} />
                   Download CSV
                 </Button>
+                
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs bg-zinc-900 hover:bg-zinc-800 text-white"
+                    >
+                      <UserPlus size={13} />
+                      Add User
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Add Elite Pass User</DialogTitle>
+                      <DialogDescription>
+                        Manually register a user for Elite Pass. Verification and screenshots are bypassed.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleAddUser} className="space-y-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-xs">Full Name</Label>
+                          <Input
+                            id="name"
+                            value={newOrder.name}
+                            onChange={(e) => setNewOrder({ ...newOrder, name: e.target.value })}
+                            className="h-9 text-sm"
+                            placeholder="John Doe"
+                            required={false}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="usn" className="text-xs">USN</Label>
+                          <Input
+                            id="usn"
+                            value={newOrder.usn}
+                            onChange={(e) => setNewOrder({ ...newOrder, usn: e.target.value.toUpperCase() })}
+                            className="h-9 text-sm"
+                            placeholder="4JK21CS001"
+                            required={false}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-xs">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={newOrder.email}
+                            onChange={(e) => setNewOrder({ ...newOrder, email: e.target.value.toLowerCase() })}
+                            className="h-9 text-sm"
+                            placeholder="john@example.com"
+                            required={false}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone" className="text-xs">Phone</Label>
+                          <Input
+                            id="phone"
+                            value={newOrder.phone}
+                            onChange={(e) => setNewOrder({ ...newOrder, phone: e.target.value })}
+                            className="h-9 text-sm"
+                            placeholder="9876543210"
+                            required={false}
+                          />
+                        </div>
+                        <div className="col-span-2 space-y-2">
+                          <Label htmlFor="college" className="text-xs">College</Label>
+                          <CreatableSelect
+                            instanceId="college-select"
+                            options={[
+                              { value: "A J Institute of Engineering and Technology, Mangalore", label: "A J Institute of Engineering and Technology, Mangalore" },
+                              { value: "Canara Engineering College, Mangalore", label: "Canara Engineering College, Mangalore" },
+                              { value: "St Joseph Engineering College, Vamanjoor", label: "St Joseph Engineering College, Vamanjoor" },
+                              { value: "Sahyadri College of Engineering and Management", label: "Sahyadri College of Engineering and Management" },
+                              { value: "NMAM Institute of Technology, Nitte", label: "NMAM Institute of Technology, Nitte" },
+                            ]}
+                            value={newOrder.college ? { value: newOrder.college, label: newOrder.college } : null}
+                            onChange={(val: any) => setNewOrder({ ...newOrder, college: val?.value || "" })}
+                            className="text-sm"
+                            placeholder="Select or type college name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="department" className="text-xs">Department</Label>
+                          <Input
+                            id="department"
+                            value={newOrder.department}
+                            onChange={(e) => setNewOrder({ ...newOrder, department: e.target.value })}
+                            className="h-9 text-sm"
+                            placeholder="Computer Science"
+                            required={false}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="year" className="text-xs">Year</Label>
+                          <Input
+                            id="year"
+                            type="number"
+                            min={1}
+                            max={5}
+                            value={newOrder.year}
+                            onChange={(e) => setNewOrder({ ...newOrder, year: parseInt(e.target.value) })}
+                            className="h-9 text-sm"
+                            required
+                          />
+                        </div>
+                        <div className="col-span-2 space-y-2">
+                          <Label className="text-xs">Solo Events (Select at least 1)</Label>
+                          <ReactSelect
+                            instanceId="events-select"
+                            isMulti
+                            options={soloEvents.map(ev => ({ value: ev.id, label: ev.eventName }))}
+                            value={soloEvents.filter(ev => newOrder.eventIds.includes(ev.id)).map(ev => ({ value: ev.id, label: ev.eventName }))}
+                            onChange={(vals: any) => setNewOrder({ ...newOrder, eventIds: vals ? vals.map((v: any) => v.value) : [] })}
+                            className="text-sm"
+                            placeholder="Select solo events..."
+                          />
+                        </div>
+                        <div className="col-span-2 space-y-2">
+                          <Label htmlFor="transactionId" className="text-xs">Transaction ID</Label>
+                          <Input
+                            id="transactionId"
+                            value={newOrder.transactionId}
+                            onChange={(e) => setNewOrder({ ...newOrder, transactionId: e.target.value })}
+                            className="h-9 text-sm"
+                            placeholder="ADMIN_MANUAL_ENTRY"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter className="pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsAddDialogOpen(false)}
+                          disabled={isSubmitting}
+                          className="h-9 text-sm"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="h-9 text-sm bg-zinc-900 hover:bg-zinc-800"
+                        >
+                          {isSubmitting ? "Adding..." : "Add User"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
                 <div className="relative">
                   <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                   <Input

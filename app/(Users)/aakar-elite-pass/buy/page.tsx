@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CreatableSelect from "react-select/creatable";
 import { checkElitePassDuplicates, createElitePassOrder } from "@/backend/elite-pass";
+import { getSoloEvents } from "@/backend/events";
 import { cinzelFont } from "@/lib/font";
 import {
   AnimeParticleField,
@@ -362,19 +363,18 @@ export default function ElitePassBuyPage() {
       setIsLoadingSoloEvents(true);
       setSoloEventsLoadError("");
       try {
-        const response = await fetch("/api/events/solo", { cache: "no-store" });
-        const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result?.error || "Failed to load solo events");
+        const response = await getSoloEvents();
+        if (response.error) {
+          throw new Error(response.error);
         }
 
-        const events = Array.isArray(result?.data) ? result.data as SoloEventOption[] : [];
+        const events = Array.isArray(response.data) ? response.data as SoloEventOption[] : [];
         if (!cancelled) {
           setSoloEvents(events);
         }
-      } catch {
+      } catch (err: any) {
         if (!cancelled) {
-          setSoloEventsLoadError("Could not load solo events. Refresh and try again.");
+          setSoloEventsLoadError(err.message || "Could not load solo events. Refresh and try again.");
         }
       } finally {
         if (!cancelled) {

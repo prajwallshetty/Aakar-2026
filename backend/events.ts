@@ -182,6 +182,24 @@ export async function getEventsOfAllUsers() {
     }
 }
 
+export async function getSoloEvents() {
+    try {
+        const events = await db.event.findMany({
+            where: {
+                eventType: "Solo"
+            },
+            orderBy: [
+                { eventCategory: "asc" },
+                { eventName: "asc" }
+            ]
+        }) as ExtendedEvent[];
+        return { data: events, error: null };
+    } catch (e) {
+        console.error("Get Solo Events Error:", e);
+        return { data: [], error: "Failed to fetch solo events" };
+    }
+}
+
 export async function getEventOptions() {
     try {
         const events = await getAllEvents();
