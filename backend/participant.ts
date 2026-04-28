@@ -113,7 +113,7 @@ export async function getParticipantsCount() {
     usns.add(p.usn);
     if (p.groupMembersData) {
       Object.keys(p.groupMembersData).forEach(groupEvent => {
-        p.groupMembersData![groupEvent].members.forEach(member => {
+        (p.groupMembersData as any)[groupEvent].members.forEach((member: any) => {
           usns.add(member.usn);
         })
       });
@@ -121,6 +121,27 @@ export async function getParticipantsCount() {
   })
 
   return usns.size;
+}
+
+export async function getTotalAmountCollected() {
+  try {
+    const isUserAdmin = await isAdmin();
+    if (!isUserAdmin) return 0;
+
+    const result = await db.participant.aggregate({
+      where: {
+        paymentStatus: "APPROVED"
+      },
+      _sum: {
+        amount: true
+      }
+    });
+
+    return result._sum.amount || 0;
+  } catch (error) {
+    console.error("Error fetching total amount collected:", error);
+    return 0;
+  }
 }
 
 export async function getParticipantsCountForEvent(eventId: number) {

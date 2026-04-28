@@ -8,16 +8,16 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { UserPlus, Trash2, Pencil, User, AlertCircle, Ticket, Users, Search, Shirt } from 'lucide-react';
+import { getParticipantsCount, getTotalAmountCollected } from '@/backend/participant';
+import { getTotalEvents } from '@/backend/events';
+import { getMerchOrdersCount } from '@/backend/merch';
+import { IndianRupee, UserPlus, Trash2, Pencil, User, AlertCircle, Ticket, Users, Search, Shirt } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '@/backend/admin';
 import { Admin } from '@prisma/client';
-import { getParticipantsCount } from '@/backend/participant';
-import { getTotalEvents } from '@/backend/events';
-import { getMerchOrdersCount } from '@/backend/merch';
 
 interface ErrorResponse {
   error: string;
@@ -33,12 +33,16 @@ const StatCard = ({
   icon: Icon,
   loading,
   description,
+  prefix,
+  isGreen,
 }: {
   title: string;
   value: number;
   icon: any;
   loading: boolean;
   description?: string;
+  prefix?: string;
+  isGreen?: boolean;
 }) => (
   <Card className="border border-zinc-200 shadow-none">
     <CardContent className="p-5">
@@ -48,14 +52,16 @@ const StatCard = ({
           {loading ? (
             <Skeleton className="h-8 w-20 mt-1" />
           ) : (
-            <p className="text-3xl font-bold text-zinc-900 tracking-tight">{value.toLocaleString()}</p>
+            <p className={`text-3xl font-bold tracking-tight ${isGreen ? 'text-emerald-600' : 'text-zinc-900'}`}>
+              {prefix}{value.toLocaleString()}
+            </p>
           )}
           {description && !loading && (
             <p className="text-xs text-zinc-400 mt-1">{description}</p>
           )}
         </div>
-        <div className="h-9 w-9 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
-          <Icon size={16} className="text-zinc-600" />
+        <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${isGreen ? 'bg-emerald-50' : 'bg-zinc-100'}`}>
+          <Icon size={16} className={isGreen ? 'text-emerald-600' : 'text-zinc-600'} />
         </div>
       </div>
     </CardContent>
@@ -72,7 +78,7 @@ const AdminPortal = () => {
   const [currentId, setCurrentId] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState('');
-  const [stats, setStats] = useState({ totalUsers: 0, totalEvents: 0 });
+  const [stats, setStats] = useState({ totalUsers: 0, totalEvents: 0, totalAmount: 0 });
   const [merchCount, setMerchCount] = useState(0);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<number | null>(null);
@@ -110,6 +116,7 @@ const AdminPortal = () => {
       setStats({
         totalUsers: await getParticipantsCount(),
         totalEvents: await getTotalEvents(),
+        totalAmount: await getTotalAmountCollected(),
       });
       setMerchCount(await getMerchOrdersCount());
     } catch (error) {
@@ -217,11 +224,12 @@ const AdminPortal = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <StatCard title="Participants" value={stats.totalUsers} icon={Users} loading={loading.stats} description="Total registered" />
           <StatCard title="Events" value={stats.totalEvents} icon={Ticket} loading={loading.stats} description="Across all categories" />
           <StatCard title="Admins" value={admins.length} icon={User} loading={loading.admins} description="Active accounts" />
           <StatCard title="Merch Orders" value={merchCount} icon={Shirt} loading={loading.stats} description="Shirt orders" />
+          <StatCard title="Total Collected" value={stats.totalAmount} icon={IndianRupee} loading={loading.stats} description="From participants" prefix="₹" isGreen />
         </div>
 
         {/* Admin Table Card */}
