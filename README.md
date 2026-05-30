@@ -39,7 +39,7 @@
     </td>
     <td align="center">
       <a href="#">
-        <img src="https://ui-avatars.com/api/?name=Pahima+Uchil&background=FF0066&color=fff&size=100" width="100px;" alt="Pahima R Uchil"/><br />
+        <img src="https://github.com/Pahimauchil.png" width="100px;" alt="Pahima Uchil"/><br />
         <sub><b>Pahima R Uchil</b></sub>
       </a><br />
       <sub>Software Engineer</sub>
